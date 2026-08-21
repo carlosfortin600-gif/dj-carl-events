@@ -1,0 +1,32 @@
+<%#
+  label, prefix, songValue, spotifyValue, confirmedValue, notesValue (optional)
+%>
+<div class="col-12">
+  <div class="row g-2 align-items-end border rounded p-3 bg-light-subtle">
+    <div class="col-md-5">
+      <label class="form-label mb-1"><%= label %></label>
+      <input type="text" class="form-control" name="<%= prefix %>_song"
+             value="<%= songValue || '' %>" placeholder="Artiste — Titre">
+    </div>
+    <div class="col-md-5">
+      <label class="form-label mb-1">Lien Spotify</label>
+      <input type="url" class="form-control" name="<%= prefix %>_spotify"
+             value="<%= spotifyValue || '' %>" placeholder="https://open.spotify.com/track/…">
+    </div>
+    <div class="col-md-2">
+      <div class="form-check song-confirmed-check mb-2">
+        <input class="form-check-input" type="checkbox" name="<%= prefix %>_confirmed" value="1"
+               id="<%= prefix %>_confirmed"
+               <%= confirmedValue ? 'checked' : '' %>>
+        <label class="form-check-label" for="<%= prefix %>_confirmed">Validée</label>
+      </div>
+    </div>
+    <% if (typeof notesValue !== 'undefined') { %>
+      <div class="col-12">
+        <label class="form-label mb-1">Notes</label>
+        <textarea class="form-control" name="<%= prefix %>_notes" rows="2"
+                  placeholder="Noms, ordre d'entrée, annonces, préférences…"><%= notesValue || '' %></textarea>
+      </div>
+    <% } %>
+  </div>
+</div>

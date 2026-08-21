@@ -1,0 +1,240 @@
+<% const q = questionnaire.data; %>
+
+<% if (questionnaire.updated_at) { %>
+  <p class="text-muted small mb-3">Dernière modification : <%= formatTimestampFr(questionnaire.updated_at) %></p>
+<% } %>
+
+<p class="text-muted small mb-4">
+  Questionnaire adapté pour : <strong><%= event.event_type %></strong>
+</p>
+
+<form method="post" action="<%= typeof formAction !== 'undefined' ? formAction : ('/events/' + event.id + '/questionnaire') %>" id="questionnaireForm" data-unsaved-guard>
+
+  <section class="q-section mb-4">
+    <h2 class="h5 q-section-title">Informations générales</h2>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Heure entrée des invités en salle</label>
+        <input type="time" class="form-control" name="guest_arrival_time" value="<%= q.general.guest_arrival_time %>">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Heure début du party</label>
+        <input type="time" class="form-control" name="party_start_time" value="<%= q.general.party_start_time %>">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Heure de fin prévue</label>
+        <input type="time" class="form-control" name="expected_end_time" value="<%= q.general.expected_end_time %>">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Notes sur la célébration</label>
+        <input type="text" class="form-control" name="celebration_notes" value="<%= q.general.celebration_notes %>" placeholder="Ex. : 40e anniversaire, party de bureau, fête de Noël…">
+      </div>
+    </div>
+    <p class="text-muted small mt-3 mb-2">Tranche d'âge des invités</p>
+    <div class="row g-2 mb-3">
+      <% AGE_GROUPS.forEach(function(age) { %>
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="age_groups" value="<%= age %>"
+                   id="age_<%= age.replace(/\s+/g, '_') %>"
+                   <%= q.general.age_groups.includes(age) ? 'checked' : '' %>>
+            <label class="form-check-label" for="age_<%= age.replace(/\s+/g, '_') %>"><%= age %></label>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+    <p class="fw-semibold mb-2">Thème pour la soirée</p>
+    <div class="row g-2">
+      <% EVENING_THEME_OPTIONS.filter(function(theme) { return theme !== 'Autre'; }).forEach(function(theme) { %>
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="evening_themes" value="<%= theme %>"
+                   id="theme_<%= theme.replace(/\s+/g, '_') %>"
+                   <%= q.general.evening_themes.includes(theme) ? 'checked' : '' %>>
+            <label class="form-check-label" for="theme_<%= theme.replace(/\s+/g, '_') %>"><%= theme %></label>
+          </div>
+        </div>
+      <% }); %>
+      <div class="col-12 col-md-6">
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <div class="form-check mb-0">
+            <input class="form-check-input" type="checkbox" name="evening_themes" value="Autre" id="theme_autre"
+                   <%= q.general.evening_themes.includes('Autre') ? 'checked' : '' %>>
+            <label class="form-check-label" for="theme_autre">Autre</label>
+          </div>
+          <input type="text" class="form-control form-control-sm" name="evening_theme_other"
+                 value="<%= q.general.evening_theme_other || '' %>"
+                 placeholder="Précisez le thème…" style="min-width: 220px; flex: 1;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%- include('day-contact-fields', { dayContact: q.day_contact }) %>
+
+  <section class="q-section mb-4">
+    <h2 class="h5 q-section-title">Déroulement</h2>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label d-block">Cocktail / accueil</label>
+        <div class="btn-group" role="group">
+          <input type="radio" class="btn-check" name="has_cocktail" id="cocktail_yes" value="yes" <%= q.schedule.has_cocktail === 'yes' ? 'checked' : '' %>>
+          <label class="btn btn-outline-primary btn-sm" for="cocktail_yes">Oui</label>
+          <input type="radio" class="btn-check" name="has_cocktail" id="cocktail_no" value="no" <%= q.schedule.has_cocktail === 'no' ? 'checked' : '' %>>
+          <label class="btn btn-outline-primary btn-sm" for="cocktail_no">Non</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label d-block">Repas / souper</label>
+        <div class="btn-group" role="group">
+          <input type="radio" class="btn-check" name="has_meal" id="meal_yes" value="yes" <%= q.schedule.has_meal === 'yes' ? 'checked' : '' %>>
+          <label class="btn btn-outline-primary btn-sm" for="meal_yes">Oui</label>
+          <input type="radio" class="btn-check" name="has_meal" id="meal_no" value="no" <%= q.schedule.has_meal === 'no' ? 'checked' : '' %>>
+          <label class="btn btn-outline-primary btn-sm" for="meal_no">Non</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label d-block">Discours / annonces prévus</label>
+        <div class="btn-group" role="group">
+          <input type="radio" class="btn-check" name="speeches_planned" id="speech_yes" value="yes" <%= q.schedule.speeches_planned === 'yes' ? 'checked' : '' %>>
+          <label class="btn btn-outline-primary btn-sm" for="speech_yes">Oui</label>
+          <input type="radio" class="btn-check" name="speeches_planned" id="speech_no" value="no" <%= q.schedule.speeches_planned === 'no' ? 'checked' : '' %>>
+          <label class="btn btn-outline-primary btn-sm" for="speech_no">Non</label>
+        </div>
+      </div>
+      <%- include('cocktail-location-fields', { cocktailData: q.schedule }) %>
+      <div class="col-12">
+        <label class="form-label">Moments spéciaux à prévoir</label>
+        <textarea class="form-control" name="special_moments_notes" rows="3"><%= q.schedule.special_moments_notes %></textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="q-section mb-4">
+    <h2 class="h5 q-section-title">Musique de soirée</h2>
+    <div class="row g-2 mb-3">
+      <% PARTY_DECADES.forEach(function(decade) { %>
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="party_decades" value="<%= decade %>"
+                   id="pd_<%= decade.replace(/[\s\/]+/g, '_') %>"
+                   <%= q.party_music.decades.includes(decade) ? 'checked' : '' %>>
+            <label class="form-check-label" for="pd_<%= decade.replace(/[\s\/]+/g, '_') %>"><%= decade %></label>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+    <label class="form-label">Chansons incontournables</label>
+    <textarea class="form-control mb-3" name="must_play" rows="3"
+              placeholder="Liste libre — artistes, chansons, notes…"><%= q.party_music.must_play %></textarea>
+    <div class="row g-3 mt-2">
+      <div class="col-md-6">
+        <label class="form-label">Artistes préférés</label>
+        <textarea class="form-control" name="preferred_artists" rows="2"><%= q.party_music.preferred_artists %></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Chansons interdites</label>
+        <textarea class="form-control" name="forbidden_songs" rows="2"><%= q.party_music.forbidden_songs %></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Styles à éviter</label>
+        <textarea class="form-control" name="avoid_styles" rows="2"><%= q.party_music.avoid_styles %></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Le DJ peut-il accepter les demandes des invités ?</label>
+        <select class="form-select" name="guest_requests">
+          <option value="">— Choisir —</option>
+          <% PARTY_GUEST_REQUEST_OPTIONS.forEach(function(opt) { %>
+            <option value="<%= opt.value %>" <%= q.party_music.guest_requests === opt.value ? 'selected' : '' %>><%= opt.label %></option>
+          <% }); %>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <section class="q-section mb-4">
+    <h2 class="h5 q-section-title">Animation</h2>
+    <div class="mb-3">
+      <label class="form-label">Niveau désiré</label>
+      <select class="form-select" name="animation_level">
+        <option value="">— Choisir —</option>
+        <% ANIMATION_LEVELS.forEach(function(opt) { %>
+          <option value="<%= opt.value %>" <%= q.animation.level === opt.value ? 'selected' : '' %>><%= opt.label %></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="row g-2 mb-3">
+      <% ANIMATION_ACTIVITIES.forEach(function(act, idx) { %>
+        <div class="col-6 col-md-4">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="animation_activities" value="<%= act %>"
+                   id="aa_<%= idx %>"
+                   <%= q.animation.activities.includes(act) ? 'checked' : '' %>>
+            <label class="form-check-label" for="aa_<%= idx %>"><%= act %></label>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+    <label class="form-label">Commentaires</label>
+    <textarea class="form-control" name="animation_comments" rows="3"><%= q.animation.comments %></textarea>
+  </section>
+
+  <section class="q-section mb-4">
+    <h2 class="h5 q-section-title">Moments importants</h2>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead>
+          <tr>
+            <th>Moment</th>
+            <th>Actif</th>
+            <th>Heure</th>
+            <th>Chanson</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% q.important_moments.forEach(function(m) { %>
+            <tr>
+              <td><%= m.label %></td>
+              <td>
+                <select class="form-select form-select-sm" name="moment_<%= m.key %>_active">
+                  <option value="" <%= !m.active ? 'selected' : '' %>>—</option>
+                  <option value="yes" <%= m.active === 'yes' ? 'selected' : '' %>>Oui</option>
+                  <option value="no" <%= m.active === 'no' ? 'selected' : '' %>>Non</option>
+                </select>
+              </td>
+              <td><input type="time" class="form-control form-control-sm" name="moment_<%= m.key %>_time" value="<%= m.time %>"></td>
+              <td><input type="text" class="form-control form-control-sm" name="moment_<%= m.key %>_song" value="<%= m.song %>"></td>
+              <td><input type="text" class="form-control form-control-sm" name="moment_<%= m.key %>_notes" value="<%= m.notes %>"></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="q-section mb-4">
+    <h2 class="h5 q-section-title">Questions importantes</h2>
+    <div class="mb-3">
+      <label class="form-label">Décrivez la soirée parfaite pour vous</label>
+      <textarea class="form-control" name="perfect_evening" rows="4"><%= q.important_questions.perfect_evening %></textarea>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Autres informations ou demandes que DJ Carl devrait connaître</label>
+      <textarea class="form-control" name="other_info" rows="4"><%= q.important_questions.other_info %></textarea>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Situations particulières à éviter (annonces, sujets sensibles…)</label>
+      <textarea class="form-control" name="sensitive_situations" rows="4"><%= q.important_questions.sensitive_situations %></textarea>
+    </div>
+  </section>
+
+  <div class="sticky-save-bar d-flex flex-wrap gap-2 align-items-center justify-content-between">
+    <div class="form-check mb-0">
+      <input class="form-check-input" type="checkbox" name="_completed" value="1" id="q_completed"
+             <%= q._completed ? 'checked' : '' %>>
+      <label class="form-check-label" for="q_completed">Marquer le questionnaire comme complété</label>
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg"><%= typeof portalMode !== 'undefined' && portalMode ? 'Enregistrer mes réponses' : 'Enregistrer le questionnaire' %></button>
+  </div>
+</form>

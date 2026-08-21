@@ -1,0 +1,188 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/nav', { activeNav }) %>
+
+<main class="container pb-5">
+  <div class="row justify-content-center">
+    <div class="col-xl-9">
+      <div class="d-flex align-items-center gap-2 mb-3">
+        <a href="/" class="btn btn-outline-secondary btn-sm">← Retour</a>
+      </div>
+
+      <h1 class="h3 mb-4">Nouvel événement</h1>
+
+      <% if (errors.length > 0) { %>
+        <div class="alert alert-danger">
+          <ul class="mb-0">
+            <% errors.forEach(function(err) { %><li><%= err %></li><% }); %>
+          </ul>
+        </div>
+      <% } %>
+
+      <form method="post" action="/events/new" class="card" data-unsaved-guard>
+        <div class="card-body p-4">
+          <% const weddingClientLabels = values.event_type === 'Mariage'; %>
+
+          <section class="form-section form-section-client">
+            <h2 class="form-section-title">Informations client</h2>
+          <% if (weddingClientLabels) { %>
+            <div class="row g-3 mb-4" id="clientNamesRow">
+              <div class="col-md-6" data-client-field="2">
+                <label class="form-label" for="first_name_2" id="label_first_name_2">Prénom de la mariée</label>
+                <input type="text" class="form-control" id="first_name_2" name="first_name_2"
+                       value="<%= values.first_name_2 || '' %>">
+              </div>
+              <div class="col-md-6" data-client-field="1">
+                <label class="form-label" for="first_name_1" id="label_first_name_1">Prénom du mari *</label>
+                <input type="text" class="form-control" id="first_name_1" name="first_name_1" required
+                       value="<%= values.first_name_1 || '' %>">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="phone">Téléphone</label>
+                <input type="tel" class="form-control" id="phone" name="phone"
+                       value="<%= values.phone || '' %>">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="email">Courriel</label>
+                <input type="email" class="form-control" id="email" name="email"
+                       value="<%= values.email || '' %>">
+              </div>
+            </div>
+            <input type="hidden" name="last_name" id="last_name_wedding" value="—">
+          <% } else { %>
+          <div class="row g-3 mb-4" id="clientNamesRow">
+            <div class="col-12" id="lastNameField">
+              <label class="form-label" for="last_name" id="label_last_name">Nom de l'entreprise *</label>
+              <input type="text" class="form-control" id="last_name" name="last_name" required
+                     value="<%= values.last_name || '' %>" placeholder="Ex. : Entreprise ABC, Club social, École…">
+            </div>
+            <div class="col-md-6" data-client-field="1">
+              <label class="form-label" for="first_name_1" id="label_first_name_1">Personne contact *</label>
+              <input type="text" class="form-control" id="first_name_1" name="first_name_1" required
+                     value="<%= values.first_name_1 || '' %>">
+            </div>
+            <div class="col-md-6" data-client-field="2">
+              <label class="form-label" for="first_name_2" id="label_first_name_2">Personne contact 2</label>
+              <input type="text" class="form-control" id="first_name_2" name="first_name_2"
+                     value="<%= values.first_name_2 || '' %>">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="phone">Téléphone</label>
+              <input type="tel" class="form-control" id="phone" name="phone"
+                     value="<%= values.phone || '' %>">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="email">Courriel</label>
+              <input type="email" class="form-control" id="email" name="email"
+                     value="<%= values.email || '' %>">
+            </div>
+          </div>
+          <% } %>
+          </section>
+
+          <section class="form-section form-section-event">
+            <h2 class="form-section-title">Événement</h2>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="event_type">Type d'événement *</label>
+              <select class="form-select" id="event_type" name="event_type" required>
+                <option value="">— Choisir —</option>
+                <% eventTypes.forEach(function(type) { %>
+                  <option value="<%= type %>" <%= values.event_type === type ? 'selected' : '' %>><%= type %></option>
+                <% }); %>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="event_date">Date *</label>
+              <%- include('date-fr-field', {
+                id: 'event_date',
+                name: 'event_date',
+                value: values.event_date || '',
+                required: true
+              }) %>
+            </div>
+            <div class="col-md-4 col-lg-3">
+              <label class="form-label" for="start_time">Heure début</label>
+              <input type="time" class="form-control" id="start_time" name="start_time"
+                     value="<%= values.start_time || '' %>">
+            </div>
+            <div class="col-md-8 col-lg-9">
+              <label class="form-label" for="end_datetime">Fin (date et heure)</label>
+              <%- include('datetime-fr-field', {
+                id: 'end_datetime',
+                name: 'end_datetime',
+                value: values.end_datetime || endDatetimeLocalValue(values.event_date, values.end_date, values.end_time),
+                displayValue: values.end_time
+                  ? formatDateTimeFr(values.end_date || values.event_date, values.end_time) : ''
+              }) %>
+            </div>
+            <div class="col-md-9">
+              <label class="form-label" for="venue">Nom de la salle</label>
+              <input type="text" class="form-control" id="venue" name="venue"
+                     value="<%= values.venue || '' %>">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="guest_count" title="Nombre approximatif d'invités">Invités</label>
+              <input type="number" class="form-control" id="guest_count" name="guest_count" min="0"
+                     value="<%= values.guest_count || '' %>"
+                     placeholder="—">
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="address">Adresse</label>
+              <div class="address-suggest-wrap">
+                <input type="text" class="form-control address-suggest" id="address" name="address"
+                       value="<%= values.address || '' %>"
+                       autocomplete="off" spellcheck="false">
+                <ul class="address-suggest-list list-group" id="address-suggestions" hidden></ul>
+              </div>
+              <a href="<%= googleMapsUrl(values.address) || '#' %>"
+                 id="address-map-link"
+                 class="small mt-1 d-inline-block <%= values.address && values.address.trim() ? '' : 'd-none' %>"
+                 target="_blank" rel="noopener noreferrer">Ouvrir dans Google Maps</a>
+            </div>
+            <div class="col-12" id="route-time-block">
+              <label class="form-label" for="route_origin_custom">Adresse de départ (temps de route)</label>
+              <div class="address-suggest-wrap">
+                <input type="text" class="form-control address-suggest"
+                       id="route_origin_custom" name="route_origin_custom"
+                       placeholder="D'où partez-vous pour cet événement ?"
+                       value="<%= values.route_origin_custom || '' %>"
+                       autocomplete="off" spellcheck="false">
+                <ul class="address-suggest-list list-group" hidden></ul>
+              </div>
+              <p class="text-muted small mb-0 mt-1">Change selon l'événement — choisissez une suggestion pour un calcul plus précis.</p>
+              <div id="route-time-result" class="small mt-2 text-muted">—</div>
+              <a href="#" id="route-directions-link"
+                 class="small d-none"
+                 target="_blank" rel="noopener noreferrer">Temps réel avec trafic (Google Maps)</a>
+            </div>
+          </div>
+          </section>
+
+          <%- include('partials/services-form', {
+            serviceOptions,
+            selectedServices: Array.isArray(values.services) ? values.services : (values.services ? [values.services] : []),
+            customServiceSlots: (() => {
+              const slots = [];
+              for (let i = 1; i <= CUSTOM_SERVICE_SLOT_COUNT; i++) {
+                slots.push({
+                  enabled: values['custom_service_enabled_' + i] === '1',
+                  name: values['custom_service_' + i] || ''
+                });
+              }
+              return slots;
+            })(),
+            bingoMusicalStyle: values.bingo_musical_style || '',
+            onConnaitChansonNotes: values.on_connait_chanson_notes || ''
+          }) %>
+
+          <div class="d-flex gap-2 mt-2">
+            <button type="submit" class="btn btn-primary btn-lg">Créer le dossier</button>
+            <a href="/" class="btn btn-outline-secondary btn-lg">Annuler</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

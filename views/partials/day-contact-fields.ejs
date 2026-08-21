@@ -1,0 +1,23 @@
+<% const contact = typeof dayContact !== 'undefined' ? dayContact : { name: '', phone: '', email: '' }; %>
+
+<section class="q-section mb-4">
+  <h2 class="h5 q-section-title">Personne à contacter le jour de l'événement</h2>
+  <p class="text-muted small mb-3">Contact sur place ou responsable à joindre le jour même (coordonateur, gérant de salle, etc.).</p>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label" for="day_contact_name">Nom</label>
+      <input type="text" class="form-control" id="day_contact_name" name="day_contact_name"
+             value="<%= contact.name || '' %>" placeholder="Nom complet">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="day_contact_phone">Téléphone</label>
+      <input type="tel" class="form-control" id="day_contact_phone" name="day_contact_phone"
+             value="<%= contact.phone || '' %>" placeholder="514-555-1234">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="day_contact_email">Courriel</label>
+      <input type="email" class="form-control" id="day_contact_email" name="day_contact_email"
+             value="<%= contact.email || '' %>" placeholder="contact@exemple.com">
+    </div>
+  </div>
+</section>

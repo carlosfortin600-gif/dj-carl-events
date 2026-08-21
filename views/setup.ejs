@@ -1,0 +1,36 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/nav', { activeNav: 'dashboard' }) %>
+
+<main class="container pb-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-body p-4 p-md-5">
+          <h1 class="h3 mb-3">Étape 1 — Fondation prête</h1>
+          <p class="text-muted mb-4">
+            Le serveur Express, la base SQLite et la structure du projet sont en place.
+            Le tableau de bord complet arrive à l'étape 2.
+          </p>
+
+          <div class="alert alert-success d-flex align-items-center gap-2" role="alert">
+            <span class="fs-4">✓</span>
+            <div>Serveur actif sur <strong>http://localhost:3000</strong></div>
+          </div>
+
+          <h2 class="h5 mt-4">Tables SQLite créées</h2>
+          <ul class="list-group list-group-flush mb-4">
+            <% tables.forEach(function(name) { %>
+              <li class="list-group-item px-0"><code><%= name %></code></li>
+            <% }); %>
+          </ul>
+
+          <p class="mb-0 small text-muted">
+            Vérification API : <a href="/api/health" target="_blank" rel="noopener">/api/health</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

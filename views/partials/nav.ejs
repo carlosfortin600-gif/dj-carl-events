@@ -1,0 +1,21 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container">
+    <a class="navbar-brand" href="/">DJ CARL</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link<%= typeof activeNav === 'dashboard' ? ' active' : '' %>" href="/">Tableau de bord</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link<%= typeof activeNav === 'calendar' ? ' active' : '' %>" href="/calendar">Calendrier</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link<%= typeof activeNav === 'new' ? ' active' : '' %>" href="/events/new">Nouvel événement</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

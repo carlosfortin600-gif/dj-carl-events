@@ -1,0 +1,198 @@
+<% if (resumeSaved) { %>
+  <div class="alert alert-success">Informations enregistrées.</div>
+<% } %>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <form method="post" action="/events/<%= event.id %>/resume/save" data-unsaved-guard>
+      <% const weddingClientLabels = event.event_type === 'Mariage'; %>
+
+      <section class="form-section form-section-client">
+        <h2 class="form-section-title">Informations client</h2>
+      <% if (weddingClientLabels) { %>
+        <div class="row g-3 mb-4" id="clientNamesRow">
+          <div class="col-md-6" data-client-field="2">
+            <label class="form-label" for="first_name_2" id="label_first_name_2">Prénom de la mariée</label>
+            <input type="text" class="form-control" id="first_name_2" name="first_name_2"
+                   value="<%= event.first_name_2 || '' %>">
+          </div>
+          <div class="col-md-6" data-client-field="1">
+            <label class="form-label" for="first_name_1" id="label_first_name_1">Prénom du mari *</label>
+            <input type="text" class="form-control" id="first_name_1" name="first_name_1" required
+                   value="<%= event.first_name_1 || '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="phone">Téléphone</label>
+            <input type="tel" class="form-control" id="phone" name="phone"
+                   value="<%= event.phone || '' %>">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="email">Courriel</label>
+            <input type="email" class="form-control" id="email" name="email"
+                   value="<%= event.email || '' %>">
+          </div>
+        </div>
+        <input type="hidden" name="last_name" id="last_name_wedding" value="<%= event.last_name || '—' %>">
+      <% } else { %>
+      <div class="row g-3 mb-4" id="clientNamesRow">
+        <div class="col-12" id="lastNameField">
+          <label class="form-label" for="last_name" id="label_last_name">Nom de l'entreprise *</label>
+          <input type="text" class="form-control" id="last_name" name="last_name" required
+                 value="<%= event.last_name || '' %>" placeholder="Ex. : Entreprise ABC, Club social, École…">
+        </div>
+        <div class="col-md-6" data-client-field="1">
+          <label class="form-label" for="first_name_1" id="label_first_name_1">Personne contact *</label>
+          <input type="text" class="form-control" id="first_name_1" name="first_name_1" required
+                 value="<%= event.first_name_1 || '' %>">
+        </div>
+        <div class="col-md-6" data-client-field="2">
+          <label class="form-label" for="first_name_2" id="label_first_name_2">Personne contact 2</label>
+          <input type="text" class="form-control" id="first_name_2" name="first_name_2"
+                 value="<%= event.first_name_2 || '' %>">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="phone">Téléphone</label>
+          <input type="tel" class="form-control" id="phone" name="phone"
+                 value="<%= event.phone || '' %>">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="email">Courriel</label>
+          <input type="email" class="form-control" id="email" name="email"
+                 value="<%= event.email || '' %>">
+        </div>
+      </div>
+      <% } %>
+      </section>
+
+      <section class="form-section form-section-event">
+        <h2 class="form-section-title">Événement</h2>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="event_type">Type d'événement *</label>
+          <select class="form-select" id="event_type" name="event_type" required>
+            <% eventTypes.forEach(function(type) { %>
+              <option value="<%= type %>" <%= event.event_type === type ? 'selected' : '' %>><%= type %></option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="event_date">Date *</label>
+          <%- include('date-fr-field', {
+            id: 'event_date',
+            name: 'event_date',
+            value: event.event_date || '',
+            required: true
+          }) %>
+        </div>
+        <div class="col-md-4 col-lg-3">
+          <label class="form-label" for="start_time">Heure début</label>
+          <input type="time" class="form-control" id="start_time" name="start_time"
+                 value="<%= event.start_time ? event.start_time.slice(0, 5) : '' %>">
+        </div>
+        <div class="col-md-8 col-lg-9">
+          <label class="form-label" for="end_datetime">Fin (date et heure)</label>
+          <%- include('datetime-fr-field', {
+            id: 'end_datetime',
+            name: 'end_datetime',
+            value: endDatetimeLocalValue(event.event_date, event.end_date, event.end_time),
+            displayValue: event.end_time
+              ? formatDateTimeFr(event.end_date || event.event_date, event.end_time) : ''
+          }) %>
+        </div>
+        <div class="col-md-9">
+          <label class="form-label" for="venue">Nom de la salle</label>
+          <input type="text" class="form-control" id="venue" name="venue"
+                 value="<%= event.venue || '' %>">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label" for="guest_count" title="Nombre approximatif d'invités">Invités</label>
+          <input type="number" class="form-control" id="guest_count" name="guest_count" min="0"
+                 value="<%= event.guest_count != null ? event.guest_count : '' %>"
+                 placeholder="—">
+        </div>
+        <div class="col-12">
+          <label class="form-label" for="address">Adresse</label>
+          <div class="address-suggest-wrap">
+            <input type="text" class="form-control address-suggest" id="address" name="address"
+                   value="<%= event.address || '' %>"
+                   autocomplete="off" spellcheck="false">
+            <ul class="address-suggest-list list-group" id="address-suggestions" hidden></ul>
+          </div>
+          <a href="<%= googleMapsUrl(event.address) || '#' %>"
+             id="address-map-link"
+             class="small mt-1 d-inline-block <%= event.address && event.address.trim() ? '' : 'd-none' %>"
+             target="_blank" rel="noopener noreferrer">Ouvrir dans Google Maps</a>
+        </div>
+        <div class="col-12" id="route-time-block">
+          <label class="form-label" for="route_origin_custom">Adresse de départ (temps de route)</label>
+          <div class="address-suggest-wrap">
+            <input type="text" class="form-control address-suggest"
+                   id="route_origin_custom" name="route_origin_custom"
+                   placeholder="D'où partez-vous pour cet événement ?"
+                   value="<%= resolveDepartureAddress(event.route_origin_key, event.route_origin_custom, ROUTE_ORIGIN_OPTIONS) %>"
+                   autocomplete="off" spellcheck="false">
+            <ul class="address-suggest-list list-group" hidden></ul>
+          </div>
+          <p class="text-muted small mb-0 mt-1">Change selon l'événement — choisissez une suggestion pour un calcul plus précis.</p>
+          <div id="route-time-result" class="small mt-2 text-muted">—</div>
+          <a href="#" id="route-directions-link"
+             class="small d-none"
+             target="_blank" rel="noopener noreferrer">Temps réel avec trafic (Google Maps)</a>
+        </div>
+      </div>
+      </section>
+
+      <%- include('services-form', {
+        serviceOptions: SERVICE_OPTIONS,
+        selectedServices,
+        customServiceSlots,
+        bingoMusicalStyle: event.bingo_musical_style || '',
+        onConnaitChansonNotes: event.on_connait_chanson_notes || ''
+      }) %>
+
+      <section class="form-section form-section-status">
+      <h2 class="form-section-title">Statut du dossier</h2>
+      <select name="status" class="form-select w-auto mb-3">
+        <% Object.entries(STATUS_LABELS).forEach(function([value, label]) { %>
+          <option value="<%= value %>" <%= event.status === value ? 'selected' : '' %>><%= label %></option>
+        <% }); %>
+      </select>
+
+      <button type="submit" class="btn btn-primary btn-lg">Enregistrer les informations</button>
+      <p class="text-muted small mt-2 mb-0">Rien n'est enregistré tant que vous n'appuyez pas sur ce bouton (Entrée ne sauvegarde plus par accident).</p>
+      </section>
+    </form>
+  </div>
+
+  <div class="col-lg-5">
+    <%- include('portal-link', { event, portalLinks, portalRegenerated, portalToggled }) %>
+
+    <h2 class="h5 mb-3">Résumé rapide</h2>
+    <ul class="list-group">
+      <li class="list-group-item d-flex justify-content-between">
+        <span>Questionnaire</span>
+        <strong class="<%= summary.questionnaireComplete ? 'text-success' : 'text-warning' %>">
+          <%= summary.questionnaireComplete ? 'Complété' : 'Incomplet' %>
+        </strong>
+      </li>
+      <li class="list-group-item d-flex justify-content-between">
+        <span>Plan de soirée</span>
+        <strong><%= summary.timelineCount %> étape<%= summary.timelineCount !== 1 ? 's' : '' %></strong>
+      </li>
+      <% if (isWeddingEvent(event.event_type)) { %>
+      <li class="list-group-item d-flex justify-content-between">
+        <span>Première danse</span>
+        <strong class="<%= summary.firstDanceDefined ? 'text-success' : 'text-muted' %>">
+          <%= summary.firstDanceDefined ? 'Définie' : 'Non définie' %>
+        </strong>
+      </li>
+      <% } %>
+      <li class="list-group-item d-flex justify-content-between">
+        <span>Musique reçue</span>
+        <strong class="<%= summary.musicReceived ? 'text-success' : 'text-muted' %>">
+          <%= summary.musicReceived ? 'Oui' : 'Non' %>
+        </strong>
+      </li>
+    </ul>
+  </div>
+</div>

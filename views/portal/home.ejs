@@ -1,0 +1,84 @@
+<%- include('partials/head', { title }) %>
+
+<main class="container pb-5" style="max-width: 720px;">
+  <div class="card portal-welcome mb-4">
+    <div class="card-body p-4 text-center">
+      <h1 class="h3 mb-2">Bonjour <%= clientShortName(event) %> !</h1>
+      <p class="text-muted mb-0">
+        <%= event.event_type %> — <%= formatDateFr(event.event_date) %>
+        <% if (event.venue) { %> · <%= event.venue %><% } %>
+      </p>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body p-4">
+      <h2 class="h5 mb-3">Complétez votre dossier</h2>
+      <p class="text-muted">
+        Utilisez cet espace pour remplir le questionnaire et nous transmettre vos préférences musicales et le déroulement souhaité de votre soirée.
+      </p>
+
+      <% if (event.event_type === 'Mariage') { %>
+        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task <%= summary.questionnaireComplete ? 'portal-task-done' : '' %>">
+          <div>
+            <strong>Questionnaire mariage</strong>
+            <div class="small text-muted">
+              <%= summary.questionnaireComplete ? 'Complété — vous pouvez le modifier à tout moment' : 'À remplir' %>
+            </div>
+          </div>
+          <a href="/portal/<%= event.portal_token %>/questionnaire" class="btn btn-primary">
+            <%= summary.questionnaireComplete ? 'Modifier' : 'Commencer' %>
+          </a>
+        </div>
+      <% } else { %>
+        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task <%= summary.questionnaireComplete ? 'portal-task-done' : '' %>">
+          <div>
+            <strong><%= getQuestionnaireLabel(event.event_type) %></strong>
+            <div class="small text-muted">
+              <%= summary.questionnaireComplete ? 'Complété — vous pouvez le modifier à tout moment' : 'À remplir' %>
+            </div>
+          </div>
+          <a href="/portal/<%= event.portal_token %>/questionnaire" class="btn btn-primary">
+            <%= summary.questionnaireComplete ? 'Modifier' : 'Commencer' %>
+          </a>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-4">
+      <h2 class="h6 mb-3">Rappel de votre événement</h2>
+      <dl class="row mb-0 small">
+        <dt class="col-sm-4">Date</dt>
+        <dd class="col-sm-8"><%= formatDateFr(event.event_date) %></dd>
+        <% if (event.start_time || event.end_time) { %>
+          <dt class="col-sm-4">Heures</dt>
+          <dd class="col-sm-8">
+            <% if (event.start_time) { %><%= formatTime(event.start_time) %><% } %>
+            <% if (event.end_time) { %>
+              <% if (event.start_time) { %> — <% } %>
+              <%= formatDateTimeFr(event.end_date || event.event_date, event.end_time) %>
+            <% } %>
+          </dd>
+        <% } %>
+        <% if (event.venue) { %>
+          <dt class="col-sm-4">Salle</dt>
+          <dd class="col-sm-8"><%= event.venue %></dd>
+        <% } %>
+        <% if (event.address) { %>
+          <dt class="col-sm-4">Adresse</dt>
+          <dd class="col-sm-8">
+            <% if (googleMapsUrl(event.address)) { %>
+              <a href="<%= googleMapsUrl(event.address) %>" target="_blank" rel="noopener noreferrer"><%= event.address %></a>
+            <% } else { %>
+              <%= event.address %>
+            <% } %>
+          </dd>
+        <% } %>
+      </dl>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

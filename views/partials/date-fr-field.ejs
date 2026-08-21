@@ -1,0 +1,8 @@
+<div class="date-fr-picker">
+  <input type="text" class="form-control date-fr-display" readonly
+         value="<%= value ? formatDateFr(value) : '' %>"
+         placeholder="Choisir une date"
+         aria-haspopup="dialog">
+  <input type="date" class="date-fr-native" id="<%= id %>" name="<%= name %>"
+         value="<%= value || '' %>"<% if (typeof required !== 'undefined' && required) { %> required<% } %>>
+</div>

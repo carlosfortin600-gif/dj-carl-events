@@ -1,0 +1,42 @@
+<div class="summary-sheet">
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4 no-print">
+    <div>
+      <h2 class="h5 mb-1">Fiche récapitulative</h2>
+      <p class="text-muted small mb-0">
+        Toutes les informations du dossier en un seul endroit — prête à imprimer ou consulter.
+      </p>
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.print()">
+      Imprimer / PDF
+    </button>
+  </div>
+
+  <div class="summary-sheet-print-header d-none d-print-block mb-4">
+    <h1 class="h4 mb-1"><%= clientFullName(event) %></h1>
+    <p class="mb-0"><%= event.event_type %> — <%= formatDateFr(event.event_date) %></p>
+    <% if (event.venue) { %><p class="mb-0 text-muted"><%= event.venue %></p><% } %>
+    <p class="small text-muted mt-2 mb-0">Généré le <%= summarySheet.generatedAt %></p>
+  </div>
+
+  <% summarySheet.sections.forEach(function(sec) { %>
+    <section class="summary-sheet-section mb-4">
+      <h3 class="summary-sheet-section-title"><%= sec.title %></h3>
+      <table class="table table-sm summary-sheet-table mb-0">
+        <tbody>
+          <% sec.rows.forEach(function(r) { %>
+            <tr>
+              <th scope="row" class="summary-sheet-label"><%= r.label %></th>
+              <td class="summary-sheet-value">
+                <% if (r.link && r.value !== '—') { %>
+                  <a href="<%= r.link %>" target="_blank" rel="noopener noreferrer"><%= r.value %></a>
+                <% } else { %>
+                  <%= r.value %>
+                <% } %>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </section>
+  <% }); %>
+</div>

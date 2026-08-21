@@ -1,0 +1,59 @@
+<div class="card border-primary mb-4">
+  <div class="card-header bg-primary text-white py-3">
+    <h2 class="h6 mb-0">Lien client — portail privé</h2>
+  </div>
+  <div class="card-body">
+    <% if (portalRegenerated) { %>
+      <div class="alert alert-warning py-2 small">Nouveau lien généré. L'ancien lien ne fonctionne plus.</div>
+    <% } %>
+    <% if (portalToggled) { %>
+      <div class="alert alert-success py-2 small">Accès client mis à jour.</div>
+    <% } %>
+
+    <p class="text-muted small mb-3">
+      Envoyez ce lien à vos clients pour qu'ils remplissent le questionnaire et complètent leur dossier.
+      <% if (portalLinks.lan) { %>
+        Sur le même réseau Wi‑Fi, utilisez le <strong>lien réseau local</strong> pour les téléphones.
+      <% } %>
+    </p>
+
+    <label class="form-label small fw-semibold">Lien à partager</label>
+    <div class="input-group mb-2">
+      <input type="text" class="form-control font-monospace small" id="portalLinkPrimary" readonly value="<%= portalLinks.primary %>">
+      <button type="button" class="btn btn-outline-primary" data-copy-target="portalLinkPrimary">Copier</button>
+    </div>
+
+    <% if (portalLinks.lan) { %>
+      <label class="form-label small fw-semibold mt-3">Lien réseau local (téléphones)</label>
+      <div class="input-group mb-2">
+        <input type="text" class="form-control font-monospace small" id="portalLinkLan" readonly value="<%= portalLinks.lan %>">
+        <button type="button" class="btn btn-outline-secondary" data-copy-target="portalLinkLan">Copier</button>
+      </div>
+    <% } %>
+
+    <div class="d-flex flex-wrap gap-2 mt-3">
+      <a href="<%= portalLinks.primary %>" target="_blank" rel="noopener" class="btn btn-sm btn-primary">Ouvrir le portail</a>
+      <form method="post" action="/events/<%= event.id %>/portal/regenerate" class="d-inline"
+            onsubmit="return confirm('Régénérer le lien ? L\\'ancien lien ne fonctionnera plus.');">
+        <button type="submit" class="btn btn-sm btn-outline-warning">Régénérer le lien</button>
+      </form>
+      <% if (event.portal_enabled) { %>
+        <form method="post" action="/events/<%= event.id %>/portal/toggle" class="d-inline">
+          <input type="hidden" name="enabled" value="0">
+          <button type="submit" class="btn btn-sm btn-outline-danger">Désactiver l'accès</button>
+        </form>
+      <% } else { %>
+        <form method="post" action="/events/<%= event.id %>/portal/toggle" class="d-inline">
+          <input type="hidden" name="enabled" value="1">
+          <button type="submit" class="btn btn-sm btn-outline-success">Réactiver l'accès</button>
+        </form>
+      <% } %>
+    </div>
+
+    <% if (!event.portal_enabled) { %>
+      <div class="alert alert-danger mt-3 mb-0 py-2 small">L'accès client est actuellement <strong>désactivé</strong>.</div>
+    <% } else if (event.portal_last_accessed) { %>
+      <p class="text-muted small mt-3 mb-0">Dernier accès client : <%= event.portal_last_accessed %></p>
+    <% } %>
+  </div>
+</div>

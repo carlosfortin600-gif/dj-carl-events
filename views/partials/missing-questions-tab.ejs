@@ -1,0 +1,36 @@
+<% if (missingQuestions.allDone) { %>
+  <div class="alert alert-success">
+    Toutes les questions du questionnaire sont remplies — rien en rouge.
+  </div>
+<% } else { %>
+  <p class="text-muted mb-4">
+    <strong><%= missingQuestions.count %></strong> question<%= missingQuestions.count > 1 ? 's' : '' %>
+    à compléter dans le questionnaire (même repérage qu'en rouge sur l'onglet Questionnaire).
+  </p>
+<% } %>
+
+<% if (!missingQuestions.allDone) { %>
+  <div class="missing-questions-page">
+    <% missingQuestions.sections.forEach(function(group) { %>
+      <section class="missing-questions-section mb-4">
+        <h2 class="h5 missing-questions-section-title"><%= group.section %></h2>
+        <ul class="missing-questions-list list-unstyled mb-0">
+          <% group.items.forEach(function(item) { %>
+            <li>
+              <a class="missing-question-link"
+                 href="/events/<%= event.id %>?tab=questionnaire&amp;focus=<%= encodeURIComponent(item.fieldName) %>">
+                <%= item.label %>
+              </a>
+            </li>
+          <% }); %>
+        </ul>
+      </section>
+    <% }); %>
+  </div>
+
+  <div class="mt-4 pt-3 border-top">
+    <a class="btn btn-primary" href="/events/<%= event.id %>?tab=questionnaire">
+      Ouvrir le questionnaire
+    </a>
+  </div>
+<% } %>

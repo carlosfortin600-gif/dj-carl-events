@@ -1,0 +1,12 @@
+[
+  {
+    "id": "maison",
+    "label": "Maison",
+    "address": "Montréal, QC"
+  },
+  {
+    "id": "entrepot",
+    "label": "Entrepôt / bureau",
+    "address": ""
+  }
+]

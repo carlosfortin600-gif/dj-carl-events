@@ -1,0 +1,129 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/nav', { activeNav }) %>
+
+<main class="container pb-5">
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <a href="/" class="btn btn-outline-secondary btn-sm">← Tableau de bord</a>
+  </div>
+
+  <% if (created) { %>
+    <div class="alert alert-success">Dossier client créé avec succès.</div>
+  <% } %>
+  <% if (statusUpdated) { %>
+    <div class="alert alert-success">Statut mis à jour.</div>
+  <% } %>
+
+  <% if (questionnaireSaved) { %>
+    <div class="alert alert-success">Questionnaire enregistré.</div>
+  <% } %>
+
+  <% if (event.deleted_at) { %>
+    <div class="alert alert-warning">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <span>Cet événement est dans la <strong>corbeille</strong> (supprimé le <%= event.deleted_at %>).</span>
+        <div class="d-flex flex-wrap gap-2">
+          <form method="post" action="/events/<%= event.id %>/restore" class="mb-0">
+            <button type="submit" class="btn btn-success btn-sm">Restaurer l'événement</button>
+          </form>
+          <form method="post" action="/events/<%= event.id %>/destroy" class="mb-0 event-destroy-form"
+                data-confirm-name="<%= clientShortName(event) %>"
+                data-confirm-date="<%= formatDateFr(event.event_date) %>">
+            <button type="submit" class="btn btn-danger btn-sm">Supprimer définitivement</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <div class="event-header card mb-4">
+    <div class="card-body p-4">
+      <h1 class="h2 mb-1"><%= clientShortName(event) %></h1>
+      <p class="h5 text-muted mb-2"><%= event.event_type %> — <%= formatDateFr(event.event_date) %></p>
+      <span class="badge <%= statusBadgeClass(event.status) %> fs-6"><%= statusLabel(event.status) %></span>
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs event-tabs mb-4 flex-nowrap overflow-auto" role="tablist">
+    <% const tabs = [
+      { id: 'resume', label: 'Résumé' },
+      { id: 'questionnaire', label: 'Questionnaire' },
+      { id: 'a-completer', label: 'À compléter', badge: missingQuestions.count },
+      { id: 'timeline', label: 'Plan de soirée' },
+      { id: 'musique', label: 'Musique' },
+      { id: 'services', label: 'Services' },
+      { id: 'fiche', label: 'Fiche récap' },
+      { id: 'notes', label: 'Notes DJ' }
+    ]; %>
+    <% tabs.forEach(function(t) { %>
+      <li class="nav-item">
+        <a class="nav-link <%= tab === t.id ? 'active' : '' %>"
+           href="/events/<%= event.id %>?tab=<%= t.id %>"><%= t.label %><% if (t.badge > 0) { %> <span class="badge rounded-pill bg-danger ms-1"><%= t.badge %></span><% } %></a>
+      </li>
+    <% }); %>
+  </ul>
+
+  <div class="card">
+    <div class="card-body p-4">
+
+      <% if (tab === 'resume') { %>
+        <%- include('partials/resume-tab', {
+          event,
+          eventTypes: EVENT_TYPES,
+          services,
+          selectedServices,
+          customServiceSlots,
+          summary,
+          portalLinks,
+          portalRegenerated,
+          portalToggled,
+          resumeSaved
+        }) %>
+
+      <% } else if (tab === 'questionnaire') { %>
+        <% if (isWeddingEvent(event.event_type)) { %>
+          <%- include('partials/questionnaire-form', { event, questionnaire, questionnaireSaved }) %>
+        <% } else { %>
+          <%- include('partials/party-questionnaire-form', { event, questionnaire, questionnaireSaved }) %>
+        <% } %>
+
+      <% } else if (tab === 'a-completer') { %>
+        <%- include('partials/missing-questions-tab', { event, missingQuestions }) %>
+
+      <% } else if (tab === 'timeline') { %>
+        <%- include('partials/timeline-tab', { event, questionnaire, timelineItems, proposedTimelineSteps, timelineSaved, timelineGenerated, timelineGeneratedMessage, timelineNeedsConfirm, timelineExistingCount }) %>
+
+      <% } else if (tab === 'musique') { %>
+        <% if (isWeddingEvent(event.event_type)) { %>
+          <%- include('partials/music-tab', { event, music, musicSaved }) %>
+        <% } else { %>
+          <%- include('partials/party-music-tab', { event, music, musicSaved }) %>
+        <% } %>
+
+      <% } else if (tab === 'fiche') { %>
+        <%- include('partials/summary-sheet-tab', { event, summarySheet }) %>
+
+      <% } else if (tab === 'notes') { %>
+        <%- include('partials/notes-tab', { event, djNotes, notesSaved }) %>
+
+      <% } else if (tab === 'services') { %>
+        <% if (servicesSaved) { %>
+          <div class="alert alert-success">Services enregistrés.</div>
+        <% } %>
+        <form method="post" action="/events/<%= event.id %>/services/save" data-unsaved-guard>
+          <%- include('partials/services-form', {
+            serviceOptions: SERVICE_OPTIONS,
+            selectedServices,
+            customServiceSlots,
+            bingoMusicalStyle: event.bingo_musical_style || '',
+            onConnaitChansonNotes: event.on_connait_chanson_notes || ''
+          }) %>
+          <button type="submit" class="btn btn-primary btn-lg">Enregistrer les services</button>
+        </form>
+
+      <% } %>
+
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

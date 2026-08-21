@@ -1,0 +1,76 @@
+<% if (musicSaved) { %>
+  <div class="alert alert-success">Musique enregistrée.</div>
+<% } %>
+
+<form method="post" action="/events/<%= event.id %>/music/save" data-unsaved-guard>
+
+  <section class="music-section">
+    <h2 class="h5 q-section-title">Entrée</h2>
+    <p class="text-muted small mb-3">Artiste, chanson, lien Spotify et case à cocher quand la chanson est validée.</p>
+    <% music.entranceSections.forEach(function(section) { %>
+      <div class="mb-3 pb-3 border-bottom">
+        <h3 class="h6 mb-2"><%= section.label %></h3>
+        <%- include('music-song-block', {
+          prefix: 'entrance_' + section.key,
+          song: music.entrances[section.key]
+        }) %>
+        <label class="form-label small mt-2 mb-1">Notes — <%= section.label.toLowerCase() %></label>
+        <textarea class="form-control" name="entrance_<%= section.key %>_notes" rows="2"
+                  placeholder="Noms, ordre d'entrée, annonces, timing…"><%= music.entrances[section.key].notes || '' %></textarea>
+      </div>
+    <% }); %>
+  </section>
+
+  <section class="music-section">
+    <h2 class="h5 q-section-title">Première danse</h2>
+    <%- include('music-song-block', { prefix: 'first_dance', song: music.firstDance }) %>
+  </section>
+
+  <section class="music-section">
+    <h2 class="h5 q-section-title">Danses spéciales</h2>
+    <% const specialRows = Math.max(music.specialDances.length + 1, 3); %>
+    <% for (let i = 1; i <= specialRows; i++) { %>
+      <% const s = music.specialDances[i - 1] || {}; %>
+      <div class="row g-2 mb-2">
+        <div class="col-md-3">
+          <input type="text" class="form-control form-control-sm" name="special_<%= i %>_moment"
+                 placeholder="Moment" value="<%= s.notes ? s.notes.split(' — ')[0] : '' %>">
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control form-control-sm" name="special_<%= i %>_people"
+                 placeholder="Personnes" value="<%= s.notes && s.notes.includes(' — ') ? s.notes.split(' — ')[1] : '' %>">
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control form-control-sm" name="special_<%= i %>_artist"
+                 placeholder="Artiste" value="<%= s.artist || '' %>">
+        </div>
+        <div class="col-md-3">
+          <input type="text" class="form-control form-control-sm" name="special_<%= i %>_title"
+                 placeholder="Chanson" value="<%= s.title || '' %>">
+        </div>
+      </div>
+    <% } %>
+  </section>
+
+  <%- include('music-ambiance-sections', { music }) %>
+
+  <section class="music-section">
+    <h2 class="h5 q-section-title">Chansons incontournables</h2>
+    <textarea class="form-control" name="must_play" rows="4"
+              placeholder="Liste libre — artistes, chansons, notes…"><%= music.mustPlayText || '' %></textarea>
+  </section>
+
+  <section class="music-section">
+    <h2 class="h5 q-section-title">Ne pas jouer</h2>
+    <textarea class="form-control" name="do_not_play" rows="4"
+              placeholder="Chansons ou artistes à éviter…"><%= music.doNotPlayText || '' %></textarea>
+  </section>
+
+  <section class="music-section music-section-special-requests">
+    <h2 class="h5 q-section-title">Demandes spéciales</h2>
+    <textarea class="form-control music-special-requests-field" name="special_requests" rows="8"
+              placeholder="Chansons importantes, moments à souligner, préférences particulières, musique de cocktail ou souper…"><%= music.specialRequests ? (music.specialRequests.notes || '') : '' %></textarea>
+  </section>
+
+  <button type="submit" class="btn btn-primary btn-lg">Enregistrer la musique</button>
+</form>

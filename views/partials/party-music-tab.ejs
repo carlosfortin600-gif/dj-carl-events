@@ -1,0 +1,32 @@
+<% if (musicSaved) { %>
+  <div class="alert alert-success">Musique enregistrée.</div>
+<% } %>
+
+<form method="post" action="/events/<%= event.id %>/music/save" data-unsaved-guard>
+
+  <%- include('music-ambiance-sections', { music }) %>
+
+  <section class="music-section">
+    <h2 class="h5 q-section-title">Thème de la soirée</h2>
+    <input type="text" class="form-control mb-3" name="evening_theme" value="<%= music.eveningTheme || '' %>"
+           placeholder="Ex. : années 80, tropical, party de bureau, couleurs néon…">
+    <label class="form-label">Notes</label>
+    <textarea class="form-control" name="evening_theme_notes" rows="2"
+              placeholder="Précisions sur le thème musical de la soirée…"><%= music.eveningThemeNotes || '' %></textarea>
+    <div class="form-text">Laissez le thème vide s'il n'y a pas de thème particulier.</div>
+  </section>
+
+  <section class="music-section music-section-special-requests">
+    <h2 class="h5 q-section-title">Demandes spéciales</h2>
+    <textarea class="form-control music-special-requests-field" name="special_requests" rows="8"
+              placeholder="Chansons importantes, moments à souligner, préférences particulières…"><%= music.specialRequests || '' %></textarea>
+  </section>
+
+  <section class="music-section">
+    <h2 class="h5 q-section-title">À ne surtout pas jouer</h2>
+    <textarea class="form-control" name="do_not_play" rows="4"
+              placeholder="Chansons, artistes ou styles à éviter absolument…"><%= music.doNotPlay || '' %></textarea>
+  </section>
+
+  <button type="submit" class="btn btn-primary btn-lg">Enregistrer la musique</button>
+</form>

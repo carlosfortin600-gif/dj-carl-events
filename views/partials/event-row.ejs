@@ -1,0 +1,88 @@
+<div class="list-group-item table-list-item py-0 <%= expandable ? 'event-row-expandable' : '' %> <%= (typeof trashMode !== 'undefined' && trashMode) ? 'event-row-trash' : '' %>">
+  <div class="event-row-header py-3 <%= expandable ? 'event-row-clickable' : '' %>"
+       <% if (expandable) { %>
+         role="button" tabindex="0" data-event-toggle="<%= ev.id %>"
+         aria-expanded="false" aria-controls="eventChecklist<%= ev.id %>"
+       <% } %>>
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+      <div class="flex-grow-1">
+        <div class="event-line text-break <%= (typeof trashMode !== 'undefined' && trashMode) ? 'text-muted' : '' %>">
+          <strong><%= formatDateFr(ev.event_date) %></strong>
+          <span class="text-muted mx-1">|</span>
+          <%= clientShortName(ev) %>
+          <span class="text-muted mx-1">|</span>
+          <%= ev.event_type %>
+          <span class="text-muted mx-1">|</span>
+          <%= ev.venue || '—' %>
+          <% if (!(typeof trashMode !== 'undefined' && trashMode)) { %>
+            <span class="text-muted mx-1">|</span>
+            <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
+            <% if (expandable && ev.checklist && !ev.checklist.allDone) { %>
+              <span class="badge bg-primary ms-1"><%= ev.checklist.missingCount %> à compléter</span>
+            <% } %>
+          <% } else if (ev.deleted_at) { %>
+            <span class="text-muted mx-1">|</span>
+            <span class="small">Supprimé le <%= ev.deleted_at %></span>
+          <% } %>
+        </div>
+      </div>
+      <div class="d-flex gap-2 flex-shrink-0">
+        <% if (expandable) { %>
+          <span class="btn btn-outline-secondary btn-sm event-row-chevron" aria-hidden="true">▼</span>
+        <% } %>
+        <% if (typeof trashMode !== 'undefined' && trashMode) { %>
+          <form method="post" action="/events/<%= ev.id %>/restore" class="d-inline">
+            <button type="submit" class="btn btn-success btn-sm">Restaurer</button>
+          </form>
+          <a href="/events/<%= ev.id %>" class="btn btn-outline-secondary btn-sm">Voir</a>
+          <form method="post" action="/events/<%= ev.id %>/destroy" class="d-inline event-destroy-form"
+                data-confirm-name="<%= clientShortName(ev) %>"
+                data-confirm-date="<%= formatDateFr(ev.event_date) %>">
+            <button type="submit" class="btn btn-danger btn-sm">Supprimer définitivement</button>
+          </form>
+        <% } else { %>
+          <a href="/events/<%= ev.id %>" class="btn btn-outline-primary btn-sm" onclick="event.stopPropagation()">Ouvrir</a>
+          <form method="post" action="/events/<%= ev.id %>/delete" class="d-inline event-delete-form"
+                onclick="event.stopPropagation()"
+                data-confirm-name="<%= clientShortName(ev) %>"
+                data-confirm-date="<%= formatDateFr(ev.event_date) %>">
+            <button type="submit" class="btn btn-outline-danger btn-sm" title="Supprimer">✕</button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <% if (expandable && ev.checklist) { %>
+    <div class="event-checklist-panel collapse" id="eventChecklist<%= ev.id %>">
+      <div class="pb-3 px-1">
+        <% if (ev.checklist.allDone) { %>
+          <div class="checklist-box checklist-box-complete">
+            <strong>✓ Dossier complet</strong>
+            <p class="mb-0 small mt-1">Toutes les sections principales sont remplies.</p>
+          </div>
+        <% } else { %>
+          <div class="checklist-box checklist-box-missing">
+            <strong>Ce qui manque pour compléter le dossier</strong>
+            <ul class="checklist-missing-list mb-0 mt-2">
+              <% ev.checklist.missing.forEach(function(item) { %>
+                <li>
+                  <a href="/events/<%= ev.id %>?tab=<%= item.tab %>"><%= item.label %></a>
+                </li>
+              <% }); %>
+            </ul>
+          </div>
+        <% } %>
+
+        <% if (ev.checklist.complete.length > 0) { %>
+          <div class="checklist-done small text-muted mt-2">
+            <span class="fw-semibold">Complété :</span>
+            <% ev.checklist.complete.forEach(function(item, i) { %>
+              <%= item.label %><% if (item.detail) { %> (<%= item.detail %>)<% } %><%= i < ev.checklist.complete.length - 1 ? ', ' : '' %>
+            <% }); %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  <% } %>
+</div>
