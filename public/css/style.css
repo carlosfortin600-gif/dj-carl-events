@@ -250,6 +250,12 @@ table tr.q-field-missing td:first-child {
   border-left: 4px solid #fd7e14;
 }
 
+.form-section-gestion {
+  background: linear-gradient(160deg, #eef6ff 0%, #ffffff 55%);
+  border-color: #b6d4fe;
+  border-left: 4px solid #0d6efd;
+}
+
 .date-fr-picker,
 .datetime-fr-picker {
   position: relative;

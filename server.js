@@ -99,10 +99,26 @@ const { getDjNotes, saveDjNotes } = require("./lib/dj-notes");
 const { buildSummarySheet } = require("./lib/summary-sheet");
 const { parseMonthParam, getCalendarData } = require("./lib/calendar");
 const { importDatabaseFromFile } = require("./lib/import-database");
+const {
+  MAX_FILE_SIZE,
+  MAX_FILES_PER_UPLOAD,
+  createUploadMiddleware,
+  getEventFiles,
+  getEventFileById,
+  getStoredFilePath,
+  saveUploadedFiles,
+  deleteEventFile,
+  deleteAllEventFiles,
+  formatFileSize
+} = require("./lib/event-files");
 
 function eventRedirect(eventId, tab, params = {}) {
   const qs = new URLSearchParams({ tab, ...params }).toString();
   return `/events/${eventId}?${qs}`;
+}
+
+function gestionRedirect(eventId, params = {}) {
+  return eventRedirect(eventId, "gestion", params);
 }
 
 const app = express();
@@ -194,6 +210,7 @@ app.locals.PARTY_GUEST_REQUEST_OPTIONS = PARTY_GUEST_REQUEST_OPTIONS;
 app.locals.BINGO_MUSICAL_STYLE_OPTIONS = BINGO_MUSICAL_STYLE_OPTIONS;
 app.locals.isWeddingEvent = isWeddingEvent;
 app.locals.getQuestionnaireLabel = getQuestionnaireLabel;
+app.locals.formatFileSize = formatFileSize;
 
 app.get("/api/health", (req, res) => {
   const tables = db
@@ -396,6 +413,7 @@ app.post("/events/:id/destroy", (req, res) => {
   }
 
   permanentlyDeleteEvent(db, eventId);
+  deleteAllEventFiles(db, eventId);
   res.redirect("/?destroyed=1#corbeille");
 });
 
@@ -432,6 +450,7 @@ app.get("/events/:id", (req, res) => {
     djNotes
   });
   const missingQuestions = getQuestionnaireMissing(event.event_type, questionnaire.data);
+  const eventFiles = getEventFiles(db, event.id);
 
   let timelineNeedsConfirm = false;
   let timelineExistingCount = 0;
@@ -457,6 +476,9 @@ app.get("/events/:id", (req, res) => {
     djNotes,
     summarySheet,
     missingQuestions,
+    eventFiles,
+    maxFileSize: MAX_FILE_SIZE,
+    maxFilesPerUpload: MAX_FILES_PER_UPLOAD,
     tab,
     created: req.query.created === "1",
     statusUpdated: req.query.statusUpdated === "1",
@@ -471,8 +493,78 @@ app.get("/events/:id", (req, res) => {
     musicSaved: req.query.musicSaved === "1",
     notesSaved: req.query.notesSaved === "1",
     servicesSaved: req.query.servicesSaved === "1",
-    resumeSaved: req.query.resumeSaved === "1"
+    resumeSaved: req.query.resumeSaved === "1",
+    filesUploaded: req.query.filesUploaded === "1",
+    fileDeleted: req.query.fileDeleted === "1",
+    filesError: req.query.filesError || ""
   });
+});
+
+app.post("/events/:id/files/upload", (req, res) => {
+  const eventId = Number(req.params.id);
+  const event = getEventById(db, eventId);
+  if (!event || event.deleted_at) {
+    return res.status(404).render("error", {
+      title: "Événement introuvable",
+      activeNav: "dashboard",
+      message: "Cet événement n'existe pas ou a été supprimé."
+    });
+  }
+
+  const upload = createUploadMiddleware(eventId);
+  upload.array("files", MAX_FILES_PER_UPLOAD)(req, res, (err) => {
+    if (err) {
+      const message =
+        err.code === "LIMIT_FILE_SIZE"
+          ? `Fichier trop volumineux (max ${formatFileSize(MAX_FILE_SIZE)}).`
+          : "Téléversement impossible.";
+      return res.redirect(gestionRedirect(eventId, { filesError: message }));
+    }
+
+    const files = req.files || [];
+    if (!files.length) {
+      return res.redirect(gestionRedirect(eventId, { filesError: "Choisissez au moins un fichier." }));
+    }
+
+    try {
+      saveUploadedFiles(db, eventId, files);
+      res.redirect(gestionRedirect(eventId, { filesUploaded: "1" }));
+    } catch (uploadErr) {
+      console.error(uploadErr);
+      res.redirect(gestionRedirect(eventId, { filesError: "Erreur lors de l'enregistrement." }));
+    }
+  });
+});
+
+app.get("/events/:id/files/:fileId/download", (req, res) => {
+  const eventId = Number(req.params.id);
+  const fileId = Number(req.params.fileId);
+  const event = getEventById(db, eventId);
+  if (!event) {
+    return res.status(404).send("Not found");
+  }
+
+  const file = getEventFileById(db, fileId, eventId);
+  if (!file) {
+    return res.status(404).send("Not found");
+  }
+
+  const filePath = getStoredFilePath(eventId, file.stored_name);
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).send("Fichier introuvable");
+  }
+
+  res.download(filePath, file.original_name);
+});
+
+app.post("/events/:id/files/:fileId/delete", (req, res) => {
+  const eventId = Number(req.params.id);
+  if (!getEventById(db, eventId)) {
+    return res.status(404).send("Not found");
+  }
+
+  deleteEventFile(db, Number(req.params.fileId), eventId);
+  res.redirect(gestionRedirect(eventId, { fileDeleted: "1" }));
 });
 
 app.post("/events/:id/resume/save", (req, res) => {

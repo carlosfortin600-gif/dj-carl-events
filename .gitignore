@@ -4,4 +4,5 @@ data/*.db-wal
 data/*.db-shm
 .env
 dist/
+data/uploads/
 .DS_Store

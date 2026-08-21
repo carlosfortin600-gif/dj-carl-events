@@ -1,0 +1,53 @@
+<% if (filesUploaded) { %>
+  <div class="alert alert-success">Fichier(s) téléversé(s).</div>
+<% } %>
+<% if (fileDeleted) { %>
+  <div class="alert alert-success">Fichier supprimé.</div>
+<% } %>
+<% if (filesError) { %>
+  <div class="alert alert-danger"><%= filesError %></div>
+<% } %>
+
+<section class="form-section form-section-gestion mb-4">
+  <h2 class="form-section-title">Téléverser des fichiers</h2>
+  <p class="text-muted small mb-3">
+    Contrats, plans, listes, photos, audio… (max <%= formatFileSize(maxFileSize) %> par fichier, jusqu'à <%= maxFilesPerUpload %> à la fois)
+  </p>
+  <form method="post" action="/events/<%= event.id %>/files/upload" enctype="multipart/form-data" class="card bg-light">
+    <div class="card-body">
+      <div class="mb-3">
+        <label class="form-label" for="gestion_files">Fichiers</label>
+        <input type="file" class="form-control" id="gestion_files" name="files" multiple required>
+      </div>
+      <button type="submit" class="btn btn-primary">Téléverser</button>
+    </div>
+  </form>
+</section>
+
+<section class="form-section form-section-gestion">
+  <h2 class="form-section-title">Fichiers du dossier</h2>
+  <% if (!eventFiles.length) { %>
+    <p class="text-muted mb-0">Aucun fichier pour cet événement.</p>
+  <% } else { %>
+    <div class="list-group">
+      <% eventFiles.forEach(function(file) { %>
+        <div class="list-group-item d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div class="min-w-0">
+            <strong class="text-break"><%= file.original_name %></strong>
+            <div class="small text-muted">
+              <%= formatFileSize(file.size_bytes) %>
+              <% if (file.uploaded_at) { %> · <%= formatTimestampFr(file.uploaded_at) %><% } %>
+            </div>
+          </div>
+          <div class="d-flex gap-2 flex-shrink-0">
+            <a href="/events/<%= event.id %>/files/<%= file.id %>/download" class="btn btn-sm btn-outline-primary">Télécharger</a>
+            <form method="post" action="/events/<%= event.id %>/files/<%= file.id %>/delete" class="d-inline"
+                  onsubmit="return confirm('Supprimer ce fichier ?');">
+              <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+            </form>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+</section>

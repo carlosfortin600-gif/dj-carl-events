@@ -63,6 +63,7 @@
       { id: 'musique', label: 'Musique' },
       { id: 'services', label: 'Services' },
       { id: 'fiche', label: 'Fiche récap' },
+      { id: 'gestion', label: 'Gestion' },
       { id: 'notes', label: 'Notes DJ' }
     ]; %>
     <% tabs.forEach(function(t) { %>
@@ -123,6 +124,17 @@
 
       <% } else if (tab === 'notes') { %>
         <%- include('partials/notes-tab', { event, djNotes, notesSaved }) %>
+
+      <% } else if (tab === 'gestion') { %>
+        <%- include('partials/gestion-tab', {
+          event: event,
+          eventFiles: typeof eventFiles !== 'undefined' ? eventFiles : [],
+          filesUploaded: typeof filesUploaded !== 'undefined' ? filesUploaded : false,
+          fileDeleted: typeof fileDeleted !== 'undefined' ? fileDeleted : false,
+          filesError: typeof filesError !== 'undefined' ? filesError : '',
+          maxFileSize: typeof maxFileSize !== 'undefined' ? maxFileSize : 0,
+          maxFilesPerUpload: typeof maxFilesPerUpload !== 'undefined' ? maxFilesPerUpload : 10
+        }) %>
 
       <% } else if (tab === 'services') { %>
         <% if (servicesSaved) { %>

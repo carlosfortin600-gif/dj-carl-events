@@ -11,13 +11,18 @@
     "package": "bash scripts/package-deploy.sh",
     "export-db": "node scripts/prepare-db-upload.js"
   },
-  "keywords": ["dj", "events", "mariage"],
+  "keywords": [
+    "dj",
+    "events",
+    "mariage"
+  ],
   "author": "DJ Carl",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "better-sqlite3": "^12.11.1",
     "ejs": "^3.1.10",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "multer": "^2.0.2"
   }
 }

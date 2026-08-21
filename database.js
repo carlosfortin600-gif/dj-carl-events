@@ -112,6 +112,19 @@ function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_events_client ON events(client_id);
     CREATE INDEX IF NOT EXISTS idx_timeline_event ON timeline_items(event_id, sort_order);
     CREATE INDEX IF NOT EXISTS idx_songs_event ON songs(event_id, category, sort_order);
+
+    CREATE TABLE IF NOT EXISTS event_files (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_id INTEGER NOT NULL,
+      original_name TEXT NOT NULL,
+      stored_name TEXT NOT NULL,
+      mime_type TEXT,
+      size_bytes INTEGER NOT NULL DEFAULT 0,
+      uploaded_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_event_files_event ON event_files(event_id, uploaded_at);
   `);
 
   migrate(db);
@@ -291,6 +304,22 @@ function migrate(db) {
       key TEXT PRIMARY KEY,
       value TEXT
     )
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS event_files (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_id INTEGER NOT NULL,
+      original_name TEXT NOT NULL,
+      stored_name TEXT NOT NULL,
+      mime_type TEXT,
+      size_bytes INTEGER NOT NULL DEFAULT 0,
+      uploaded_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+    )
+  `);
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_event_files_event ON event_files(event_id, uploaded_at)
   `);
 
   const timelineReordered = db
