@@ -96,3 +96,47 @@ npm start
 ```
 
 → http://localhost:3000
+
+## Importer vos données locales sur Render
+
+Vos événements créés sur votre Mac sont dans `data/djcarl.db`. Pour les mettre en ligne :
+
+### 1. Préparer le fichier sur votre Mac
+
+Dans le Terminal :
+
+```bash
+cd /Users/djcarl/Documents/DJ/Concepts/DJ-Carl-Quiz/events
+npm run export-db
+```
+
+→ Crée `dist/djcarl-upload.db` (copie propre avec vos événements).
+
+### 2. Vérifier le disque sur Render
+
+Render → **dj-carl-events** → **Disks** : un disque monté sur `/var/data`  
+Environment → `DATA_DIR` = `/var/data`
+
+(Sans disque, les données en ligne ne persistent pas correctement.)
+
+### 3. Envoyer le fichier via SSH (plan Starter)
+
+1. Render → **dj-carl-events** → **Connect** → **SSH**
+2. Copiez la commande SSH affichée (ex. `ssh srv-xxxxx@ssh.oregon.render.com`)
+3. Sur votre Mac, dans un **nouveau** Terminal :
+
+```bash
+cd /Users/djcarl/Documents/DJ/Concepts/DJ-Carl-Quiz/events
+scp dist/djcarl-upload.db VOTRE_COMMANDE_SSH:/var/data/djcarl.db
+```
+
+Remplacez `VOTRE_COMMANDE_SSH` par la partie après `scp`, par exemple :
+`srv-da3prh0n74is73fef5u0@ssh.oregon.render.com`
+
+4. Render → **Manual Deploy** → **Deploy latest commit** (ou attendez le redémarrage)
+
+### 4. Vérifier
+
+Ouvrez **https://dj-carl-events.onrender.com** — votre mariage du 22 août devrait apparaître.
+
+**Note :** cela **remplace** la base en ligne par votre copie locale. Si vous aviez créé des événements directement sur Render, ils seront écrasés.

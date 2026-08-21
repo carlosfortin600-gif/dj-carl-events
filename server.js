@@ -1,6 +1,8 @@
 const express = require("express");
+const fs = require("fs");
 const path = require("path");
-const { initDatabase, DB_PATH } = require("./database");
+const Database = require("better-sqlite3");
+const { initDatabase, DB_PATH, DATA_DIR } = require("./database");
 const {
   STATUS_LABELS,
   EVENT_TYPES,
@@ -160,6 +162,45 @@ app.locals.PARTY_GUEST_REQUEST_OPTIONS = PARTY_GUEST_REQUEST_OPTIONS;
 app.locals.BINGO_MUSICAL_STYLE_OPTIONS = BINGO_MUSICAL_STYLE_OPTIONS;
 app.locals.isWeddingEvent = isWeddingEvent;
 app.locals.getQuestionnaireLabel = getQuestionnaireLabel;
+
+const IMPORT_SECRET = process.env.IMPORT_SECRET?.trim();
+if (IMPORT_SECRET) {
+  app.get("/admin/import-db", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "import-db.html"));
+  });
+
+  app.post(
+    "/admin/import-db",
+    express.raw({ type: "application/octet-stream", limit: "20mb" }),
+    (req, res) => {
+      if (req.headers["x-import-secret"] !== IMPORT_SECRET) {
+        return res.status(403).json({ error: "Mot de passe incorrect" });
+      }
+      if (!req.body?.length) {
+        return res.status(400).json({ error: "Fichier vide" });
+      }
+
+      const tmpPath = path.join(DATA_DIR, ".import-tmp.db");
+      try {
+        fs.writeFileSync(tmpPath, req.body);
+        const testDb = new Database(tmpPath, { readonly: true });
+        const events = testDb.prepare("SELECT COUNT(*) AS n FROM events").get().n;
+        testDb.close();
+
+        db.close();
+        fs.copyFileSync(tmpPath, DB_PATH);
+        fs.unlinkSync(tmpPath);
+
+        res.json({ ok: true, events });
+        setTimeout(() => process.exit(0), 300);
+      } catch (err) {
+        console.error("Import DB failed:", err);
+        if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath);
+        res.status(500).json({ error: "Fichier invalide ou import échoué" });
+      }
+    }
+  );
+}
 
 app.get("/api/health", (req, res) => {
   const tables = db

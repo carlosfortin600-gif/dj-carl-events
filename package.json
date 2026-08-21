@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "node server.js",
-    "package": "bash scripts/package-deploy.sh"
+    "package": "bash scripts/package-deploy.sh",
+    "export-db": "node scripts/prepare-db-upload.js"
   },
   "keywords": ["dj", "events", "mariage"],
   "author": "DJ Carl",
