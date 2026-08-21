@@ -58,7 +58,7 @@
         result.innerHTML =
           '<div class="alert alert-success">' +
           (data.events != null ? data.events + " événement(s) importé(s). " : "") +
-          "Le site redémarre — rechargez dans 30 secondes.</div>";
+          '<a href="/" class="alert-link">Ouvrir le tableau de bord</a></div>';
       } catch (err) {
         result.innerHTML = '<div class="alert alert-danger">' + err.message + "</div>";
         btn.disabled = false;
