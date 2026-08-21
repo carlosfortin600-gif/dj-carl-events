@@ -792,7 +792,8 @@ app.post("/events/:id/notes/save", (req, res) => {
   const eventId = Number(req.params.id);
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
   saveDjNotes(db, eventId, req.body);
-  res.redirect(eventRedirect(eventId, "notes", { notesSaved: "1" }));
+  const returnTab = req.body.return_tab === "gestion" ? "gestion" : "notes";
+  res.redirect(eventRedirect(eventId, returnTab, { notesSaved: "1" }));
 });
 
 app.post("/events/:id/status", (req, res) => {

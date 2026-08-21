@@ -1,3 +1,6 @@
+<% if (notesSaved) { %>
+  <div class="alert alert-success">Informations enregistrées.</div>
+<% } %>
 <% if (filesUploaded) { %>
   <div class="alert alert-success">Fichier(s) téléversé(s).</div>
 <% } %>
@@ -7,6 +10,15 @@
 <% if (filesError) { %>
   <div class="alert alert-danger"><%= filesError %></div>
 <% } %>
+
+<form method="post" action="/events/<%= event.id %>/notes/save" data-unsaved-guard class="mb-4">
+  <input type="hidden" name="return_tab" value="gestion">
+  <%- include('dj-technique-fields', { event, djNotes }) %>
+  <% if (djNotes.updated_at) { %>
+    <p class="text-muted small">Dernière modification : <%= formatTimestampFr(djNotes.updated_at) %></p>
+  <% } %>
+  <button type="submit" class="btn btn-primary btn-lg">Enregistrer</button>
+</form>
 
 <section class="form-section form-section-gestion mb-4">
   <h2 class="form-section-title">Téléverser des fichiers</h2>

@@ -128,6 +128,8 @@
       <% } else if (tab === 'gestion') { %>
         <%- include('partials/gestion-tab', {
           event: event,
+          djNotes: djNotes,
+          notesSaved: notesSaved,
           eventFiles: typeof eventFiles !== 'undefined' ? eventFiles : [],
           filesUploaded: typeof filesUploaded !== 'undefined' ? filesUploaded : false,
           fileDeleted: typeof fileDeleted !== 'undefined' ? fileDeleted : false,
