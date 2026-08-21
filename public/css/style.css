@@ -271,6 +271,12 @@ table tr.q-field-missing td:first-child {
   text-overflow: ellipsis;
 }
 
+.datetime-fr-row .datetime-fr-time {
+  width: auto;
+  min-width: 7.5rem;
+  flex-shrink: 0;
+}
+
 .date-fr-native,
 .datetime-fr-native {
   position: absolute;

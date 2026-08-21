@@ -1,8 +1,24 @@
+<% 
+  let dtDate = '';
+  let dtTime = '';
+  if (value) {
+    const parts = String(value).split('T');
+    dtDate = parts[0] || '';
+    dtTime = parts[1] ? parts[1].slice(0, 5) : '';
+  }
+%>
 <div class="datetime-fr-picker">
-  <input type="text" class="form-control datetime-fr-display" readonly
-         value="<%= displayValue || '' %>"
-         placeholder="Choisir date et heure"
-         aria-haspopup="dialog">
-  <input type="datetime-local" class="datetime-fr-native" id="<%= id %>" name="<%= name %>"
-         value="<%= value || '' %>">
+  <div class="datetime-fr-row d-flex gap-2 flex-wrap align-items-stretch">
+    <div class="date-fr-picker datetime-fr-date flex-grow-1" style="min-width: 12rem">
+      <input type="text" class="form-control datetime-fr-display" readonly
+             value="<%= displayValue || '' %>"
+             placeholder="Choisir la date"
+             aria-haspopup="dialog">
+      <input type="date" class="date-fr-native datetime-date-native" id="<%= id %>"
+             value="<%= dtDate %>">
+    </div>
+    <input type="time" class="form-control datetime-fr-time" value="<%= dtTime %>"
+           aria-label="Heure" title="Heure">
+  </div>
+  <input type="hidden" class="datetime-fr-combined" name="<%= name %>" value="<%= value || '' %>">
 </div>

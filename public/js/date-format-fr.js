@@ -134,9 +134,54 @@
     });
 
     document.querySelectorAll(".datetime-fr-picker").forEach((wrap) => {
-      bindPicker(wrap, (native, display) => {
-        display.value = native.value ? formatDateTimeLocal(native.value) : "";
+      const dateNative = wrap.querySelector(".datetime-date-native");
+      const timeInput = wrap.querySelector(".datetime-fr-time");
+      const combined = wrap.querySelector(".datetime-fr-combined");
+      const display = wrap.querySelector(".datetime-fr-display");
+      if (!dateNative || !timeInput || !combined || !display) return;
+
+      function sync() {
+        const date = dateNative.value;
+        const time = timeInput.value;
+        if (date && time) {
+          combined.value = `${date}T${time}`;
+          display.value = formatDateTimeLocal(combined.value);
+        } else if (date) {
+          combined.value = `${date}T00:00`;
+          display.value = formatDateFr(date);
+        } else {
+          combined.value = "";
+          display.value = "";
+        }
+      }
+
+      function openDate() {
+        openNativePicker(dateNative);
+      }
+
+      dateNative.addEventListener("change", sync);
+      dateNative.addEventListener("input", sync);
+      timeInput.addEventListener("change", sync);
+      timeInput.addEventListener("input", sync);
+      display.addEventListener("click", openDate);
+      display.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openDate();
+        }
       });
+
+      if (dateNative.id) {
+        const label = document.querySelector(`label[for="${dateNative.id}"]`);
+        if (label) {
+          label.addEventListener("click", (event) => {
+            event.preventDefault();
+            openDate();
+          });
+        }
+      }
+
+      sync();
     });
   }
 
