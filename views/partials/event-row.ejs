@@ -41,6 +41,7 @@
             <button type="submit" class="btn btn-danger btn-sm">Supprimer définitivement</button>
           </form>
         <% } else { %>
+          <a href="/events/<%= ev.id %>?tab=client" class="btn btn-outline-success btn-sm" onclick="event.stopPropagation()" title="Lien à envoyer au client">Lien client</a>
           <a href="/events/<%= ev.id %>" class="btn btn-outline-primary btn-sm" onclick="event.stopPropagation()">Ouvrir</a>
           <form method="post" action="/events/<%= ev.id %>/delete" class="d-inline event-delete-form"
                 onclick="event.stopPropagation()"

@@ -534,7 +534,7 @@ app.post("/events/:id/portal/regenerate", (req, res) => {
   }
 
   regeneratePortalToken(db, eventId);
-  res.redirect(`/events/${eventId}?tab=resume&portalRegenerated=1`);
+  res.redirect(`/events/${eventId}?tab=client&portalRegenerated=1`);
 });
 
 app.post("/events/:id/portal/toggle", (req, res) => {
@@ -549,7 +549,7 @@ app.post("/events/:id/portal/toggle", (req, res) => {
   }
 
   setPortalEnabled(db, eventId, req.body.enabled === "1");
-  res.redirect(`/events/${eventId}?tab=resume&portalToggled=1`);
+  res.redirect(`/events/${eventId}?tab=client&portalToggled=1`);
 });
 
 app.get("/portal/:token", (req, res) => {

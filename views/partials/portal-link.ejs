@@ -1,6 +1,6 @@
 <div class="card border-primary mb-4">
   <div class="card-header bg-primary text-white py-3">
-    <h2 class="h6 mb-0">Lien client — portail privé</h2>
+    <h2 class="h6 mb-0">Lien privé pour cet événement</h2>
   </div>
   <div class="card-body">
     <% if (portalRegenerated) { %>
@@ -11,7 +11,8 @@
     <% } %>
 
     <p class="text-muted small mb-3">
-      Envoyez ce lien à vos clients pour qu'ils remplissent le questionnaire et complètent leur dossier.
+      Ce lien est <strong>unique à cet événement</strong>. Envoyez-le par texto ou courriel —
+      votre client pourra remplir le questionnaire sans voir vos autres dossiers.
       <% if (portalLinks.lan) { %>
         Sur le même réseau Wi‑Fi, utilisez le <strong>lien réseau local</strong> pour les téléphones.
       <% } %>
