@@ -1,7 +1,7 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
-const { initDatabase, DB_PATH, DATA_DIR } = require("./database");
+const { initDatabase, DB_PATH, DATA_DIR, isPersistentStorage } = require("./database");
 const {
   STATUS_LABELS,
   EVENT_TYPES,
@@ -206,6 +206,7 @@ app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
     database: DB_PATH,
+    persistent: isPersistentStorage(),
     events: db.prepare("SELECT COUNT(*) AS n FROM events WHERE deleted_at IS NULL").get().n,
     tables
   });
@@ -732,5 +733,5 @@ app.use((req, res) => {
 app.listen(PORT, HOST, () => {
   const base = process.env.PUBLIC_URL || `http://localhost:${PORT}`;
   console.log(`DJ Carl Events — ${base}`);
-  console.log(`Base SQLite : ${DB_PATH}`);
+  console.log(`Base SQLite : ${DB_PATH}${isPersistentStorage() ? " (persistante)" : ""}`);
 });

@@ -99,9 +99,25 @@ npm start
 
 ## Importer vos données locales sur Render
 
-Vos événements créés sur votre Mac sont dans `data/djcarl.db`. Pour les mettre en ligne :
+**Important :** sans disque persistant, chaque déploiement (Push GitHub) **efface** vos événements en ligne.
+Configurez d'abord le disque ci-dessous, puis importez une fois.
 
-### 1. Préparer le fichier sur votre Mac
+### Disque persistant Render (obligatoire en production)
+
+1. Render → **dj-carl-events** → **Disks** → **Add Disk**
+   - **Name** : `data`
+   - **Mount Path** : `/var/data`
+   - **Size** : 1 GB
+2. **Environment** → ajoutez `DATA_DIR` = `/var/data` (optionnel — détecté auto si le disque existe)
+3. **Save** → attendez le redéploiement
+4. Importez vos données **une dernière fois** (section suivante)
+
+Vérification : `https://votre-site.onrender.com/api/health` doit afficher  
+`"persistent": true` et `"database": "/var/data/djcarl.db"`.
+
+Après ça, vos Push GitHub **ne effaceront plus** les événements.
+
+### Importer depuis votre Mac
 
 Dans le Terminal :
 

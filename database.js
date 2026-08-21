@@ -2,8 +2,24 @@ const Database = require("better-sqlite3");
 const fs = require("fs");
 const path = require("path");
 
-const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
+function resolveDataDir() {
+  const fromEnv = process.env.DATA_DIR?.trim();
+  if (fromEnv) return fromEnv;
+
+  const renderDisk = "/var/data";
+  if (fs.existsSync(renderDisk)) {
+    return renderDisk;
+  }
+
+  return path.join(__dirname, "data");
+}
+
+const DATA_DIR = resolveDataDir();
 const DB_PATH = path.join(DATA_DIR, "djcarl.db");
+
+function isPersistentStorage() {
+  return DATA_DIR !== path.join(__dirname, "data");
+}
 
 function ensureDataDir() {
   if (!fs.existsSync(DATA_DIR)) {
@@ -292,5 +308,6 @@ function migrate(db) {
 module.exports = {
   initDatabase,
   DB_PATH,
-  DATA_DIR
+  DATA_DIR,
+  isPersistentStorage
 };
