@@ -11,7 +11,7 @@
   <div class="datetime-fr-row d-flex gap-2 flex-wrap align-items-stretch">
     <div class="date-fr-picker datetime-fr-date flex-grow-1" style="min-width: 12rem">
       <input type="text" class="form-control datetime-fr-display" readonly
-             value="<%= displayValue || '' %>"
+             value="<%= dtDate ? formatDateFr(dtDate) : '' %>"
              placeholder="Choisir la date"
              aria-haspopup="dialog">
       <input type="date" class="date-fr-native datetime-date-native" id="<%= id %>"

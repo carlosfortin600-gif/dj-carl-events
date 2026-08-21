@@ -145,14 +145,12 @@
         const time = timeInput.value;
         if (date && time) {
           combined.value = `${date}T${time}`;
-          display.value = formatDateTimeLocal(combined.value);
         } else if (date) {
           combined.value = `${date}T00:00`;
-          display.value = formatDateFr(date);
         } else {
           combined.value = "";
-          display.value = "";
         }
+        display.value = date ? formatDateFr(date) : "";
       }
 
       function openDate() {
