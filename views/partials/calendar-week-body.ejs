@@ -1,0 +1,35 @@
+<% function dayUrl(dateStr) {
+  const q = queryString({ view: 'day', date: dateStr });
+  return calendarBasePath + '?' + q;
+} %>
+
+<div class="calendar-week-grid">
+  <% weekDays.forEach(function(day) { %>
+    <div class="calendar-week-col <%= day.events.length ? 'has-events' : '' %> <%= day.isToday ? 'is-today' : '' %>">
+      <a href="<%= dayUrl(day.iso) %>" class="calendar-week-col-head text-decoration-none">
+        <span class="calendar-week-col-weekday"><%= day.weekdayLabel %></span>
+        <span class="calendar-week-col-day"><%= day.dayNum %></span>
+      </a>
+      <div class="calendar-week-col-events">
+        <% if (!day.events.length) { %>
+          <span class="text-muted small">—</span>
+        <% } else { %>
+          <% day.events.forEach(function(ev) { %>
+            <div class="calendar-week-event calendar-event-card status-border-<%= ev.status %>">
+              <div class="calendar-week-event-title"><%= clientShortName(ev) %></div>
+              <div class="calendar-week-event-meta small text-muted">
+                <% if (ev.start_time) { %><%= formatTime(ev.start_time) %> · <% } %><%= ev.event_type %>
+              </div>
+              <a href="/events/<%= ev.id %>?tab=gestion" class="btn btn-outline-primary btn-sm mt-1 btn-xs-compact">Gestion</a>
+            </div>
+          <% }); %>
+        <% } %>
+      </div>
+      <% if (showDayGestionDetails && day.gestionDetails) { %>
+        <div class="calendar-week-col-gestion">
+          <%- include('calendar-gestion-blocks', { gestionDetails: day.gestionDetails, compact: true }) %>
+        </div>
+      <% } %>
+    </div>
+  <% }); %>
+</div>

@@ -322,6 +322,17 @@ function migrate(db) {
     CREATE INDEX IF NOT EXISTS idx_event_files_event ON event_files(event_id, uploaded_at)
   `);
 
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS subcontractor_contracts (
+      event_id INTEGER NOT NULL,
+      subcontractor_id TEXT NOT NULL,
+      data TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      PRIMARY KEY (event_id, subcontractor_id),
+      FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+    )
+  `);
+
   const timelineReordered = db
     .prepare("SELECT value FROM app_meta WHERE key = 'timeline_reordered_by_time'")
     .get();

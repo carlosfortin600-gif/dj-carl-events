@@ -1,0 +1,39 @@
+<div class="calendar-gestion-block <%= compact ? 'calendar-gestion-block-compact' : '' %>">
+  <% if (gestionDetails.locations.length) { %>
+    <% if (!compact) { %>
+      <h3 class="h6 text-uppercase text-muted mb-3">Locations</h3>
+    <% } else { %>
+      <div class="calendar-gestion-block-title small text-muted">Locations</div>
+    <% } %>
+    <div class="list-group list-group-flush calendar-day-list <%= compact ? 'mb-2' : 'mb-4' %>">
+      <% gestionDetails.locations.forEach(function(loc) { %>
+        <div class="list-group-item <%= compact ? 'py-1 px-0 border-0' : 'py-2' %> calendar-day-gestion calendar-day-gestion-<%= loc.type === 'room-none' ? 'room-none' : loc.type %>">
+          <div class="d-flex justify-content-between align-items-start gap-2">
+            <span class="small <%= compact ? 'calendar-gestion-summary-compact' : '' %>"><%= loc.summary %></span>
+            <a href="<%= loc.gestionUrl %>" class="btn btn-outline-primary btn-sm flex-shrink-0 <%= compact ? 'btn-xs-compact' : '' %>">Gestion</a>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+
+  <% if (!compact) { %>
+    <h3 class="h6 text-uppercase text-muted mb-3">Contrats sous-traitants</h3>
+  <% } else { %>
+    <div class="calendar-gestion-block-title small text-muted">Contrats</div>
+  <% } %>
+  <% if (gestionDetails.contracts.length) { %>
+    <div class="list-group list-group-flush calendar-day-list <%= compact ? 'mb-0' : 'mb-4' %>">
+      <% gestionDetails.contracts.forEach(function(ct) { %>
+        <div class="list-group-item <%= compact ? 'py-1 px-0 border-0' : 'py-2' %> calendar-day-gestion calendar-day-gestion-contrat">
+          <div class="d-flex justify-content-between align-items-start gap-2">
+            <span class="small <%= compact ? 'calendar-gestion-summary-compact' : '' %>"><%= ct.summary %></span>
+            <a href="<%= ct.gestionUrl %>" class="btn btn-outline-primary btn-sm flex-shrink-0 <%= compact ? 'btn-xs-compact' : '' %>">Gestion</a>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <p class="text-muted small <%= compact ? 'mb-0' : 'mb-4' %>">Aucun contrat</p>
+  <% } %>
+</div>

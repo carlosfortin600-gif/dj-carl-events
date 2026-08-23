@@ -1,0 +1,38 @@
+<div class="card border-info mb-4">
+  <div class="card-header bg-info text-dark py-3">
+    <h2 class="h6 mb-0">Envoyer pour signature</h2>
+  </div>
+  <div class="card-body">
+    <ol class="small text-muted mb-3 ps-3">
+      <li class="mb-1">Remplissez le contrat et signez la case <strong>DJ Carl</strong>.</li>
+      <li class="mb-1">Cliquez sur <strong>Enregistrer le contrat</strong>.</li>
+      <li class="mb-1">Copiez le lien ci-dessous et envoyez-le par texto ou courriel à <strong><%= subcontractorLabel %></strong>.</li>
+      <li class="mb-1">Le sous-traitant ouvre le lien sur son téléphone, lit le contrat et signe.</li>
+      <li>Quand les deux signatures sont présentes, utilisez <strong>Ouvrir pour impression</strong> ou téléchargez le PDF.</li>
+    </ol>
+
+    <label class="form-label small fw-semibold">Lien de signature pour <%= subcontractorLabel %></label>
+    <div class="input-group mb-2">
+      <input type="text" class="form-control font-monospace small" id="contractSignLinkPrimary" readonly value="<%= contractSignLinks.primary %>">
+      <button type="button" class="btn btn-outline-primary" data-copy-target="contractSignLinkPrimary">Copier</button>
+    </div>
+
+    <% if (contractSignLinks.lan) { %>
+      <label class="form-label small fw-semibold mt-3">Lien réseau local (téléphone sur le même Wi‑Fi)</label>
+      <div class="input-group mb-2">
+        <input type="text" class="form-control font-monospace small" id="contractSignLinkLan" readonly value="<%= contractSignLinks.lan %>">
+        <button type="button" class="btn btn-outline-secondary" data-copy-target="contractSignLinkLan">Copier</button>
+      </div>
+    <% } %>
+
+    <div class="d-flex flex-wrap gap-2 mt-3">
+      <a href="<%= contractSignLinks.primary %>" target="_blank" rel="noopener" class="btn btn-sm btn-primary">Ouvrir le lien de signature</a>
+    </div>
+
+    <% if (contract.signature_subcontractor) { %>
+      <div class="alert alert-success py-2 small mt-3 mb-0">Signature du sous-traitant reçue.</div>
+    <% } else { %>
+      <div class="alert alert-warning py-2 small mt-3 mb-0">En attente de la signature de <%= subcontractorLabel %>.</div>
+    <% } %>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<% const section = typeof gestionSection !== 'undefined' ? gestionSection : 'location'; %>
+<nav class="gestion-subnav nav nav-pills flex-wrap gap-2 mb-4" aria-label="Sections gestion">
+  <a class="nav-link <%= section === 'location' ? 'active' : '' %>"
+     href="/events/<%= event.id %>?tab=gestion&gestion=location">Location</a>
+  <a class="nav-link <%= section === 'contrat' ? 'active' : '' %>"
+     href="/events/<%= event.id %>?tab=gestion&gestion=contrat&sousTraitant=mario">Contrat sous-traitant</a>
+  <a class="nav-link <%= section === 'depart' ? 'active' : '' %>"
+     href="/events/<%= event.id %>?tab=gestion&gestion=depart">Départ et arrivée</a>
+  <a class="nav-link <%= section === 'fichiers' ? 'active' : '' %>"
+     href="/events/<%= event.id %>?tab=gestion&gestion=fichiers">Fichiers</a>
+</nav>

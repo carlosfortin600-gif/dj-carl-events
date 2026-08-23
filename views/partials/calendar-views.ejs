@@ -1,0 +1,71 @@
+<% 
+  const view = cal.view;
+  const anchorDate = cal.anchorDate;
+  const year = cal.year;
+  const month = cal.month;
+  const periodLabel = cal.periodLabel;
+  const prevQuery = cal.prevQuery;
+  const nextQuery = cal.nextQuery;
+  const navPrevLabel = cal.navPrevLabel;
+  const navNextLabel = cal.navNextLabel;
+  const byDate = cal.byDate;
+  const daysInMonth = cal.daysInMonth;
+  const firstWeekday = cal.firstWeekday;
+  const selectedDate = cal.selectedDate;
+  const weekDays = cal.weekDays;
+  const dayEvents = cal.dayEvents;
+  const dayGestionDetails = cal.dayGestionDetails;
+%>
+<% function calUrl(params) {
+  const merged = { view: view, date: anchorDate, year: year, month: month };
+  Object.assign(merged, params);
+  if (merged.view === 'month') delete merged.date;
+  const q = queryString(merged);
+  return calendarBasePath + (q ? '?' + q : '');
+} %>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+  <div class="btn-group" role="group" aria-label="Vue calendrier">
+    <a href="<%= calUrl({ view: 'day', date: anchorDate }) %>"
+       class="btn btn-sm <%= view === 'day' ? 'btn-primary' : 'btn-outline-secondary' %>">Jour</a>
+    <a href="<%= calUrl({ view: 'week', date: anchorDate }) %>"
+       class="btn btn-sm <%= view === 'week' ? 'btn-primary' : 'btn-outline-secondary' %>">Semaine</a>
+    <a href="<%= calUrl({ view: 'month', year: year, month: month }) %>"
+       class="btn btn-sm <%= view === 'month' ? 'btn-primary' : 'btn-outline-secondary' %>">Mois</a>
+  </div>
+  <div class="btn-group">
+    <a href="<%= calUrl(prevQuery) %>" class="btn btn-outline-secondary btn-sm">← <%= navPrevLabel %></a>
+    <a href="<%= calUrl(nextQuery) %>" class="btn btn-outline-secondary btn-sm"><%= navNextLabel %> →</a>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header bg-white py-3 text-center">
+    <h2 class="h4 mb-0"><%= periodLabel %></h2>
+  </div>
+  <div class="card-body p-2 p-md-3">
+    <% if (view === 'month') { %>
+      <%- include('calendar-month-body', { calendarBasePath, view, anchorDate, year, month, byDate, daysInMonth, firstWeekday, selectedDate }) %>
+    <% } else if (view === 'week') { %>
+      <%- include('calendar-week-body', {
+        calendarBasePath, view, anchorDate, year, month, weekDays,
+        showDayGestionDetails: typeof showDayGestionDetails !== 'undefined' ? showDayGestionDetails : false
+      }) %>
+    <% } else { %>
+      <%- include('calendar-day-body', {
+        calendarBasePath, view, anchorDate, year, month, dayEvents,
+        showContractLink: typeof showContractLink !== 'undefined' ? showContractLink : false,
+        subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
+        showDayGestionDetails: typeof showDayGestionDetails !== 'undefined' ? showDayGestionDetails : false,
+        dayGestionDetails: dayGestionDetails
+      }) %>
+    <% } %>
+
+    <div class="calendar-legend mt-3 d-flex flex-wrap gap-3 small">
+      <span><span class="legend-dot status-dot-a_completer"></span> À compléter</span>
+      <span><span class="legend-dot status-dot-en_preparation"></span> En préparation</span>
+      <span><span class="legend-dot status-dot-pret"></span> Prêt</span>
+      <span><span class="legend-dot status-dot-termine"></span> Terminé</span>
+    </div>
+  </div>
+</div>

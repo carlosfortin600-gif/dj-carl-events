@@ -1,0 +1,28 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/nav', { activeNav: 'calendar' }) %>
+
+<main class="container pb-5">
+  <div class="d-flex align-items-center gap-2 mb-3">
+    <a href="/" class="btn btn-outline-secondary btn-sm">← Quitter</a>
+  </div>
+  <div class="mb-3">
+    <h1 class="h3 mb-1">Calendrier — <%= subcontractorLabel %></h1>
+    <p class="text-muted small mb-0">Contrats sous-traitant — vue jour, semaine ou mois.</p>
+  </div>
+
+  <nav class="nav nav-pills flex-wrap gap-2 mb-4">
+    <% subcontractors.forEach(function(st) { %>
+      <a class="nav-link <%= st.id === subcontractorId ? 'active' : '' %>"
+         href="/gestion/calendrier/<%= st.id %>?view=<%= cal.view %>&date=<%= cal.anchorDate %>">Calendrier <%= st.label %></a>
+    <% }); %>
+    <a class="nav-link" href="/calendar?view=<%= cal.view %>&date=<%= cal.anchorDate %>">Calendrier général</a>
+  </nav>
+
+  <%- include('partials/calendar-views', Object.assign({
+    calendarBasePath: '/gestion/calendrier/' + subcontractorId,
+    showContractLink: true,
+    subcontractorLabel: subcontractorLabel
+  }, cal)) %>
+</main>
+
+<%- include('partials/footer') %>

@@ -5,32 +5,6 @@
     || ((djNotes.tech_room_location || djNotes.tech_room_start || djNotes.tech_room_end) ? 'yes' : 'no');
 %>
 
-<section class="form-section form-section-technique-departure mb-4">
-  <h2 class="form-section-title">Départ et Arrivée</h2>
-  <div class="row g-3">
-    <div class="col-md-6">
-      <label class="form-label" for="tech_departure_datetime">Départ — date et heure</label>
-      <%- include('datetime-fr-field', {
-        id: 'tech_departure_datetime',
-        name: 'tech_departure_datetime',
-        value: endDatetimeLocalValue(event.event_date, djNotes.tech_departure_date, djNotes.tech_departure_time),
-        displayValue: djNotes.tech_departure_date
-          ? formatDateTimeFr(djNotes.tech_departure_date, djNotes.tech_departure_time) : ''
-      }) %>
-    </div>
-    <div class="col-md-6">
-      <label class="form-label" for="tech_arrival_datetime">Arrivée — date et heure</label>
-      <%- include('datetime-fr-field', {
-        id: 'tech_arrival_datetime',
-        name: 'tech_arrival_datetime',
-        value: endDatetimeLocalValue(event.event_date, djNotes.tech_arrival_date, djNotes.tech_arrival_time),
-        displayValue: djNotes.tech_arrival_date
-          ? formatDateTimeFr(djNotes.tech_arrival_date, djNotes.tech_arrival_time) : ''
-      }) %>
-    </div>
-  </div>
-</section>
-
 <section class="form-section form-section-technique-trailer mb-4">
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
     <h2 class="form-section-title mb-0">Location trailer</h2>

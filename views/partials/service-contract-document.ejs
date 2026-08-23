@@ -1,0 +1,87 @@
+<div class="service-contract-print">
+  <div class="text-center mb-4">
+    <h1 class="h4 mb-1">Contrat de service</h1>
+    <p class="text-muted small mb-0">DJ Carl — Gestion d'événements</p>
+  </div>
+
+  <% const subName = contract.full_name || (typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : 'Sous-traitant'); %>
+
+  <p class="mb-4">
+    Entre <strong>DJ Carl</strong> (ci-après « le contractant ») et
+    <strong><%= subName %></strong> (ci-après « le sous-traitant »),
+    il est convenu ce qui suit pour l'événement suivant :
+  </p>
+
+  <table class="table table-sm service-contract-table mb-4">
+    <tbody>
+      <tr>
+        <th scope="row">Client / événement</th>
+        <td><%= clientFullName(event) %> — <%= event.event_type %></td>
+      </tr>
+      <tr>
+        <th scope="row">Date de l'événement</th>
+        <td><%= formatDateFr(event.event_date) %><% if (event.start_time) { %> · <%= formatTime(event.start_time) %><% } %></td>
+      </tr>
+      <tr>
+        <th scope="row">Lieu</th>
+        <td><%= event.venue || '—' %><% if (event.address) { %><br><span class="text-muted small"><%= event.address %></span><% } %></td>
+      </tr>
+      <% if (contract.contract_date || contract.contract_time || contract.contract_end_date || contract.contract_end_time) { %>
+        <tr>
+          <th scope="row">Période du contrat</th>
+          <td><%= formatDateTimeRangeFr(
+            contract.contract_date,
+            contract.contract_time,
+            contract.contract_end_date || contract.contract_date,
+            contract.contract_end_time
+          ) %></td>
+        </tr>
+      <% } %>
+      <% if (contract.amount) { %>
+        <tr>
+          <th scope="row">Montant convenu</th>
+          <td><%= contract.amount %></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <h2 class="h6 text-uppercase text-muted mb-2">Description des services</h2>
+  <p class="service-contract-body mb-4"><%= contract.service_description || '—' %></p>
+
+  <% if (contract.payment_terms) { %>
+    <h2 class="h6 text-uppercase text-muted mb-2">Modalités de paiement</h2>
+    <p class="service-contract-body mb-4"><%= contract.payment_terms %></p>
+  <% } %>
+
+  <% if (contract.additional_notes) { %>
+    <h2 class="h6 text-uppercase text-muted mb-2">Notes</h2>
+    <p class="service-contract-body mb-4"><%= contract.additional_notes %></p>
+  <% } %>
+
+  <p class="small text-muted mb-5">
+    Le sous-traitant s'engage à fournir les services décrits ci-dessus de manière professionnelle,
+    dans les délais convenus avec le contractant.
+  </p>
+
+  <div class="row g-4 mt-2 service-contract-signatures">
+    <div class="col-md-6">
+      <p class="mb-2"><strong>DJ Carl</strong><br><span class="text-muted small">Contractant</span></p>
+      <% if (contract.signature_contractant) { %>
+        <img src="<%= contract.signature_contractant %>" alt="Signature DJ Carl" class="service-contract-signature-img">
+      <% } else { %>
+        <div class="service-contract-signature-line"></div>
+      <% } %>
+      <p class="small text-muted mb-0 mt-1">Signature</p>
+    </div>
+    <div class="col-md-6">
+      <p class="mb-2"><strong><%= subName %></strong><br><span class="text-muted small">Sous-traitant</span></p>
+      <% if (contract.signature_subcontractor) { %>
+        <img src="<%= contract.signature_subcontractor %>" alt="Signature sous-traitant" class="service-contract-signature-img">
+      <% } else { %>
+        <div class="service-contract-signature-line"></div>
+      <% } %>
+      <p class="small text-muted mb-0 mt-1">Signature</p>
+    </div>
+  </div>
+</div>

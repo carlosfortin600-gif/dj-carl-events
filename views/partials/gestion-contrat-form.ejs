@@ -1,0 +1,117 @@
+<% const subId = subcontractorId; const subLabel = subcontractorLabel; const prefix = subId; %>
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4 no-print">
+  <div>
+    <h2 class="form-section-title mb-1">Contrat de service — <%= subLabel %></h2>
+    <p class="text-muted small mb-0">Contrat simple entre DJ Carl et le sous-traitant pour cet événement.</p>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <a href="/gestion/calendrier/<%= subId %>" class="btn btn-outline-secondary btn-sm">Calendrier <%= subLabel %></a>
+    <a href="/events/<%= event.id %>/gestion/contrat/<%= subId %>/print" target="_blank" rel="noopener"
+       class="btn btn-outline-primary btn-sm">Ouvrir pour impression</a>
+  </div>
+</div>
+
+<form method="post" action="/events/<%= event.id %>/gestion/contrat/<%= subId %>/save" data-unsaved-guard class="no-print mb-4 contract-form">
+  <input type="hidden" name="return_gestion" value="contrat">
+  <input type="hidden" name="return_sous_traitant" value="<%= subId %>">
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <label class="form-label" for="<%= prefix %>_full_name">Nom complet du sous-traitant</label>
+      <input type="text" class="form-control" id="<%= prefix %>_full_name" name="full_name"
+             value="<%= contract.full_name || subLabel %>">
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" for="<%= prefix %>_contract_datetime">Date et heure de début du contrat</label>
+      <%- include('datetime-fr-field', {
+        id: prefix + '_contract_datetime',
+        name: 'contract_datetime',
+        value: contract.contract_date
+          ? contract.contract_date + 'T' + (contract.contract_time || '').slice(0, 5)
+          : ''
+      }) %>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" for="<%= prefix %>_contract_end_datetime">Date et heure de fin du contrat</label>
+      <%- include('datetime-fr-field', {
+        id: prefix + '_contract_end_datetime',
+        name: 'contract_end_datetime',
+        value: contract.contract_end_date
+          ? contract.contract_end_date + 'T' + (contract.contract_end_time || '').slice(0, 5)
+          : ''
+      }) %>
+    </div>
+    <div class="col-12">
+      <label class="form-label" for="<%= prefix %>_service_description">Description des services</label>
+      <textarea class="form-control" id="<%= prefix %>_service_description" name="service_description" rows="5"><%= contract.service_description || '' %></textarea>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" for="<%= prefix %>_amount">Montant convenu</label>
+      <input type="text" class="form-control" id="<%= prefix %>_amount" name="amount"
+             value="<%= contract.amount || '' %>" placeholder="Ex. 350 $">
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" for="<%= prefix %>_payment_terms">Modalités de paiement</label>
+      <input type="text" class="form-control" id="<%= prefix %>_payment_terms" name="payment_terms"
+             value="<%= contract.payment_terms || '' %>">
+    </div>
+    <div class="col-12">
+      <label class="form-label" for="<%= prefix %>_additional_notes">Notes additionnelles</label>
+      <textarea class="form-control" id="<%= prefix %>_additional_notes" name="additional_notes" rows="3"><%= contract.additional_notes || '' %></textarea>
+    </div>
+  </div>
+
+  <% if (typeof contractSignLinks !== 'undefined' && contractSignLinks) { %>
+    <%- include('contract-sign-link', {
+      contractSignLinks,
+      subcontractorLabel: subLabel,
+      contract
+    }) %>
+  <% } %>
+
+  <section class="form-section mb-4">
+    <h3 class="form-section-title h6">Signatures électroniques</h3>
+    <p class="text-muted small">Signez avec la souris ou le doigt (téléphone). Enregistrez le contrat pour conserver les signatures.</p>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <label class="form-label">DJ Carl — contractant</label>
+        <div class="signature-pad-wrap" data-signature-pad>
+          <canvas class="signature-pad-canvas" aria-label="Signature DJ Carl"></canvas>
+          <input type="hidden" name="signature_contractant" value="<%= contract.signature_contractant || '' %>">
+          <button type="button" class="btn btn-sm btn-outline-secondary mt-2" data-signature-clear>Effacer</button>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label"><%= contract.full_name || subLabel %> — sous-traitant</label>
+        <div class="signature-pad-wrap" data-signature-pad>
+          <canvas class="signature-pad-canvas" aria-label="Signature sous-traitant"></canvas>
+          <input type="hidden" name="signature_subcontractor" value="<%= contract.signature_subcontractor || '' %>">
+          <button type="button" class="btn btn-sm btn-outline-secondary mt-2" data-signature-clear>Effacer</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <% if (contract.updated_at) { %>
+    <p class="text-muted small">Dernière modification : <%= formatTimestampFr(contract.updated_at) %></p>
+  <% } %>
+  <button type="submit" class="btn btn-primary btn-lg">Enregistrer le contrat</button>
+</form>
+
+<% if (typeof contractSavedInDb !== 'undefined' && contractSavedInDb) { %>
+  <form method="post" action="/events/<%= event.id %>/gestion/contrat/<%= subId %>/clear" class="no-print mb-4"
+        onsubmit="return confirm('Effacer ce contrat ? Toutes les données et signatures seront supprimées.');">
+    <button type="submit" class="btn btn-outline-danger">Effacer le contrat</button>
+  </form>
+<% } %>
+
+<div class="service-contract-print card border-0 shadow-sm no-print-preview">
+  <div class="card-body p-4 p-md-5">
+    <p class="text-muted small mb-3">Aperçu du contrat (enregistrez avant d'imprimer si vous venez de modifier).</p>
+    <%- include('service-contract-document', { event, contract, subcontractorLabel: subLabel }) %>
+  </div>
+</div>
+
+<script src="/js/signature-pad.js?v=1"></script>
+<script src="/js/contract-print.js"></script>

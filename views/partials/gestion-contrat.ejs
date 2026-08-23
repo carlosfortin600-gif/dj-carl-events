@@ -1,0 +1,30 @@
+<% const activeSub = typeof sousTraitant !== 'undefined' ? sousTraitant : 'mario'; %>
+<% let activeLabel = activeSub; %>
+<% subcontractors.forEach(function(s) { if (s.id === activeSub) activeLabel = s.label; }); %>
+
+<nav class="gestion-contrat-subnav nav nav-tabs flex-nowrap overflow-auto mb-2" aria-label="Sous-traitants">
+  <% subcontractors.forEach(function(st) { %>
+    <a class="nav-link <%= activeSub === st.id ? 'active' : '' %>"
+       href="/events/<%= event.id %>?tab=gestion&gestion=contrat&sousTraitant=<%= st.id %>"><%= st.label %></a>
+  <% }); %>
+</nav>
+
+<div class="d-flex flex-wrap gap-2 mb-4">
+  <% subcontractors.forEach(function(st) { %>
+    <a href="/gestion/calendrier/<%= st.id %>"
+       class="btn btn-sm <%= activeSub === st.id ? 'btn-primary' : 'btn-outline-secondary' %>">
+      Calendrier <%= st.label %>
+    </a>
+  <% }); %>
+</div>
+
+<%- include('gestion-contrat-form', {
+  event,
+  contract,
+  contractSaved,
+  contractCleared: typeof contractCleared !== 'undefined' ? contractCleared : false,
+  subcontractorId: activeSub,
+  subcontractorLabel: activeLabel,
+  contractSignLinks: typeof contractSignLinks !== 'undefined' ? contractSignLinks : null,
+  contractSavedInDb: typeof contractSavedInDb !== 'undefined' ? contractSavedInDb : false
+}) %>

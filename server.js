@@ -15,6 +15,7 @@ const {
   formatDateTimeFr,
   formatTimestampFr,
   formatDateRangeFr,
+  formatDateTimeRangeFr,
   endDatetimeLocalValue,
   statusLabel,
   statusBadgeClass,
@@ -96,8 +97,22 @@ const {
 } = require("./lib/music");
 const { getQuestionnaireMissing } = require("./lib/questionnaire-missing");
 const { getDjNotes, saveDjNotes } = require("./lib/dj-notes");
+const {
+  SUBCONTRACTORS,
+  getSubcontractorContract,
+  saveSubcontractorContract,
+  saveSubcontractorSignatureOnly,
+  ensureContractSignToken,
+  getContractBySignToken,
+  getContractSignLinks,
+  hasSubcontractorContract,
+  deleteSubcontractorContract,
+  datetimeLocalValue,
+  isValidSubcontractor,
+  getSubcontractorLabel
+} = require("./lib/subcontractor-contracts");
 const { buildSummarySheet } = require("./lib/summary-sheet");
-const { parseMonthParam, getCalendarData } = require("./lib/calendar");
+const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, queryString } = require("./lib/calendar");
 const { importDatabaseFromFile } = require("./lib/import-database");
 const {
   MAX_FILE_SIZE,
@@ -118,7 +133,12 @@ function eventRedirect(eventId, tab, params = {}) {
 }
 
 function gestionRedirect(eventId, params = {}) {
-  return eventRedirect(eventId, "gestion", params);
+  const gestion = params.gestion || "location";
+  const { sousTraitant, ...rest } = params;
+  const query = { tab: "gestion", gestion, ...rest };
+  if (sousTraitant) query.sousTraitant = sousTraitant;
+  const qs = new URLSearchParams(query).toString();
+  return `/events/${eventId}?${qs}`;
 }
 
 const app = express();
@@ -179,7 +199,9 @@ app.locals.formatTime = formatTime;
 app.locals.formatDateTimeFr = formatDateTimeFr;
 app.locals.formatTimestampFr = formatTimestampFr;
 app.locals.formatDateRangeFr = formatDateRangeFr;
+app.locals.formatDateTimeRangeFr = formatDateTimeRangeFr;
 app.locals.endDatetimeLocalValue = endDatetimeLocalValue;
+app.locals.datetimeLocalValue = datetimeLocalValue;
 app.locals.statusLabel = statusLabel;
 app.locals.statusBadgeClass = statusBadgeClass;
 app.locals.clientShortName = clientShortName;
@@ -211,6 +233,7 @@ app.locals.BINGO_MUSICAL_STYLE_OPTIONS = BINGO_MUSICAL_STYLE_OPTIONS;
 app.locals.isWeddingEvent = isWeddingEvent;
 app.locals.getQuestionnaireLabel = getQuestionnaireLabel;
 app.locals.formatFileSize = formatFileSize;
+app.locals.queryString = queryString;
 
 app.get("/api/health", (req, res) => {
   const tables = db
@@ -307,16 +330,46 @@ app.get("/", (req, res) => {
 
 app.get("/calendar", (req, res) => {
   const { year, month } = parseMonthParam(req.query.year, req.query.month);
-  const cal = getCalendarData(db, year, month);
-  const selectedDate = req.query.date || null;
-  const selectedEvents = selectedDate ? cal.byDate[selectedDate] || [] : [];
+  const cal = getCalendarViewData(db, {
+    view: req.query.view,
+    date: req.query.date,
+    year,
+    month,
+    includeDayGestion: true
+  });
 
   res.render("calendar", {
     title: "Calendrier — DJ CARL",
     activeNav: "calendar",
-    ...cal,
-    selectedDate,
-    selectedEvents
+    cal
+  });
+});
+
+app.get("/gestion/calendrier/:subcontractor", (req, res) => {
+  const subcontractorId = req.params.subcontractor;
+  if (!isValidSubcontractor(subcontractorId)) {
+    return res.status(404).render("error", {
+      title: "Page introuvable",
+      activeNav: "dashboard",
+      message: "Sous-traitant introuvable."
+    });
+  }
+
+  const { year, month } = parseMonthParam(req.query.year, req.query.month);
+  const cal = getSubcontractorCalendarData(db, subcontractorId, {
+    view: req.query.view,
+    date: req.query.date,
+    year,
+    month
+  });
+
+  res.render("subcontractor-calendar", {
+    title: `Calendrier ${getSubcontractorLabel(subcontractorId)} — DJ CARL`,
+    activeNav: "calendar",
+    subcontractorId,
+    subcontractorLabel: getSubcontractorLabel(subcontractorId),
+    subcontractors: SUBCONTRACTORS,
+    cal
   });
 });
 
@@ -431,6 +484,16 @@ app.get("/events/:id", (req, res) => {
   const { selectedServices, customServiceSlots } = splitServicesForForm(services);
   const summary = getEventSummary(db, event.id, event.event_type);
   const tab = req.query.tab || "resume";
+  const gestionSection =
+    tab === "gestion"
+      ? ["location", "contrat", "depart", "fichiers"].includes(req.query.gestion)
+        ? req.query.gestion
+        : "location"
+      : null;
+  const sousTraitant =
+    gestionSection === "contrat" && isValidSubcontractor(req.query.sousTraitant)
+      ? req.query.sousTraitant
+      : "mario";
   const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
   const portalToken = ensurePortalToken(db, event.id);
   const portalLinks = getPortalLinks(req, portalToken);
@@ -451,6 +514,20 @@ app.get("/events/:id", (req, res) => {
   });
   const missingQuestions = getQuestionnaireMissing(event.event_type, questionnaire.data);
   const eventFiles = getEventFiles(db, event.id);
+  let subcontractorContract =
+    gestionSection === "contrat"
+      ? getSubcontractorContract(db, event.id, sousTraitant)
+      : null;
+  let contractSignLinks = null;
+  let contractSavedInDb = false;
+  if (gestionSection === "contrat") {
+    contractSavedInDb = hasSubcontractorContract(db, event.id, sousTraitant);
+    if (contractSavedInDb) {
+      const signToken = ensureContractSignToken(db, event.id, sousTraitant);
+      if (signToken) contractSignLinks = getContractSignLinks(req, signToken);
+    }
+    subcontractorContract = getSubcontractorContract(db, event.id, sousTraitant);
+  }
 
   let timelineNeedsConfirm = false;
   let timelineExistingCount = 0;
@@ -496,7 +573,15 @@ app.get("/events/:id", (req, res) => {
     resumeSaved: req.query.resumeSaved === "1",
     filesUploaded: req.query.filesUploaded === "1",
     fileDeleted: req.query.fileDeleted === "1",
-    filesError: req.query.filesError || ""
+    filesError: req.query.filesError || "",
+    gestionSection,
+    sousTraitant,
+    subcontractors: SUBCONTRACTORS,
+    subcontractorContract,
+    contractSignLinks,
+    contractSavedInDb,
+    contractSaved: req.query.contractSaved === "1",
+    contractCleared: req.query.contractCleared === "1"
   });
 });
 
@@ -518,20 +603,20 @@ app.post("/events/:id/files/upload", (req, res) => {
         err.code === "LIMIT_FILE_SIZE"
           ? `Fichier trop volumineux (max ${formatFileSize(MAX_FILE_SIZE)}).`
           : "Téléversement impossible.";
-      return res.redirect(gestionRedirect(eventId, { filesError: message }));
+      return res.redirect(gestionRedirect(eventId, { gestion: "fichiers", filesError: message }));
     }
 
     const files = req.files || [];
     if (!files.length) {
-      return res.redirect(gestionRedirect(eventId, { filesError: "Choisissez au moins un fichier." }));
+      return res.redirect(gestionRedirect(eventId, { gestion: "fichiers", filesError: "Choisissez au moins un fichier." }));
     }
 
     try {
       saveUploadedFiles(db, eventId, files);
-      res.redirect(gestionRedirect(eventId, { filesUploaded: "1" }));
+      res.redirect(gestionRedirect(eventId, { gestion: "fichiers", filesUploaded: "1" }));
     } catch (uploadErr) {
       console.error(uploadErr);
-      res.redirect(gestionRedirect(eventId, { filesError: "Erreur lors de l'enregistrement." }));
+      res.redirect(gestionRedirect(eventId, { gestion: "fichiers", filesError: "Erreur lors de l'enregistrement." }));
     }
   });
 });
@@ -564,7 +649,7 @@ app.post("/events/:id/files/:fileId/delete", (req, res) => {
   }
 
   deleteEventFile(db, Number(req.params.fileId), eventId);
-  res.redirect(gestionRedirect(eventId, { fileDeleted: "1" }));
+  res.redirect(gestionRedirect(eventId, { gestion: "fichiers", fileDeleted: "1" }));
 });
 
 app.post("/events/:id/resume/save", (req, res) => {
@@ -793,7 +878,127 @@ app.post("/events/:id/notes/save", (req, res) => {
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
   saveDjNotes(db, eventId, req.body);
   const returnTab = req.body.return_tab === "gestion" ? "gestion" : "notes";
-  res.redirect(eventRedirect(eventId, returnTab, { notesSaved: "1" }));
+  const params = { notesSaved: "1" };
+  if (returnTab === "gestion") {
+    params.gestion = req.body.gestion_section || req.body.save_scope || "location";
+  }
+  res.redirect(eventRedirect(eventId, returnTab, params));
+});
+
+app.post("/events/:id/gestion/contrat/:subcontractor/save", (req, res) => {
+  const eventId = Number(req.params.id);
+  const subcontractor = req.params.subcontractor;
+  if (!getEventById(db, eventId)) return res.status(404).send("Not found");
+  if (!isValidSubcontractor(subcontractor)) return res.status(404).send("Not found");
+
+  saveSubcontractorContract(db, eventId, subcontractor, req.body);
+  res.redirect(
+    gestionRedirect(eventId, {
+      gestion: "contrat",
+      sousTraitant: subcontractor,
+      contractSaved: "1"
+    })
+  );
+});
+
+app.post("/events/:id/gestion/contrat/:subcontractor/clear", (req, res) => {
+  const eventId = Number(req.params.id);
+  const subcontractor = req.params.subcontractor;
+  if (!getEventById(db, eventId)) return res.status(404).send("Not found");
+  if (!isValidSubcontractor(subcontractor)) return res.status(404).send("Not found");
+
+  deleteSubcontractorContract(db, eventId, subcontractor);
+  res.redirect(
+    gestionRedirect(eventId, {
+      gestion: "contrat",
+      sousTraitant: subcontractor,
+      contractCleared: "1"
+    })
+  );
+});
+
+app.get("/signer/contrat/:token", (req, res) => {
+  const match = getContractBySignToken(db, req.params.token);
+  if (!match) {
+    return res.status(404).render("error", {
+      title: "Lien invalide",
+      activeNav: "dashboard",
+      message: "Ce lien de signature est invalide ou a expiré."
+    });
+  }
+
+  res.render("contract-signer", {
+    title: `Signature — ${match.subcontractorLabel}`,
+    event: match.event,
+    contract: match.contract,
+    subcontractorLabel: match.subcontractorLabel,
+    signToken: req.params.token,
+    signed: req.query.signed === "1"
+  });
+});
+
+app.post("/signer/contrat/:token", (req, res) => {
+  const match = getContractBySignToken(db, req.params.token);
+  if (!match) {
+    return res.status(404).render("error", {
+      title: "Lien invalide",
+      activeNav: "dashboard",
+      message: "Ce lien de signature est invalide ou a expiré."
+    });
+  }
+
+  if (!req.body.signature_subcontractor?.trim()) {
+    return res.redirect(`/signer/contrat/${req.params.token}?error=signature`);
+  }
+
+  saveSubcontractorSignatureOnly(
+    db,
+    match.eventId,
+    match.subcontractorId,
+    req.body.signature_subcontractor
+  );
+  res.redirect(`/signer/contrat/${req.params.token}?signed=1`);
+});
+
+app.get("/events/:id/gestion/contrat/:subcontractor/print", (req, res) => {
+  const eventId = Number(req.params.id);
+  const subcontractor = req.params.subcontractor;
+  const event = getEventById(db, eventId);
+  if (!event) return res.status(404).send("Not found");
+  if (!isValidSubcontractor(subcontractor)) return res.status(404).send("Not found");
+
+  const contract = getSubcontractorContract(db, eventId, subcontractor);
+  const subcontractorLabel =
+    SUBCONTRACTORS.find((s) => s.id === subcontractor)?.label || subcontractor;
+  const pagePath = `/events/${eventId}/gestion/contrat/${subcontractor}/print`;
+  const pageUrl = `${req.protocol}://${req.get("host")}${pagePath}`;
+  const backUrl = `/events/${eventId}?tab=gestion&gestion=contrat&sousTraitant=${subcontractor}`;
+  const downloadUrl = `${pagePath}?download=1`;
+  const title = `Contrat ${subcontractorLabel} — ${clientShortName(event)}`;
+
+  if (req.query.download === "1") {
+    const safeName = clientShortName(event).replace(/[^\w\-]+/g, "-").replace(/-+/g, "-");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="contrat-${subcontractor}-${safeName}.html"`
+    );
+    return res.render("contract-download", {
+      title,
+      event,
+      contract,
+      subcontractorLabel: subcontractorLabel
+    });
+  }
+
+  res.render("contract-print", {
+    title,
+    event,
+    contract,
+    subcontractorLabel,
+    pageUrl,
+    backUrl,
+    downloadUrl
+  });
 });
 
 app.post("/events/:id/status", (req, res) => {

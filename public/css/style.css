@@ -256,6 +256,79 @@ table tr.q-field-missing td:first-child {
   border-left: 4px solid #0d6efd;
 }
 
+.gestion-subnav .nav-link,
+.gestion-contrat-subnav .nav-link {
+  font-weight: 500;
+}
+
+.service-contract-print {
+  background: #fff;
+}
+
+.service-contract-table th {
+  width: 11rem;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.service-contract-body {
+  white-space: pre-wrap;
+}
+
+.service-contract-signature-line {
+  border-bottom: 1px solid #333;
+  height: 2rem;
+}
+
+.service-contract-signature-img {
+  display: block;
+  max-width: 100%;
+  max-height: 5rem;
+  object-fit: contain;
+}
+
+.signature-pad-wrap {
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  background: #fff;
+}
+
+.signature-pad-canvas {
+  display: block;
+  width: 100%;
+  height: 7rem;
+  touch-action: none;
+  cursor: crosshair;
+  background: #fff;
+}
+
+.contract-print-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.contract-print-copy {
+  flex: 1 1 16rem;
+  max-width: 28rem;
+}
+
+@media print {
+  .gestion-subnav,
+  .gestion-contrat-subnav,
+  .no-print,
+  .contract-print-toolbar {
+    display: none !important;
+  }
+
+  .service-contract-print {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
+
 .date-fr-picker,
 .datetime-fr-picker {
   position: relative;
@@ -478,6 +551,156 @@ table tr.q-field-missing td:first-child {
 .calendar-more {
   font-size: 0.65rem;
   color: #6c757d;
+}
+
+.calendar-week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-day-gestion-room-none {
+  border-left: 4px solid #adb5bd;
+}
+
+.calendar-week-col {
+  min-height: 10rem;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 8px;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.calendar-week-col.has-events {
+  background: rgba(13, 202, 240, 0.04);
+}
+
+.calendar-week-col-head:hover {
+  color: var(--dj-accent);
+}
+
+.calendar-week-col-gestion {
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px dashed #e9ecef;
+}
+
+.calendar-gestion-block-compact .calendar-gestion-block-title {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.03em;
+  margin-top: 0.35rem;
+}
+
+.calendar-gestion-summary-compact {
+  line-height: 1.25;
+}
+
+.btn-xs-compact {
+  --bs-btn-padding-y: 0.1rem;
+  --bs-btn-padding-x: 0.35rem;
+  --bs-btn-font-size: 0.7rem;
+}
+
+.calendar-week-col.is-today {
+  border-color: var(--dj-accent);
+  box-shadow: 0 0 0 2px rgba(13, 202, 240, 0.2);
+}
+
+.calendar-week-col-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #eee;
+}
+
+.calendar-week-col-weekday {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+}
+
+.calendar-week-col-day {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.calendar-week-col-events {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.calendar-events-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.calendar-event-card {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  background: #fff;
+}
+
+.calendar-week-event.calendar-event-card {
+  padding: 0.5rem 0.65rem;
+}
+
+.calendar-week-event {
+  border-left-width: 4px;
+  border-left-style: solid;
+}
+
+.calendar-week-event-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.calendar-day-event,
+.calendar-week-event {
+  border-left-color: #dee2e6;
+}
+
+.calendar-day-event {
+  border-left-width: 4px;
+  border-left-style: solid;
+}
+
+.calendar-day-gestion-trailer {
+  border-left: 4px solid #0d6efd;
+}
+
+.calendar-day-gestion-room {
+  border-left: 4px solid #198754;
+}
+
+.calendar-day-gestion-contrat {
+  border-left: 4px solid #6610f2;
+}
+.status-border-a_completer { border-left-color: #ffc107 !important; }
+.status-border-en_preparation { border-left-color: #0dcaf0 !important; }
+.status-border-pret { border-left-color: #198754 !important; }
+.status-border-termine { border-left-color: #6c757d !important; }
+
+@media (max-width: 768px) {
+  .calendar-week-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-week-col {
+    min-height: auto;
+  }
 }
 
 .legend-dot {
