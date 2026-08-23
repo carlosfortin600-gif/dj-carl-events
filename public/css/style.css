@@ -685,6 +685,39 @@ table tr.q-field-missing td:first-child {
   border-left: 4px solid #198754;
 }
 
+.calendar-agreement-summary {
+  padding: 0.4rem 0.5rem;
+  border-left: 3px solid #6610f2;
+  background: rgba(102, 16, 242, 0.05);
+  border-radius: 0 6px 6px 0;
+}
+
+.calendar-agreement-summary-text {
+  line-height: 1.35;
+}
+
+.calendar-week-event .calendar-agreement-summary {
+  margin-top: 0.35rem;
+  padding: 0.3rem 0.4rem;
+}
+
+.calendar-week-event .calendar-agreement-summary-text {
+  font-size: 0.7rem;
+  margin-bottom: 0.25rem !important;
+}
+
+.calendar-week-event .calendar-agreement-summary .badge {
+  font-size: 0.6rem;
+}
+
+.calendar-ententes-item {
+  padding: 0.85rem 1rem;
+}
+
+.calendar-ententes-list .calendar-agreement-summary {
+  margin-top: 0.5rem;
+}
+
 .calendar-day-gestion-contrat {
   border-left: 4px solid #6610f2;
 }

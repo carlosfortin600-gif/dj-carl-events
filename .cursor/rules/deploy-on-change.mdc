@@ -1,0 +1,22 @@
+---
+description: Publier sur le web après chaque modification du projet events
+alwaysApply: true
+---
+
+# DJ Carl Events — déploiement automatique
+
+Après **chaque modification** de code dans `events/`, publier sur le web :
+
+1. `git add` des fichiers pertinents (pas de secrets `.env`)
+2. `git commit` avec un message clair en français ou anglais
+3. `git push origin main` vers `https://github.com/carlosfortin600-gif/dj-carl-events.git`
+
+Render redéploie automatiquement depuis `main` → **https://dj-carl-events.onrender.com**
+
+Si le push échoue (auth GitHub), indiquer à l'utilisateur la commande exacte à lancer localement :
+
+```bash
+cd events && git push origin main
+```
+
+Vérifier que `PUBLIC_URL=https://dj-carl-events.onrender.com` est défini sur Render (liens portail, contrats, calendriers sous-traitants).

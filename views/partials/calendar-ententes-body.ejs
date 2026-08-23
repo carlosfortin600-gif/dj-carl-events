@@ -1,0 +1,33 @@
+<% const list = agreementsList || []; %>
+
+<% if (!list.length) { %>
+  <p class="text-muted text-center py-4 mb-0">Aucun événement planifié.</p>
+<% } else { %>
+  <div class="calendar-ententes-list">
+    <% list.forEach(function(ev) { %>
+      <div class="calendar-event-card calendar-ententes-item status-border-<%= ev.status %> mb-3">
+        <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap mb-2">
+          <div>
+            <div class="fw-semibold"><%= formatDateFr(ev.event_date) %><% if (ev.start_time) { %> · <%= formatTime(ev.start_time) %><% } %></div>
+            <div class="text-muted small">
+              <%= ev.event_type %><% if (ev.venue) { %> · <%= ev.venue %><% } %>
+            </div>
+          </div>
+          <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
+        </div>
+
+        <%- include('calendar-agreement-summary', { ev, showAgreementSummary: true }) %>
+
+        <% if (typeof publicCalendarMode === 'undefined' || !publicCalendarMode) { %>
+          <div class="d-flex gap-2 mt-2 flex-wrap">
+            <% if (showContractLink && ev.contractUrl) { %>
+              <a href="<%= ev.contractUrl %>" class="btn btn-primary btn-sm">Contrat <%= subcontractorLabel %></a>
+            <% } %>
+            <a href="/events/<%= ev.id %>?tab=gestion" class="btn btn-outline-primary btn-sm">Gestion</a>
+            <a href="/events/<%= ev.id %>" class="btn btn-outline-secondary btn-sm">Ouvrir</a>
+          </div>
+        <% } %>
+      </div>
+    <% }); %>
+  </div>
+<% } %>

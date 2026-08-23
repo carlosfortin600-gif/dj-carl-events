@@ -15,6 +15,7 @@
               <% if (ev.start_time) { %> · <%= formatTime(ev.start_time) %><% } %>
               <% if (ev.venue) { %> · <%= ev.venue %><% } %>
             </div>
+            <%- include('calendar-agreement-summary', { ev, showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false }) %>
             <div class="d-flex gap-2 mt-2 flex-wrap">
               <% if (showContractLink && ev.contractUrl) { %>
                 <a href="<%= ev.contractUrl %>" class="btn btn-primary btn-sm">Contrat <%= subcontractorLabel %></a>
