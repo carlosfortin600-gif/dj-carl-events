@@ -18,6 +18,14 @@
     <a class="nav-link" href="/calendar?view=<%= cal.view %>&date=<%= cal.anchorDate %>">Calendrier général</a>
   </nav>
 
+  <% if (typeof calendarShareLinks !== 'undefined' && calendarShareLinks) { %>
+    <%- include('partials/subcontractor-calendar-link', {
+      subcontractorId,
+      subcontractorLabel,
+      calendarShareLinks
+    }) %>
+  <% } %>
+
   <%- include('partials/calendar-views', Object.assign({
     calendarBasePath: '/gestion/calendrier/' + subcontractorId,
     showContractLink: true,
@@ -26,3 +34,4 @@
 </main>
 
 <%- include('partials/footer') %>
+<script src="/js/contract-print.js"></script>

@@ -18,6 +18,14 @@
   <% }); %>
 </div>
 
+<% if (activeSub && typeof calendarShareLinks !== 'undefined' && calendarShareLinks) { %>
+  <%- include('partials/subcontractor-calendar-link', {
+    subcontractorId: activeSub,
+    subcontractorLabel: activeLabel,
+    calendarShareLinks
+  }) %>
+<% } %>
+
 <%- include('gestion-contrat-form', {
   event,
   contract,
@@ -26,5 +34,6 @@
   subcontractorId: activeSub,
   subcontractorLabel: activeLabel,
   contractSignLinks: typeof contractSignLinks !== 'undefined' ? contractSignLinks : null,
-  contractSavedInDb: typeof contractSavedInDb !== 'undefined' ? contractSavedInDb : false
+  contractSavedInDb: typeof contractSavedInDb !== 'undefined' ? contractSavedInDb : false,
+  calendarShareLinks: typeof calendarShareLinks !== 'undefined' ? calendarShareLinks : null
 }) %>

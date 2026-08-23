@@ -111,7 +111,12 @@ const {
   isValidSubcontractor,
   getSubcontractorLabel
 } = require("./lib/subcontractor-contracts");
-const { buildSummarySheet } = require("./lib/summary-sheet");
+const {
+  ensureSubcontractorCalendarToken,
+  getSubcontractorByCalendarToken,
+  getSubcontractorCalendarLinks,
+  getAllSubcontractorCalendarLinks
+} = require("./lib/subcontractor-calendar-access");
 const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, queryString } = require("./lib/calendar");
 const { importDatabaseFromFile } = require("./lib/import-database");
 const {
@@ -341,7 +346,8 @@ app.get("/calendar", (req, res) => {
   res.render("calendar", {
     title: "Calendrier — DJ CARL",
     activeNav: "calendar",
-    cal
+    cal,
+    subcontractorCalendarLinks: getAllSubcontractorCalendarLinks(db, req)
   });
 });
 
@@ -362,6 +368,8 @@ app.get("/gestion/calendrier/:subcontractor", (req, res) => {
     year,
     month
   });
+  const calendarToken = ensureSubcontractorCalendarToken(db, subcontractorId);
+  const calendarShareLinks = getSubcontractorCalendarLinks(req, calendarToken);
 
   res.render("subcontractor-calendar", {
     title: `Calendrier ${getSubcontractorLabel(subcontractorId)} — DJ CARL`,
@@ -369,6 +377,33 @@ app.get("/gestion/calendrier/:subcontractor", (req, res) => {
     subcontractorId,
     subcontractorLabel: getSubcontractorLabel(subcontractorId),
     subcontractors: SUBCONTRACTORS,
+    calendarShareLinks,
+    cal
+  });
+});
+
+app.get("/calendrier/:token", (req, res) => {
+  const match = getSubcontractorByCalendarToken(db, req.params.token);
+  if (!match) {
+    return res.status(404).render("error", {
+      title: "Lien invalide",
+      activeNav: "dashboard",
+      message: "Ce lien de calendrier est invalide."
+    });
+  }
+
+  const { year, month } = parseMonthParam(req.query.year, req.query.month);
+  const cal = getSubcontractorCalendarData(db, match.subcontractorId, {
+    view: req.query.view,
+    date: req.query.date,
+    year,
+    month
+  });
+
+  res.render("subcontractor-calendar-public", {
+    title: `Calendrier ${match.subcontractorLabel} — DJ Carl`,
+    subcontractorLabel: match.subcontractorLabel,
+    calendarToken: req.params.token,
     cal
   });
 });
@@ -520,12 +555,15 @@ app.get("/events/:id", (req, res) => {
       : null;
   let contractSignLinks = null;
   let contractSavedInDb = false;
+  let calendarShareLinks = null;
   if (gestionSection === "contrat") {
     contractSavedInDb = hasSubcontractorContract(db, event.id, sousTraitant);
     if (contractSavedInDb) {
       const signToken = ensureContractSignToken(db, event.id, sousTraitant);
       if (signToken) contractSignLinks = getContractSignLinks(req, signToken);
     }
+    const calendarToken = ensureSubcontractorCalendarToken(db, sousTraitant);
+    calendarShareLinks = getSubcontractorCalendarLinks(req, calendarToken);
     subcontractorContract = getSubcontractorContract(db, event.id, sousTraitant);
   }
 
@@ -580,6 +618,7 @@ app.get("/events/:id", (req, res) => {
     subcontractorContract,
     contractSignLinks,
     contractSavedInDb,
+    calendarShareLinks,
     contractSaved: req.query.contractSaved === "1",
     contractCleared: req.query.contractCleared === "1"
   });

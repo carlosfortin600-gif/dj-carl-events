@@ -1,0 +1,33 @@
+<div class="card border-primary mb-4">
+  <div class="card-header bg-primary text-white py-3">
+    <h2 class="h6 mb-0">Lien calendrier — <%= subcontractorLabel %></h2>
+  </div>
+  <div class="card-body">
+    <p class="text-muted small mb-3">
+      Envoyez ce lien à <strong><%= subcontractorLabel %></strong> par texto ou courriel pour qu'il consulte
+      son calendrier (événements et contrats) sans accéder à votre tableau de bord.
+      <% if (calendarShareLinks.lan) { %>
+        Sur le même Wi‑Fi, utilisez le <strong>lien réseau local</strong> pour les téléphones.
+      <% } %>
+    </p>
+
+    <label class="form-label small fw-semibold">Lien à partager</label>
+    <div class="input-group mb-2">
+      <input type="text" class="form-control font-monospace small" id="calendarShareLinkPrimary" readonly value="<%= calendarShareLinks.primary %>">
+      <button type="button" class="btn btn-outline-primary" data-copy-target="calendarShareLinkPrimary">Copier</button>
+    </div>
+
+    <% if (calendarShareLinks.lan) { %>
+      <label class="form-label small fw-semibold mt-3">Lien réseau local (téléphones)</label>
+      <div class="input-group mb-2">
+        <input type="text" class="form-control font-monospace small" id="calendarShareLinkLan" readonly value="<%= calendarShareLinks.lan %>">
+        <button type="button" class="btn btn-outline-secondary" data-copy-target="calendarShareLinkLan">Copier</button>
+      </div>
+    <% } %>
+
+    <div class="d-flex flex-wrap gap-2 mt-3">
+      <a href="<%= calendarShareLinks.primary %>" target="_blank" rel="noopener" class="btn btn-sm btn-primary">Ouvrir le calendrier</a>
+      <a href="/gestion/calendrier/<%= subcontractorId %>" class="btn btn-sm btn-outline-secondary">Vue console</a>
+    </div>
+  </div>
+</div>

@@ -9,6 +9,30 @@
     <h1 class="h3 mb-0">Calendrier</h1>
   </div>
 
+  <% if (typeof subcontractorCalendarLinks !== 'undefined' && subcontractorCalendarLinks) { %>
+    <div class="card border-primary mb-4">
+      <div class="card-header bg-primary text-white py-3">
+        <h2 class="h6 mb-0">Liens calendrier sous-traitants</h2>
+      </div>
+      <div class="card-body">
+        <p class="text-muted small mb-3">Partagez le lien personnel de chaque sous-traitant pour son calendrier.</p>
+        <% subcontractorCalendarLinks.forEach(function(entry, idx) { %>
+          <div class="mb-3 <%= idx < subcontractorCalendarLinks.length - 1 ? 'pb-3 border-bottom' : '' %>">
+            <label class="form-label small fw-semibold mb-1">Calendrier <%= entry.label %></label>
+            <div class="input-group input-group-sm mb-2">
+              <input type="text" class="form-control font-monospace small" id="subCalLink-<%= entry.id %>" readonly value="<%= entry.links.primary %>">
+              <button type="button" class="btn btn-outline-primary" data-copy-target="subCalLink-<%= entry.id %>">Copier</button>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+              <a href="<%= entry.hostPath %>" class="btn btn-sm btn-outline-secondary">Console <%= entry.label %></a>
+              <a href="<%= entry.links.primary %>" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">Ouvrir lien</a>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  <% } %>
+
   <%- include('partials/calendar-views', {
     calendarBasePath: '/calendar',
     showContractLink: false,
@@ -18,3 +42,4 @@
 </main>
 
 <%- include('partials/footer') %>
+<script src="/js/contract-print.js"></script>

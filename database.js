@@ -333,6 +333,18 @@ function migrate(db) {
     )
   `);
 
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS subcontractor_calendar_tokens (
+      subcontractor_id TEXT PRIMARY KEY,
+      access_token TEXT NOT NULL UNIQUE,
+      created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+    )
+  `);
+  db.exec(`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_subcontractor_calendar_token
+    ON subcontractor_calendar_tokens(access_token)
+  `);
+
   const timelineReordered = db
     .prepare("SELECT value FROM app_meta WHERE key = 'timeline_reordered_by_time'")
     .get();

@@ -20,7 +20,9 @@
               <div class="calendar-week-event-meta small text-muted">
                 <% if (ev.start_time) { %><%= formatTime(ev.start_time) %> · <% } %><%= ev.event_type %>
               </div>
-              <a href="/events/<%= ev.id %>?tab=gestion" class="btn btn-outline-primary btn-sm mt-1 btn-xs-compact">Gestion</a>
+              <% if (typeof publicCalendarMode === 'undefined' || !publicCalendarMode) { %>
+                <a href="/events/<%= ev.id %>?tab=gestion" class="btn btn-outline-primary btn-sm mt-1 btn-xs-compact">Gestion</a>
+              <% } %>
             </div>
           <% }); %>
         <% } %>
