@@ -638,3 +638,47 @@ initQuestionnaireMissingHighlight();
     syncCheckbox();
   });
 })();
+
+(function initClientPlanSteps() {
+  const container = document.getElementById("clientPlanSteps");
+  const template = document.getElementById("clientPlanStepTemplate");
+  const addBtn = document.getElementById("addClientPlanStep");
+  if (!container || !template || !addBtn) return;
+
+  function reindexClientPlanRows() {
+    container.querySelectorAll(".client-plan-row").forEach((row, index) => {
+      row.querySelector(".client-plan-time")?.setAttribute("name", `client_plan_time_${index}`);
+      row.querySelector(".client-plan-title")?.setAttribute("name", `client_plan_title_${index}`);
+      row.querySelector(".client-plan-desc")?.setAttribute("name", `client_plan_desc_${index}`);
+    });
+  }
+
+  function bindRemoveButton(row) {
+    row.querySelector(".client-plan-remove")?.addEventListener("click", () => {
+      row.remove();
+      reindexClientPlanRows();
+    });
+  }
+
+  container.querySelectorAll(".client-plan-row").forEach(bindRemoveButton);
+
+  addBtn.addEventListener("click", () => {
+    const fragment = template.content.cloneNode(true);
+    const row = fragment.querySelector(".client-plan-row");
+    container.appendChild(fragment);
+    bindRemoveButton(row);
+    reindexClientPlanRows();
+    row.querySelector(".client-plan-title")?.focus();
+  });
+
+  reindexClientPlanRows();
+})();
+
+(function initPortalHashScroll() {
+  if (!location.hash) return;
+  const target = document.querySelector(location.hash);
+  if (!target) return;
+  requestAnimationFrame(() => {
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+})();

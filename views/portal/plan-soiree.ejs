@@ -1,0 +1,35 @@
+<%- include('partials/head', { title }) %>
+
+<main class="container pb-5" style="max-width: 900px;">
+  <div class="mb-3">
+    <a href="/portal/<%= event.portal_token %>" class="btn btn-outline-secondary btn-sm">← Retour</a>
+  </div>
+
+  <% if (saved) { %>
+    <div class="alert alert-success">Merci ! Votre plan de soirée a été enregistré.</div>
+  <% } %>
+
+  <div class="card mb-4">
+    <div class="card-body p-4">
+      <h1 class="h4 mb-1">Plan de soirée</h1>
+      <p class="text-muted mb-0"><%= clientShortName(event) %> — <%= formatDateFr(event.event_date) %></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-4">
+      <form method="post" action="/portal/<%= event.portal_token %>/plan-soiree" id="planSoireeForm" data-unsaved-guard>
+        <%- include('../partials/portal-plan-soiree-fields', {
+          q: questionnaire.data,
+          proposedTimelineSteps,
+          timelineItems
+        }) %>
+        <div class="sticky-save-bar mt-4">
+          <button type="submit" class="btn btn-primary btn-lg">Enregistrer mon plan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

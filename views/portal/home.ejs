@@ -23,11 +23,22 @@
           <div>
             <strong>Questionnaire mariage</strong>
             <div class="small text-muted">
-              <%= summary.questionnaireComplete ? 'Complété — questionnaire et plan de soirée modifiables' : 'Questionnaire et plan de soirée à remplir' %>
+              <%= summary.questionnaireComplete ? 'Complété — modifiable à tout moment' : 'Informations générales, musique, animation…' %>
             </div>
           </div>
           <a href="/portal/<%= event.portal_token %>/questionnaire" class="btn btn-primary">
             <%= summary.questionnaireComplete ? 'Modifier' : 'Commencer' %>
+          </a>
+        </div>
+        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task mt-3">
+          <div>
+            <strong>Plan de soirée</strong>
+            <div class="small text-muted">
+              Choisissez vos moments, heures et étapes personnalisées
+            </div>
+          </div>
+          <a href="/portal/<%= event.portal_token %>/plan-soiree" class="btn btn-outline-primary">
+            Choisir mon plan
           </a>
         </div>
       <% } else { %>
@@ -40,6 +51,17 @@
           </div>
           <a href="/portal/<%= event.portal_token %>/questionnaire" class="btn btn-primary">
             <%= summary.questionnaireComplete ? 'Modifier' : 'Commencer' %>
+          </a>
+        </div>
+        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task mt-3">
+          <div>
+            <strong>Plan de soirée</strong>
+            <div class="small text-muted">
+              Choisissez vos moments, heures et étapes personnalisées
+            </div>
+          </div>
+          <a href="/portal/<%= event.portal_token %>/plan-soiree" class="btn btn-outline-primary">
+            Choisir mon plan
           </a>
         </div>
       <% } %>

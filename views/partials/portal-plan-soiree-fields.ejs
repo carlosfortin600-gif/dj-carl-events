@@ -1,0 +1,123 @@
+<% const steps = typeof proposedTimelineSteps !== 'undefined' ? proposedTimelineSteps : []; %>
+<% const timeline = typeof timelineItems !== 'undefined' ? timelineItems : []; %>
+<% const moments = q.important_moments || []; %>
+<% const clientSteps = (q.client_plan && q.client_plan.steps) ? q.client_plan.steps : []; %>
+
+<p class="text-muted small">
+  Choisissez les moments importants de votre soirée, ajoutez vos propres étapes, puis enregistrez.
+  DJ Carl s'en sert pour bâtir le déroulement.
+</p>
+
+<% if (steps.length) { %>
+  <div class="card border-info mb-4">
+    <div class="card-body py-3">
+      <h3 class="h6 mb-2">Aperçu selon le questionnaire</h3>
+      <ul class="small mb-0 ps-3">
+        <% steps.forEach(function(step) { %>
+          <li class="mb-1">
+            <strong><%= step.time ? formatTime(step.time) : '—' %></strong>
+            — <%= step.title %>
+            <% if (step.description) { %><span class="text-muted"> · <%= step.description %></span><% } %>
+          </li>
+        <% }); %>
+      </ul>
+      <p class="text-muted small mb-0 mt-2">Complétez aussi le questionnaire pour enrichir cet aperçu.</p>
+    </div>
+  </div>
+<% } %>
+
+<% if (timeline.length) { %>
+  <div class="card mb-4">
+    <div class="card-body py-3">
+      <h3 class="h6 mb-2">Plan en cours (DJ Carl)</h3>
+      <ul class="small mb-0 ps-3">
+        <% timeline.forEach(function(item) { %>
+          <li class="mb-1">
+            <strong><%= item.time ? formatTime(item.time) : '—' %></strong>
+            — <%= item.title %>
+            <% if (item.description) { %><span class="text-muted"> · <%= item.description %></span><% } %>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+  </div>
+<% } %>
+
+<h3 class="h6 mb-3">Vos étapes personnalisées</h3>
+<p class="text-muted small">Ajoutez les moments que vous souhaitez voir dans le plan (heure approximative, titre, détails).</p>
+
+<div id="clientPlanSteps" class="mb-3">
+  <% clientSteps.forEach(function(step, index) { %>
+    <div class="row g-2 mb-2 client-plan-row align-items-center">
+      <div class="col-6 col-md-2">
+        <label class="form-label small mb-0 d-md-none">Heure</label>
+        <input type="time" class="form-control form-control-sm client-plan-time" name="client_plan_time_<%= index %>" value="<%= step.time %>">
+      </div>
+      <div class="col-6 col-md-4">
+        <label class="form-label small mb-0 d-md-none">Titre</label>
+        <input type="text" class="form-control form-control-sm client-plan-title" name="client_plan_title_<%= index %>" value="<%= step.title %>" placeholder="Ex. Entrée des invités">
+      </div>
+      <div class="col-10 col-md-5">
+        <label class="form-label small mb-0 d-md-none">Détails</label>
+        <input type="text" class="form-control form-control-sm client-plan-desc" name="client_plan_desc_<%= index %>" value="<%= step.description %>" placeholder="Précisions (optionnel)">
+      </div>
+      <div class="col-2 col-md-1 text-end">
+        <button type="button" class="btn btn-sm btn-outline-danger client-plan-remove" title="Retirer">×</button>
+      </div>
+    </div>
+  <% }); %>
+</div>
+
+<button type="button" class="btn btn-sm btn-outline-primary mb-4" id="addClientPlanStep">+ Ajouter une étape</button>
+
+<h3 class="h6 mb-3">Moments à préciser</h3>
+<div class="table-responsive">
+  <table class="table table-sm align-middle">
+    <thead>
+      <tr>
+        <th>Moment</th>
+        <th>Actif</th>
+        <th>Heure approx.</th>
+        <th>Chanson</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% moments.forEach(function(m) { %>
+        <tr>
+          <td><%= m.label %></td>
+          <td>
+            <select class="form-select form-select-sm" name="moment_<%= m.key %>_active">
+              <option value="" <%= !m.active ? 'selected' : '' %>>—</option>
+              <option value="yes" <%= m.active === 'yes' ? 'selected' : '' %>>Oui</option>
+              <option value="no" <%= m.active === 'no' ? 'selected' : '' %>>Non</option>
+            </select>
+          </td>
+          <td><input type="time" class="form-control form-control-sm" name="moment_<%= m.key %>_time" value="<%= m.time %>"></td>
+          <td><input type="text" class="form-control form-control-sm" name="moment_<%= m.key %>_song" value="<%= m.song %>"></td>
+          <td><input type="text" class="form-control form-control-sm" name="moment_<%= m.key %>_notes" value="<%= m.notes %>"></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<template id="clientPlanStepTemplate">
+  <div class="row g-2 mb-2 client-plan-row align-items-center">
+    <div class="col-6 col-md-2">
+      <label class="form-label small mb-0 d-md-none">Heure</label>
+      <input type="time" class="form-control form-control-sm client-plan-time" data-name="client_plan_time">
+    </div>
+    <div class="col-6 col-md-4">
+      <label class="form-label small mb-0 d-md-none">Titre</label>
+      <input type="text" class="form-control form-control-sm client-plan-title" data-name="client_plan_title" placeholder="Ex. Entrée des invités">
+    </div>
+    <div class="col-10 col-md-5">
+      <label class="form-label small mb-0 d-md-none">Détails</label>
+      <input type="text" class="form-control form-control-sm client-plan-desc" data-name="client_plan_desc" placeholder="Précisions (optionnel)">
+    </div>
+    <div class="col-2 col-md-1 text-end">
+      <button type="button" class="btn btn-sm btn-outline-danger client-plan-remove" title="Retirer">×</button>
+    </div>
+  </div>
+</template>

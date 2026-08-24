@@ -118,6 +118,7 @@ const {
   getAllSubcontractorCalendarLinks
 } = require("./lib/subcontractor-calendar-access");
 const { buildSummarySheet } = require("./lib/summary-sheet");
+const { applyPlanSoireeFromBody } = require("./lib/plan-soiree");
 const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, queryString } = require("./lib/calendar");
 const { importDatabaseFromFile } = require("./lib/import-database");
 const {
@@ -834,6 +835,54 @@ app.post("/portal/:token/questionnaire", (req, res) => {
   } catch (err) {
     console.error(err);
     res.redirect(`/portal/${req.params.token}/questionnaire`);
+  }
+});
+
+app.get("/portal/:token/plan-soiree", (req, res) => {
+  const event = getEventByPortalToken(db, req.params.token);
+  if (!event) {
+    return res.status(404).render("portal/error", {
+      title: "Lien invalide",
+      message: "Ce lien n'est plus valide ou a été désactivé."
+    });
+  }
+
+  touchPortalAccess(db, event.id);
+  const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
+  const proposedTimelineSteps = buildStepsFromQuestionnaire(
+    questionnaire.data,
+    event.event_type
+  );
+  const timelineItems = getTimelineItems(db, event.id);
+
+  res.render("portal/plan-soiree", {
+    title: `Plan de soirée — ${clientShortName(event)}`,
+    event,
+    questionnaire,
+    proposedTimelineSteps,
+    timelineItems,
+    saved: req.query.saved === "1"
+  });
+});
+
+app.post("/portal/:token/plan-soiree", (req, res) => {
+  const event = getEventByPortalToken(db, req.params.token);
+  if (!event) {
+    return res.status(404).render("portal/error", {
+      title: "Lien invalide",
+      message: "Ce lien n'est plus valide ou a été désactivé."
+    });
+  }
+
+  try {
+    const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
+    const data = { ...questionnaire.data };
+    applyPlanSoireeFromBody(data, req.body, event.event_type);
+    saveQuestionnaireForEvent(db, event.id, event.event_type, data);
+    res.redirect(`/portal/${req.params.token}/plan-soiree?saved=1`);
+  } catch (err) {
+    console.error(err);
+    res.redirect(`/portal/${req.params.token}/plan-soiree`);
   }
 });
 

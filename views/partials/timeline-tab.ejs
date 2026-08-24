@@ -41,6 +41,24 @@
   </div>
 </div>
 
+<% const clientPlanSteps = (questionnaire && questionnaire.data && questionnaire.data.client_plan && questionnaire.data.client_plan.steps) ? questionnaire.data.client_plan.steps : []; %>
+<% if (clientPlanSteps.length) { %>
+  <div class="card mb-4 border-primary">
+    <div class="card-body py-3">
+      <h3 class="h6 mb-2">Plan proposé par le client</h3>
+      <ul class="small mb-0 ps-3">
+        <% clientPlanSteps.forEach(function(step) { %>
+          <li>
+            <strong><%= step.time ? formatTime(step.time) : '—' %></strong>
+            — <%= step.title %>
+            <% if (step.description) { %><span class="text-muted"> · <%= step.description %></span><% } %>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+  </div>
+<% } %>
+
 <div class="d-flex flex-wrap gap-2 mb-4">
   <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addTimelineForm">
     + Ajouter une étape

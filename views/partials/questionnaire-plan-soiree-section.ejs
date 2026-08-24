@@ -1,82 +1,8 @@
-<% const steps = typeof proposedTimelineSteps !== 'undefined' ? proposedTimelineSteps : []; %>
-<% const timeline = typeof timelineItems !== 'undefined' ? timelineItems : []; %>
-<% const moments = q.important_moments || []; %>
-
 <section class="q-section mb-4" id="plan-soiree">
   <h2 class="h5 q-section-title">Plan de soirée</h2>
-  <p class="text-muted small">
-    Indiquez les heures dans les sections ci-dessus (cérémonie, entrée, souper, party…), puis précisez les moments importants ci-dessous.
-    DJ Carl s'en sert pour bâtir le déroulement de votre soirée.
-  </p>
-
-  <% if (steps.length) { %>
-    <div class="card border-info mb-4">
-      <div class="card-body py-3">
-        <h3 class="h6 mb-2">Aperçu selon vos réponses</h3>
-        <ul class="small mb-0 ps-3">
-          <% steps.forEach(function(step) { %>
-            <li class="mb-1">
-              <strong><%= step.time ? formatTime(step.time) : '—' %></strong>
-              — <%= step.title %>
-              <% if (step.description) { %><span class="text-muted"> · <%= step.description %></span><% } %>
-            </li>
-          <% }); %>
-        </ul>
-        <p class="text-muted small mb-0 mt-2">Enregistrez le questionnaire pour mettre à jour cet aperçu.</p>
-      </div>
-    </div>
-  <% } else if (typeof questionnaire !== 'undefined' && questionnaire.updated_at) { %>
-    <div class="alert alert-light border small mb-4">
-      Remplissez les heures (entrée, souper, première danse, etc.) puis enregistrez — l'aperçu du plan apparaîtra ici.
-    </div>
-  <% } %>
-
-  <% if (timeline.length) { %>
-    <div class="card mb-4">
-      <div class="card-body py-3">
-        <h3 class="h6 mb-2">Plan en cours (DJ Carl)</h3>
-        <ul class="small mb-0 ps-3">
-          <% timeline.forEach(function(item) { %>
-            <li class="mb-1">
-              <strong><%= item.time ? formatTime(item.time) : '—' %></strong>
-              — <%= item.title %>
-              <% if (item.description) { %><span class="text-muted"> · <%= item.description %></span><% } %>
-            </li>
-          <% }); %>
-        </ul>
-      </div>
-    </div>
-  <% } %>
-
-  <h3 class="h6 mb-3">Moments à préciser</h3>
-  <div class="table-responsive">
-    <table class="table table-sm align-middle">
-      <thead>
-        <tr>
-          <th>Moment</th>
-          <th>Actif</th>
-          <th>Heure approx.</th>
-          <th>Chanson</th>
-          <th>Notes</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% moments.forEach(function(m) { %>
-          <tr>
-            <td><%= m.label %></td>
-            <td>
-              <select class="form-select form-select-sm" name="moment_<%= m.key %>_active">
-                <option value="" <%= !m.active ? 'selected' : '' %>>—</option>
-                <option value="yes" <%= m.active === 'yes' ? 'selected' : '' %>>Oui</option>
-                <option value="no" <%= m.active === 'no' ? 'selected' : '' %>>Non</option>
-              </select>
-            </td>
-            <td><input type="time" class="form-control form-control-sm" name="moment_<%= m.key %>_time" value="<%= m.time %>"></td>
-            <td><input type="text" class="form-control form-control-sm" name="moment_<%= m.key %>_song" value="<%= m.song %>"></td>
-            <td><input type="text" class="form-control form-control-sm" name="moment_<%= m.key %>_notes" value="<%= m.notes %>"></td>
-          </tr>
-        <% }); %>
-      </tbody>
-    </table>
-  </div>
+  <%- include('portal-plan-soiree-fields', {
+    q,
+    proposedTimelineSteps: typeof proposedTimelineSteps !== 'undefined' ? proposedTimelineSteps : [],
+    timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : []
+  }) %>
 </section>
