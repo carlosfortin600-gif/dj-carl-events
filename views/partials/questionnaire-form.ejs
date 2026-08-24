@@ -215,20 +215,14 @@
   <!-- Repas -->
   <section class="q-section mb-4" id="repas">
     <h2 class="h5 q-section-title">Repas</h2>
-    <div class="row g-3 mb-3">
-      <%- include('cocktail-location-fields', {
-        fieldPrefix: 'dinner',
-        locationSectionTitle: 'Repas',
-        cocktailData: dinner
-      }) %>
-    </div>
     <%- include('questionnaire-meal-styles', {
       stylesFieldName: 'dinner_styles',
       mealStyles: dinner.styles || [],
-      stylesIdPrefix: 'ds'
+      stylesIdPrefix: 'ds',
+      stylesLabel: 'Style(s) de musique'
     }) %>
-    <label class="form-label" for="dinner_requests">Demandes spéciales pour le repas</label>
-    <textarea class="form-control" id="dinner_requests" name="dinner_requests" rows="3"><%= dinner.requests || '' %></textarea>
+    <label class="form-label" for="dinner_requests">Commentaires</label>
+    <textarea class="form-control" id="dinner_requests" name="dinner_requests" rows="3" placeholder="Précisions pour la musique pendant le repas…"><%= dinner.requests || '' %></textarea>
   </section>
 
   <!-- Musique de soirée -->
