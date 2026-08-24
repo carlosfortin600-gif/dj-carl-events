@@ -118,7 +118,7 @@ const {
   getAllSubcontractorCalendarLinks
 } = require("./lib/subcontractor-calendar-access");
 const { buildSummarySheet } = require("./lib/summary-sheet");
-const { buildEventDossierZip, sanitizeFolderName } = require("./lib/event-export");
+const { buildEventDossierZip, buildAllEventsDossierZip } = require("./lib/event-export");
 const { applyPlanSoireeFromBody } = require("./lib/plan-soiree");
 const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, queryString } = require("./lib/calendar");
 const { importDatabaseFromFile } = require("./lib/import-database");
@@ -332,8 +332,25 @@ app.get("/", (req, res) => {
     deleted: req.query.deleted === "1",
     restored: req.query.restored === "1",
     destroyed: req.query.destroyed === "1",
+    exportEmpty: req.query.exportEmpty === "1",
     ...data
   });
+});
+
+app.get("/export/dossiers.zip", async (req, res) => {
+  try {
+    const result = await buildAllEventsDossierZip(db);
+    if (!result) {
+      return res.redirect("/?exportEmpty=1");
+    }
+
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader("Content-Disposition", `attachment; filename="${result.archiveName}"`);
+    res.send(result.zipBuffer);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erreur lors de l'export de tous les dossiers.");
+  }
 });
 
 app.get("/calendar", (req, res) => {
