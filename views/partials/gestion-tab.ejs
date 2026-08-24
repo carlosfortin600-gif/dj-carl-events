@@ -4,6 +4,9 @@
 <% if (contractSaved) { %>
   <div class="alert alert-success">Contrat enregistré.</div>
 <% } %>
+<% if (typeof contractError !== 'undefined' && contractError) { %>
+  <div class="alert alert-danger"><%= contractError %></div>
+<% } %>
 <% if (typeof contractCleared !== 'undefined' && contractCleared) { %>
   <div class="alert alert-success">Contrat effacé.</div>
 <% } %>
@@ -51,6 +54,7 @@
     contract: subcontractorContract,
     contractSaved,
     contractCleared: typeof contractCleared !== 'undefined' ? contractCleared : false,
+    contractError: typeof contractError !== 'undefined' ? contractError : '',
     contractSignLinks: typeof contractSignLinks !== 'undefined' ? contractSignLinks : null,
     contractSavedInDb: typeof contractSavedInDb !== 'undefined' ? contractSavedInDb : false,
     calendarShareLinks: typeof calendarShareLinks !== 'undefined' ? calendarShareLinks : null

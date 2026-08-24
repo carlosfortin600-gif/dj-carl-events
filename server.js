@@ -621,7 +621,8 @@ app.get("/events/:id", (req, res) => {
     contractSavedInDb,
     calendarShareLinks,
     contractSaved: req.query.contractSaved === "1",
-    contractCleared: req.query.contractCleared === "1"
+    contractCleared: req.query.contractCleared === "1",
+    contractError: req.query.contractError || ""
   });
 });
 
@@ -931,7 +932,16 @@ app.post("/events/:id/gestion/contrat/:subcontractor/save", (req, res) => {
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
   if (!isValidSubcontractor(subcontractor)) return res.status(404).send("Not found");
 
-  saveSubcontractorContract(db, eventId, subcontractor, req.body);
+  const result = saveSubcontractorContract(db, eventId, subcontractor, req.body);
+  if (!result.ok) {
+    return res.redirect(
+      gestionRedirect(eventId, {
+        gestion: "contrat",
+        sousTraitant: subcontractor,
+        contractError: result.error
+      })
+    );
+  }
   res.redirect(
     gestionRedirect(eventId, {
       gestion: "contrat",

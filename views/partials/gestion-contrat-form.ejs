@@ -12,7 +12,7 @@
   </div>
 </div>
 
-<form method="post" action="/events/<%= event.id %>/gestion/contrat/<%= subId %>/save" data-unsaved-guard class="no-print mb-4 contract-form">
+<form method="post" action="/events/<%= event.id %>/gestion/contrat/<%= subId %>/save" data-unsaved-guard class="no-print mb-4 contract-form" data-contract-date-form>
   <input type="hidden" name="return_gestion" value="contrat">
   <input type="hidden" name="return_sous_traitant" value="<%= subId %>">
 
@@ -121,3 +121,46 @@
 
 <script src="/js/signature-pad.js?v=1"></script>
 <script src="/js/contract-print.js"></script>
+<script>
+(function () {
+  const form = document.querySelector("[data-contract-date-form]");
+  if (!form) return;
+
+  const startInput = form.querySelector('[name="contract_datetime"]');
+  const endInput = form.querySelector('[name="contract_end_datetime"]');
+  const endDateNative = form.querySelector("#<%= prefix %>_contract_end_datetime");
+
+  function sortKey(value) {
+    if (!value) return null;
+    const [date, time] = String(value).split("T");
+    if (!date) return null;
+    return date + "T" + (time ? time.slice(0, 5) : "00:00");
+  }
+
+  function syncEndMin() {
+    if (!endDateNative || !startInput) return;
+    const startDate = startInput.value.split("T")[0];
+    if (startDate) {
+      endDateNative.min = startDate;
+    } else {
+      endDateNative.removeAttribute("min");
+    }
+  }
+
+  function isEndBeforeStart() {
+    const startKey = sortKey(startInput?.value);
+    const endKey = sortKey(endInput?.value);
+    return startKey && endKey && endKey < startKey;
+  }
+
+  startInput?.addEventListener("change", syncEndMin);
+  startInput?.addEventListener("input", syncEndMin);
+  syncEndMin();
+
+  form.addEventListener("submit", (event) => {
+    if (!isEndBeforeStart()) return;
+    event.preventDefault();
+    alert("La date de fin doit être au minimum la date et l'heure de début.");
+  });
+})();
+</script>
