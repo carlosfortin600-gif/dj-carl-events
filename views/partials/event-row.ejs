@@ -1,4 +1,4 @@
-<div class="list-group-item table-list-item py-0 <%= expandable ? 'event-row-expandable' : '' %> <%= (typeof trashMode !== 'undefined' && trashMode) ? 'event-row-trash' : '' %>">
+<div class="list-group-item table-list-item py-0 <%= expandable ? 'event-row-expandable' : '' %> <%= (typeof trashMode !== 'undefined' && trashMode) ? 'event-row-trash' : '' %> <%= (typeof pastMode !== 'undefined' && pastMode) ? 'event-row-past' : '' %>">
   <div class="event-row-header py-3 <%= expandable ? 'event-row-clickable' : '' %>"
        <% if (expandable) { %>
          role="button" tabindex="0" data-event-toggle="<%= ev.id %>"
@@ -6,7 +6,7 @@
        <% } %>>
     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
       <div class="flex-grow-1">
-        <div class="event-line text-break <%= (typeof trashMode !== 'undefined' && trashMode) ? 'text-muted' : '' %>">
+        <div class="event-line text-break <%= (typeof trashMode !== 'undefined' && trashMode) ? 'text-muted' : '' %> <%= (typeof pastMode !== 'undefined' && pastMode) ? 'text-muted' : '' %>">
           <strong><%= formatDateFr(ev.event_date) %></strong>
           <span class="text-muted mx-1">|</span>
           <%= clientShortName(ev) %>
@@ -41,14 +41,18 @@
             <button type="submit" class="btn btn-danger btn-sm">Supprimer définitivement</button>
           </form>
         <% } else { %>
+          <% if (!(typeof pastMode !== 'undefined' && pastMode)) { %>
           <a href="/events/<%= ev.id %>?tab=client" class="btn btn-outline-success btn-sm" onclick="event.stopPropagation()" title="Lien à envoyer au client">Lien client</a>
-          <a href="/events/<%= ev.id %>" class="btn btn-outline-primary btn-sm" onclick="event.stopPropagation()">Ouvrir</a>
+          <% } %>
+          <a href="/events/<%= ev.id %>" class="btn btn-outline-primary btn-sm <%= (typeof pastMode !== 'undefined' && pastMode) ? 'btn-sm' : '' %>" onclick="event.stopPropagation()">Ouvrir</a>
+          <% if (!(typeof pastMode !== 'undefined' && pastMode)) { %>
           <form method="post" action="/events/<%= ev.id %>/delete" class="d-inline event-delete-form"
                 onclick="event.stopPropagation()"
                 data-confirm-name="<%= clientShortName(ev) %>"
                 data-confirm-date="<%= formatDateFr(ev.event_date) %>">
             <button type="submit" class="btn btn-outline-danger btn-sm" title="Supprimer">✕</button>
           </form>
+          <% } %>
         <% } %>
       </div>
     </div>

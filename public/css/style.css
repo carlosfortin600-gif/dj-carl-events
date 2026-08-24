@@ -34,6 +34,54 @@ body {
   font-size: 0.875rem;
 }
 
+.dashboard-past-section .card {
+  background: #f8f9fb;
+  box-shadow: none;
+  border: 1px solid #e9ecef;
+}
+
+.dashboard-past-section .card-header {
+  background: transparent;
+  border-bottom-color: #eef1f4;
+  color: #adb5bd;
+}
+
+.dashboard-past-section .card-header h2,
+.dashboard-past-section .card-header h6 {
+  color: #adb5bd;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.dashboard-past-section .list-group-item {
+  background: transparent;
+  border-color: #eef1f4;
+}
+
+.dashboard-past-section .event-row-header {
+  padding-top: 0.55rem !important;
+  padding-bottom: 0.55rem !important;
+}
+
+.dashboard-past-section .event-line {
+  font-size: 0.8125rem;
+}
+
+.dashboard-past-section .btn {
+  --bs-btn-padding-y: 0.15rem;
+  --bs-btn-padding-x: 0.5rem;
+  --bs-btn-font-size: 0.75rem;
+}
+
+.dashboard-past-section .badge {
+  font-size: 0.65rem;
+  font-weight: 500;
+}
+
+.event-row-past {
+  opacity: 0.85;
+}
+
 .event-line {
   font-size: 0.95rem;
   line-height: 1.5;
