@@ -1,5 +1,7 @@
 <% const q = questionnaire.data; %>
 <% const ceremony = q.ceremony || { location: '', start_time: '', end_time: '' }; %>
+<% const cocktail = q.cocktail || { cocktail_location: '', cocktail_place: '', cocktail_dj_distance: '', styles: [], requests: '' }; %>
+<% const dinner = q.dinner || { dinner_location: '', dinner_place: '', dinner_dj_distance: '', styles: [], requests: '' }; %>
 
 <% if (questionnaire.updated_at) { %>
   <p class="text-muted small mb-3">Dernière modification : <%= formatTimestampFr(questionnaire.updated_at) %></p>
@@ -191,27 +193,42 @@
     </div>
   </section>
 
-  <!-- Cocktail et repas -->
-  <section class="q-section mb-4">
-    <h2 class="h5 q-section-title">Cocktail et repas</h2>
+  <!-- Cocktail -->
+  <section class="q-section mb-4" id="cocktail">
+    <h2 class="h5 q-section-title">Cocktail</h2>
     <div class="row g-3 mb-3">
-      <%- include('cocktail-location-fields', { cocktailData: q.cocktail_dinner }) %>
+      <%- include('cocktail-location-fields', {
+        fieldPrefix: 'cocktail',
+        locationSectionTitle: 'Cocktail',
+        cocktailData: cocktail
+      }) %>
     </div>
-    <p class="text-muted small">Styles désirés</p>
-    <div class="row g-2 mb-3">
-      <% COCKTAIL_STYLES.forEach(function(style) { %>
-        <div class="col-6 col-md-4 col-lg-3">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="cocktail_styles" value="<%= style %>"
-                   id="cs_<%= style.replace(/\s+/g, '_') %>"
-                   <%= q.cocktail_dinner.styles.includes(style) ? 'checked' : '' %>>
-            <label class="form-check-label" for="cs_<%= style.replace(/\s+/g, '_') %>"><%= style %></label>
-          </div>
-        </div>
-      <% }); %>
+    <%- include('questionnaire-meal-styles', {
+      stylesFieldName: 'cocktail_styles',
+      mealStyles: cocktail.styles || [],
+      stylesIdPrefix: 'cs'
+    }) %>
+    <label class="form-label" for="cocktail_requests">Demandes spéciales pour le cocktail</label>
+    <textarea class="form-control" id="cocktail_requests" name="cocktail_requests" rows="3"><%= cocktail.requests || '' %></textarea>
+  </section>
+
+  <!-- Repas -->
+  <section class="q-section mb-4" id="repas">
+    <h2 class="h5 q-section-title">Repas</h2>
+    <div class="row g-3 mb-3">
+      <%- include('cocktail-location-fields', {
+        fieldPrefix: 'dinner',
+        locationSectionTitle: 'Repas',
+        cocktailData: dinner
+      }) %>
     </div>
-    <label class="form-label">Demandes spéciales pour le souper</label>
-    <textarea class="form-control" name="dinner_requests" rows="3"><%= q.cocktail_dinner.dinner_requests %></textarea>
+    <%- include('questionnaire-meal-styles', {
+      stylesFieldName: 'dinner_styles',
+      mealStyles: dinner.styles || [],
+      stylesIdPrefix: 'ds'
+    }) %>
+    <label class="form-label" for="dinner_requests">Demandes spéciales pour le repas</label>
+    <textarea class="form-control" id="dinner_requests" name="dinner_requests" rows="3"><%= dinner.requests || '' %></textarea>
   </section>
 
   <!-- Musique de soirée -->

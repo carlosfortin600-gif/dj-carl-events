@@ -1,27 +1,30 @@
-<% const loc = typeof cocktailData !== 'undefined' ? cocktailData : {}; %>
+<% 
+  const prefix = typeof fieldPrefix !== 'undefined' ? fieldPrefix : 'cocktail';
+  const sectionTitle = typeof locationSectionTitle !== 'undefined' ? locationSectionTitle : 'Cocktail';
+  const loc = typeof cocktailData !== 'undefined' ? cocktailData : {};
+  const locationField = prefix + '_location';
+  const placeField = prefix + '_place';
+  const distanceField = prefix + '_dj_distance';
+%>
 
 <div class="col-12">
-  <hr class="my-2">
-  <p class="fw-semibold mb-2">Cocktail — emplacement</p>
-</div>
-<div class="col-md-6">
-  <label class="form-label d-block">Même salle ou ailleurs ?</label>
+  <label class="form-label d-block"><%= sectionTitle %> — même salle ou ailleurs ?</label>
   <div class="d-flex flex-wrap gap-2">
     <% COCKTAIL_LOCATION_OPTIONS.forEach(function(opt) { %>
-      <input type="radio" class="btn-check" name="cocktail_location"
-             id="cocktail_loc_<%= opt.value %>" value="<%= opt.value %>"
-             <%= loc.cocktail_location === opt.value ? 'checked' : '' %>>
-      <label class="btn btn-outline-secondary btn-sm" for="cocktail_loc_<%= opt.value %>"><%= opt.label %></label>
+      <input type="radio" class="btn-check" name="<%= locationField %>"
+             id="<%= prefix %>_loc_<%= opt.value %>" value="<%= opt.value %>"
+             <%= loc[locationField] === opt.value ? 'checked' : '' %>>
+      <label class="btn btn-outline-secondary btn-sm" for="<%= prefix %>_loc_<%= opt.value %>"><%= opt.label %></label>
     <% }); %>
   </div>
 </div>
 <div class="col-md-6">
   <label class="form-label">Lieu / endroit</label>
-  <input type="text" class="form-control" name="cocktail_place" value="<%= loc.cocktail_place || '' %>"
-         placeholder="Ex. : salle adjacent, terrasse, jardin…">
+  <input type="text" class="form-control" name="<%= placeField %>" value="<%= loc[placeField] || '' %>"
+         placeholder="Ex. : salle adjacente, terrasse, jardin…">
 </div>
 <div class="col-md-6">
-  <label class="form-label">Distance du DJ au cocktail</label>
-  <input type="text" class="form-control" name="cocktail_dj_distance" value="<%= loc.cocktail_dj_distance || '' %>"
+  <label class="form-label">Distance du DJ au <%= sectionTitle.toLowerCase() %></label>
+  <input type="text" class="form-control" name="<%= distanceField %>" value="<%= loc[distanceField] || '' %>"
          placeholder="Ex. : 30 m, 2e étage, même pièce…">
 </div>

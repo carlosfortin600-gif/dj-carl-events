@@ -1,0 +1,19 @@
+<% 
+  const stylesField = typeof stylesFieldName !== 'undefined' ? stylesFieldName : 'cocktail_styles';
+  const selectedStyles = typeof mealStyles !== 'undefined' ? mealStyles : [];
+  const idPrefix = typeof stylesIdPrefix !== 'undefined' ? stylesIdPrefix : 'cs';
+%>
+
+<p class="text-muted small mb-2">Styles désirés</p>
+<div class="row g-2 mb-3">
+  <% COCKTAIL_STYLES.forEach(function(style) { %>
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="<%= stylesField %>" value="<%= style %>"
+               id="<%= idPrefix %>_<%= style.replace(/\s+/g, '_') %>"
+               <%= selectedStyles.includes(style) ? 'checked' : '' %>>
+        <label class="form-check-label" for="<%= idPrefix %>_<%= style.replace(/\s+/g, '_') %>"><%= style %></label>
+      </div>
+    </div>
+  <% }); %>
+</div>
