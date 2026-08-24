@@ -18,15 +18,15 @@
 
         <%- include('calendar-agreement-summary', { ev, showAgreementSummary: true }) %>
 
-        <% if (typeof publicCalendarMode === 'undefined' || !publicCalendarMode) { %>
-          <div class="d-flex gap-2 mt-2 flex-wrap">
-            <% if (showContractLink && ev.contractUrl) { %>
-              <a href="<%= ev.contractUrl %>" class="btn btn-primary btn-sm">Contrat <%= subcontractorLabel %></a>
-            <% } %>
-            <a href="/events/<%= ev.id %>?tab=gestion" class="btn btn-outline-primary btn-sm">Gestion</a>
-            <a href="/events/<%= ev.id %>" class="btn btn-outline-secondary btn-sm">Ouvrir</a>
-          </div>
-        <% } %>
+        <div class="d-flex gap-2 mt-2 flex-wrap">
+          <%- include('calendar-contract-btn', {
+            ev,
+            subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
+            showContractLink: typeof showContractLink !== 'undefined' ? showContractLink : true,
+            showAgreementSummary: true,
+            publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false
+          }) %>
+        </div>
       </div>
     <% }); %>
   </div>

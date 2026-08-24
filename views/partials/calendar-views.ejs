@@ -54,7 +54,6 @@
     <% if (view === 'ententes') { %>
       <%- include('calendar-ententes-body', {
         agreementsList,
-        showContractLink: typeof showContractLink !== 'undefined' ? showContractLink : false,
         subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
         publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false
       }) %>
@@ -63,6 +62,8 @@
     <% } else if (view === 'week') { %>
       <%- include('calendar-week-body', {
         calendarBasePath, view, anchorDate, year, month, weekDays,
+        showContractLink: typeof showContractLink !== 'undefined' ? showContractLink : false,
+        subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
         showDayGestionDetails: typeof showDayGestionDetails !== 'undefined' ? showDayGestionDetails : false,
         publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false,
         showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false

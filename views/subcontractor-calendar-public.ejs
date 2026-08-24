@@ -16,8 +16,9 @@
 
     <%- include('partials/calendar-views', {
       calendarBasePath: '/calendrier/' + calendarToken,
-      showContractLink: false,
+      showContractLink: true,
       showAgreementSummary: true,
+      subcontractorLabel: subcontractorLabel,
       showDayGestionDetails: false,
       publicCalendarMode: true,
       cal: cal

@@ -1,0 +1,10 @@
+<% if ((typeof showContractLink !== 'undefined' && showContractLink) || (typeof showAgreementSummary !== 'undefined' && showAgreementSummary)) { %>
+  <% const contractHref = (typeof publicCalendarMode !== 'undefined' && publicCalendarMode && ev.contractSignUrl)
+    ? ev.contractSignUrl
+    : ev.contractUrl; %>
+  <% if (contractHref) { %>
+    <a href="<%= contractHref %>" class="btn btn-primary btn-sm <%= (typeof compact !== 'undefined' && compact) ? 'btn-xs-compact mt-1' : '' %>" target="_blank" rel="noopener">
+      Contrat <%= subcontractorLabel %>
+    </a>
+  <% } %>
+<% } %>

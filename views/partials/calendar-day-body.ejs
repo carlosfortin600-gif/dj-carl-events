@@ -17,13 +17,13 @@
             </div>
             <%- include('calendar-agreement-summary', { ev, showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false }) %>
             <div class="d-flex gap-2 mt-2 flex-wrap">
-              <% if (showContractLink && ev.contractUrl) { %>
-                <a href="<%= ev.contractUrl %>" class="btn btn-primary btn-sm">Contrat <%= subcontractorLabel %></a>
-              <% } %>
-              <% if (typeof publicCalendarMode === 'undefined' || !publicCalendarMode) { %>
-                <a href="/events/<%= ev.id %>?tab=gestion" class="btn btn-outline-primary btn-sm">Gestion</a>
-                <a href="/events/<%= ev.id %>" class="btn btn-outline-secondary btn-sm">Ouvrir</a>
-              <% } %>
+              <%- include('calendar-contract-btn', {
+                ev,
+                subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
+                showContractLink: typeof showContractLink !== 'undefined' ? showContractLink : false,
+                showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false,
+                publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false
+              }) %>
             </div>
           </div>
           <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>

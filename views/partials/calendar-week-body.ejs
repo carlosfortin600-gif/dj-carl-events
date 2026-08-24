@@ -21,9 +21,14 @@
                 <% if (ev.start_time) { %><%= formatTime(ev.start_time) %> · <% } %><%= ev.event_type %>
               </div>
               <%- include('calendar-agreement-summary', { ev, showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false }) %>
-              <% if (typeof publicCalendarMode === 'undefined' || !publicCalendarMode) { %>
-                <a href="/events/<%= ev.id %>?tab=gestion" class="btn btn-outline-primary btn-sm mt-1 btn-xs-compact">Gestion</a>
-              <% } %>
+              <%- include('calendar-contract-btn', {
+                ev,
+                subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
+                showContractLink: typeof showContractLink !== 'undefined' ? showContractLink : false,
+                showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false,
+                publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false,
+                compact: true
+              }) %>
             </div>
           <% }); %>
         <% } %>
