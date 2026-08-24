@@ -18,7 +18,7 @@
             <div class="calendar-week-event calendar-event-card status-border-<%= ev.status %>">
               <div class="calendar-week-event-title"><%= clientShortName(ev) %></div>
               <div class="calendar-week-event-meta small text-muted">
-                <% if (ev.start_time) { %><%= formatTime(ev.start_time) %> · <% } %><%= ev.event_type %>
+                <% if (ev.calendarTime || ev.start_time) { %><%= formatTime(ev.calendarTime || ev.start_time) %> · <% } %><%= ev.event_type %>
               </div>
               <%- include('calendar-agreement-summary', { ev, showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false }) %>
               <%- include('calendar-contract-btn', {

@@ -8,7 +8,7 @@
       <div class="calendar-event-card calendar-ententes-item status-border-<%= ev.status %> mb-3">
         <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap mb-2">
           <div>
-            <div class="fw-semibold"><%= formatDateFr(ev.event_date) %><% if (ev.start_time) { %> · <%= formatTime(ev.start_time) %><% } %></div>
+            <div class="fw-semibold"><%= formatDateFr(ev.contractStartDate || ev.event_date) %><% if (ev.contractStartTime || ev.start_time) { %> · <%= formatTime(ev.contractStartTime || ev.start_time) %><% } %></div>
             <div class="text-muted small">
               <%= ev.event_type %><% if (ev.venue) { %> · <%= ev.venue %><% } %>
             </div>

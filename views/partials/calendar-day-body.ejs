@@ -12,7 +12,7 @@
             <strong><%= clientShortName(ev) %></strong>
             <div class="text-muted small">
               <%= ev.event_type %>
-              <% if (ev.start_time) { %> · <%= formatTime(ev.start_time) %><% } %>
+              <% if (ev.calendarTime || ev.start_time) { %> · <%= formatTime(ev.calendarTime || ev.start_time) %><% } %>
               <% if (ev.venue) { %> · <%= ev.venue %><% } %>
             </div>
             <%- include('calendar-agreement-summary', { ev, showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false }) %>

@@ -129,6 +129,8 @@
   const startInput = form.querySelector('[name="contract_datetime"]');
   const endInput = form.querySelector('[name="contract_end_datetime"]');
   const endDateNative = form.querySelector("#<%= prefix %>_contract_end_datetime");
+  const endPicker = endInput?.closest(".datetime-fr-picker");
+  const endDateDisplay = endPicker?.querySelector(".datetime-fr-display");
 
   function sortKey(value) {
     if (!value) return null;
@@ -147,14 +149,38 @@
     }
   }
 
+  function ensureEndDateAtLeastStart() {
+    if (!startInput?.value || !endPicker) return;
+    const [startDate] = startInput.value.split("T");
+    const endDateNativeEl = endPicker.querySelector(".datetime-date-native");
+    const endDate = endInput?.value.split("T")[0] || endDateNativeEl?.value || "";
+    if (!startDate) return;
+    if (!endDate || endDate < startDate) {
+      const timeInput = endPicker.querySelector(".datetime-fr-time");
+      const [, startTime] = startInput.value.split("T");
+      if (endDateNativeEl) endDateNativeEl.value = startDate;
+      if (timeInput && !timeInput.value && startTime) {
+        timeInput.value = startTime.slice(0, 5);
+      }
+      endDateNativeEl?.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+  }
+
   function isEndBeforeStart() {
     const startKey = sortKey(startInput?.value);
     const endKey = sortKey(endInput?.value);
     return startKey && endKey && endKey < startKey;
   }
 
-  startInput?.addEventListener("change", syncEndMin);
+  startInput?.addEventListener("change", () => {
+    syncEndMin();
+    ensureEndDateAtLeastStart();
+  });
   startInput?.addEventListener("input", syncEndMin);
+  endDateDisplay?.addEventListener("click", () => {
+    syncEndMin();
+    ensureEndDateAtLeastStart();
+  }, true);
   syncEndMin();
 
   form.addEventListener("submit", (event) => {
