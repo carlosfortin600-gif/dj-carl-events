@@ -81,6 +81,9 @@
           <input type="hidden" name="signature_contractant" value="<%= contract.signature_contractant || '' %>">
           <button type="button" class="btn btn-sm btn-outline-secondary mt-2" data-signature-clear>Effacer</button>
         </div>
+        <% if (contract.signature_contractant) { %>
+          <p class="small text-muted mb-0 mt-1">Signé le <%= formatTimestampFr(contract.signature_contractant_date || contract.updated_at) %></p>
+        <% } %>
       </div>
       <div class="col-md-6">
         <label class="form-label"><%= contract.full_name || subLabel %> — sous-traitant</label>
@@ -89,6 +92,9 @@
           <input type="hidden" name="signature_subcontractor" value="<%= contract.signature_subcontractor || '' %>">
           <button type="button" class="btn btn-sm btn-outline-secondary mt-2" data-signature-clear>Effacer</button>
         </div>
+        <% if (contract.signature_subcontractor) { %>
+          <p class="small text-muted mb-0 mt-1">Signé le <%= formatTimestampFr(contract.signature_subcontractor_date || contract.updated_at) %></p>
+        <% } %>
       </div>
     </div>
   </section>

@@ -30,7 +30,10 @@
     </div>
 
     <% if (contract.signature_subcontractor) { %>
-      <div class="alert alert-success py-2 small mt-3 mb-0">Signature du sous-traitant reçue.</div>
+      <div class="alert alert-success py-2 small mt-3 mb-0">
+        Signature du sous-traitant reçue<% if (contract.signature_subcontractor_date || contract.updated_at) { %>
+          le <%= formatTimestampFr(contract.signature_subcontractor_date || contract.updated_at) %><% } %>.
+      </div>
     <% } else { %>
       <div class="alert alert-warning py-2 small mt-3 mb-0">En attente de la signature de <%= subcontractorLabel %>.</div>
     <% } %>

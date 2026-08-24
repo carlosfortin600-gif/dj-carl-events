@@ -72,7 +72,13 @@
       <% } else { %>
         <div class="service-contract-signature-line"></div>
       <% } %>
-      <p class="small text-muted mb-0 mt-1">Signature</p>
+      <p class="small text-muted mb-0 mt-1">
+        <% if (contract.signature_contractant) { %>
+          Signé le <%= formatTimestampFr(contract.signature_contractant_date || contract.updated_at) %>
+        <% } else { %>
+          Signature
+        <% } %>
+      </p>
     </div>
     <div class="col-md-6">
       <p class="mb-2"><strong><%= subName %></strong><br><span class="text-muted small">Sous-traitant</span></p>
@@ -81,7 +87,13 @@
       <% } else { %>
         <div class="service-contract-signature-line"></div>
       <% } %>
-      <p class="small text-muted mb-0 mt-1">Signature</p>
+      <p class="small text-muted mb-0 mt-1">
+        <% if (contract.signature_subcontractor) { %>
+          Signé le <%= formatTimestampFr(contract.signature_subcontractor_date || contract.updated_at) %>
+        <% } else { %>
+          Signature
+        <% } %>
+      </p>
     </div>
   </div>
 </div>
