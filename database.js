@@ -158,6 +158,15 @@ function migrate(db) {
   if (!columns.includes("on_connait_chanson_notes")) {
     db.exec("ALTER TABLE events ADD COLUMN on_connait_chanson_notes TEXT");
   }
+  if (!columns.includes("animation_included")) {
+    db.exec("ALTER TABLE events ADD COLUMN animation_included TEXT");
+  }
+  if (!columns.includes("animation_notes")) {
+    db.exec("ALTER TABLE events ADD COLUMN animation_notes TEXT");
+  }
+  if (!columns.includes("venue_elevator")) {
+    db.exec("ALTER TABLE events ADD COLUMN venue_elevator TEXT");
+  }
   if (!columns.includes("route_origin_key")) {
     db.exec("ALTER TABLE events ADD COLUMN route_origin_key TEXT");
   }

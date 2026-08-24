@@ -115,10 +115,21 @@
                   ? formatDateTimeFr(values.end_date || values.event_date, values.end_time) : ''
               }) %>
             </div>
-            <div class="col-md-9">
+            <div class="col-md-6">
               <label class="form-label" for="venue">Nom de la salle</label>
               <input type="text" class="form-control" id="venue" name="venue"
                      value="<%= values.venue || '' %>">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label d-block">Ascenseur</label>
+              <div class="btn-group btn-group-sm w-100" role="group" aria-label="Ascenseur disponible">
+                <input type="radio" class="btn-check" name="venue_elevator" id="venue_elevator_yes" value="yes"
+                       <%= values.venue_elevator === 'yes' ? 'checked' : '' %>>
+                <label class="btn btn-outline-secondary" for="venue_elevator_yes">Oui</label>
+                <input type="radio" class="btn-check" name="venue_elevator" id="venue_elevator_no" value="no"
+                       <%= values.venue_elevator === 'no' ? 'checked' : '' %>>
+                <label class="btn btn-outline-secondary" for="venue_elevator_no">Non</label>
+              </div>
             </div>
             <div class="col-md-3">
               <label class="form-label" for="guest_count" title="Nombre approximatif d'invités">Invités</label>
@@ -172,7 +183,9 @@
               return slots;
             })(),
             bingoMusicalStyle: values.bingo_musical_style || '',
-            onConnaitChansonNotes: values.on_connait_chanson_notes || ''
+            onConnaitChansonNotes: values.on_connait_chanson_notes || '',
+            animationIncludedValue: values.animation_included || 'no',
+            animationNotesValue: values.animation_notes || ''
           }) %>
 
           <div class="d-flex gap-2 mt-2">

@@ -99,10 +99,21 @@
               ? formatDateTimeFr(event.end_date || event.event_date, event.end_time) : ''
           }) %>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-6">
           <label class="form-label" for="venue">Nom de la salle</label>
           <input type="text" class="form-control" id="venue" name="venue"
                  value="<%= event.venue || '' %>">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label d-block">Ascenseur</label>
+          <div class="btn-group btn-group-sm w-100" role="group" aria-label="Ascenseur disponible">
+            <input type="radio" class="btn-check" name="venue_elevator" id="venue_elevator_yes" value="yes"
+                   <%= event.venue_elevator === 'yes' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="venue_elevator_yes">Oui</label>
+            <input type="radio" class="btn-check" name="venue_elevator" id="venue_elevator_no" value="no"
+                   <%= event.venue_elevator === 'no' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="venue_elevator_no">Non</label>
+          </div>
         </div>
         <div class="col-md-3">
           <label class="form-label" for="guest_count" title="Nombre approximatif d'invités">Invités</label>
@@ -147,7 +158,9 @@
         selectedServices,
         customServiceSlots,
         bingoMusicalStyle: event.bingo_musical_style || '',
-        onConnaitChansonNotes: event.on_connait_chanson_notes || ''
+        onConnaitChansonNotes: event.on_connait_chanson_notes || '',
+        animationIncludedValue: event.animation_included || (selectedServices.includes('Animation') ? 'yes' : 'no'),
+        animationNotesValue: event.animation_notes || ''
       }) %>
 
       <section class="form-section form-section-status">

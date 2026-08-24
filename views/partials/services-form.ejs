@@ -12,7 +12,10 @@
   ? supplementaryServiceOptions
   : (typeof SUPPLEMENTARY_SERVICE_OPTIONS !== 'undefined' ? SUPPLEMENTARY_SERVICE_OPTIONS : []); %>
 
-<% const bingoStyle = typeof bingoMusicalStyle !== 'undefined' ? (bingoMusicalStyle || '') : ''; %>
+<% const animationIncluded = typeof animationIncludedValue !== 'undefined'
+  ? animationIncludedValue
+  : (selected.includes('Animation') ? 'yes' : 'no'); %>
+<% const animationNotes = typeof animationNotesValue !== 'undefined' ? (animationNotesValue || '') : ''; %>
 <% const onConnaitNotes = typeof onConnaitChansonNotes !== 'undefined' ? (onConnaitChansonNotes || '') : ''; %>
 <% const styleOptions = typeof BINGO_MUSICAL_STYLE_OPTIONS !== 'undefined'
   ? BINGO_MUSICAL_STYLE_OPTIONS
@@ -22,6 +25,37 @@
   <h2 class="form-section-title">Équipements fournis</h2>
   <div class="row g-3">
     <% baseOptions.forEach(function(service, idx) { %>
+      <% if (service === 'Animation') { %>
+        <div class="col-12">
+          <div class="row g-2 align-items-end">
+            <div class="col-md-4 col-lg-3">
+              <div class="form-check service-check-item">
+                <input class="form-check-input" type="checkbox" name="services" value="<%= service %>"
+                       id="svc_base_<%= idx %>"
+                       <%= selected.includes(service) ? 'checked' : '' %>>
+                <label class="form-check-label" for="svc_base_<%= idx %>"><%= service %></label>
+              </div>
+            </div>
+            <div class="col-md-3 col-lg-2">
+              <label class="form-label d-block">Incluse</label>
+              <div class="btn-group btn-group-sm w-100" role="group" aria-label="Animation incluse">
+                <input type="radio" class="btn-check" name="animation_included" id="animation_included_yes" value="yes"
+                       <%= animationIncluded === 'yes' ? 'checked' : '' %>>
+                <label class="btn btn-outline-secondary" for="animation_included_yes">Oui</label>
+                <input type="radio" class="btn-check" name="animation_included" id="animation_included_no" value="no"
+                       <%= animationIncluded === 'no' ? 'checked' : '' %>>
+                <label class="btn btn-outline-secondary" for="animation_included_no">Non</label>
+              </div>
+            </div>
+            <div class="col-md-5 col-lg-7">
+              <label class="form-label" for="animation_notes">Précisions</label>
+              <input type="text" class="form-control" name="animation_notes" id="animation_notes"
+                     value="<%= animationNotes %>"
+                     placeholder="Type d'animation, jeux, notes…">
+            </div>
+          </div>
+        </div>
+      <% } else { %>
       <div class="col-12 col-md-6">
         <div class="form-check service-check-item">
           <input class="form-check-input" type="checkbox" name="services" value="<%= service %>"
@@ -30,6 +64,7 @@
           <label class="form-check-label" for="svc_base_<%= idx %>"><%= service %></label>
         </div>
       </div>
+      <% } %>
     <% }); %>
   </div>
 </section>
@@ -138,3 +173,20 @@
     <% } %>
   </div>
 </section>
+
+<script>
+(function () {
+  const yes = document.getElementById("animation_included_yes");
+  const no = document.getElementById("animation_included_no");
+  const checkbox = document.querySelector('input[name="services"][value="Animation"]');
+  if (!yes || !no || !checkbox) return;
+
+  function syncFromRadio() {
+    if (yes.checked) checkbox.checked = true;
+    if (no.checked) checkbox.checked = false;
+  }
+
+  yes.addEventListener("change", syncFromRadio);
+  no.addEventListener("change", syncFromRadio);
+})();
+</script>
