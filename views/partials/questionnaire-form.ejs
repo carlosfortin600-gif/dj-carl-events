@@ -1,4 +1,5 @@
 <% const q = questionnaire.data; %>
+<% const ceremony = q.ceremony || { location: '', start_time: '', end_time: '' }; %>
 
 <% if (questionnaire.updated_at) { %>
   <p class="text-muted small mb-3">Dernière modification : <%= formatTimestampFr(questionnaire.updated_at) %></p>
@@ -42,18 +43,18 @@
       <div class="col-12">
         <label class="form-label" for="ceremony_location">Endroit ?</label>
         <input type="text" class="form-control" id="ceremony_location" name="ceremony_location"
-               value="<%= q.ceremony.location || '' %>"
+               value="<%= ceremony.location || '' %>"
                placeholder="Ex. : église, salle, extérieur, nom du lieu…">
       </div>
       <div class="col-md-6 col-lg-4">
         <label class="form-label" for="ceremony_start_time">Heure de début</label>
         <input type="time" class="form-control" id="ceremony_start_time" name="ceremony_start_time"
-               value="<%= q.ceremony.start_time || '' %>">
+               value="<%= ceremony.start_time || '' %>">
       </div>
       <div class="col-md-6 col-lg-4">
         <label class="form-label" for="ceremony_end_time">Heure de fin</label>
         <input type="time" class="form-control" id="ceremony_end_time" name="ceremony_end_time"
-               value="<%= q.ceremony.end_time || '' %>">
+               value="<%= ceremony.end_time || '' %>">
       </div>
     </div>
   </section>
