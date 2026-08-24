@@ -117,6 +117,7 @@ const {
   getSubcontractorCalendarLinks,
   getAllSubcontractorCalendarLinks
 } = require("./lib/subcontractor-calendar-access");
+const { buildSummarySheet } = require("./lib/summary-sheet");
 const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, queryString } = require("./lib/calendar");
 const { importDatabaseFromFile } = require("./lib/import-database");
 const {
