@@ -22,6 +22,8 @@
         <%- include('../partials/questionnaire-form', {
           event,
           questionnaire,
+          proposedTimelineSteps: typeof proposedTimelineSteps !== 'undefined' ? proposedTimelineSteps : [],
+          timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : [],
           formAction: '/portal/' + event.portal_token + '/questionnaire',
           portalMode: true
         }) %>
@@ -29,6 +31,8 @@
         <%- include('../partials/party-questionnaire-form', {
           event,
           questionnaire,
+          proposedTimelineSteps: typeof proposedTimelineSteps !== 'undefined' ? proposedTimelineSteps : [],
+          timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : [],
           formAction: '/portal/' + event.portal_token + '/questionnaire',
           portalMode: true
         }) %>

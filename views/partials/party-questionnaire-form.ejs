@@ -179,6 +179,14 @@
     <textarea class="form-control" name="animation_comments" rows="3"><%= q.animation.comments %></textarea>
   </section>
 
+  <% if (typeof portalMode !== 'undefined' && portalMode) { %>
+    <%- include('questionnaire-plan-soiree-section', {
+      q,
+      questionnaire,
+      proposedTimelineSteps: typeof proposedTimelineSteps !== 'undefined' ? proposedTimelineSteps : [],
+      timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : []
+    }) %>
+  <% } else { %>
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Moments importants</h2>
     <div class="table-responsive">
@@ -212,6 +220,7 @@
       </table>
     </div>
   </section>
+  <% } %>
 
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Questions importantes</h2>

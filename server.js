@@ -801,11 +801,18 @@ app.get("/portal/:token/questionnaire", (req, res) => {
 
   touchPortalAccess(db, event.id);
   const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
+  const proposedTimelineSteps = buildStepsFromQuestionnaire(
+    questionnaire.data,
+    event.event_type
+  );
+  const timelineItems = getTimelineItems(db, event.id);
 
   res.render("portal/questionnaire", {
     title: `${getQuestionnaireLabel(event.event_type)} — ${clientShortName(event)}`,
     event,
     questionnaire,
+    proposedTimelineSteps,
+    timelineItems,
     saved: req.query.saved === "1"
   });
 });

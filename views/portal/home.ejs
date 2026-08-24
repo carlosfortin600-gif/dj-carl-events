@@ -15,7 +15,7 @@
     <div class="card-body p-4">
       <h2 class="h5 mb-3">Complétez votre dossier</h2>
       <p class="text-muted">
-        Utilisez cet espace pour remplir le questionnaire et nous transmettre vos préférences musicales et le déroulement souhaité de votre soirée.
+        Utilisez cet espace pour remplir le questionnaire, le <strong>plan de soirée</strong> et nous transmettre vos préférences musicales et le déroulement souhaité de votre soirée.
       </p>
 
       <% if (event.event_type === 'Mariage') { %>
@@ -23,7 +23,7 @@
           <div>
             <strong>Questionnaire mariage</strong>
             <div class="small text-muted">
-              <%= summary.questionnaireComplete ? 'Complété — vous pouvez le modifier à tout moment' : 'À remplir' %>
+              <%= summary.questionnaireComplete ? 'Complété — questionnaire et plan de soirée modifiables' : 'Questionnaire et plan de soirée à remplir' %>
             </div>
           </div>
           <a href="/portal/<%= event.portal_token %>/questionnaire" class="btn btn-primary">
