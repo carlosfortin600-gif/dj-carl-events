@@ -159,7 +159,7 @@
             customServiceSlots,
             bingoMusicalStyle: event.bingo_musical_style || '',
             onConnaitChansonNotes: event.on_connait_chanson_notes || '',
-            animationIncludedValue: event.animation_included || (selectedServices.includes('Animation') ? 'yes' : 'no'),
+            animationIncludedValue: event.animation_included || (selectedServices.includes('Animation') ? 'yes' : ''),
             animationNotesValue: event.animation_notes || ''
           }) %>
           <button type="submit" class="btn btn-primary btn-lg">Enregistrer les services</button>
