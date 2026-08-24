@@ -16,6 +16,7 @@
   ? animationIncludedValue
   : (selected.includes('Animation') ? 'yes' : 'no'); %>
 <% const animationNotes = typeof animationNotesValue !== 'undefined' ? (animationNotesValue || '') : ''; %>
+<% const bingoStyle = typeof bingoMusicalStyle !== 'undefined' ? (bingoMusicalStyle || '') : ''; %>
 <% const onConnaitNotes = typeof onConnaitChansonNotes !== 'undefined' ? (onConnaitChansonNotes || '') : ''; %>
 <% const styleOptions = typeof BINGO_MUSICAL_STYLE_OPTIONS !== 'undefined'
   ? BINGO_MUSICAL_STYLE_OPTIONS
