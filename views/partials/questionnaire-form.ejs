@@ -35,6 +35,29 @@
 
   <%- include('day-contact-fields', { dayContact: q.day_contact }) %>
 
+  <!-- Cérémonie -->
+  <section class="q-section mb-4" id="ceremonie">
+    <h2 class="h5 q-section-title">Cérémonie</h2>
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label" for="ceremony_location">Endroit ?</label>
+        <input type="text" class="form-control" id="ceremony_location" name="ceremony_location"
+               value="<%= q.ceremony.location || '' %>"
+               placeholder="Ex. : église, salle, extérieur, nom du lieu…">
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <label class="form-label" for="ceremony_start_time">Heure de début</label>
+        <input type="time" class="form-control" id="ceremony_start_time" name="ceremony_start_time"
+               value="<%= q.ceremony.start_time || '' %>">
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <label class="form-label" for="ceremony_end_time">Heure de fin</label>
+        <input type="time" class="form-control" id="ceremony_end_time" name="ceremony_end_time"
+               value="<%= q.ceremony.end_time || '' %>">
+      </div>
+    </div>
+  </section>
+
   <!-- Entrée -->
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Entrée</h2>
