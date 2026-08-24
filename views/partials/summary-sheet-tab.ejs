@@ -6,9 +6,14 @@
         Toutes les informations du dossier en un seul endroit — prête à imprimer ou consulter.
       </p>
     </div>
-    <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.print()">
-      Imprimer / PDF
-    </button>
+    <div class="d-flex flex-wrap gap-2">
+      <button type="button" class="btn btn-outline-primary btn-sm" onclick="window.print()">
+        Imprimer / PDF
+      </button>
+      <a href="/events/<%= event.id %>/export/dossier.zip" class="btn btn-outline-secondary btn-sm">
+        Télécharger dossier PDF (ZIP)
+      </a>
+    </div>
   </div>
 
   <div class="summary-sheet-print-header d-none d-print-block mb-4">

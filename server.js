@@ -118,6 +118,7 @@ const {
   getAllSubcontractorCalendarLinks
 } = require("./lib/subcontractor-calendar-access");
 const { buildSummarySheet } = require("./lib/summary-sheet");
+const { buildEventDossierZip, sanitizeFolderName } = require("./lib/event-export");
 const { applyPlanSoireeFromBody } = require("./lib/plan-soiree");
 const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, queryString } = require("./lib/calendar");
 const { importDatabaseFromFile } = require("./lib/import-database");
@@ -740,6 +741,27 @@ app.post("/events/:id/questionnaire", (req, res) => {
   } catch (err) {
     console.error(err);
     res.redirect(`/events/${eventId}?tab=questionnaire`);
+  }
+});
+
+app.get("/events/:id/export/dossier.zip", async (req, res) => {
+  const event = getEventById(db, Number(req.params.id));
+  if (!event) {
+    return res.status(404).render("error", {
+      title: "Événement introuvable",
+      activeNav: "dashboard",
+      message: "Cet événement n'existe pas."
+    });
+  }
+
+  try {
+    const { folderName, zipBuffer } = await buildEventDossierZip(db, event);
+    res.setHeader("Content-Type", "application/zip");
+    res.setHeader("Content-Disposition", `attachment; filename="${folderName}.zip"`);
+    res.send(zipBuffer);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Erreur lors de l'export PDF.");
   }
 });
 
