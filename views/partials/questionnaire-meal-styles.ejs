@@ -2,10 +2,10 @@
   const stylesField = typeof stylesFieldName !== 'undefined' ? stylesFieldName : 'cocktail_styles';
   const selectedStyles = typeof mealStyles !== 'undefined' ? mealStyles : [];
   const idPrefix = typeof stylesIdPrefix !== 'undefined' ? stylesIdPrefix : 'cs';
-  const stylesLabel = typeof stylesLabel !== 'undefined' ? stylesLabel : 'Styles désirés';
+  const labelText = typeof stylesLabel !== 'undefined' ? stylesLabel : 'Styles désirés';
 %>
 
-<p class="text-muted small mb-2"><%= stylesLabel %></p>
+<p class="text-muted small mb-2"><%= labelText %></p>
 <div class="row g-2 mb-3">
   <% COCKTAIL_STYLES.forEach(function(style) { %>
     <div class="col-6 col-md-4 col-lg-3">
