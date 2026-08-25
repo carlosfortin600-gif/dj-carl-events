@@ -1,0 +1,93 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/nav', { activeNav }) %>
+
+<main class="container pb-5" style="max-width: 720px;">
+  <div class="mb-3">
+    <a href="/" class="btn btn-outline-secondary btn-sm">← Tableau de bord</a>
+  </div>
+
+  <% if (saved) { %>
+    <div class="alert alert-success">Paramètres enregistrés.</div>
+  <% } %>
+
+  <div class="card">
+    <div class="card-body p-4">
+      <h1 class="h4 mb-2">Notifications client</h1>
+      <p class="text-muted small mb-4">
+        Quand un client enregistre son questionnaire ou son plan de soirée, vous recevez une alerte
+        sur le tableau de bord. Ajoutez votre courriel pour aussi recevoir un message.
+      </p>
+
+      <form method="post" action="/settings/notifications">
+        <div class="mb-4">
+          <label class="form-label" for="emailTo">Mon courriel de notification</label>
+          <input type="email" class="form-control" id="emailTo" name="emailTo"
+                 value="<%= settings.emailTo %>"
+                 placeholder="carl@votredomaine.com" autocomplete="email">
+          <div class="form-text">Courriel où vous voulez recevoir les avis de modification client.</div>
+        </div>
+
+        <div class="border rounded p-3 mb-4 bg-light">
+          <h2 class="h6 mb-3">Envoi par courriel (SMTP)</h2>
+          <p class="text-muted small">
+            Nécessaire pour recevoir les messages par courriel. Exemple Gmail :
+            serveur <code>smtp.gmail.com</code>, port <code>587</code>, et un
+            <strong>mot de passe d'application</strong> Google.
+          </p>
+
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label" for="smtpHost">Serveur SMTP</label>
+              <input type="text" class="form-control" id="smtpHost" name="smtpHost"
+                     value="<%= settings.smtpHost %>" placeholder="smtp.gmail.com">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="smtpPort">Port</label>
+              <input type="text" class="form-control" id="smtpPort" name="smtpPort"
+                     value="<%= settings.smtpPort || '587' %>">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="smtpUser">Utilisateur SMTP</label>
+              <input type="email" class="form-control" id="smtpUser" name="smtpUser"
+                     value="<%= settings.smtpUser %>" placeholder="votre@gmail.com" autocomplete="username">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="smtpPass">Mot de passe SMTP</label>
+              <input type="password" class="form-control" id="smtpPass" name="smtpPass"
+                     value="" placeholder="<%= typeof smtpPassSet !== 'undefined' && smtpPassSet ? '•••••••• (inchangé)' : 'Mot de passe d\'application' %>"
+                     autocomplete="new-password">
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="smtpFrom">Expéditeur (optionnel)</label>
+              <input type="text" class="form-control" id="smtpFrom" name="smtpFrom"
+                     value="<%= settings.smtpFrom %>" placeholder="DJ Carl &lt;carl@votredomaine.com&gt;">
+            </div>
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="smtpSecure" value="1" id="smtpSecure"
+                       <%= settings.smtpSecure ? 'checked' : '' %>>
+                <label class="form-check-label" for="smtpSecure">Connexion sécurisée (SSL, port 465)</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-light border small mb-4">
+          <% if (emailConfigured) { %>
+            <strong>Courriel actif.</strong> Les prochaines modifications client déclencheront un message à
+            <strong><%= settings.emailTo %></strong>.
+          <% } else if (settings.emailTo) { %>
+            <strong>Courriel incomplet.</strong> Renseignez le serveur SMTP pour activer l'envoi par courriel.
+            Les alertes dans l'app restent actives.
+          <% } else { %>
+            <strong>Alertes dans l'app seulement.</strong> Ajoutez votre courriel et le SMTP pour recevoir aussi un message.
+          <% } %>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

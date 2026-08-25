@@ -130,6 +130,11 @@ const {
   markPortalNotificationsReadForEvent,
   markPortalNotificationRead
 } = require("./lib/portal-notifications");
+const {
+  getNotificationSettings,
+  saveNotificationSettings,
+  isEmailNotificationConfigured
+} = require("./lib/app-settings");
 const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, queryString } = require("./lib/calendar");
 const { importDatabaseFromFile } = require("./lib/import-database");
 const {
@@ -346,8 +351,27 @@ app.get("/", (req, res) => {
     exportEmpty: req.query.exportEmpty === "1",
     portalNotifications: getUnreadPortalNotifications(db),
     portalNotificationCount: getUnreadPortalNotificationCount(db),
+    emailNotificationConfigured: isEmailNotificationConfigured(db),
     ...data
   });
+});
+
+app.get("/settings/notifications", (req, res) => {
+  const raw = getNotificationSettings(db);
+  const settings = { ...raw, smtpPass: "" };
+  res.render("settings-notifications", {
+    title: "Notifications — DJ CARL",
+    activeNav: "notifications",
+    settings,
+    smtpPassSet: Boolean(raw.smtpPass),
+    emailConfigured: isEmailNotificationConfigured(db),
+    saved: req.query.saved === "1"
+  });
+});
+
+app.post("/settings/notifications", (req, res) => {
+  saveNotificationSettings(db, req.body);
+  res.redirect("/settings/notifications?saved=1");
 });
 
 app.get("/export/dossiers.zip", async (req, res) => {

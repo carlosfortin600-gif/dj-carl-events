@@ -674,30 +674,6 @@ initQuestionnaireMissingHighlight();
   reindexClientPlanRows();
 })();
 
-(function initSpecialAnimationCards() {
-  const grid = document.getElementById("specialAnimationGrid");
-  const template = document.getElementById("specialAnimCardTemplate");
-  const addBtn = document.getElementById("addSpecialAnimCard");
-  if (!grid || !template || !addBtn) return;
-
-  function reindexSpecialAnimationCards() {
-    grid.querySelectorAll(".special-animation-card").forEach((card, index) => {
-      card.querySelector(".special-anim-label")?.setAttribute("name", `special_anim_label_${index}`);
-      card.querySelector(".special-anim-song")?.setAttribute("name", `special_anim_song_${index}`);
-    });
-  }
-
-  addBtn.addEventListener("click", () => {
-    const fragment = template.content.cloneNode(true);
-    const col = fragment.querySelector(".col-6");
-    grid.appendChild(fragment);
-    reindexSpecialAnimationCards();
-    col?.querySelector(".special-anim-label")?.focus();
-  });
-
-  reindexSpecialAnimationCards();
-})();
-
 (function initPortalHashScroll() {
   if (!location.hash) return;
   const target = document.querySelector(location.hash);

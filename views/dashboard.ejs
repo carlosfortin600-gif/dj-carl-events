@@ -42,6 +42,16 @@
     </div>
   <% } %>
 
+  <% if (typeof emailNotificationConfigured !== 'undefined' && !emailNotificationConfigured) { %>
+    <div class="alert alert-light border d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <span class="small">
+        Les alertes client s'affichent ici. Pour aussi recevoir un courriel,
+        configurez votre adresse dans les paramètres.
+      </span>
+      <a href="/settings/notifications" class="btn btn-sm btn-outline-primary">Mon courriel de notification</a>
+    </div>
+  <% } %>
+
   <% if (typeof deleted !== 'undefined' && deleted) { %>
     <div class="alert alert-warning">Événement déplacé dans la corbeille. Vous pouvez le restaurer ci-dessous.</div>
   <% } %>
