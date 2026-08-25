@@ -9,6 +9,12 @@
   <% if (saved) { %>
     <div class="alert alert-success">Paramètres enregistrés.</div>
   <% } %>
+  <% if (typeof testSent !== 'undefined' && testSent) { %>
+    <div class="alert alert-success">Courriel de test envoyé. Vérifiez votre boîte de réception (et les indésirables).</div>
+  <% } %>
+  <% if (typeof testError !== 'undefined' && testError) { %>
+    <div class="alert alert-danger"><%= testError %></div>
+  <% } %>
 
   <div class="card">
     <div class="card-body p-4">
@@ -84,7 +90,16 @@
           <% } %>
         </div>
 
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+          <button type="submit" class="btn btn-outline-secondary"
+                  formaction="/settings/notifications/test" formmethod="post">
+            Tester l'envoi
+          </button>
+        </div>
+        <p class="form-text mt-2 mb-0">
+          Le test utilise les valeurs du formulaire (mot de passe enregistré conservé si le champ est vide).
+        </p>
       </form>
     </div>
   </div>

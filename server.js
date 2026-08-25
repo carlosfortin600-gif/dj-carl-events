@@ -128,7 +128,8 @@ const {
   getLastPortalClientUpdate,
   hasUnreadPortalNotificationForEvent,
   markPortalNotificationsReadForEvent,
-  markPortalNotificationRead
+  markPortalNotificationRead,
+  sendTestNotificationEmail
 } = require("./lib/portal-notifications");
 const {
   getNotificationSettings,
@@ -359,19 +360,40 @@ app.get("/", (req, res) => {
 app.get("/settings/notifications", (req, res) => {
   const raw = getNotificationSettings(db);
   const settings = { ...raw, smtpPass: "" };
+  const testErrorMessages = {
+    not_configured: "Renseignez votre courriel et le serveur SMTP avant de tester.",
+    missing_module: "Le module d'envoi de courriel n'est pas disponible sur le serveur.",
+    send_failed: "L'envoi a échoué. Vérifiez le serveur SMTP, le port et le mot de passe."
+  };
+  const testError = req.query.testError;
   res.render("settings-notifications", {
     title: "Notifications — DJ CARL",
     activeNav: "notifications",
     settings,
     smtpPassSet: Boolean(raw.smtpPass),
     emailConfigured: isEmailNotificationConfigured(db),
-    saved: req.query.saved === "1"
+    saved: req.query.saved === "1",
+    testSent: req.query.testSent === "1",
+    testError: testErrorMessages[testError] || (testError ? testErrorMessages.send_failed : "")
   });
 });
 
 app.post("/settings/notifications", (req, res) => {
   saveNotificationSettings(db, req.body);
   res.redirect("/settings/notifications?saved=1");
+});
+
+app.post("/settings/notifications/test", async (req, res) => {
+  try {
+    const result = await sendTestNotificationEmail({ db, body: req.body });
+    if (result.sent) {
+      return res.redirect("/settings/notifications?testSent=1");
+    }
+    return res.redirect(`/settings/notifications?testError=${encodeURIComponent(result.reason || "send_failed")}`);
+  } catch (err) {
+    console.error("Test notification email:", err.message);
+    res.redirect("/settings/notifications?testError=send_failed");
+  }
 });
 
 app.get("/export/dossiers.zip", async (req, res) => {
