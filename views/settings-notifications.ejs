@@ -36,7 +36,14 @@
           <input type="email" class="form-control" id="emailTo" name="emailTo"
                  value="<%= settings.emailTo %>"
                  placeholder="carl@votredomaine.com" autocomplete="email">
-          <div class="form-text">Courriel où vous voulez recevoir les avis de modification client.</div>
+          <div class="form-text">
+            <% if (typeof usesResend !== 'undefined' && usesResend) { %>
+              <strong>Avec Resend sans domaine :</strong> mettez ici le courriel de votre compte Resend
+              (ex. votre Gmail d'inscription), pas un autre courriel.
+            <% } else { %>
+              Courriel où vous voulez recevoir les avis de modification client.
+            <% } %>
+          </div>
         </div>
 
         <div class="border rounded p-3 mb-4">
@@ -45,10 +52,11 @@
             <strong>Première config (sans domaine) :</strong>
             <ol class="mb-0 ps-3">
               <li>Collez votre clé API Resend (<code>re_...</code>)</li>
-              <li><strong>Mon courriel</strong> = le courriel de votre compte Resend</li>
-              <li><strong>Expédiateur Resend</strong> = <code><%= resendTestFrom %></code> (copier-coller)</li>
+              <li><strong>Mon courriel</strong> = <em>exactement</em> le courriel de votre compte Resend (Gmail d'inscription)</li>
+              <li><strong>Expédiateur Resend</strong> = laissez vide ou <code><%= resendTestFrom %></code></li>
               <li>Enregistrer → Tester l'envoi</li>
             </ol>
+            <p class="mb-0 mt-2"><strong>Important :</strong> sans domaine vérifié, Resend refuse Hotmail, Outlook, etc. Pour recevoir ailleurs, ajoutez <code>djcarl.ca</code> (ou votre domaine) sur <a href="https://resend.com/domains" target="_blank" rel="noopener">resend.com/domains</a>.</p>
           </div>
           <p class="text-muted small mb-3">
             Sans domaine vérifié, Resend n'envoie qu'à votre propre courriel de compte.
@@ -121,6 +129,9 @@
             <strong>Courriel actif<% if (usesResend) { %> (Resend)<% } else { %> (SMTP)<% } %>.</strong>
             Les prochaines modifications client déclencheront un message à
             <strong><%= settings.emailTo %></strong>.
+            <% if (usesResend && !settings.resendFrom) { %>
+              <span class="d-block mt-1">Mode test Resend : vérifiez que ce courriel est bien celui de votre compte Resend.</span>
+            <% } %>
           <% } else if (settings.emailTo) { %>
             <strong>Configuration incomplète.</strong>
             Ajoutez une clé Resend + expéditeur, ou le SMTP complet (utilisateur + mot de passe).

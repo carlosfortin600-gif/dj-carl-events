@@ -134,6 +134,7 @@ const {
   sendTestNotificationEmail,
   describeMailError
 } = require("./lib/portal-notifications");
+const { summarizePortalChanges } = require("./lib/portal-change-summary");
 const { RESEND_TEST_FROM } = require("./lib/email-send");
 const {
   getNotificationSettings,
@@ -404,7 +405,7 @@ app.post("/settings/notifications/test", async (req, res) => {
     return res.redirect(`/settings/notifications?testSent=1${provider}${from}`);
   } catch (err) {
     console.error("Test notification email:", err.message);
-    const detail = encodeURIComponent(describeMailError(err).slice(0, 240));
+    const detail = encodeURIComponent(describeMailError(err).slice(0, 500));
     const reason = err.code === "not_configured" ? "not_configured" : "send_failed";
     res.redirect(`/settings/notifications?testError=${reason}&testDetail=${detail}`);
   }
@@ -975,10 +976,18 @@ app.post("/portal/:token/questionnaire", async (req, res) => {
   }
 
   try {
+    const existing = getQuestionnaireForEvent(db, event.id, event.event_type);
+    const before = existing.data;
     const data = bodyToQuestionnaireForEvent(req.body, event.event_type);
+    const changes = summarizePortalChanges({
+      before,
+      after: data,
+      eventType: event.event_type,
+      kind: "questionnaire"
+    });
     saveQuestionnaireForEvent(db, event.id, event.event_type, data);
     syncMusicFromQuestionnaireForEvent(db, event.id, event.event_type, data);
-    await notifyDjCarlClientUpdate({ db, event, kind: "questionnaire", req });
+    await notifyDjCarlClientUpdate({ db, event, kind: "questionnaire", req, changes });
     res.redirect(`/portal/${req.params.token}/questionnaire?saved=1`);
   } catch (err) {
     console.error(err);
@@ -1024,10 +1033,17 @@ app.post("/portal/:token/plan-soiree", async (req, res) => {
 
   try {
     const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
+    const before = JSON.parse(JSON.stringify(questionnaire.data));
     const data = { ...questionnaire.data };
     applyPlanSoireeFromBody(data, req.body, event.event_type);
+    const changes = summarizePortalChanges({
+      before,
+      after: data,
+      eventType: event.event_type,
+      kind: "plan-soiree"
+    });
     saveQuestionnaireForEvent(db, event.id, event.event_type, data);
-    await notifyDjCarlClientUpdate({ db, event, kind: "plan-soiree", req });
+    await notifyDjCarlClientUpdate({ db, event, kind: "plan-soiree", req, changes });
     res.redirect(`/portal/${req.params.token}/plan-soiree?saved=1`);
   } catch (err) {
     console.error(err);
