@@ -23,7 +23,8 @@ const {
   splitServicesForForm,
   BINGO_MUSICAL_STYLE_OPTIONS,
   googleMapsUrl,
-  googleMapsDirectionsUrl
+  googleMapsDirectionsUrl,
+  sortByTime
 } = require("./lib/helpers");
 const {
   loadRouteOrigins,
@@ -216,6 +217,7 @@ app.locals.clientShortName = clientShortName;
 app.locals.clientFullName = clientFullName;
 app.locals.googleMapsUrl = googleMapsUrl;
 app.locals.googleMapsDirectionsUrl = googleMapsDirectionsUrl;
+app.locals.sortByTime = sortByTime;
 app.locals.ROUTE_ORIGIN_OPTIONS = loadRouteOrigins();
 app.locals.resolveRouteOrigin = resolveRouteOrigin;
 app.locals.routeOriginLabel = routeOriginLabel;

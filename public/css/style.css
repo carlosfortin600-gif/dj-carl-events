@@ -82,6 +82,21 @@ body {
   opacity: 0.85;
 }
 
+.special-animation-card {
+  background: #fff;
+  border-color: #dee2e6 !important;
+  min-height: 148px;
+}
+
+.special-animation-card textarea {
+  resize: vertical;
+  min-height: 88px;
+}
+
+.special-animation-card .special-anim-label {
+  font-weight: 600;
+}
+
 .event-line {
   font-size: 0.95rem;
   line-height: 1.5;

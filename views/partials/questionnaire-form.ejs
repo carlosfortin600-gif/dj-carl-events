@@ -299,6 +299,8 @@
     <textarea class="form-control" name="animation_comments" rows="3"><%= q.animation.comments %></textarea>
   </section>
 
+  <%- include('questionnaire-special-animation', { q }) %>
+
   <!-- Plan de soirée (portail client) -->
   <% if (typeof portalMode !== 'undefined' && portalMode) { %>
     <%- include('questionnaire-plan-soiree-section', {
@@ -323,7 +325,7 @@
           </tr>
         </thead>
         <tbody>
-          <% q.important_moments.forEach(function(m) { %>
+          <% sortByTime(q.important_moments, 'time').forEach(function(m) { %>
             <tr>
               <td><%= m.label %></td>
               <td>

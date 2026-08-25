@@ -1,6 +1,6 @@
 <% const steps = typeof proposedTimelineSteps !== 'undefined' ? proposedTimelineSteps : []; %>
 <% const timeline = typeof timelineItems !== 'undefined' ? timelineItems : []; %>
-<% const moments = q.important_moments || []; %>
+<% const moments = sortByTime(q.important_moments || [], 'time'); %>
 <% const clientSteps = (q.client_plan && q.client_plan.steps) ? q.client_plan.steps : []; %>
 
 <p class="text-muted small">

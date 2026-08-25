@@ -1,0 +1,38 @@
+<% const animItems = (q.special_animation && q.special_animation.items) ? q.special_animation.items : []; %>
+
+<section class="q-section mb-4" id="animation-speciale">
+  <h2 class="h5 q-section-title">Animation spéciale</h2>
+  <p class="text-muted small mb-3">
+    Listez les chansons pour vos animations spéciales (jeux, tirages, moments festifs…).
+  </p>
+
+  <div class="row g-3 mb-3" id="specialAnimationGrid">
+    <% animItems.forEach(function(item, index) { %>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="special-animation-card border rounded p-3 h-100">
+          <input type="text" class="form-control form-control-sm mb-2 special-anim-label"
+                 name="special_anim_label_<%= index %>"
+                 value="<%= item.label %>"
+                 placeholder="Animation">
+          <textarea class="form-control form-control-sm special-anim-song"
+                    name="special_anim_song_<%= index %>"
+                    rows="4"
+                    placeholder="Chanson(s)…"><%= item.song %></textarea>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+
+  <button type="button" class="btn btn-sm btn-outline-primary" id="addSpecialAnimCard">+ Ajouter un carré</button>
+
+  <template id="specialAnimCardTemplate">
+    <div class="col-6 col-md-4 col-lg-3">
+      <div class="special-animation-card border rounded p-3 h-100">
+        <input type="text" class="form-control form-control-sm mb-2 special-anim-label"
+               data-name="special_anim_label" placeholder="Animation">
+        <textarea class="form-control form-control-sm special-anim-song"
+                  data-name="special_anim_song" rows="4" placeholder="Chanson(s)…"></textarea>
+      </div>
+    </div>
+  </template>
+</section>
