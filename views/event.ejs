@@ -7,7 +7,13 @@
   </div>
 
   <% if (created) { %>
-    <div class="alert alert-success">Dossier client créé avec succès.</div>
+    <div class="alert alert-success">
+      Dossier client créé avec succès.
+      <% if (typeof addCalendar !== 'undefined' && addCalendar) { %>
+        Ajout à votre calendrier en cours…
+        <a href="<%= calendarIcsUrl %>" class="alert-link ms-1">Ouvrir le fichier calendrier</a>
+      <% } %>
+    </div>
   <% } %>
   <% if (statusUpdated) { %>
     <div class="alert alert-success">Statut mis à jour.</div>
@@ -189,5 +195,32 @@
     </div>
   </div>
 </main>
+
+<% if (typeof addCalendar !== 'undefined' && addCalendar && calendarIcsUrl) { %>
+<script>
+(function () {
+  var url = "<%= calendarIcsUrl %>";
+  var filename = "<%= calendarIcsFilename %>";
+  fetch(url)
+    .then(function (response) {
+      if (!response.ok) throw new Error("calendar");
+      return response.blob();
+    })
+    .then(function (blob) {
+      var objectUrl = URL.createObjectURL(blob);
+      var link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(function () { URL.revokeObjectURL(objectUrl); }, 1000);
+    })
+    .catch(function () {
+      window.location.href = url;
+    });
+})();
+</script>
+<% } %>
 
 <%- include('partials/footer') %>

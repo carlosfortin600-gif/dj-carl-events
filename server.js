@@ -76,6 +76,7 @@ const {
   regeneratePortalToken,
   setPortalEnabled,
   getPortalLinks,
+  getPortalBaseUrls,
   getEventByPortalToken,
   touchPortalAccess
 } = require("./lib/portal");
@@ -120,6 +121,7 @@ const {
 } = require("./lib/subcontractor-calendar-access");
 const { buildSummarySheet } = require("./lib/summary-sheet");
 const { buildEventDossierZip, buildAllEventsDossierZip } = require("./lib/event-export");
+const { buildEventIcs, buildEventIcsFilename } = require("./lib/event-ics");
 const { applyPlanSoireeFromBody } = require("./lib/plan-soiree");
 const {
   notifyDjCarlClientUpdate,
@@ -540,7 +542,7 @@ app.post("/events/new", (req, res) => {
 
   try {
     const eventId = createEvent(db, values);
-    res.redirect(`/events/${eventId}?created=1`);
+    res.redirect(`/events/${eventId}?created=1&addCalendar=1`);
   } catch (err) {
     console.error(err);
     res.status(500).render("event-new", {
@@ -594,6 +596,30 @@ app.post("/events/:id/destroy", (req, res) => {
   permanentlyDeleteEvent(db, eventId);
   deleteAllEventFiles(db, eventId);
   res.redirect("/?destroyed=1#corbeille");
+});
+
+app.get("/events/:id/calendar.ics", (req, res) => {
+  const event = getEventById(db, Number(req.params.id));
+  if (!event) {
+    return res.status(404).send("Événement introuvable.");
+  }
+
+  try {
+    const services = getEventServices(db, event.id);
+    const { currentBase } = getPortalBaseUrls(req);
+    const ics = buildEventIcs({
+      event,
+      services,
+      appUrl: currentBase
+    });
+    const filename = buildEventIcsFilename(event);
+    res.setHeader("Content-Type", "text/calendar; charset=utf-8");
+    res.setHeader("Content-Disposition", `inline; filename="${filename}"`);
+    res.send(ics);
+  } catch (err) {
+    console.error("Calendar ICS:", err.message);
+    res.status(500).send("Impossible de générer le fichier calendrier.");
+  }
 });
 
 app.get("/events/:id", (req, res) => {
@@ -693,6 +719,9 @@ app.get("/events/:id", (req, res) => {
     maxFilesPerUpload: MAX_FILES_PER_UPLOAD,
     tab,
     created: req.query.created === "1",
+    addCalendar: req.query.addCalendar === "1",
+    calendarIcsUrl: `/events/${event.id}/calendar.ics`,
+    calendarIcsFilename: buildEventIcsFilename(event),
     statusUpdated: req.query.statusUpdated === "1",
     questionnaireSaved: req.query.questionnaireSaved === "1",
     portalRegenerated: req.query.portalRegenerated === "1",
