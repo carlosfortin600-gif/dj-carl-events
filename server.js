@@ -132,6 +132,7 @@ const {
   sendTestNotificationEmail,
   describeMailError
 } = require("./lib/portal-notifications");
+const { RESEND_TEST_FROM } = require("./lib/email-send");
 const {
   getNotificationSettings,
   saveNotificationSettings,
@@ -378,9 +379,11 @@ app.get("/settings/notifications", (req, res) => {
     resendApiKeySet: Boolean(raw.resendApiKey),
     emailConfigured: isEmailNotificationConfigured(db),
     usesResend: Boolean(getEffectiveNotificationConfig(db).resendApiKey),
+    resendTestFrom: RESEND_TEST_FROM,
     saved: req.query.saved === "1",
     testSent: req.query.testSent === "1",
     testProvider: req.query.testProvider || "",
+    testFrom: req.query.testFrom ? decodeURIComponent(String(req.query.testFrom)) : "",
     testError: testErrorMessages[testError] || testDetail || (testError ? "L'envoi a échoué." : "")
   });
 });
@@ -392,9 +395,11 @@ app.post("/settings/notifications", (req, res) => {
 
 app.post("/settings/notifications/test", async (req, res) => {
   try {
+    saveNotificationSettings(db, req.body);
     const result = await sendTestNotificationEmail({ db, body: req.body });
     const provider = result.provider ? `&testProvider=${encodeURIComponent(result.provider)}` : "";
-    return res.redirect(`/settings/notifications?testSent=1${provider}`);
+    const from = result.from ? `&testFrom=${encodeURIComponent(result.from)}` : "";
+    return res.redirect(`/settings/notifications?testSent=1${provider}${from}`);
   } catch (err) {
     console.error("Test notification email:", err.message);
     const detail = encodeURIComponent(describeMailError(err).slice(0, 240));

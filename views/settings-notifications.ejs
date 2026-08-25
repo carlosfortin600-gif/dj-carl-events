@@ -12,6 +12,9 @@
   <% if (typeof testSent !== 'undefined' && testSent) { %>
     <div class="alert alert-success">
       Courriel de test envoyé<% if (testProvider) { %> via <%= testProvider === 'resend' ? 'Resend' : 'SMTP' %><% } %>.
+      <% if (typeof testFrom !== 'undefined' && testFrom) { %>
+        Expéditeur : <code><%= testFrom %></code>.
+      <% } %>
       Vérifiez votre boîte de réception (et les indésirables).
     </div>
   <% } %>
@@ -38,11 +41,19 @@
 
         <div class="border rounded p-3 mb-4">
           <h2 class="h6 mb-2">Resend — recommandé en ligne</h2>
+          <div class="alert alert-info small py-2 mb-3">
+            <strong>Première config (sans domaine) :</strong>
+            <ol class="mb-0 ps-3">
+              <li>Collez votre clé API Resend (<code>re_...</code>)</li>
+              <li><strong>Mon courriel</strong> = le courriel de votre compte Resend</li>
+              <li><strong>Expédiateur Resend</strong> = <code><%= resendTestFrom %></code> (copier-coller)</li>
+              <li>Enregistrer → Tester l'envoi</li>
+            </ol>
+          </div>
           <p class="text-muted small mb-3">
-            Sur un serveur cloud, Gmail SMTP échoue souvent (connexion bloquée ou refusée).
-            <strong>Resend</strong> envoie par API HTTPS et fonctionne partout.
-            Créez un compte sur <a href="https://resend.com" target="_blank" rel="noopener">resend.com</a>,
-            récupérez une clé API, puis ajoutez un domaine ou utilisez leur expéditeur de test.
+            Sans domaine vérifié, Resend n'envoie qu'à votre propre courriel de compte.
+            Avec un domaine (ex. djcarl.ca), ajoutez-le dans Resend puis mettez
+            <code>DJ Carl &lt;notifications@votredomaine.com&gt;</code>.
           </p>
           <div class="row g-3">
             <div class="col-12">
@@ -55,8 +66,8 @@
               <label class="form-label" for="resendFrom">Expéditeur Resend</label>
               <input type="text" class="form-control" id="resendFrom" name="resendFrom"
                      value="<%= settings.resendFrom %>"
-                     placeholder="DJ Carl &lt;notifications@votredomaine.com&gt;">
-              <div class="form-text">Obligatoire si une clé Resend est renseignée. Doit correspondre à un domaine vérifié chez Resend.</div>
+                     placeholder="<%= resendTestFrom %>">
+              <div class="form-text">Laissez vide pour utiliser l'expéditeur de test Resend. N'utilisez pas votre adresse Gmail ici.</div>
             </div>
           </div>
         </div>
