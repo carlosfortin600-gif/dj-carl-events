@@ -15,8 +15,11 @@
           <span class="text-muted mx-1">|</span>
           <%= ev.venue || '—' %>
           <% if (!(typeof trashMode !== 'undefined' && trashMode)) { %>
+            <% const hidePastIncomplete = typeof pastMode !== 'undefined' && pastMode && ev.status === 'a_completer'; %>
+            <% if (!hidePastIncomplete) { %>
             <span class="text-muted mx-1">|</span>
             <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
+            <% } %>
             <% if (expandable && ev.checklist && !ev.checklist.allDone) { %>
               <span class="badge bg-primary ms-1"><%= ev.checklist.missingCount %> à compléter</span>
             <% } %>
