@@ -121,6 +121,15 @@ const {
 const { buildSummarySheet } = require("./lib/summary-sheet");
 const { buildEventDossierZip, buildAllEventsDossierZip } = require("./lib/event-export");
 const { applyPlanSoireeFromBody } = require("./lib/plan-soiree");
+const {
+  notifyDjCarlClientUpdate,
+  getUnreadPortalNotifications,
+  getUnreadPortalNotificationCount,
+  getLastPortalClientUpdate,
+  hasUnreadPortalNotificationForEvent,
+  markPortalNotificationsReadForEvent,
+  markPortalNotificationRead
+} = require("./lib/portal-notifications");
 const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, queryString } = require("./lib/calendar");
 const { importDatabaseFromFile } = require("./lib/import-database");
 const {
@@ -335,6 +344,8 @@ app.get("/", (req, res) => {
     restored: req.query.restored === "1",
     destroyed: req.query.destroyed === "1",
     exportEmpty: req.query.exportEmpty === "1",
+    portalNotifications: getUnreadPortalNotifications(db),
+    portalNotificationCount: getUnreadPortalNotificationCount(db),
     ...data
   });
 });
@@ -596,6 +607,12 @@ app.get("/events/:id", (req, res) => {
     timelineExistingCount = timelineItems.length;
   }
 
+  const lastPortalClientUpdate = getLastPortalClientUpdate(db, event.id);
+  const portalClientUpdateUnread = hasUnreadPortalNotificationForEvent(db, event.id);
+  if (tab === "client" || tab === "questionnaire") {
+    markPortalNotificationsReadForEvent(db, event.id);
+  }
+
   res.render("event", {
     title: `${clientShortName(event)} — DJ CARL`,
     activeNav: "dashboard",
@@ -643,7 +660,9 @@ app.get("/events/:id", (req, res) => {
     calendarShareLinks,
     contractSaved: req.query.contractSaved === "1",
     contractCleared: req.query.contractCleared === "1",
-    contractError: req.query.contractError || ""
+    contractError: req.query.contractError || "",
+    lastPortalClientUpdate,
+    portalClientUpdateUnread: tab === "client" || tab === "questionnaire" ? false : portalClientUpdateUnread
   });
 });
 
@@ -859,7 +878,7 @@ app.get("/portal/:token/questionnaire", (req, res) => {
   });
 });
 
-app.post("/portal/:token/questionnaire", (req, res) => {
+app.post("/portal/:token/questionnaire", async (req, res) => {
   const event = getEventByPortalToken(db, req.params.token);
   if (!event) {
     return res.status(404).render("portal/error", {
@@ -872,6 +891,7 @@ app.post("/portal/:token/questionnaire", (req, res) => {
     const data = bodyToQuestionnaireForEvent(req.body, event.event_type);
     saveQuestionnaireForEvent(db, event.id, event.event_type, data);
     syncMusicFromQuestionnaireForEvent(db, event.id, event.event_type, data);
+    await notifyDjCarlClientUpdate({ db, event, kind: "questionnaire", req });
     res.redirect(`/portal/${req.params.token}/questionnaire?saved=1`);
   } catch (err) {
     console.error(err);
@@ -906,7 +926,7 @@ app.get("/portal/:token/plan-soiree", (req, res) => {
   });
 });
 
-app.post("/portal/:token/plan-soiree", (req, res) => {
+app.post("/portal/:token/plan-soiree", async (req, res) => {
   const event = getEventByPortalToken(db, req.params.token);
   if (!event) {
     return res.status(404).render("portal/error", {
@@ -920,11 +940,18 @@ app.post("/portal/:token/plan-soiree", (req, res) => {
     const data = { ...questionnaire.data };
     applyPlanSoireeFromBody(data, req.body, event.event_type);
     saveQuestionnaireForEvent(db, event.id, event.event_type, data);
+    await notifyDjCarlClientUpdate({ db, event, kind: "plan-soiree", req });
     res.redirect(`/portal/${req.params.token}/plan-soiree?saved=1`);
   } catch (err) {
     console.error(err);
     res.redirect(`/portal/${req.params.token}/plan-soiree`);
   }
+});
+
+app.post("/notifications/:id/read", (req, res) => {
+  markPortalNotificationRead(db, Number(req.params.id));
+  const back = req.body.returnTo || req.get("Referer") || "/";
+  res.redirect(back);
 });
 
 app.post("/events/:id/timeline/add", (req, res) => {

@@ -364,6 +364,21 @@ function migrate(db) {
       "INSERT OR REPLACE INTO app_meta (key, value) VALUES ('timeline_reordered_by_time', '1')"
     ).run();
   }
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS portal_client_notifications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_id INTEGER NOT NULL,
+      kind TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      read_at TEXT,
+      FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+    )
+  `);
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_portal_client_notifications_unread
+    ON portal_client_notifications(event_id, read_at, created_at)
+  `);
 }
 
 module.exports = {

@@ -17,6 +17,19 @@
     <div class="alert alert-success">Questionnaire enregistré.</div>
   <% } %>
 
+  <% if (typeof portalClientUpdateUnread !== 'undefined' && portalClientUpdateUnread) { %>
+    <div class="alert alert-info">
+      <strong>Modification client.</strong>
+      <% if (typeof lastPortalClientUpdate !== 'undefined' && lastPortalClientUpdate) { %>
+        Le client a mis à jour le <strong><%= lastPortalClientUpdate.kindLabel %></strong>
+        le <%= formatTimestampFr(lastPortalClientUpdate.created_at) %>.
+      <% } else { %>
+        Le client a récemment modifié son dossier.
+      <% } %>
+      <a href="/events/<%= event.id %>?tab=client" class="alert-link ms-1">Voir le lien client</a>
+    </div>
+  <% } %>
+
   <% if (event.deleted_at) { %>
     <div class="alert alert-warning">
       <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -61,7 +74,7 @@
   <ul class="nav nav-tabs event-tabs mb-4 flex-nowrap overflow-auto" role="tablist">
     <% const tabs = [
       { id: 'resume', label: 'Résumé' },
-      { id: 'client', label: 'Lien client' },
+      { id: 'client', label: 'Lien client', badge: (typeof portalClientUpdateUnread !== 'undefined' && portalClientUpdateUnread) ? 1 : 0 },
       { id: 'questionnaire', label: 'Questionnaire' },
       { id: 'a-completer', label: 'À compléter', badge: missingQuestions.count },
       { id: 'timeline', label: 'Plan de soirée' },
@@ -101,7 +114,8 @@
           event,
           portalLinks,
           portalRegenerated,
-          portalToggled
+          portalToggled,
+          lastPortalClientUpdate: typeof lastPortalClientUpdate !== 'undefined' ? lastPortalClientUpdate : null
         }) %>
 
       <% } else if (tab === 'questionnaire') { %>

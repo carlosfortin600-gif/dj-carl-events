@@ -56,5 +56,12 @@
     <% } else if (event.portal_last_accessed) { %>
       <p class="text-muted small mt-3 mb-0">Dernier accès client : <%= event.portal_last_accessed %></p>
     <% } %>
+    <% if (typeof lastPortalClientUpdate !== 'undefined' && lastPortalClientUpdate) { %>
+      <p class="text-muted small mt-2 mb-0">
+        Dernière modification enregistrée :
+        <strong><%= lastPortalClientUpdate.kindLabel %></strong>
+        — <%= formatTimestampFr(lastPortalClientUpdate.created_at) %>
+      </p>
+    <% } %>
   </div>
 </div>
