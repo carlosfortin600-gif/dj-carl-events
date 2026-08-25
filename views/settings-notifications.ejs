@@ -10,7 +10,10 @@
     <div class="alert alert-success">Paramètres enregistrés.</div>
   <% } %>
   <% if (typeof testSent !== 'undefined' && testSent) { %>
-    <div class="alert alert-success">Courriel de test envoyé. Vérifiez votre boîte de réception (et les indésirables).</div>
+    <div class="alert alert-success">
+      Courriel de test envoyé<% if (testProvider) { %> via <%= testProvider === 'resend' ? 'Resend' : 'SMTP' %><% } %>.
+      Vérifiez votre boîte de réception (et les indésirables).
+    </div>
   <% } %>
   <% if (typeof testError !== 'undefined' && testError) { %>
     <div class="alert alert-danger"><%= testError %></div>
@@ -33,12 +36,36 @@
           <div class="form-text">Courriel où vous voulez recevoir les avis de modification client.</div>
         </div>
 
+        <div class="border rounded p-3 mb-4">
+          <h2 class="h6 mb-2">Resend — recommandé en ligne</h2>
+          <p class="text-muted small mb-3">
+            Sur un serveur cloud, Gmail SMTP échoue souvent (connexion bloquée ou refusée).
+            <strong>Resend</strong> envoie par API HTTPS et fonctionne partout.
+            Créez un compte sur <a href="https://resend.com" target="_blank" rel="noopener">resend.com</a>,
+            récupérez une clé API, puis ajoutez un domaine ou utilisez leur expéditeur de test.
+          </p>
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label" for="resendApiKey">Clé API Resend</label>
+              <input type="password" class="form-control" id="resendApiKey" name="resendApiKey"
+                     value="" placeholder="<%= typeof resendApiKeySet !== 'undefined' && resendApiKeySet ? '•••••••• (inchangée)' : 're_...' %>"
+                     autocomplete="off">
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="resendFrom">Expéditeur Resend</label>
+              <input type="text" class="form-control" id="resendFrom" name="resendFrom"
+                     value="<%= settings.resendFrom %>"
+                     placeholder="DJ Carl &lt;notifications@votredomaine.com&gt;">
+              <div class="form-text">Obligatoire si une clé Resend est renseignée. Doit correspondre à un domaine vérifié chez Resend.</div>
+            </div>
+          </div>
+        </div>
+
         <div class="border rounded p-3 mb-4 bg-light">
-          <h2 class="h6 mb-3">Envoi par courriel (SMTP)</h2>
+          <h2 class="h6 mb-3">SMTP (Gmail, etc.) — optionnel</h2>
           <p class="text-muted small">
-            Nécessaire pour recevoir les messages par courriel. Exemple Gmail :
-            serveur <code>smtp.gmail.com</code>, port <code>587</code>, et un
-            <strong>mot de passe d'application</strong> Google.
+            Fonctionne bien en local. En production sur Render, préférez Resend ci-dessus.
+            Gmail : serveur <code>smtp.gmail.com</code>, port <code>587</code>, mot de passe d'application.
           </p>
 
           <div class="row g-3">
@@ -80,13 +107,15 @@
 
         <div class="alert alert-light border small mb-4">
           <% if (emailConfigured) { %>
-            <strong>Courriel actif.</strong> Les prochaines modifications client déclencheront un message à
+            <strong>Courriel actif<% if (usesResend) { %> (Resend)<% } else { %> (SMTP)<% } %>.</strong>
+            Les prochaines modifications client déclencheront un message à
             <strong><%= settings.emailTo %></strong>.
           <% } else if (settings.emailTo) { %>
-            <strong>Courriel incomplet.</strong> Renseignez le serveur SMTP pour activer l'envoi par courriel.
+            <strong>Configuration incomplète.</strong>
+            Ajoutez une clé Resend + expéditeur, ou le SMTP complet (utilisateur + mot de passe).
             Les alertes dans l'app restent actives.
           <% } else { %>
-            <strong>Alertes dans l'app seulement.</strong> Ajoutez votre courriel et le SMTP pour recevoir aussi un message.
+            <strong>Alertes dans l'app seulement.</strong> Ajoutez votre courriel et Resend ou SMTP pour recevoir aussi un message.
           <% } %>
         </div>
 
@@ -98,7 +127,7 @@
           </button>
         </div>
         <p class="form-text mt-2 mb-0">
-          Le test utilise les valeurs du formulaire (mot de passe enregistré conservé si le champ est vide).
+          Le test utilise les valeurs du formulaire. Les mots de passe/clés enregistrés sont conservés si les champs sont vides.
         </p>
       </form>
     </div>

@@ -129,12 +129,14 @@ const {
   hasUnreadPortalNotificationForEvent,
   markPortalNotificationsReadForEvent,
   markPortalNotificationRead,
-  sendTestNotificationEmail
+  sendTestNotificationEmail,
+  describeMailError
 } = require("./lib/portal-notifications");
 const {
   getNotificationSettings,
   saveNotificationSettings,
-  isEmailNotificationConfigured
+  isEmailNotificationConfigured,
+  getEffectiveNotificationConfig
 } = require("./lib/app-settings");
 const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, queryString } = require("./lib/calendar");
 const { importDatabaseFromFile } = require("./lib/import-database");
@@ -359,22 +361,27 @@ app.get("/", (req, res) => {
 
 app.get("/settings/notifications", (req, res) => {
   const raw = getNotificationSettings(db);
-  const settings = { ...raw, smtpPass: "" };
+  const settings = { ...raw, smtpPass: "", resendApiKey: "" };
   const testErrorMessages = {
-    not_configured: "Renseignez votre courriel et le serveur SMTP avant de tester.",
-    missing_module: "Le module d'envoi de courriel n'est pas disponible sur le serveur.",
-    send_failed: "L'envoi a échoué. Vérifiez le serveur SMTP, le port et le mot de passe."
+    not_configured: "Renseignez votre courriel et la configuration d'envoi avant de tester.",
+    missing_module: "Le module d'envoi SMTP n'est pas disponible sur le serveur."
   };
   const testError = req.query.testError;
+  const testDetail = req.query.testDetail
+    ? decodeURIComponent(String(req.query.testDetail))
+    : "";
   res.render("settings-notifications", {
     title: "Notifications — DJ CARL",
     activeNav: "notifications",
     settings,
     smtpPassSet: Boolean(raw.smtpPass),
+    resendApiKeySet: Boolean(raw.resendApiKey),
     emailConfigured: isEmailNotificationConfigured(db),
+    usesResend: Boolean(getEffectiveNotificationConfig(db).resendApiKey),
     saved: req.query.saved === "1",
     testSent: req.query.testSent === "1",
-    testError: testErrorMessages[testError] || (testError ? testErrorMessages.send_failed : "")
+    testProvider: req.query.testProvider || "",
+    testError: testErrorMessages[testError] || testDetail || (testError ? "L'envoi a échoué." : "")
   });
 });
 
@@ -386,13 +393,13 @@ app.post("/settings/notifications", (req, res) => {
 app.post("/settings/notifications/test", async (req, res) => {
   try {
     const result = await sendTestNotificationEmail({ db, body: req.body });
-    if (result.sent) {
-      return res.redirect("/settings/notifications?testSent=1");
-    }
-    return res.redirect(`/settings/notifications?testError=${encodeURIComponent(result.reason || "send_failed")}`);
+    const provider = result.provider ? `&testProvider=${encodeURIComponent(result.provider)}` : "";
+    return res.redirect(`/settings/notifications?testSent=1${provider}`);
   } catch (err) {
     console.error("Test notification email:", err.message);
-    res.redirect("/settings/notifications?testError=send_failed");
+    const detail = encodeURIComponent(describeMailError(err).slice(0, 240));
+    const reason = err.code === "not_configured" ? "not_configured" : "send_failed";
+    res.redirect(`/settings/notifications?testError=${reason}&testDetail=${detail}`);
   }
 });
 
