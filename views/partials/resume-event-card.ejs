@@ -43,8 +43,13 @@
               <span class="resume-event-row-ententes-list">
                 <% ev.agreements.forEach(function(st) { %>
                   <span class="resume-event-row-entente-item">
-                    <span class="d-block"><%= st.label %></span>
-                    <span>Signé <strong class="<%= st.signed ? 'text-success' : '' %>"><%= st.signed ? 'Oui' : 'Non' %></strong><% if (st.amount) { %> · <%= st.amount %><% } %></span>
+                    <span class="resume-event-row-entente-contract">
+                      <span class="resume-event-row-entente-name"><%= st.label %></span>
+                      <span>Signé <strong class="<%= st.signed ? 'text-success' : '' %>"><%= st.signed ? 'Oui' : 'Non' %></strong></span>
+                    </span>
+                    <% if (st.amount) { %>
+                      <span class="resume-event-row-entente-amount"><%= st.amount %></span>
+                    <% } %>
                   </span>
                 <% }); %>
               </span>

@@ -872,9 +872,21 @@ table tr.q-field-missing td:first-child {
 }
 
 .resume-event-row-entente-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0;
+}
+
+.resume-event-row-entente-contract {
   display: inline-flex;
-  flex-direction: column;
-  gap: 0.05rem;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+}
+
+.resume-event-row-entente-amount {
+  margin-left: 1in;
 }
 
 .resume-event-row-label {
