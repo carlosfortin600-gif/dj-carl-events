@@ -639,6 +639,7 @@ initQuestionnaireMissingHighlight();
 
   bindToggle("tech_trailer_yes", "tech_trailer_no", "tech_trailer_fields");
   bindToggle("tech_room_yes", "tech_room_no", "tech_room_fields");
+  bindToggle("tech_client_called_yes", "tech_client_called_no", "tech_client_call_fields");
 })();
 
 (function initCustomServiceInputs() {

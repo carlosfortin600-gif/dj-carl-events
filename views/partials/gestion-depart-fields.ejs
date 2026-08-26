@@ -29,6 +29,53 @@
     </div>
   </div>
 
+  <% const clientCalled = djNotes.tech_client_called
+    || ((djNotes.tech_client_call_date || djNotes.tech_client_call_time) ? 'yes' : 'no'); %>
+  <div class="border rounded p-3 bg-light mb-4">
+    <h3 class="h6 mb-3">Client</h3>
+    <div class="row g-3">
+      <div class="col-12">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <span class="fw-semibold">Client appelé</span>
+          <div class="btn-group btn-group-sm" role="group" aria-label="Client appelé">
+            <input type="radio" class="btn-check" name="tech_client_called" id="tech_client_called_yes" value="yes"
+                   <%= clientCalled === 'yes' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="tech_client_called_yes">Oui</label>
+            <input type="radio" class="btn-check" name="tech_client_called" id="tech_client_called_no" value="no"
+                   <%= clientCalled === 'no' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="tech_client_called_no">Non</label>
+          </div>
+        </div>
+      </div>
+      <div id="tech_client_call_fields" class="col-md-6" <%= clientCalled === 'no' ? 'hidden' : '' %>>
+        <label class="form-label" for="tech_client_call_datetime">Date de l'appel</label>
+        <%- include('datetime-fr-field', {
+          id: 'tech_client_call_datetime',
+          name: 'tech_client_call_datetime',
+          value: endDatetimeLocalValue(event.event_date, djNotes.tech_client_call_date, djNotes.tech_client_call_time),
+          displayValue: djNotes.tech_client_call_date
+            ? formatDateTimeFr(djNotes.tech_client_call_date, djNotes.tech_client_call_time) : ''
+        }) %>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="tech_callback_name">Nom — rappel</label>
+        <input type="text" class="form-control" id="tech_callback_name" name="tech_callback_name"
+               value="<%= djNotes.tech_callback_name || '' %>"
+               placeholder="Personne à rappeler">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="tech_callback_datetime">Date — rappel</label>
+        <%- include('datetime-fr-field', {
+          id: 'tech_callback_datetime',
+          name: 'tech_callback_datetime',
+          value: endDatetimeLocalValue(event.event_date, djNotes.tech_callback_date, djNotes.tech_callback_time),
+          displayValue: djNotes.tech_callback_date
+            ? formatDateTimeFr(djNotes.tech_callback_date, djNotes.tech_callback_time) : ''
+        }) %>
+      </div>
+    </div>
+  </div>
+
   <% if (typeof eventAgreementStatuses !== 'undefined' && eventAgreementStatuses.length) { %>
     <div class="border rounded p-3 bg-light">
       <h3 class="h6 mb-3">Ententes</h3>

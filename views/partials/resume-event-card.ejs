@@ -80,6 +80,28 @@
         <span class="resume-event-row-label">Prix</span>
         <span><%= ev.chargedPrice || '—' %></span>
       </div>
+
+      <div class="resume-event-row-field resume-event-row-client small">
+        <span class="resume-event-row-label">Client</span>
+        <div class="resume-event-row-location-item">
+          <span class="resume-event-row-location-need-label">Appelé</span>
+          <strong class="resume-event-row-location-need-value"><%= ev.clientCalled ? 'Oui' : 'Non' %></strong>
+          <% if (ev.clientCalled && ev.clientCallAt) { %>
+            <span class="text-muted mx-1">·</span>
+            <span>Date</span>
+            <strong class="resume-event-row-location-rented-value"><%= ev.clientCallAt %></strong>
+          <% } %>
+        </div>
+        <div class="resume-event-row-location-item mt-1">
+          <span class="resume-event-row-location-need-label">Rappel</span>
+          <strong class="resume-event-row-location-need-value"><%= ev.callbackName || '—' %></strong>
+          <% if (ev.callbackAt) { %>
+            <span class="text-muted mx-1">·</span>
+            <span>Date</span>
+            <strong class="resume-event-row-location-rented-value"><%= ev.callbackAt %></strong>
+          <% } %>
+        </div>
+      </div>
     </div>
   </div>
 

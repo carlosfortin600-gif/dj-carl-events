@@ -887,6 +887,11 @@ table tr.q-field-missing td:first-child {
   min-width: 10rem;
 }
 
+.resume-event-row-client {
+  flex: 1 1 14rem;
+  min-width: 12rem;
+}
+
 .resume-event-row-ententes-list {
   display: flex;
   flex-direction: column;
