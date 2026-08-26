@@ -24,9 +24,13 @@
       <div class="resume-event-row-field resume-event-row-where">
         <span class="resume-event-row-label">Où</span>
         <span>
-          <% if (ev.venue) { %><%= ev.venue %><% } else if (!ev.address) { %>—<% } %>
           <% if (ev.address) { %>
-            <span class="d-block text-muted small mt-1"><%= ev.address %></span>
+            <span class="d-block"><%= ev.address %></span>
+          <% } else if (!ev.venue) { %>
+            —
+          <% } %>
+          <% if (ev.venue) { %>
+            <span class="d-block text-muted small mt-1"><%= ev.venue %></span>
           <% } %>
         </span>
 
@@ -34,13 +38,19 @@
           <div class="resume-event-row-location small">
             <span class="resume-event-row-label d-block mb-1">Location</span>
             <div class="resume-event-row-location-item">
-              Hôtel — besoin <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong><% if (ev.hotelNeeded) { %>
-                · Loué <strong><%= ev.hotelRented ? 'Oui' : 'Non' %></strong>
+              <span class="resume-event-row-location-need-label">Hôtel — besoin</span>
+              <strong class="resume-event-row-location-need-value"><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong><% if (ev.hotelNeeded) { %>
+                <span class="text-muted mx-1">·</span>
+                <span>Loué</span>
+                <strong><%= ev.hotelRented ? 'Oui' : 'Non' %></strong>
               <% } %>
             </div>
             <div class="resume-event-row-location-item">
-              Trailer — besoin <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong><% if (ev.trailerNeeded) { %>
-                · Loué <strong><%= ev.trailerRented ? 'Oui' : 'Non' %></strong>
+              <span class="resume-event-row-location-need-label">Trailer — besoin</span>
+              <strong class="resume-event-row-location-need-value"><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong><% if (ev.trailerNeeded) { %>
+                <span class="text-muted mx-1">·</span>
+                <span>Loué</span>
+                <strong><%= ev.trailerRented ? 'Oui' : 'Non' %></strong>
               <% } %>
             </div>
           </div>

@@ -867,6 +867,17 @@ table tr.q-field-missing td:first-child {
   margin-top: 0.2rem;
 }
 
+.resume-event-row-location-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0;
+}
+
+.resume-event-row-location-need-value {
+  margin-left: 1in;
+}
+
 .resume-event-row-ententes {
   flex: 1 1 10rem;
   min-width: 10rem;
