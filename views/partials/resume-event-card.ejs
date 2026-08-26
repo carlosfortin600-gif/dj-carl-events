@@ -44,7 +44,7 @@
                 <% ev.agreements.forEach(function(st) { %>
                   <span class="resume-event-row-entente-item">
                     <span class="d-block"><%= st.label %></span>
-                    <span>Signé <strong class="<%= st.signed ? 'text-success' : '' %>"><%= st.signed ? 'Oui' : 'Non' %></strong></span>
+                    <span>Signé <strong class="<%= st.signed ? 'text-success' : '' %>"><%= st.signed ? 'Oui' : 'Non' %></strong><% if (st.amount) { %> · <%= st.amount %><% } %></span>
                   </span>
                 <% }); %>
               </span>
