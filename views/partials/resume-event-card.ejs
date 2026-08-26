@@ -41,16 +41,16 @@
               <span class="resume-event-row-location-need-label">Hôtel — besoin</span>
               <strong class="resume-event-row-location-need-value"><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong><% if (ev.hotelNeeded) { %>
                 <span class="text-muted mx-1">·</span>
-                <span>Loué</span>
-                <strong><%= ev.hotelRented ? 'Oui' : 'Non' %></strong>
+                <span class="resume-event-row-location-rented-label">Loué</span>
+                <strong class="resume-event-row-location-rented-value"><%= ev.hotelRented ? 'Oui' : 'Non' %></strong>
               <% } %>
             </div>
             <div class="resume-event-row-location-item">
               <span class="resume-event-row-location-need-label">Trailer — besoin</span>
               <strong class="resume-event-row-location-need-value"><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong><% if (ev.trailerNeeded) { %>
                 <span class="text-muted mx-1">·</span>
-                <span>Loué</span>
-                <strong><%= ev.trailerRented ? 'Oui' : 'Non' %></strong>
+                <span class="resume-event-row-location-rented-label">Loué</span>
+                <strong class="resume-event-row-location-rented-value"><%= ev.trailerRented ? 'Oui' : 'Non' %></strong>
               <% } %>
             </div>
           </div>

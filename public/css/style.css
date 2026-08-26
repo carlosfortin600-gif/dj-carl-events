@@ -878,6 +878,10 @@ table tr.q-field-missing td:first-child {
   margin-left: 1in;
 }
 
+.resume-event-row-location-rented-value {
+  margin-left: 1in;
+}
+
 .resume-event-row-ententes {
   flex: 1 1 10rem;
   min-width: 10rem;
