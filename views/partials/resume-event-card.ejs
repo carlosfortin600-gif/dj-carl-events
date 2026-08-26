@@ -23,18 +23,17 @@
     </div>
   </dl>
 
+  <% if (ev.agreements && ev.agreements.length) { %>
   <div class="resume-event-card-section">
     <div class="resume-event-card-section-title">Ententes</div>
-    <% if (ev.agreements && ev.agreements.length) { %>
-      <% ev.agreements.forEach(function(st) { %>
-        <div class="resume-event-card-line small">
-          <span class="text-muted"><%= st.label %></span>
-          <span>Entente <strong><%= st.passed ? 'Oui' : 'Non' %></strong></span>
-          <span>Signé <strong class="<%= st.signed ? 'text-success' : '' %>"><%= st.signed ? 'Oui' : 'Non' %></strong></span>
-        </div>
-      <% }); %>
-    <% } %>
+    <% ev.agreements.forEach(function(st) { %>
+      <div class="resume-event-card-line small">
+        <span class="text-muted"><%= st.label %></span>
+        <span>Signé <strong class="<%= st.signed ? 'text-success' : '' %>"><%= st.signed ? 'Oui' : 'Non' %></strong></span>
+      </div>
+    <% }); %>
   </div>
+  <% } %>
 
   <div class="resume-event-card-section">
     <div class="resume-event-card-section-title">Location</div>
