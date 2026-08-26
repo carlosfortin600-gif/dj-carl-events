@@ -1,61 +1,33 @@
-<div class="resume-event-card status-border-<%= ev.status %>">
-  <div class="resume-event-card-header">
-    <div class="resume-event-card-name"><%= clientShortName(ev) %></div>
-    <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
-  </div>
-
-  <dl class="resume-event-card-meta">
-    <div class="resume-event-card-row">
-      <dt>Date</dt>
-      <dd><%= formatDateFr(ev.event_date) %></dd>
-    </div>
-    <div class="resume-event-card-row">
-      <dt>Quand</dt>
-      <dd><%= ev.start_time ? formatTime(ev.start_time) : '—' %></dd>
-    </div>
-    <div class="resume-event-card-row">
-      <dt>Où</dt>
-      <dd><%= ev.venue || '—' %></dd>
-    </div>
-    <div class="resume-event-card-row">
-      <dt>Prix chargé</dt>
-      <dd><%= ev.chargedPrice || '—' %></dd>
-    </div>
-  </dl>
-
-  <% if (ev.agreements && ev.agreements.length) { %>
-  <div class="resume-event-card-section">
-    <div class="resume-event-card-section-title">Ententes</div>
-    <% ev.agreements.forEach(function(st) { %>
-      <div class="resume-event-card-line small">
-        <span class="text-muted"><%= st.label %></span>
-        <span>Signé <strong class="<%= st.signed ? 'text-success' : '' %>"><%= st.signed ? 'Oui' : 'Non' %></strong></span>
-      </div>
-    <% }); %>
-  </div>
-  <% } %>
-
-  <div class="resume-event-card-section">
-    <div class="resume-event-card-section-title">Location</div>
-    <div class="resume-event-card-line small">
-      <span class="text-muted">Hôtel — besoin</span>
-      <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong>
-      <% if (ev.hotelNeeded) { %>
-        <span class="text-muted ms-2">Loué</span>
-        <strong><%= ev.hotelRented ? 'Oui' : 'Non' %></strong>
-      <% } %>
-    </div>
-    <div class="resume-event-card-line small">
-      <span class="text-muted">Trailer — besoin</span>
-      <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong>
-      <% if (ev.trailerNeeded) { %>
-        <span class="text-muted ms-2">Loué</span>
-        <strong><%= ev.trailerRented ? 'Oui' : 'Non' %></strong>
-      <% } %>
-    </div>
-  </div>
-
-  <div class="resume-event-card-footer">
-    <a href="/events/<%= ev.id %>" class="btn btn-sm btn-outline-primary">Ouvrir le dossier</a>
-  </div>
-</div>
+<tr id="resume-location-<%= ev.id %>" class="resume-event-row status-border-<%= ev.status %>">
+  <td class="resume-event-name fw-semibold">
+    <a href="/events/<%= ev.id %>" class="text-decoration-none"><%= clientShortName(ev) %></a>
+  </td>
+  <td><%= formatDateFr(ev.event_date) %></td>
+  <td>
+    <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong>
+  </td>
+  <td>
+    <% if (ev.trailerNeeded) { %>
+      <strong class="<%= ev.trailerRented ? 'text-success' : 'text-warning' %>">
+        <%= ev.trailerRented ? 'Oui' : 'Non' %>
+      </strong>
+    <% } else { %>
+      <span class="text-muted">—</span>
+    <% } %>
+  </td>
+  <td>
+    <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong>
+  </td>
+  <td>
+    <% if (ev.hotelNeeded) { %>
+      <strong class="<%= ev.hotelRented ? 'text-success' : 'text-warning' %>">
+        <%= ev.hotelRented ? 'Oui' : 'Non' %>
+      </strong>
+    <% } else { %>
+      <span class="text-muted">—</span>
+    <% } %>
+  </td>
+  <td class="text-end">
+    <a href="/events/<%= ev.id %>?tab=gestion&gestion=location" class="btn btn-sm btn-outline-primary">Location</a>
+  </td>
+</tr>
