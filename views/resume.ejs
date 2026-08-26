@@ -4,52 +4,16 @@
 <main class="container pb-5">
   <div class="mb-4">
     <h1 class="h3 mb-1">Résumé</h1>
-    <p class="text-muted small mb-0">Contrats à venir et suivi des locations (trailer, hôtel).</p>
+    <p class="text-muted small mb-0">Événements à venir — date, lieu, prix, ententes et locations.</p>
   </div>
 
   <% if (!eventsList.length) { %>
     <p class="text-muted text-center py-5">Aucun événement à venir.</p>
   <% } else { %>
-    <div class="card mb-4">
-      <div class="card-header py-3">
-        <h2 class="h6 mb-0">Contrats à venir</h2>
-      </div>
-      <ul class="list-group list-group-flush resume-contracts-index">
-        <% eventsList.forEach(function(ev) { %>
-          <li class="list-group-item resume-contracts-index-item">
-            <a href="#resume-location-<%= ev.id %>" class="resume-contracts-index-link">
-              <span class="fw-semibold"><%= clientShortName(ev) %></span>
-              <span class="text-muted"><%= formatDateFr(ev.event_date) %></span>
-            </a>
-          </li>
-        <% }); %>
-      </ul>
-    </div>
-
-    <div class="card resume-events-list">
-      <div class="card-header py-3">
-        <h2 class="h6 mb-0">Locations</h2>
-      </div>
-      <div class="table-responsive">
-        <table class="table table-hover resume-events-table align-middle mb-0">
-          <thead class="table-light">
-            <tr>
-              <th>Contrat</th>
-              <th>Date</th>
-              <th>Trailer — besoin</th>
-              <th>Trailer — loué</th>
-              <th>Hôtel — besoin</th>
-              <th>Hôtel — loué</th>
-              <th class="text-end"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% eventsList.forEach(function(ev) { %>
-              <%- include('partials/resume-event-card', { ev }) %>
-            <% }); %>
-          </tbody>
-        </table>
-      </div>
+    <div class="resume-events-grid">
+      <% eventsList.forEach(function(ev) { %>
+        <%- include('partials/resume-event-card', { ev }) %>
+      <% }); %>
     </div>
   <% } %>
 </main>
