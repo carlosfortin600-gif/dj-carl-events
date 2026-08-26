@@ -8,10 +8,10 @@
 <section class="form-section form-section-technique-trailer mb-4">
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
     <h2 class="form-section-title mb-0">Location trailer</h2>
-    <div class="btn-group btn-group-sm" role="group" aria-label="Location trailer requise">
+    <div class="btn-group btn-group-sm" role="group" aria-label="Besoin de trailer">
       <input type="radio" class="btn-check" name="tech_trailer_needed" id="tech_trailer_yes" value="yes"
              <%= trailerNeeded === 'yes' ? 'checked' : '' %>>
-      <label class="btn btn-outline-secondary" for="tech_trailer_yes">Oui</label>
+      <label class="btn btn-outline-secondary" for="tech_trailer_yes">Besoin — Oui</label>
       <input type="radio" class="btn-check" name="tech_trailer_needed" id="tech_trailer_no" value="no"
              <%= trailerNeeded === 'no' ? 'checked' : '' %>>
       <label class="btn btn-outline-secondary" for="tech_trailer_no">Non</label>
@@ -42,22 +42,18 @@
 </section>
 
 <section class="form-section form-section-technique-room mb-4">
-  <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 mb-3">
-    <div class="form-check mt-1">
-      <input class="form-check-input" type="checkbox" name="tech_room_needed" id="tech_room_needed" value="yes"
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <h2 class="form-section-title mb-0">Location hôtel</h2>
+    <div class="btn-group btn-group-sm" role="group" aria-label="Besoin d'hôtel">
+      <input type="radio" class="btn-check" name="tech_room_needed" id="tech_room_yes" value="yes"
              <%= roomNeeded === 'yes' ? 'checked' : '' %>>
-      <label class="form-check-label fw-semibold" for="tech_room_needed">Hôtel loué</label>
+      <label class="btn btn-outline-secondary" for="tech_room_yes">Besoin — Oui</label>
+      <input type="radio" class="btn-check" name="tech_room_needed" id="tech_room_no" value="no"
+             <%= roomNeeded === 'no' ? 'checked' : '' %>>
+      <label class="btn btn-outline-secondary" for="tech_room_no">Non</label>
     </div>
-    <h2 class="form-section-title mb-0 visually-hidden">Location chambre</h2>
   </div>
   <div id="tech_room_fields" class="row g-3" <%= roomNeeded === 'no' ? 'hidden' : '' %>>
-    <div class="col-md-6">
-      <label class="form-label" for="tech_room_price">Prix chargé</label>
-      <input type="text" class="form-control" id="tech_room_price" name="tech_room_price"
-             value="<%= djNotes.tech_room_price || '' %>"
-             placeholder="Ex. : 189 $ + taxes"
-             <%= roomNeeded === 'no' ? 'disabled' : '' %>>
-    </div>
     <div class="col-md-6">
       <label class="form-label" for="tech_room_location">Endroit</label>
       <input type="text" class="form-control" id="tech_room_location" name="tech_room_location"

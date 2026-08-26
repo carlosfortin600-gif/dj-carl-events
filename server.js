@@ -143,6 +143,7 @@ const {
   getEffectiveNotificationConfig
 } = require("./lib/app-settings");
 const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, getSubcontractorAgreementsList, queryString } = require("./lib/calendar");
+const { getResumeEventsList, getEventAgreementStatuses } = require("./lib/resume");
 const { importDatabaseFromFile } = require("./lib/import-database");
 const {
   MAX_FILE_SIZE,
@@ -363,20 +364,16 @@ app.get("/", (req, res) => {
   });
 });
 
-app.get("/ententes", (req, res) => {
-  const defaultSub = SUBCONTRACTORS[0]?.id || "mario";
-  const raw = String(req.query.sousTraitant || defaultSub).toLowerCase();
-  const subcontractorId = isValidSubcontractor(raw) ? raw : defaultSub;
-  const agreementsList = getSubcontractorAgreementsList(db, subcontractorId);
-
-  res.render("ententes", {
-    title: "Ententes — DJ CARL",
-    activeNav: "ententes",
-    subcontractorId,
-    subcontractorLabel: getSubcontractorLabel(subcontractorId),
-    subcontractors: SUBCONTRACTORS,
-    agreementsList
+app.get("/resume", (req, res) => {
+  res.render("resume", {
+    title: "Résumé — DJ CARL",
+    activeNav: "resume",
+    eventsList: getResumeEventsList(db)
   });
+});
+
+app.get("/ententes", (req, res) => {
+  res.redirect(301, "/resume");
 });
 
 app.get("/settings/notifications", (req, res) => {
@@ -673,6 +670,7 @@ app.get("/events/:id", (req, res) => {
   );
   const music = getMusicDataForEvent(db, event.id, event.event_type);
   const djNotes = getDjNotes(db, event.id);
+  const eventAgreementStatuses = getEventAgreementStatuses(db, event.id);
   const summarySheet = buildSummarySheet({
     event,
     services,
@@ -729,6 +727,7 @@ app.get("/events/:id", (req, res) => {
     proposedTimelineSteps,
     music,
     djNotes,
+    eventAgreementStatuses,
     summarySheet,
     missingQuestions,
     eventFiles,

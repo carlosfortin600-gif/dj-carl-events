@@ -39,7 +39,7 @@
     <input type="hidden" name="return_tab" value="gestion">
     <input type="hidden" name="save_scope" value="depart">
     <input type="hidden" name="gestion_section" value="depart">
-    <%- include('gestion-depart-fields', { event, djNotes }) %>
+    <%- include('gestion-depart-fields', { event, djNotes, eventAgreementStatuses }) %>
     <% if (djNotes.updated_at) { %>
       <p class="text-muted small">Dernière modification : <%= formatTimestampFr(djNotes.updated_at) %></p>
     <% } %>

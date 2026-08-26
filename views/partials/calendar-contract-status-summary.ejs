@@ -8,11 +8,24 @@
       <span class="text-muted">Signé</span>
       <strong class="ms-1 <%= ev.agreementSigned ? 'text-success' : '' %>"><%= ev.agreementSigned ? 'Oui' : 'Non' %></strong>
     </div>
+    <div class="col-6 col-md-auto">
+      <span class="text-muted">Prix chargé</span>
+      <strong class="ms-1"><%= ev.chargedPrice || '—' %></strong>
+    </div>
+    <div class="col-6 col-md-auto">
+      <span class="text-muted">Hôtel — besoin</span>
+      <strong class="ms-1"><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong>
+      <% if (ev.hotelNeeded) { %>
+        <span class="text-muted ms-1">· Loué</span>
+        <strong class="ms-1"><%= ev.hotelRented ? 'Oui' : 'Non' %></strong>
+      <% } %>
+    </div>
     <div class="col-12 col-md-auto">
-      <span class="text-muted">Hôtel loué</span>
-      <strong class="ms-1"><%= ev.hotelRented ? 'Oui' : 'Non' %></strong>
-      <% if (ev.hotelRented && ev.hotelPrice) { %>
-        <span class="text-muted ms-1">· <%= ev.hotelPrice %></span>
+      <span class="text-muted">Trailer — besoin</span>
+      <strong class="ms-1"><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong>
+      <% if (ev.trailerNeeded) { %>
+        <span class="text-muted ms-1">· Loué</span>
+        <strong class="ms-1"><%= ev.trailerRented ? 'Oui' : 'Non' %></strong>
       <% } %>
     </div>
   </div>

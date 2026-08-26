@@ -272,6 +272,16 @@ function migrate(db) {
   if (!djNotesColumns.includes("tech_room_price")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_room_price TEXT");
   }
+  if (!djNotesColumns.includes("tech_charged_price")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_charged_price TEXT");
+  }
+
+  db.exec(`
+    UPDATE dj_notes
+    SET tech_charged_price = tech_room_price
+    WHERE (tech_charged_price IS NULL OR tech_charged_price = '')
+      AND tech_room_price IS NOT NULL AND tech_room_price != ''
+  `);
 
   db.exec(`
     UPDATE dj_notes

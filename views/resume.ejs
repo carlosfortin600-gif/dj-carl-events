@@ -1,0 +1,21 @@
+<%- include('partials/head', { title }) %>
+<%- include('partials/nav', { activeNav: 'resume' }) %>
+
+<main class="container pb-5">
+  <div class="mb-4">
+    <h1 class="h3 mb-1">Résumé</h1>
+    <p class="text-muted small mb-0">Vue d'ensemble par événement — date, lieu, prix, ententes et locations.</p>
+  </div>
+
+  <% if (!eventsList.length) { %>
+    <p class="text-muted text-center py-5">Aucun événement planifié.</p>
+  <% } else { %>
+    <div class="resume-events-grid">
+      <% eventsList.forEach(function(ev) { %>
+        <%- include('partials/resume-event-card', { ev }) %>
+      <% }); %>
+    </div>
+  <% } %>
+</main>
+
+<%- include('partials/footer') %>

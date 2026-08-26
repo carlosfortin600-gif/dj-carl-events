@@ -638,7 +638,7 @@ initQuestionnaireMissingHighlight();
   }
 
   bindToggle("tech_trailer_yes", "tech_trailer_no", "tech_trailer_fields");
-  bindCheckboxToggle("tech_room_needed", "tech_room_fields");
+  bindToggle("tech_room_yes", "tech_room_no", "tech_room_fields");
 })();
 
 (function initCustomServiceInputs() {
