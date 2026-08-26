@@ -22,18 +22,34 @@
         <span class="resume-event-row-label">Où</span>
         <span><%= ev.venue || '—' %></span>
 
-        <div class="resume-event-row-location small mt-2">
-          <span class="resume-event-row-label d-block mb-1">Location</span>
-          <div class="resume-event-row-location-item">
-            Hôtel — besoin <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong><% if (ev.hotelNeeded) { %>
-              · Loué <strong><%= ev.hotelRented ? 'Oui' : 'Non' %></strong>
-            <% } %>
+        <div class="resume-event-row-subcols mt-2">
+          <div class="resume-event-row-location small">
+            <span class="resume-event-row-label d-block mb-1">Location</span>
+            <div class="resume-event-row-location-item">
+              Hôtel — besoin <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong><% if (ev.hotelNeeded) { %>
+                · Loué <strong><%= ev.hotelRented ? 'Oui' : 'Non' %></strong>
+              <% } %>
+            </div>
+            <div class="resume-event-row-location-item">
+              Trailer — besoin <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong><% if (ev.trailerNeeded) { %>
+                · Loué <strong><%= ev.trailerRented ? 'Oui' : 'Non' %></strong>
+              <% } %>
+            </div>
           </div>
-          <div class="resume-event-row-location-item">
-            Trailer — besoin <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong><% if (ev.trailerNeeded) { %>
-              · Loué <strong><%= ev.trailerRented ? 'Oui' : 'Non' %></strong>
-            <% } %>
-          </div>
+
+          <% if (ev.agreements && ev.agreements.length) { %>
+            <div class="resume-event-row-ententes small">
+              <span class="resume-event-row-label d-block mb-1">Ententes</span>
+              <span class="resume-event-row-ententes-list">
+                <% ev.agreements.forEach(function(st) { %>
+                  <span class="resume-event-row-entente-item">
+                    <span class="d-block"><%= st.label %></span>
+                    <span>Signé <strong class="<%= st.signed ? 'text-success' : '' %>"><%= st.signed ? 'Oui' : 'Non' %></strong></span>
+                  </span>
+                <% }); %>
+              </span>
+            </div>
+          <% } %>
         </div>
       </div>
 
@@ -41,20 +57,6 @@
         <span class="resume-event-row-label">Prix</span>
         <span><%= ev.chargedPrice || '—' %></span>
       </div>
-
-      <% if (ev.agreements && ev.agreements.length) { %>
-        <div class="resume-event-row-field resume-event-row-ententes">
-          <span class="resume-event-row-label">Ententes</span>
-          <span class="small resume-event-row-ententes-list">
-            <% ev.agreements.forEach(function(st) { %>
-              <span class="resume-event-row-entente-item">
-                <span class="d-block"><%= st.label %></span>
-                <span>Signé <strong class="<%= st.signed ? 'text-success' : '' %>"><%= st.signed ? 'Oui' : 'Non' %></strong></span>
-              </span>
-            <% }); %>
-          </span>
-        </div>
-      <% } %>
     </div>
   </div>
 
