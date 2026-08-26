@@ -16,7 +16,21 @@
 
       <div class="resume-event-row-field">
         <span class="resume-event-row-label">Quand</span>
-        <span><%= ev.start_time ? formatTime(ev.start_time) : '—' %></span>
+        <span>
+          <% if (!ev.start_time && !ev.end_time) { %>
+            —
+          <% } else { %>
+            <% if (ev.start_time) { %><%= formatTime(ev.start_time) %><% } %>
+            <% if (ev.start_time && ev.end_time) { %> à <% } %>
+            <% if (ev.end_time) { %>
+              <% if (ev.end_date && ev.end_date !== ev.event_date) { %>
+                <%= formatDateTimeFr(ev.end_date, ev.end_time) %>
+              <% } else { %>
+                <%= formatTime(ev.end_time) %>
+              <% } %>
+            <% } %>
+          <% } %>
+        </span>
       </div>
     </div>
 
