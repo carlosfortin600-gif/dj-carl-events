@@ -142,7 +142,7 @@ const {
   isEmailNotificationConfigured,
   getEffectiveNotificationConfig
 } = require("./lib/app-settings");
-const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, queryString } = require("./lib/calendar");
+const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, getSubcontractorAgreementsList, queryString } = require("./lib/calendar");
 const { importDatabaseFromFile } = require("./lib/import-database");
 const {
   MAX_FILE_SIZE,
@@ -360,6 +360,22 @@ app.get("/", (req, res) => {
     portalNotificationCount: getUnreadPortalNotificationCount(db),
     emailNotificationConfigured: isEmailNotificationConfigured(db),
     ...data
+  });
+});
+
+app.get("/ententes", (req, res) => {
+  const defaultSub = SUBCONTRACTORS[0]?.id || "mario";
+  const raw = String(req.query.sousTraitant || defaultSub).toLowerCase();
+  const subcontractorId = isValidSubcontractor(raw) ? raw : defaultSub;
+  const agreementsList = getSubcontractorAgreementsList(db, subcontractorId);
+
+  res.render("ententes", {
+    title: "Ententes — DJ CARL",
+    activeNav: "ententes",
+    subcontractorId,
+    subcontractorLabel: getSubcontractorLabel(subcontractorId),
+    subcontractors: SUBCONTRACTORS,
+    agreementsList
   });
 });
 
