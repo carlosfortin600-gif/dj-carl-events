@@ -15,21 +15,26 @@
         <span class="resume-event-row-label">Quand</span>
         <span><%= ev.start_time ? formatTime(ev.start_time) : '—' %></span>
       </div>
-
-      <div class="resume-event-row-field resume-event-row-location">
-        <span class="resume-event-row-label">Location</span>
-        <span class="small">
-          Hôtel <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong><% if (ev.hotelNeeded) { %> · Loué <strong><%= ev.hotelRented ? 'Oui' : 'Non' %></strong><% } %>
-          <span class="text-muted mx-1">·</span>
-          Trailer <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong><% if (ev.trailerNeeded) { %> · Loué <strong><%= ev.trailerRented ? 'Oui' : 'Non' %></strong><% } %>
-        </span>
-      </div>
     </div>
 
     <div class="resume-event-row-line resume-event-row-line-secondary">
-      <div class="resume-event-row-field resume-event-row-venue">
+      <div class="resume-event-row-field resume-event-row-where">
         <span class="resume-event-row-label">Où</span>
         <span><%= ev.venue || '—' %></span>
+
+        <div class="resume-event-row-location small mt-2">
+          <span class="resume-event-row-label d-block mb-1">Location</span>
+          <div class="resume-event-row-location-item">
+            Hôtel — besoin <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong><% if (ev.hotelNeeded) { %>
+              · Loué <strong><%= ev.hotelRented ? 'Oui' : 'Non' %></strong>
+            <% } %>
+          </div>
+          <div class="resume-event-row-location-item">
+            Trailer — besoin <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong><% if (ev.trailerNeeded) { %>
+              · Loué <strong><%= ev.trailerRented ? 'Oui' : 'Non' %></strong>
+            <% } %>
+          </div>
+        </div>
       </div>
 
       <div class="resume-event-row-field">

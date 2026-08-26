@@ -837,19 +837,24 @@ table tr.q-field-missing td:first-child {
   font-size: 0.92rem;
 }
 
-.resume-event-row-venue {
-  flex: 1 1 10rem;
-  min-width: 10rem;
+.resume-event-row-venue,
+.resume-event-row-where {
+  flex: 1 1 12rem;
+  min-width: 12rem;
+}
+
+.resume-event-row-location {
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.resume-event-row-location-item + .resume-event-row-location-item {
+  margin-top: 0.2rem;
 }
 
 .resume-event-row-ententes {
   flex: 1 1 10rem;
   min-width: 10rem;
-}
-
-.resume-event-row-location {
-  flex: 1 1 14rem;
-  min-width: 12rem;
 }
 
 .resume-event-row-ententes-list {
