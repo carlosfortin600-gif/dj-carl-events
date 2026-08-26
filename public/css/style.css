@@ -823,10 +823,17 @@ table tr.q-field-missing td:first-child {
 
 .resume-event-row-name {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 0.5rem;
   min-width: 9rem;
+}
+
+.resume-event-row-name-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
 }
 
 .resume-event-row-field {

@@ -2,7 +2,10 @@
   <div class="resume-event-row-body">
     <div class="resume-event-row-line">
       <div class="resume-event-row-name">
-        <a href="/events/<%= ev.id %>" class="fw-semibold text-decoration-none"><%= clientShortName(ev) %></a>
+        <div class="resume-event-row-name-text">
+          <a href="/events/<%= ev.id %>" class="fw-semibold text-decoration-none"><%= clientShortName(ev) %></a>
+          <div class="text-muted small"><%= ev.event_type %></div>
+        </div>
         <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
       </div>
 
