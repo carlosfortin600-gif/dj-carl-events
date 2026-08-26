@@ -1004,6 +1004,18 @@ table tr.q-field-missing td:first-child {
   pointer-events: none;
 }
 
+.event-row-questionnaire-sent {
+  max-width: 100%;
+}
+
+.event-row-questionnaire-sent-fields .datetime-fr-picker {
+  min-width: 14rem;
+}
+
+.event-row-questionnaire-sent-fields .datetime-fr-row {
+  margin-bottom: 0;
+}
+
 .checklist-box {
   border-radius: 10px;
   padding: 1rem 1.15rem;

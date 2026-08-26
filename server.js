@@ -1168,6 +1168,14 @@ app.post("/events/:id/notes/save", (req, res) => {
   res.redirect(eventRedirect(eventId, returnTab, params));
 });
 
+app.post("/events/:id/questionnaire-sent", (req, res) => {
+  const eventId = Number(req.params.id);
+  if (!getEventById(db, eventId)) return res.status(404).send("Not found");
+  saveDjNotes(db, eventId, { ...req.body, save_scope: "questionnaire_sent" });
+  const returnTo = req.body.returnTo?.trim();
+  res.redirect(returnTo || "/");
+});
+
 app.post("/events/:id/gestion/contrat/:subcontractor/save", (req, res) => {
   const eventId = Number(req.params.id);
   const subcontractor = req.params.subcontractor;

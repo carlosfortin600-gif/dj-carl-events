@@ -640,6 +640,29 @@ initQuestionnaireMissingHighlight();
   bindToggle("tech_trailer_yes", "tech_trailer_no", "tech_trailer_fields");
   bindToggle("tech_room_yes", "tech_room_no", "tech_room_fields");
   bindToggle("tech_client_called_yes", "tech_client_called_no", "tech_client_call_fields");
+  bindToggle("tech_questionnaire_sent_yes", "tech_questionnaire_sent_no", "tech_questionnaire_sent_fields");
+})();
+
+(function initDashboardQuestionnaireSentForms() {
+  document.querySelectorAll("[data-questionnaire-sent-form]").forEach((form) => {
+    form.addEventListener("click", (event) => event.stopPropagation());
+    const yes = form.querySelector("[data-questionnaire-sent-yes]");
+    const no = form.querySelector("[data-questionnaire-sent-no]");
+    const fields = form.querySelector("[data-questionnaire-sent-fields]");
+    if (!yes || !no || !fields) return;
+
+    function update() {
+      const active = yes.checked;
+      fields.hidden = !active;
+      fields.querySelectorAll("input, textarea, select").forEach((el) => {
+        el.disabled = !active;
+      });
+    }
+
+    yes.addEventListener("change", update);
+    no.addEventListener("change", update);
+    update();
+  });
 })();
 
 (function initCustomServiceInputs() {

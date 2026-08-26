@@ -293,6 +293,15 @@ function migrate(db) {
   if (!djNotesColumns.includes("tech_callback_time")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_callback_time TEXT");
   }
+  if (!djNotesColumns.includes("tech_questionnaire_sent")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_questionnaire_sent TEXT");
+  }
+  if (!djNotesColumns.includes("tech_questionnaire_sent_date")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_questionnaire_sent_date TEXT");
+  }
+  if (!djNotesColumns.includes("tech_questionnaire_sent_time")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_questionnaire_sent_time TEXT");
+  }
 
   db.exec(`
     UPDATE dj_notes

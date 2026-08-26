@@ -76,6 +76,37 @@
     </div>
   </div>
 
+  <% const questionnaireSentGestion = djNotes.tech_questionnaire_sent
+    || ((djNotes.tech_questionnaire_sent_date || djNotes.tech_questionnaire_sent_time) ? 'yes' : 'no'); %>
+  <div class="border rounded p-3 bg-light mb-4">
+    <h3 class="h6 mb-3">Questionnaire</h3>
+    <div class="row g-3">
+      <div class="col-12">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <span class="fw-semibold">Questionnaire envoyé</span>
+          <div class="btn-group btn-group-sm" role="group" aria-label="Questionnaire envoyé">
+            <input type="radio" class="btn-check" name="tech_questionnaire_sent" id="tech_questionnaire_sent_yes" value="yes"
+                   <%= questionnaireSentGestion === 'yes' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="tech_questionnaire_sent_yes">Oui</label>
+            <input type="radio" class="btn-check" name="tech_questionnaire_sent" id="tech_questionnaire_sent_no" value="no"
+                   <%= questionnaireSentGestion === 'no' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="tech_questionnaire_sent_no">Non</label>
+          </div>
+        </div>
+      </div>
+      <div id="tech_questionnaire_sent_fields" class="col-md-6" <%= questionnaireSentGestion === 'no' ? 'hidden' : '' %>>
+        <label class="form-label" for="tech_questionnaire_sent_datetime">Date d'envoi</label>
+        <%- include('datetime-fr-field', {
+          id: 'tech_questionnaire_sent_datetime',
+          name: 'tech_questionnaire_sent_datetime',
+          value: endDatetimeLocalValue(event.event_date, djNotes.tech_questionnaire_sent_date, djNotes.tech_questionnaire_sent_time),
+          displayValue: djNotes.tech_questionnaire_sent_date
+            ? formatDateTimeFr(djNotes.tech_questionnaire_sent_date, djNotes.tech_questionnaire_sent_time) : ''
+        }) %>
+      </div>
+    </div>
+  </div>
+
   <% if (typeof eventAgreementStatuses !== 'undefined' && eventAgreementStatuses.length) { %>
     <div class="border rounded p-3 bg-light">
       <h3 class="h6 mb-3">Ententes</h3>

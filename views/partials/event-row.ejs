@@ -28,6 +28,44 @@
             <span class="small">Supprimé le <%= ev.deleted_at %></span>
           <% } %>
         </div>
+        <% if (!(typeof trashMode !== 'undefined' && trashMode) && !(typeof pastMode !== 'undefined' && pastMode)) { %>
+          <% const questionnaireSent = ev.questionnaireSentValue
+            || ((ev.questionnaireSentDate || ev.questionnaireSentTime) ? 'yes' : 'no'); %>
+          <form method="post" action="/events/<%= ev.id %>/questionnaire-sent"
+                class="event-row-questionnaire-sent mt-2 small"
+                data-questionnaire-sent-form
+                onclick="event.stopPropagation()">
+            <input type="hidden" name="returnTo" value="/">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <span class="fw-semibold text-muted">Questionnaire envoyé</span>
+              <div class="btn-group btn-group-sm" role="group" aria-label="Questionnaire envoyé">
+                <input type="radio" class="btn-check" name="tech_questionnaire_sent"
+                       id="tech_questionnaire_sent_yes_<%= ev.id %>" value="yes"
+                       data-questionnaire-sent-yes
+                       <%= questionnaireSent === 'yes' ? 'checked' : '' %>>
+                <label class="btn btn-outline-secondary" for="tech_questionnaire_sent_yes_<%= ev.id %>">Oui</label>
+                <input type="radio" class="btn-check" name="tech_questionnaire_sent"
+                       id="tech_questionnaire_sent_no_<%= ev.id %>" value="no"
+                       data-questionnaire-sent-no
+                       <%= questionnaireSent === 'no' ? 'checked' : '' %>>
+                <label class="btn btn-outline-secondary" for="tech_questionnaire_sent_no_<%= ev.id %>">Non</label>
+              </div>
+              <div class="event-row-questionnaire-sent-fields" data-questionnaire-sent-fields
+                   id="event_questionnaire_sent_fields_<%= ev.id %>"
+                   <%= questionnaireSent === 'no' ? 'hidden' : '' %>>
+                <label class="visually-hidden" for="tech_questionnaire_sent_datetime_<%= ev.id %>">Date d'envoi</label>
+                <%- include('datetime-fr-field', {
+                  id: 'tech_questionnaire_sent_datetime_' + ev.id,
+                  name: 'tech_questionnaire_sent_datetime',
+                  value: endDatetimeLocalValue(ev.event_date, ev.questionnaireSentDate, ev.questionnaireSentTime),
+                  displayValue: ev.questionnaireSentDate
+                    ? formatDateTimeFr(ev.questionnaireSentDate, ev.questionnaireSentTime) : ''
+                }) %>
+              </div>
+              <button type="submit" class="btn btn-sm btn-outline-primary">Enregistrer</button>
+            </div>
+          </form>
+        <% } %>
       </div>
       <div class="d-flex gap-2 flex-shrink-0">
         <% if (expandable) { %>
