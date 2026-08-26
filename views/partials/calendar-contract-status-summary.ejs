@@ -1,0 +1,19 @@
+<div class="contract-status-summary border rounded px-3 py-2 mb-2 bg-light">
+  <div class="row g-2 g-md-3 small align-items-center">
+    <div class="col-6 col-md-auto">
+      <span class="text-muted">Entente</span>
+      <strong class="ms-1"><%= ev.agreementPassed ? 'Oui' : 'Non' %></strong>
+    </div>
+    <div class="col-6 col-md-auto">
+      <span class="text-muted">Signé</span>
+      <strong class="ms-1 <%= ev.agreementSigned ? 'text-success' : '' %>"><%= ev.agreementSigned ? 'Oui' : 'Non' %></strong>
+    </div>
+    <div class="col-12 col-md-auto">
+      <span class="text-muted">Hôtel loué</span>
+      <strong class="ms-1"><%= ev.hotelRented ? 'Oui' : 'Non' %></strong>
+      <% if (ev.hotelRented && ev.hotelPrice) { %>
+        <span class="text-muted ms-1">· <%= ev.hotelPrice %></span>
+      <% } %>
+    </div>
+  </div>
+</div>

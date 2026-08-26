@@ -269,6 +269,9 @@ function migrate(db) {
   if (!djNotesColumns.includes("tech_room_needed")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_room_needed TEXT");
   }
+  if (!djNotesColumns.includes("tech_room_price")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_room_price TEXT");
+  }
 
   db.exec(`
     UPDATE dj_notes

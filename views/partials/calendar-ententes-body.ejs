@@ -6,17 +6,22 @@
   <div class="calendar-ententes-list">
     <% list.forEach(function(ev) { %>
       <div class="calendar-event-card calendar-ententes-item status-border-<%= ev.status %> mb-3">
+        <%- include('calendar-contract-status-summary', { ev }) %>
+
         <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap mb-2">
           <div>
-            <div class="fw-semibold"><%= formatDateFr(ev.contractStartDate || ev.event_date) %><% if (ev.contractStartTime || ev.start_time) { %> · <%= formatTime(ev.contractStartTime || ev.start_time) %><% } %></div>
+            <div class="fw-semibold"><%= clientShortName(ev) %></div>
             <div class="text-muted small">
-              <%= ev.event_type %><% if (ev.venue) { %> · <%= ev.venue %><% } %>
+              <%= formatDateFr(ev.contractStartDate || ev.event_date) %><% if (ev.contractStartTime || ev.start_time) { %> · <%= formatTime(ev.contractStartTime || ev.start_time) %><% } %>
+              · <%= ev.event_type %><% if (ev.venue) { %> · <%= ev.venue %><% } %>
             </div>
           </div>
           <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
         </div>
 
-        <%- include('calendar-agreement-summary', { ev, showAgreementSummary: true }) %>
+        <% if (ev.hasAgreement && ev.agreementSummary) { %>
+          <p class="small text-muted mb-2"><%= ev.agreementSummary %></p>
+        <% } %>
 
         <div class="d-flex gap-2 mt-2 flex-wrap">
           <%- include('calendar-contract-btn', {

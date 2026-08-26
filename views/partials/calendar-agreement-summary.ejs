@@ -1,15 +1,8 @@
-<% if (typeof showAgreementSummary !== 'undefined' && showAgreementSummary) { %>
-  <div class="calendar-agreement-summary mt-2">
-    <div class="small fw-semibold text-uppercase text-muted mb-1" style="font-size: 0.65rem; letter-spacing: 0.03em;">Entente</div>
-    <% if (ev.hasAgreement && ev.agreementSummary) { %>
-      <p class="small mb-1 calendar-agreement-summary-text"><%= ev.agreementSummary %></p>
-      <% if (ev.agreementSigned) { %>
-        <span class="badge text-bg-success">Signé</span>
-      <% } else { %>
-        <span class="badge text-bg-warning">Signatures en attente</span>
-      <% } %>
-    <% } else { %>
-      <p class="small text-muted mb-0">Aucune entente enregistrée</p>
-    <% } %>
+<%- include('calendar-contract-status-summary', { ev }) %>
+
+<% if (typeof showAgreementSummary !== 'undefined' && showAgreementSummary && ev.hasAgreement && ev.agreementSummary) { %>
+  <div class="calendar-agreement-summary mt-1">
+    <div class="small fw-semibold text-uppercase text-muted mb-1" style="font-size: 0.65rem; letter-spacing: 0.03em;">Détails entente</div>
+    <p class="small mb-0 calendar-agreement-summary-text"><%= ev.agreementSummary %></p>
   </div>
 <% } %>

@@ -620,8 +620,25 @@ initQuestionnaireMissingHighlight();
     update();
   }
 
+  function bindCheckboxToggle(checkboxId, fieldsId) {
+    const checkbox = document.getElementById(checkboxId);
+    const fields = document.getElementById(fieldsId);
+    if (!checkbox || !fields) return;
+
+    function update() {
+      const active = checkbox.checked;
+      fields.hidden = !active;
+      fields.querySelectorAll("input, textarea, select").forEach((el) => {
+        el.disabled = !active;
+      });
+    }
+
+    checkbox.addEventListener("change", update);
+    update();
+  }
+
   bindToggle("tech_trailer_yes", "tech_trailer_no", "tech_trailer_fields");
-  bindToggle("tech_room_yes", "tech_room_no", "tech_room_fields");
+  bindCheckboxToggle("tech_room_needed", "tech_room_fields");
 })();
 
 (function initCustomServiceInputs() {

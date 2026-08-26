@@ -743,6 +743,14 @@ table tr.q-field-missing td:first-child {
   border-left: 4px solid #198754;
 }
 
+.contract-status-summary {
+  border-color: #dee2e6 !important;
+}
+
+.contract-status-summary strong.text-success {
+  color: #198754 !important;
+}
+
 .calendar-agreement-summary {
   padding: 0.4rem 0.5rem;
   border-left: 3px solid #6610f2;
