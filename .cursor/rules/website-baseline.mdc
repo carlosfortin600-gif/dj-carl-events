@@ -1,0 +1,69 @@
+---
+description: Référence UI du site marketing DJ Carl (website/) — ne jamais régresser sous ce socle sans demande explicite
+globs: website/**
+alwaysApply: true
+---
+
+# DJ Carl — site marketing (baseline)
+
+Le site **https://djcarl.ca** a une **configuration de référence validée**. Toute modification dans `website/` doit **préserver** ce socle. Ne pas revenir en arrière sur ces choix (layout, textes clés, photos, overlays) sauf demande explicite de l’utilisateur.
+
+## Principes généraux
+
+- UI en **français** (textes visiteur) ; code en anglais (HTML/CSS/JS). Chaînes FR dans `website/i18n.js` (`fr`) et en fallback dans `website/index.html`.
+- **Pas de gros refactoring** : améliorations ciblées, spectacle d’abord.
+- **Conserver toutes les fonctionnalités** existantes lors d’un changement.
+- Fichiers actifs : `website/index.html`, `website/styles.css`, `website/script.js`, `website/i18n.js`, `website/img/`, `website/publish.py`.
+
+## Thématiques (`#thematiques`)
+
+- Titre : **« Une soirée thématique, clé en main. »**
+- Onglets : **Croisière** / **Country** / **Oscar** (`data-theme`: `cruise` | `country` | `oscar`).
+
+### Croisière
+
+- Photo `img/theme-croisiere.jpg` (décor quai / toile / photobooth).
+- Blocs : décor (liste) → highlight costumes capitaine/matelot + collier fleuri → animation → **Photobooth animé — 2 heures** (lead + note table bistro).
+
+### Country
+
+- Photo `img/theme-country.jpg` : décor **roue de chariot**, bidon de lait, clôture de bois (pas une autre image).
+- Décor (3 puces seulement) : toile de fond style saloon ; tonneaux, clôture de bois et cactus ; éléments western et accessoires festifs. **Pas** de Jail, **pas** de lumière rose.
+- Animation : inclut **« Cours de danse sur écran géant »** (`<strong>écran géant</strong>`).
+- Bloc **Photobooth animé — 2 heures** conservé (lead + note table bistro), comme la croisière.
+
+### Oscar
+
+- Photo `img/theme-oscar.jpg` : tapis rouge, rideau, projecteurs — **pas de filigrane caméra**.
+- Overlay **sur la photo** (`.theme-photo--oscar` + `.theme-photo-overlay`), puces dans cet ordre :
+  1. Trophée style Oscars
+  2. Tapis rouge et barrières velvet
+  3. Projecteurs et éclairage glam
+  4. Un paparazzi prendra des photos sur le tapis rouge
+  5. **Une hôtesse remettra les trophées** — dernière ligne, classe `.theme-photo-overlay-accent`, en `<strong>` / or
+- Liste décor sous la photo : toile de fond cinéma / Oscars ; accessoires glam.
+- Animation : nominations personnalisées ; affichage sur **écran géant** ; **« Un micro sera là pour les discours »**.
+- **Pas** de bloc photobooth 2 h sur cet onglet (volontaire).
+
+## Services (`#services`)
+
+Cartes à conserver, dont :
+
+- **Soirées thématiques** (`data-href="#thematiques"`).
+- **Option Enregistrement audio** (carte feature pleine largeur, liste hommages / discours / etc.).
+- **Photobooth** (`.service-card--photo`) :
+  - Photo pleine carte `img/service-photobooth.jpg` (haut déjà recadré ~20 % dans le fichier).
+  - Texte **en overlay en bas** de la photo, avec scrim en dégradé (`.service-card-photo-copy`).
+  - `object-fit: contain` — **pas** `cover` qui couperait les personnes.
+- Flottement léger des cartes (`.service-card` / `serviceFloat`) ; **respecter** `prefers-reduced-motion` (animations coupées).
+
+## Publication
+
+- Commande : `python3 website/publish.py` → **https://djcarl.ca**
+- Envoyés notamment : `index.html`, `styles.css`, `script.js`, `i18n.js`, `img/` (thèmes + photobooth).
+- Credentials : `website/.deploy.env` (**jamais** git).
+
+## Évolution
+
+- On peut **ajouter** par-dessus cette base.
+- On ne **supprime ni ne réduit** ces comportements, textes ou traitements photo sans accord explicite.

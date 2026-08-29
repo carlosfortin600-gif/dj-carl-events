@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="DJ Carl — DJ mobile, animation, éclairage, karaoké, photobooth, quiz musical et bingo musical dans la région de Québec.">
+  <title>DJ Carl | DJ mobile & animation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=73">
+  <link rel="icon" href="img/logo-djcarl.png" type="image/png">
+  <script>
+    (function () {
+      var lang = localStorage.getItem("djcarl-lang");
+      if (lang === "en") document.documentElement.classList.add("i18n-pending");
+      document.documentElement.lang = lang === "en" ? "en" : "fr";
+    })();
+  </script>
+</head>
+<body>
+  <canvas id="stageCanvas" aria-hidden="true"></canvas>
+  <div class="spotlight" id="spotlight" aria-hidden="true"></div>
+
+  <header class="site-header" id="top">
+    <a class="brand" href="#top">
+      <img class="brand-mark" src="img/logo-djcarl.png" alt="DJ Carl" width="100" height="100">
+      <span><strong>DJ CARL</strong><small data-i18n="brand.tagline">Musique • Animation • Événements</small></span>
+    </a>
+    <div class="header-end">
+      <nav id="mainNav">
+        <a href="#services" data-i18n="nav.services">Services</a>
+        <a href="#demos" data-i18n="nav.demos">Démos</a>
+        <a href="#thematiques" data-i18n="nav.themes">Thématiques</a>
+        <a href="#experiences" data-i18n="nav.experience">Expérience</a>
+        <a href="#evenements" data-i18n="nav.events">Événements</a>
+        <a href="#avis" data-i18n="nav.reviews">Avis</a>
+      </nav>
+      <div class="lang-switch" role="group" data-i18n-aria="nav.lang" aria-label="Langue">
+        <button type="button" class="lang-btn is-on" data-lang="fr" aria-pressed="true">FR</button>
+        <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <button class="menu-btn" id="menuBtn" data-i18n-aria="nav.menu" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="bio-bar">
+    <button class="bio-bubble" id="openBio" type="button" data-i18n="bio.button">Biographie</button>
+  </div>
+
+  <main>
+    <section class="hero section">
+      <div class="hero-copy reveal">
+        <h1 data-i18n-html="hero.title">Une soirée qui <span class="word-live">bouge</span>, pas juste une playlist.</h1>
+        <p data-i18n="hero.lead">Sonorisation, éclairage intelligent, animation, karaoké, photobooth, quiz musical et expériences interactives pour mariages, partys privés et événements corporatifs.</p>
+        <div class="hero-actions">
+          <button class="btn btn-secondary" id="openExperience" type="button" data-i18n="hero.cta">Voir l’expérience</button>
+        </div>
+        <div class="hero-stats">
+          <div><strong data-count="35" data-suffix="+">0</strong><span data-i18n="hero.years">ans d’expérience</span></div>
+          <div><strong data-count="7">0</strong><span data-i18n="hero.services">services événementiels</span></div>
+          <div><strong data-count="100" data-suffix="%">0</strong><span data-i18n="hero.tailored">adapté à votre soirée</span></div>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal">
+        <div class="photo-show" id="photoShow" aria-roledescription="carousel" data-i18n-aria="photos.label" aria-label="Photos Google de DJ Carl">
+          <div class="photo-show-track">
+            <img class="is-active" src="img/google/01.jpg" alt="DJ Carl au mixeur" width="1600" height="900" fetchpriority="high">
+            <img src="img/google/02.jpg" alt="Installation DJ en événement" width="1600" height="900" loading="lazy">
+            <img src="img/google/03.jpg" alt="Soirée DJ Carl" width="1600" height="900" loading="lazy">
+            <img src="img/google/04.jpg" alt="Animation DJ Carl" width="1600" height="900" loading="lazy">
+            <img src="img/google/05.jpg" alt="Événement en soirée" width="1600" height="900" loading="lazy">
+            <img src="img/google/06.jpg" alt="Prestation DJ Carl" width="1600" height="900" loading="lazy">
+            <img src="img/google/07.jpg" alt="Ambiance événementielle" width="1600" height="900" loading="lazy">
+            <img src="img/google/08.jpg" alt="Éclairage et animation" width="1600" height="900" loading="lazy">
+            <img src="img/google/09.jpg" alt="Party DJ Carl" width="1600" height="900" loading="lazy">
+            <img src="img/google/10.jpg" alt="Salle de réception éclairée" width="1600" height="900" loading="lazy">
+            <img src="img/google/11.jpg" alt="Événement DJ Carl" width="1600" height="900" loading="lazy">
+            <img src="img/google/12.jpg" alt="Soirée dansante" width="1600" height="900" loading="lazy">
+            <img src="img/google/13.jpg" alt="Mariage et animation" width="1600" height="900" loading="lazy">
+            <img src="img/google/14.jpg" alt="DJ Carl en prestation" width="1600" height="900" loading="lazy">
+            <img src="img/google/15.jpg" alt="Ambiance de salle" width="1600" height="900" loading="lazy">
+            <img src="img/google/16.jpg" alt="Événement privé" width="1600" height="900" loading="lazy">
+            <img src="img/google/17.jpg" alt="Animation musicale" width="1600" height="900" loading="lazy">
+            <img src="img/google/18.jpg" alt="Invités sur la piste" width="1600" height="900" loading="lazy">
+            <img src="img/google/19.jpg" alt="Setup DJ professionnel" width="1600" height="900" loading="lazy">
+            <img src="img/google/20.jpg" alt="Soirée corporative" width="1600" height="900" loading="lazy">
+            <img src="img/google/21.jpg" alt="Éclairage de scène" width="1600" height="900" loading="lazy">
+            <img src="img/google/22.jpg" alt="Piste de danse DJ Carl" width="1600" height="900" loading="lazy">
+            <img src="img/google/23.jpg" alt="Réception éclairée DJ Carl" width="1600" height="900" loading="lazy">
+            <img src="img/google/24.jpg" alt="Soirée dansante DJ Carl" width="1600" height="900" loading="lazy">
+            <img src="img/google/25.jpg" alt="Animation en salle" width="1600" height="900" loading="lazy">
+            <img src="img/google/26.jpg" alt="Événement DJ Carl en direct" width="1600" height="900" loading="lazy">
+            <img src="img/google/27.jpg" alt="Ambiance festivité" width="1600" height="900" loading="lazy">
+            <img src="img/google/28.jpg" alt="Party privée DJ Carl" width="1600" height="900" loading="lazy">
+          </div>
+          <button class="photo-show-nav prev" type="button" data-i18n-aria="photos.prev" aria-label="Photo précédente">‹</button>
+          <button class="photo-show-nav next" type="button" data-i18n-aria="photos.next" aria-label="Photo suivante">›</button>
+          <div class="photo-show-meta">
+            <a class="photo-show-credit" href="https://www.google.com/maps/place/DJ+Carl/@53.8011982,-68.4348824,17z/data=!4m6!3m5!1s0x4721b1f503a55a07:0xa41ff7306ba6457c!8m2!3d53.8011982!4d-68.4348824!16s%2Fg%2F11yvyz299c" target="_blank" rel="noopener" data-i18n="photos.credit">Photos Google</a>
+            <span class="photo-show-index" id="photoShowIndex">1 / 28</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span data-i18n="marquee">DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • </span>
+        <span data-i18n="marquee">DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • </span>
+      </div>
+    </section>
+
+    <section class="section" id="demos">
+      <div class="section-heading reveal">
+        <span class="eyebrow" data-i18n="demos.eyebrow">DÉMOS LIVE</span>
+        <h2 data-i18n="demos.title">Ne lisez pas l’expérience. Jouez-la.</h2>
+        <p data-i18n="demos.lead">Quiz, bingo, Quiz la ta chanson, Grab the Mic et roue : les mêmes animations qu’en soirée, en version démo.</p>
+      </div>
+      <div class="demo-tabs" role="tablist">
+        <button class="demo-tab active" type="button" data-demo="quiz" role="tab" aria-selected="true" data-i18n="demos.tabs.quiz">🏆 Quiz</button>
+        <button class="demo-tab" type="button" data-demo="bingo" role="tab" aria-selected="false" data-i18n="demos.tabs.bingo">🎱 Bingo</button>
+        <button class="demo-tab" type="button" data-demo="chanson" role="tab" aria-selected="false" data-i18n="demos.tabs.chanson">🎤 Quiz la ta chanson</button>
+        <button class="demo-tab" type="button" data-demo="grab" role="tab" aria-selected="false" data-i18n="demos.tabs.grab">🎙️ Grab the Mic</button>
+        <button class="demo-tab" type="button" data-demo="wheel" role="tab" aria-selected="false" data-i18n="demos.tabs.wheel">🎡 Roue</button>
+      </div>
+      <div class="demo-board" id="demoBoard">
+        <div class="demo-panel is-on" id="panelQuiz" data-demo="quiz">
+          <ul class="quiz-panel-lead">
+            <li data-i18n="quiz.lead1">La question s’affiche en grand.</li>
+            <li data-i18n="quiz.lead2">Tout le monde vote sur son téléphone.</li>
+            <li data-i18n="quiz.lead3">Les questions et les réponses peuvent être 100 % personnalisées, ou adaptées au concept de la soirée : années 80, disco, country, etc.</li>
+          </ul>
+          <div class="quiz-layout">
+            <div class="quiz-stage">
+              <p class="quiz-screen-label" data-i18n="quiz.screenLabel">Affichage sur l’écran et les téléphones</p>
+              <h3 id="quizQuestion">Qui est le plus drôle ?</h3>
+              <div class="phone-shell">
+                <div class="phone-notch" aria-hidden="true"></div>
+                <p class="quiz-phone-label" data-i18n="quiz.phoneLabel">Vous répondez ici, sur votre cellulaire</p>
+                <div class="quiz-grid" id="pageQuizGrid">
+                  <button type="button">Sophie</button>
+                  <button type="button">Marc</button>
+                  <button type="button">Julie</button>
+                  <button type="button">Carl</button>
+                </div>
+              </div>
+              <p class="quiz-result" id="pageQuizResult" hidden></p>
+            </div>
+            <aside class="quiz-uses">
+              <p class="live-kicker" data-i18n="quiz.examples">Exemples de questions</p>
+              <ul class="wheel-use-list">
+                <li>
+                  <button type="button" data-quiz-set="funny" class="is-on">
+                    <strong data-i18n="quiz.sets.funny.label">Qui est le plus drôle ?</strong>
+                    <small data-i18n="quiz.sets.funny.hint">Votez pour un invité, un collègue, un marié…</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-quiz-set="music">
+                    <strong data-i18n="quiz.sets.music.label">Quiz musical</strong>
+                    <small data-i18n="quiz.sets.music.hint">Reconnaître l’artiste, la chanson ou l’année.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-quiz-set="theme">
+                    <strong data-i18n="quiz.sets.theme.label">Adapté au concept</strong>
+                    <small data-i18n="quiz.sets.theme.hint">Années 80, disco, country… le quiz suit le thème de la soirée.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-quiz-set="dance">
+                    <strong data-i18n="quiz.sets.dance.label">Qui danse en premier ?</strong>
+                    <small data-i18n="quiz.sets.dance.hint">Parfait pour lancer le party.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-quiz-set="couple">
+                    <strong data-i18n="quiz.sets.couple.label">Questions sur les mariés</strong>
+                    <small data-i18n="quiz.sets.couple.hint">Où se sont-ils rencontrés ? Qui a dit oui en premier ?</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-quiz-set="team">
+                    <strong data-i18n="quiz.sets.team.label">Culture d’équipe</strong>
+                    <small data-i18n="quiz.sets.team.hint">Idéal en corporatif, avec les prénoms du bureau.</small>
+                  </button>
+                </li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+        <div class="demo-panel" id="panelBingo" data-demo="bingo" hidden>
+          <ul class="quiz-panel-lead">
+            <li data-i18n="bingo.lead1">Plusieurs sortes de bingo musical selon votre soirée.</li>
+            <li data-i18n="bingo.lead2">Activité parfaite pendant le souper.</li>
+            <li data-i18n="bingo.lead3">Pop, disco, années 80, Noël, country, hits québécois…</li>
+          </ul>
+          <div class="bingo-layout">
+            <div class="bingo-stage">
+              <article class="pop-bingo" id="popBingo">
+                <h3 class="pop-bingo-title" id="bingoTitle">BINGO MUSICAL POP</h3>
+                <div class="pop-bingo-grid" id="bingoCard"></div>
+                <div class="pop-bingo-win" id="bingoWin" hidden aria-hidden="true">
+                  <div class="pop-bingo-confetti" id="bingoConfetti" aria-hidden="true"></div>
+                  <p class="pop-bingo-bingo" data-i18n="bingo.win">BINGO !</p>
+                </div>
+              </article>
+            </div>
+            <aside class="bingo-uses">
+              <p class="live-kicker" data-i18n="bingo.examples">Exemples de bingo</p>
+              <ul class="wheel-use-list">
+                <li>
+                  <button type="button" data-bingo-set="pop" class="is-on">
+                    <strong data-i18n="bingo.sets.pop.label">Bingo pop</strong>
+                    <small data-i18n="bingo.sets.pop.hint">Les tubes que tout le monde connaît.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-bingo-set="disco">
+                    <strong data-i18n="bingo.sets.disco.label">Bingo disco</strong>
+                    <small data-i18n="bingo.sets.disco.hint">Parfait pour une soirée qui danse dès le souper.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-bingo-set="eighties">
+                    <strong data-i18n="bingo.sets.eighties.label">Bingo années 80</strong>
+                    <small data-i18n="bingo.sets.eighties.hint">Classiques qui font chanter toute la salle.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-bingo-set="noel">
+                    <strong data-i18n="bingo.sets.noel.label">Bingo de Noël</strong>
+                    <small data-i18n="bingo.sets.noel.hint">Idéal pour les partys des Fêtes.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-bingo-set="country">
+                    <strong data-i18n="bingo.sets.country.label">Bingo country</strong>
+                    <small data-i18n="bingo.sets.country.hint">Une ambiance western et festive.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-bingo-set="quebec">
+                    <strong data-i18n="bingo.sets.quebec.label">Bingo québécois</strong>
+                    <small data-i18n="bingo.sets.quebec.hint">Hits d’ici que votre gang reconnaît tout de suite.</small>
+                  </button>
+                </li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+        <div class="demo-panel" id="panelChanson" data-demo="chanson" hidden>
+          <ul class="quiz-panel-lead">
+            <li data-i18n="chanson.lead">Deux équipes, deux buzzers — le plus rapide répond.</li>
+          </ul>
+          <div class="chanson-layout">
+            <div class="chanson-stage">
+              <img class="chanson-buzzer" src="img/buzzer-chanson.png" width="610" height="888" data-i18n-alt="chanson.alt" alt="Buzzer pour Quiz la ta chanson">
+            </div>
+            <aside class="chanson-uses">
+              <ul class="chanson-mode-list">
+                <li>
+                  <strong data-i18n="chanson.modes.stop.label">Chanson arrêtée</strong>
+                  <small data-i18n="chanson.modes.stop.hint">La musique coupe net… à vous de trouver le titre.</small>
+                </li>
+                <li>
+                  <strong data-i18n="chanson.modes.speed.label">Chanson accélérée</strong>
+                  <small data-i18n="chanson.modes.speed.hint">La musique joue plus vite — reconnaissez le morceau.</small>
+                </li>
+                <li>
+                  <strong data-i18n="chanson.modes.hum.label">Chanson fredonnée</strong>
+                  <small data-i18n="chanson.modes.hum.hint">On fredonne l’air, à vous de trouver le titre.</small>
+                </li>
+                <li>
+                  <strong data-i18n="chanson.modes.guess.label">Devine la chanson</strong>
+                  <small data-i18n="chanson.modes.guess.hint">Un extrait de paroles à l’écran — buzz, et vous répondez.</small>
+                </li>
+                <li>
+                  <strong data-i18n="chanson.modes.blur.label">Chanson floutée</strong>
+                  <small data-i18n="chanson.modes.blur.hint">Pochette ou titre floutés : plus ça se révèle, plus c’est facile… ou trop tard.</small>
+                </li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+        <div class="demo-panel" id="panelGrab" data-demo="grab" hidden>
+          <ul class="quiz-panel-lead">
+            <li data-i18n="grab.lead1">Le DJ dit un mot… la première personne qui prend le micro doit chanter.</li>
+            <li data-i18n="grab.lead2">La chanson doit contenir ce mot — à vous de trouver et de tout donner.</li>
+            <li data-i18n="grab.lead3">Le mot et le pointage s’affichent en grand sur l’écran géant.</li>
+          </ul>
+          <div class="grab-layout">
+            <div class="grab-stage">
+              <img class="grab-mic" src="img/mic-grab.png?v=2" width="852" height="744" data-i18n-alt="grab.alt" alt="Micro rose Grab the Mic">
+            </div>
+            <div class="grab-screen-col">
+              <p class="quiz-screen-label" data-i18n="grab.screenLabel">Affichage sur l’écran géant</p>
+              <div class="grab-giant-screen" aria-label="Écran géant Grab the Mic">
+                <p class="grab-giant-kicker" data-i18n="grab.screenKicker">🎙️ Grab the Mic</p>
+                <div class="grab-giant-word-wrap">
+                  <p class="grab-giant-word-label" data-i18n="grab.wordLabel">Mot du moment</p>
+                  <p class="grab-giant-word" data-i18n="grab.wordDemo">AMOUR</p>
+                </div>
+                <p class="grab-giant-score-title" data-i18n="grab.scoreTitle">Pointage en direct</p>
+                <div class="grab-giant-scores">
+                  <div class="grab-giant-row rank-1">
+                    <span class="grab-giant-rank">#1</span>
+                    <span class="grab-giant-name">Sophie</span>
+                    <span class="grab-giant-pts">3 pt</span>
+                  </div>
+                  <div class="grab-giant-row rank-2">
+                    <span class="grab-giant-rank">#2</span>
+                    <span class="grab-giant-name">Marc</span>
+                    <span class="grab-giant-pts">2 pt</span>
+                  </div>
+                  <div class="grab-giant-row rank-3">
+                    <span class="grab-giant-rank">#3</span>
+                    <span class="grab-giant-name">Julie</span>
+                    <span class="grab-giant-pts">1 pt</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="demo-panel" id="panelWheel" data-demo="wheel" hidden>
+          <p class="live-kicker" data-i18n="wheel.kicker">Roue de tirage — démo</p>
+          <h3 id="wheelResult">Tournez pour un prix</h3>
+          <div class="wheel-layout">
+            <div class="wheel-col">
+              <div class="wheel-scene">
+                <div class="wheel-pointer" aria-hidden="true"></div>
+                <div class="wheel-disc" id="wheelDisc"></div>
+              </div>
+              <div class="demo-play-actions">
+                <button class="btn btn-primary" type="button" id="wheelSpin" data-i18n="wheel.spin">Tourner la roue</button>
+              </div>
+            </div>
+            <aside class="wheel-uses">
+              <p class="live-kicker" data-i18n="wheel.examples">Exemples d’utilisation</p>
+              <p class="wheel-uses-lead" data-i18n="wheel.examplesLead">La roue s’adapte à votre soirée. Cliquez un exemple pour l’essayer.</p>
+              <ul class="wheel-use-list">
+                <li>
+                  <button type="button" data-wheel-set="employees">
+                    <strong data-i18n="wheel.sets.employees.label">Noms des employés</strong>
+                    <small data-i18n="wheel.sets.employees.hint">Tirer au sort qui gagne, qui danse ou qui passe au micro.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-wheel-set="tables">
+                    <strong data-i18n="wheel.sets.tables.label">Numéros de table</strong>
+                    <small data-i18n="wheel.sets.tables.hint">Décider quelle table se sert au buffet, ou passe en premier.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-wheel-set="prizes" class="is-on">
+                    <strong data-i18n="wheel.sets.prizes.label">Prix et surprises</strong>
+                    <small data-i18n="wheel.sets.prizes.hint">Cadeaux, shots de danse, karaoké, encore une chanson.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-wheel-set="songs">
+                    <strong data-i18n="wheel.sets.songs.label">Chansons au choix</strong>
+                    <small data-i18n="wheel.sets.songs.hint">La salle vote… la roue tranche.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-wheel-set="teams">
+                    <strong data-i18n="wheel.sets.teams.label">Équipes / départements</strong>
+                    <small data-i18n="wheel.sets.teams.hint">Parfait en corporatif pour un défi ou un prix d’équipe.</small>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" data-wheel-set="order">
+                    <strong data-i18n="wheel.sets.order.label">Ordre de passage</strong>
+                    <small data-i18n="wheel.sets.order.hint">Karaoké, discours ou jeux : qui y va ensuite.</small>
+                  </button>
+                </li>
+              </ul>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="thematiques">
+      <div class="section-heading reveal">
+        <span class="eyebrow" data-i18n="themes.eyebrow">THÉMATIQUES</span>
+        <h2 data-i18n="themes.title">Une soirée thématique, clé en main.</h2>
+        <p data-i18n="themes.lead">Décor, costumes et animations adaptés à votre concept — croisière, country, Oscars et plus encore.</p>
+      </div>
+      <div class="demo-tabs theme-tabs" role="tablist" aria-label="Thématiques">
+        <button class="demo-tab active" type="button" data-theme="cruise" role="tab" aria-selected="true" data-i18n="themes.tabs.cruise">🚢 Croisière</button>
+        <button class="demo-tab" type="button" data-theme="country" role="tab" aria-selected="false" data-i18n="themes.tabs.country">🤠 Country</button>
+        <button class="demo-tab" type="button" data-theme="oscar" role="tab" aria-selected="false" data-i18n="themes.tabs.oscar">🎬 Oscar</button>
+      </div>
+      <div class="demo-board theme-board">
+        <div class="theme-panel is-on" id="panelThemeCruise" data-theme="cruise">
+          <div class="theme-card">
+            <h3 data-i18n="themes.cruise.title">🚢 Thématique croisière</h3>
+            <p class="theme-lead" data-i18n="themes.cruise.lead">Transformez la soirée en véritable départ en croisière!</p>
+            <figure class="theme-photo">
+              <img src="img/theme-croisiere.jpg?v=1" width="1024" height="768" data-i18n-alt="themes.cruise.photoAlt" alt="Décor thématique croisière avec quai, toile de fond et photobooth">
+            </figure>
+            <p data-i18n="themes.cruise.decorIntro">Installation d’un décor comprenant notamment :</p>
+            <ul class="theme-list">
+              <li data-i18n="themes.cruise.decor.0">Toile de fond thématique</li>
+              <li data-i18n="themes.cruise.decor.1">Quai d’embarquement</li>
+              <li data-i18n="themes.cruise.decor.2">Palmiers</li>
+              <li data-i18n="themes.cruise.decor.3">Homard et autres décorations</li>
+              <li data-i18n="themes.cruise.decor.4">Accessoires inspirés de l’univers des croisières</li>
+            </ul>
+            <p class="theme-highlight" data-i18n-html="themes.cruise.highlight">Pour pousser l’expérience encore plus loin, <strong>nous serons habillés en capitaine et matelot</strong>, et chaque invité recevra un <strong>collier fleuri</strong>.</p>
+            <h4 data-i18n="themes.cruise.animTitle">🎤 Animation thématique</h4>
+            <p data-i18n="themes.cruise.animLead">Plusieurs types d’animations peuvent être intégrés à la soirée et adaptés à la thématique croisière :</p>
+            <ul class="theme-list">
+              <li data-i18n="themes.cruise.anim.0">Jeux interactifs</li>
+              <li data-i18n-html="themes.cruise.anim.1">Tirages interactifs de style <strong>The Price Is Right</strong></li>
+              <li data-i18n="themes.cruise.anim.2">Quiz interactifs</li>
+              <li data-i18n-html="themes.cruise.anim.3">Possibilité de fournir <strong>vos propres questions</strong> pour personnaliser les quiz</li>
+              <li data-i18n="themes.cruise.anim.4">Animations et jeux adaptés à votre groupe et au déroulement de la soirée</li>
+            </ul>
+            <h4 data-i18n="themes.cruise.photoTitle">📸 Photobooth animé — 2 heures</h4>
+            <p data-i18n="themes.cruise.photoLead">Animation du photobooth pendant 2 heures, avec accessoires pour permettre aux invités de prendre des photos amusantes et créer de beaux souvenirs de la soirée.</p>
+            <p class="theme-note" data-i18n="themes.cruise.photoNote">À prévoir sur place : une table bistro ou une petite table pour disposer les accessoires du photobooth.</p>
+          </div>
+        </div>
+        <div class="theme-panel" id="panelThemeCountry" data-theme="country" hidden>
+          <div class="theme-card">
+            <h3 data-i18n="themes.country.title">🤠 Thématique country</h3>
+            <p class="theme-lead" data-i18n="themes.country.lead">Transformez la salle en vrai saloon western!</p>
+            <figure class="theme-photo">
+              <img src="img/theme-country.jpg?v=3" width="1024" height="768" data-i18n-alt="themes.country.photoAlt" alt="Décor country : roue de chariot, bidon de lait et clôture de bois">
+            </figure>
+            <p data-i18n="themes.country.decorIntro">Installation d’un décor comprenant notamment :</p>
+            <ul class="theme-list">
+              <li data-i18n="themes.country.decor.0">Toile de fond style saloon</li>
+              <li data-i18n="themes.country.decor.1">Tonneaux, clôture de bois et cactus</li>
+              <li data-i18n="themes.country.decor.2">Éléments western et accessoires festifs</li>
+            </ul>
+            <p class="theme-highlight" data-i18n-html="themes.country.highlight">Bottes country, chapeaux et bonne humeur : <strong>la salle devient un Far West</strong> dès l’entrée, parfait pour les photos et pour lancer le party.</p>
+            <h4 data-i18n="themes.country.animTitle">🎤 Animation thématique</h4>
+            <p data-i18n="themes.country.animLead">Plusieurs types d’animations peuvent être intégrés à la soirée et adaptés à la thématique country :</p>
+            <ul class="theme-list">
+              <li data-i18n="themes.country.anim.0">Playlist country, danse en ligne et hits qui font danser</li>
+              <li data-i18n-html="themes.country.anim.1">Cours de danse sur <strong>écran géant</strong></li>
+              <li data-i18n="themes.country.anim.2">Jeux interactifs et défis « western »</li>
+              <li data-i18n="themes.country.anim.3">Bingo musical country</li>
+              <li data-i18n="themes.country.anim.4">Quiz et tirages adaptés au thème</li>
+              <li data-i18n="themes.country.anim.5">Animations personnalisées selon votre groupe et le déroulement de la soirée</li>
+            </ul>
+            <h4 data-i18n="themes.country.photoTitle">📸 Photobooth animé — 2 heures</h4>
+            <p data-i18n="themes.country.photoLead">Animation du photobooth pendant 2 heures, avec accessoires et toile de fonds pour permettre aux invités de prendre des photos amusantes et créer de beaux souvenirs de la soirée.</p>
+            <p class="theme-note" data-i18n="themes.country.photoNote">À prévoir sur place : une table bistro ou une petite table pour disposer les accessoires du photobooth.</p>
+          </div>
+        </div>
+        <div class="theme-panel" id="panelThemeOscar" data-theme="oscar" hidden>
+          <div class="theme-card">
+            <h3 data-i18n="themes.oscar.title">🎬 Thématique Oscar</h3>
+            <p class="theme-lead" data-i18n="themes.oscar.lead">Transformez la soirée en vrai gala tapis rouge!</p>
+            <figure class="theme-photo theme-photo--oscar">
+              <img src="img/theme-oscar.jpg?v=5" width="856" height="634" data-i18n-alt="themes.oscar.photoAlt" alt="Tapis rouge, rideau et projecteurs — ambiance gala cinéma">
+              <div class="theme-photo-overlay">
+                <ul class="theme-photo-overlay-list">
+                  <li data-i18n="themes.oscar.photoMid.0">Trophée style Oscars</li>
+                  <li data-i18n="themes.oscar.photoMid.1">Tapis rouge et barrières velvet</li>
+                  <li data-i18n="themes.oscar.photoMid.2">Projecteurs et éclairage glam</li>
+                  <li data-i18n="themes.oscar.photoMid.3">Un paparazzi prendra des photos sur le tapis rouge</li>
+                  <li class="theme-photo-overlay-accent" data-i18n-html="themes.oscar.photoMid.4"><strong>Une hôtesse remettra les trophées</strong></li>
+                </ul>
+              </div>
+            </figure>
+            <p data-i18n-html="themes.oscar.decorIntro"><strong>Installation d’un décor comprenant notamment :</strong></p>
+            <ul class="theme-list">
+              <li data-i18n="themes.oscar.decor.0">Toile de fond cinéma / Oscars</li>
+              <li data-i18n="themes.oscar.decor.1">Accessoires glam pour les photos</li>
+            </ul>
+            <h4 data-i18n="themes.oscar.animTitle">🎤 Animation thématique</h4>
+            <p data-i18n-html="themes.oscar.animLead"><strong>Plusieurs types d’animations peuvent être intégrés à la soirée et adaptés à la thématique Oscar :</strong></p>
+            <ul class="theme-list">
+              <li data-i18n-html="themes.oscar.anim.0">Créez <strong>vos propres nominations</strong> (ex. le plus drôle, celui qui parle le plus, etc.)</li>
+              <li data-i18n-html="themes.oscar.anim.1">Nominations affichées sur <strong>écran géant</strong></li>
+              <li data-i18n="themes.oscar.anim.2">Un micro sera là pour les discours</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="services">
+      <div class="section-heading reveal">
+        <span class="eyebrow" data-i18n="services.eyebrow">SERVICES</span>
+        <h2 data-i18n="services.title">Tout ce qu’il faut pour créer l’ambiance.</h2>
+        <p data-i18n="services.lead">Combinez plusieurs expériences pour bâtir une soirée unique.</p>
+      </div>
+      <div class="service-grid">
+        <article class="service-card reveal" data-glow="purple">
+          <span class="service-icon">🎧</span>
+          <h3 data-i18n="services.dj.title">DJ & animation</h3>
+          <p data-i18n="services.dj.text">Musique adaptée à votre monde, animation naturelle et gestion du rythme de la soirée.</p>
+        </article>
+        <article class="service-card reveal" data-glow="cyan">
+          <span class="service-icon">💡</span>
+          <h3 data-i18n="services.lights.title">Éclairage intelligent</h3>
+          <p data-i18n="services.lights.text">Effets lumineux et uplights pour transformer la salle et le plancher de danse.</p>
+        </article>
+        <article class="service-card reveal" data-glow="pink">
+          <span class="service-icon">🎤</span>
+          <h3 data-i18n="services.karaoke.title">Karaoké</h3>
+          <p data-i18n="services.karaoke.text">Micros sans fil et vaste sélection de chansons pour faire participer vos invités.</p>
+        </article>
+        <article class="service-card service-card--photo reveal" data-glow="gold">
+          <div class="service-card-photo-media">
+            <img class="service-card-photo-img" src="img/service-photobooth.jpg?v=3" width="768" height="820" data-i18n-alt="services.photo.photoAlt" alt="Groupe d’invités au photobooth lors d’une soirée">
+            <div class="service-card-photo-copy">
+              <span class="service-icon">📸</span>
+              <h3 data-i18n="services.photo.title">Photobooth</h3>
+              <p data-i18n="services.photo.text">Une activité amusante qui permet à vos invités de créer des souvenirs de la soirée.</p>
+            </div>
+          </div>
+        </article>
+        <article class="service-card reveal" data-glow="purple" data-href="#thematiques">
+          <span class="service-icon">🎭</span>
+          <h3 data-i18n="services.themes.title">Soirées thématiques</h3>
+          <p data-i18n="services.themes.text">Décor, costumes et animations adaptés à votre concept — croisière, country, Oscars et plus encore. Une formule clé en main qui plonge vos invités dans l’univers choisi, du premier regard jusqu’au party.</p>
+        </article>
+        <article class="service-card reveal" data-glow="cyan" data-demo="quiz">
+          <span class="service-icon">🏆</span>
+          <h3 data-i18n="services.quiz.title">Quiz musical</h3>
+          <p data-i18n="services.quiz.text">Les invités répondent sur leur cellulaire. Questions 100 % personnalisées, ou adaptées au concept : années 80, disco, country, etc.</p>
+        </article>
+        <article class="service-card reveal" data-glow="pink" data-demo="bingo">
+          <span class="service-icon">🎶</span>
+          <h3 data-i18n="services.bingo.title">Bingo musical</h3>
+          <p data-i18n="services.bingo.text">Plusieurs styles selon votre soirée. Activité parfaite pendant le souper.</p>
+        </article>
+        <article class="service-card reveal" data-glow="gold" data-demo="wheel">
+          <span class="service-icon">🎡</span>
+          <h3 data-i18n="services.wheel.title">Roue de tirage</h3>
+          <p data-i18n="services.wheel.text">Prix, danses et surprises : la salle retient son souffle à chaque tour.</p>
+        </article>
+        <article class="service-card service-card-feature reveal" data-glow="cyan">
+          <span class="service-icon">🎙️</span>
+          <h3 data-i18n="services.audio.title">Option Enregistrement audio</h3>
+          <p data-i18n="services.audio.lead">Possibilité d’enregistrer en haute qualité plusieurs moments importants de la soirée afin d’en conserver un souvenir audio :</p>
+          <ul class="service-list">
+            <li data-i18n="services.audio.list.0">Hommages</li>
+            <li data-i18n="services.audio.list.1">Discours</li>
+            <li data-i18n="services.audio.list.2">Remises de prix</li>
+            <li data-i18n="services.audio.list.3">Présentations</li>
+            <li data-i18n="services.audio.list.4">Entrées spéciales</li>
+            <li data-i18n="services.audio.list.5">Réactions de la salle</li>
+            <li data-i18n="services.audio.list.6">Autres moments importants de l’événement</li>
+          </ul>
+          <p data-i18n="services.audio.closing">Une belle façon de conserver non seulement les images de la soirée, mais également les voix, les discours et les réactions de vos invités.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section split-section" id="experiences">
+      <div class="experience-panel reveal">
+        <span class="eyebrow" data-i18n="experience.eyebrow">EXPÉRIENCE</span>
+        <h2 data-i18n="experience.title">Votre soirée, votre rythme.</h2>
+        <p data-i18n="experience.lead">Vos demandes, moments importants et activités sont intégrés dans un déroulement clair.</p>
+        <div class="timeline">
+          <button class="timeline-item active" data-step="0" type="button">
+            <span>01</span>
+            <div><strong data-i18n="experience.timeline.0.title">Accueil</strong><small data-i18n="experience.timeline.0.hint">Ambiance musicale & invités</small></div>
+          </button>
+          <button class="timeline-item" data-step="1" type="button">
+            <span>02</span>
+            <div><strong data-i18n="experience.timeline.1.title">Souper</strong><small data-i18n="experience.timeline.1.hint">Musique, bingo ou quiz</small></div>
+          </button>
+          <button class="timeline-item" data-step="2" type="button">
+            <span>03</span>
+            <div><strong data-i18n="experience.timeline.2.title">Moments clés</strong><small data-i18n="experience.timeline.2.hint">Discours, danse, surprises</small></div>
+          </button>
+          <button class="timeline-item" data-step="3" type="button">
+            <span>04</span>
+            <div><strong data-i18n="experience.timeline.3.title">Party</strong><small data-i18n="experience.timeline.3.hint">Danse, demandes & énergie</small></div>
+          </button>
+        </div>
+      </div>
+      <div class="experience-display reveal" id="expDisplay" data-mood="accueil">
+        <span id="expIcon">🥂</span>
+        <h3 id="expTitle">L’accueil</h3>
+        <p id="expText">Une ambiance musicale présente sans être envahissante pendant l’arrivée des invités.</p>
+      </div>
+    </section>
+
+    <section class="section" id="evenements">
+      <div class="section-heading reveal">
+        <span class="eyebrow" data-i18n="events.eyebrow">ÉVÉNEMENTS</span>
+        <h2 data-i18n="events.title">Une formule pour chaque occasion.</h2>
+      </div>
+      <div class="event-tabs reveal">
+        <button class="event-tab active" data-event="mariage" type="button" data-i18n="events.tabs.mariage">Mariage</button>
+        <button class="event-tab" data-event="corporatif" type="button" data-i18n="events.tabs.corporatif">Corporatif</button>
+        <button class="event-tab" data-event="prive" type="button" data-i18n="events.tabs.prive">Party privé</button>
+        <button class="event-tab" data-event="karaoke" type="button" data-i18n="events.tabs.karaoke">Soirée karaoké</button>
+      </div>
+      <div class="event-showcase reveal" id="eventShowcase">
+        <div>
+          <span class="event-kicker" id="eventKicker">MARIAGE</span>
+          <h3 id="eventTitle">Du cocktail à la dernière chanson.</h3>
+          <p id="eventText">Une soirée structurée autour de vos moments importants.</p>
+          <ul id="eventList">
+            <li>Musique d’ambiance</li>
+            <li>Première danse et moments spéciaux</li>
+            <li>Animation personnalisée</li>
+            <li>Éclairage et photobooth</li>
+          </ul>
+        </div>
+        <div class="event-poster" id="eventPoster">
+          <span id="posterEmoji">💍</span>
+          <strong id="posterText">MARIAGE</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reviews" id="avis">
+      <div class="section-heading reveal">
+        <span class="eyebrow" data-i18n="reviews.eyebrow">AVIS GOOGLE</span>
+        <h2 data-i18n="reviews.title">Une soirée réussie se ressent.</h2>
+        <p class="google-score" data-i18n="reviews.score">4,9 ★ sur Google</p>
+        <p data-i18n="reviews.lead">Les 10 derniers avis Google.</p>
+      </div>
+      <div class="reviews-list" id="reviewsList"></div>
+      <a class="btn btn-secondary google-btn" href="https://www.google.com/maps/place/DJ+Carl/@0,0,5z/data=!4m17!1m8!3m7!1s0x4721b1f503a55a07:0xa41ff7306ba6457c!2sDJ+Carl!8m2!3d53.8011982!4d-68.4348824!10e5!16s%2Fg%2F11yvyz299c!3m7!1s0x4721b1f503a55a07:0xa41ff7306ba6457c!8m2!3d53.8011982!4d-68.4348824!9m1!1b1!16s%2Fg%2F11yvyz299c?entry=ttu" target="_blank" rel="noopener" data-i18n="reviews.cta">
+        Voir tous les avis Google
+      </a>
+    </section>
+
+    <section class="section contact-section" id="contact">
+      <div class="contact-copy reveal">
+        <h2 data-i18n="contact.title">Parlez-moi de votre événement.</h2>
+        <a class="partner-badge" href="https://huguespomerleau.com/dj-carl-fortin/" target="_blank" rel="noopener">
+          <img src="img/hugues-pomerleau.png" alt="" width="36" height="43">
+          <span data-i18n-html="contact.partner">DJ exclusif <strong>Les Productions Hugues Pomerleau</strong></span>
+        </a>
+      </div>
+      <div class="quote-form contact-cta reveal">
+        <p data-i18n="contact.form">Quelques informations suffisent pour démarrer. Le formulaire s’ouvre en ligne.</p>
+        <a class="btn btn-primary" href="https://huguespomerleau.com/soumission/" target="_blank" rel="noopener" data-i18n="contact.cta">Demander une soumission</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand" href="#top">
+      <img class="brand-mark" src="img/logo-djcarl.png" alt="DJ Carl" width="100" height="100">
+      <span><strong>DJ CARL</strong><small data-i18n="brand.footer">Votre soirée. Votre ambiance.</small></span>
+    </a>
+    <p>© <span id="year"></span> DJ Carl · <span data-i18n-html="footer.partner">DJ exclusif <a href="https://huguespomerleau.com/dj-carl-fortin/" target="_blank" rel="noopener">Les Productions Hugues Pomerleau</a></span></p>
+    <a href="#top" data-i18n="footer.top">Retour en haut ↑</a>
+  </footer>
+
+  <dialog id="experienceModal">
+    <button class="modal-close" id="experienceClose" type="button" data-i18n-aria="modal.close" aria-label="Fermer">×</button>
+    <div class="live-show live-show-video" id="liveShow">
+      <video id="experienceVideo" src="video/experience.mp4?v=2" playsinline controls preload="metadata"></video>
+      <div class="live-actions">
+        <button class="btn btn-secondary" id="liveSkip" type="button" data-i18n="modal.skip">Voir les démos</button>
+        <a class="btn btn-primary" id="liveCta" href="#demos" data-i18n="modal.play">Jouer maintenant</a>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="bioModal" aria-labelledby="bioTitle">
+    <button class="modal-close" id="bioClose" type="button" data-i18n-aria="modal.close" aria-label="Fermer">×</button>
+    <article class="bio-modal">
+      <span class="eyebrow" data-i18n="bio.eyebrow">BIOGRAPHIE</span>
+      <h2 id="bioTitle" data-i18n="bio.title">DJ Carl — L’expérience au service de votre soirée</h2>
+      <p data-i18n-html="bio.p1">Né dans une famille de musiciens, <strong>la musique fait partie de ma vie depuis toujours.</strong> Du rétro au country, du rock à la pop, en passant par le dance, l’électro et la musique québécoise, cette diversité musicale est devenue l’une de mes plus grandes forces.</p>
+      <p data-i18n-html="bio.p2">À <strong>16 ans</strong>, je découvre l’univers du DJing. Ce qui était d’abord une passion devient rapidement une véritable vocation. Depuis, j’ai accompagné des centaines d’événements : <strong>mariages, soirées privées, événements corporatifs, anniversaires et célébrations de toutes sortes.</strong></p>
+      <h3 data-i18n="bio.h3a">Chaque événement mérite sa propre ambiance</h3>
+      <p data-i18n="bio.p3">Il n’existe pas deux soirées identiques.</p>
+      <p data-i18n-html="bio.p4">Mon approche repose sur l’écoute, l’expérience et la capacité de <strong>lire la foule</strong>. Plutôt que de simplement enchaîner les chansons, je construis l’ambiance progressivement et je m’adapte constamment aux réactions des invités.</p>
+      <p class="bio-highlight" data-i18n-html="bio.highlight"><strong>La bonne musique, au bon moment.</strong></p>
+      <p data-i18n="bio.p5">Des classiques qui rassemblent toutes les générations aux succès d’aujourd’hui, chaque sélection est pensée pour votre clientèle et pour l’énergie de votre soirée.</p>
+      <h3 data-i18n="bio.h3b">Bien plus qu’un DJ</h3>
+      <p data-i18n="bio.p6">Une expérience réussie ne repose pas uniquement sur la musique.</p>
+      <p data-i18n-html="bio.p7"><strong>Sonorisation, éclairage, vidéo et animation</strong> s’intègrent pour créer une expérience complète, soignée et immersive, tout en respectant le style et l’atmosphère que vous souhaitez donner à votre événement.</p>
+      <p data-i18n-html="bio.p8">Professionnel, bilingue et courtois, <strong>j’offre mes services partout au Québec</strong> et j’accorde la même attention à chaque événement, du premier échange jusqu’à la dernière chanson de la soirée.</p>
+      <p class="bio-tagline" data-i18n="bio.tagline">Votre événement. Votre ambiance. Votre soirée.</p>
+      <p class="bio-signature" data-i18n-html="bio.signature"><strong>DJ Carl — Expérience. Diversité. Plaisir.</strong></p>
+    </article>
+  </dialog>
+
+  <script src="i18n.js?v=29"></script>
+  <script src="script.js?v=9827"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+---
+description: Quand l’utilisateur dit publie, envoyer le site marketing sur HostPapa sans demander
+alwaysApply: true
+---
+
+# Publication HostPapa
+
+Si l’utilisateur dit **publie**, **publier**, **publish** ou **mets en ligne** (le site marketing) :
+
+1. Ne pas demander comment faire. Ne pas proposer Vercel, cPanel, ni un guide manuel.
+2. Lancer tout de suite : `python3 website/publish.py` depuis la racine du projet (réseau requis).
+3. Compte déjà configuré : `ftp2@djcarl.ca` / `ftp.djcarl.ca` dans `website/.deploy.env`. Si le login échoue, demander le mot de passe une fois (jamais git, jamais le répéter) puis relancer.
+4. Confirmer avec l’URL **https://djcarl.ca**.
+
+Fichiers envoyés : `website/index.html`, `styles.css`, `script.js`, `img/`.
+Credentials : `website/.deploy.env` (gitignored).

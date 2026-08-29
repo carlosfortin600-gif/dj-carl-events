@@ -1,0 +1,85 @@
+---
+description: Référence UI/UX de base DJ Carl Quiz — ne jamais régresser sous ce socle sans demande explicite
+alwaysApply: true
+---
+
+# DJ Carl Quiz — système de base (baseline)
+
+Ce projet a une **configuration de référence validée**. Toute modification doit **préserver** ce socle. Ne pas revenir en arrière sur ces choix (layout, comportements, textes clés) sauf demande explicite de l'utilisateur.
+
+## Principes généraux
+
+- App en **français** (UI, messages) ; code en anglais (JS/HTML/CSS).
+- **Pas de gros refactoring** : améliorations ciblées, spectacle d'abord.
+- **Conserver toutes les fonctionnalités** existantes lors d'un changement.
+- Fichiers actifs : `server.js`, `public/host.html`, `public/viewer.html`, `public/viewer.js`, `public/player.html`, `public/timer-sounds.js`.
+
+## Host (`/host`)
+
+### Layout
+- Dashboard : QR | Quiz + Contrôles | Timer / Question / Joueurs.
+- Carte **Contrôles** : boutons quiz en haut (Démarrer, Réponse, Effacer, Suivante) ; pied de carte en **3 colonnes étirées** : QR plein écran | Games viewer | Reset écran.
+
+### QR plein écran
+- Overlay noir, motif QR discret en fond.
+- Titre : **« Scannez pour vous connecter »** (pas Digital Quest, pas de petits QR répétés).
+- Grand QR central + compteur joueurs **très gros** (cyan) + noms en pastilles en bas.
+- Plein écran navigateur au clic.
+
+### Games viewer
+- **Pas de nouvel onglet** : iframe plein écran dans la page host (`viewer?embed=1`).
+- Plein écran déclenché **immédiatement** au clic (geste utilisateur).
+- Bouton Fermer + Échap pour revenir à la console.
+
+### Reset écran
+- **Confirmation obligatoire** avant `resetViewer` (classement effacé, joueurs restent connectés).
+
+## Viewer (`/viewer`)
+
+### Bande du haut (118 px)
+- Logo | Timer | **Arrivées en direct**.
+- Zone arrivées : titre + pastilles à gauche ; **QR + compteur** à droite.
+- QR : hauteur **100 %** de la bande (carré, touche haut/bas du rectangle, sans déborder).
+- QR et compteur **empilés** à droite pour libérer la largeur des pastilles.
+- Pastilles compactes (~52×48 px), défilement horizontal, jusqu'à **24** tuiles (`MAX_JOIN_TILES`).
+- Compteur : **gros chiffre cyan** + libellé joueur(s) connecté(s).
+
+### Corps
+- Gauche : question + réponses (style festif Kahoot, court/long selon longueur).
+- Droite : **Classement en direct** pleine hauteur — lignes **compactes** pour afficher beaucoup de joueurs (scroll vertical).
+
+### QR viewer
+- Chargé via `GET /api/network` (`loadViewerQr` dans `viewer.js`).
+- **Pas** de gros QR dans la colonne classement (retiré volontairement).
+
+### Plein écran
+- Mode `embed=1` : masque bouton plein écran et footer (utilisé par Games viewer host).
+
+## Player (`/player`)
+
+- Sélection : **jaune**.
+- Bonne réponse révélée : **vert** ; choix du joueur faux : **jaune conservé**.
+- **Pas de rouge**, **pas de sons** timer sur le téléphone.
+
+## Timer & audio
+
+- Countdown **3-2-1-GO** au **Start timer** (pas au Démarrer quiz).
+- Sons timer : **1 bip/seconde**, simple (`timer-sounds.js`).
+- Sons sur **host et viewer uniquement**.
+
+## Serveur — QR
+
+```js
+QR_SCAN_OPTIONS = { errorCorrectionLevel: "L", margin: 2, width: 1200, color: { dark: "#000000", light: "#FFFFFF" } }
+```
+
+## Comportements à ne pas casser
+
+- Joueurs **restent connectés** après reset viewer.
+- Classement viewer **vide** après reset ; arrivées en direct conservées.
+- `resetViewer` ne déconnecte pas les joueurs.
+
+## Évolution
+
+- On peut **ajouter** par-dessus cette base.
+- On ne **supprime ni ne réduit** ces comportements sans accord explicite.
