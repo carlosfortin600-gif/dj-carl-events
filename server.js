@@ -125,6 +125,7 @@ const { buildEventIcs, buildEventIcsFilename } = require("./lib/event-ics");
 const { applyPlanSoireeFromBody } = require("./lib/plan-soiree");
 const {
   notifyDjCarlClientUpdate,
+  notifyDjCarlClientConfirmation,
   getUnreadPortalNotifications,
   getUnreadPortalNotificationCount,
   getLastPortalClientUpdate,
@@ -1035,7 +1036,7 @@ app.get("/portal/:token/confirmer", (req, res) => {
   });
 });
 
-app.post("/portal/:token/confirmer", (req, res) => {
+app.post("/portal/:token/confirmer", async (req, res) => {
   const event = getEventForPortalConfirm(db, req.params.token);
   if (!event) {
     const reason = getPortalAccessDeniedReason(db, req.params.token);
@@ -1056,6 +1057,14 @@ app.post("/portal/:token/confirmer", (req, res) => {
   }
 
   const history = recordClientConfirmation(db, event.id, confirmedByName, event.event_type);
+  await notifyDjCarlClientConfirmation({
+    db,
+    event: { ...event, client_confirmed_by_name: confirmedByName },
+    req,
+    confirmedByName,
+    changes: history.changes,
+    isReconfirmation: history.isReconfirmation
+  });
   res.render("portal/confirmed", {
     title: "Dossier confirmé — DJ Carl",
     event: { ...event, client_confirmed_by_name: confirmedByName },
