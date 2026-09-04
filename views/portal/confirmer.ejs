@@ -31,19 +31,54 @@
         <div class="alert alert-danger small"><%= error %></div>
       <% } %>
 
-      <form method="post" action="/portal/<%= event.portal_token %>/confirmer"
-            onsubmit="return confirm('Confirmer que tout est correct ? Votre dossier sera verrouillé.');">
+      <form method="post" action="/portal/<%= event.portal_token %>/confirmer" id="confirmDossierForm" novalidate>
         <div class="mb-3">
-          <label class="form-label" for="confirmed_by_name">Nom de la personne qui confirme</label>
-          <input type="text" class="form-control" id="confirmed_by_name" name="confirmed_by_name"
+          <label class="form-label" for="confirmed_by_name">Nom de la personne qui confirme <span class="text-danger">*</span></label>
+          <input type="text" class="form-control<%= typeof error !== 'undefined' && error ? ' is-invalid' : '' %>"
+                 id="confirmed_by_name" name="confirmed_by_name"
                  value="<%= typeof confirmedByName !== 'undefined' ? confirmedByName : '' %>"
-                 placeholder="Ex. Marie Tremblay" required autocomplete="name">
-          <div class="form-text">Votre nom complet, tel qu'il apparaîtra sur la confirmation.</div>
+                 placeholder="Ex. Marie Tremblay" required minlength="2" autocomplete="name">
+          <div class="invalid-feedback">Indiquez votre nom complet pour confirmer.</div>
+          <div class="form-text">Obligatoire — votre nom tel qu'il apparaîtra sur la confirmation.</div>
         </div>
-        <button type="submit" class="btn btn-success btn-lg w-100">
+        <button type="submit" class="btn btn-success btn-lg w-100" id="confirmDossierBtn" disabled>
           Tout est correct — je confirme
         </button>
       </form>
+
+      <script>
+        (function () {
+          const form = document.getElementById("confirmDossierForm");
+          const input = document.getElementById("confirmed_by_name");
+          const button = document.getElementById("confirmDossierBtn");
+          if (!form || !input || !button) return;
+
+          function hasValidName() {
+            return input.value.trim().length >= 2;
+          }
+
+          function syncButton() {
+            button.disabled = !hasValidName();
+          }
+
+          input.addEventListener("input", syncButton);
+          syncButton();
+
+          form.addEventListener("submit", function (event) {
+            if (!hasValidName()) {
+              event.preventDefault();
+              input.classList.add("is-invalid");
+              input.focus();
+              return;
+            }
+
+            input.classList.remove("is-invalid");
+            if (!confirm("Confirmer que tout est correct ? Votre dossier sera verrouillé.")) {
+              event.preventDefault();
+            }
+          });
+        })();
+      </script>
     </div>
   </div>
 </main>

@@ -142,6 +142,7 @@ const {
   getPortalAccessDeniedReason,
   portalAccessDeniedMessage,
   normalizeConfirmedByName,
+  isValidConfirmedByName,
   recordClientConfirmation,
   unconfirmClientDossier,
   getConfirmationHistory
@@ -1045,11 +1046,11 @@ app.post("/portal/:token/confirmer", (req, res) => {
   }
 
   const confirmedByName = normalizeConfirmedByName(req.body?.confirmed_by_name);
-  if (!confirmedByName) {
+  if (!isValidConfirmedByName(confirmedByName)) {
     return res.status(400).render("portal/confirmer", {
       title: `Confirmer — ${clientShortName(event)}`,
       event,
-      error: "Indiquez le nom de la personne qui confirme.",
+      error: "Indiquez le nom complet de la personne qui confirme (au moins 2 caractères).",
       confirmedByName: String(req.body?.confirmed_by_name || "")
     });
   }
