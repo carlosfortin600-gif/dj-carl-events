@@ -86,6 +86,13 @@
       <% } %>
     </p>
 
+    <% if (event.client_confirmed_at) { %>
+      <div class="alert alert-success py-2 small">
+        <strong>Client confirmé</strong> le <%= formatTimestampFr(event.client_confirmed_at) %>.
+        L'accès en ligne est verrouillé — le client ne peut plus modifier son dossier.
+      </div>
+    <% } %>
+
     <% if (event.confirmation_email_sent_at) { %>
       <p class="small mb-3">
         Dernier envoi :
@@ -102,6 +109,8 @@
         Courriel non configuré.
         <a href="/settings/notifications">Paramètres → Notifications</a>
       </div>
+    <% } else if (event.client_confirmed_at) { %>
+      <div class="alert alert-success py-2 small mb-0">Dossier confirmé par le client — envoi automatique non requis.</div>
     <% } else if (!event.portal_enabled) { %>
       <div class="alert alert-warning py-2 small mb-0">Réactivez l'accès client avant d'envoyer le courriel.</div>
     <% } else { %>

@@ -179,6 +179,9 @@ function migrate(db) {
   if (!columns.includes("confirmation_email_sent_at")) {
     db.exec("ALTER TABLE events ADD COLUMN confirmation_email_sent_at TEXT");
   }
+  if (!columns.includes("client_confirmed_at")) {
+    db.exec("ALTER TABLE events ADD COLUMN client_confirmed_at TEXT");
+  }
 
   if (columns.includes("quiz_musical_style")) {
     db.exec(`

@@ -138,6 +138,12 @@ const { summarizePortalChanges } = require("./lib/portal-change-summary");
 const { RESEND_TEST_FROM } = require("./lib/email-send");
 const { startConfirmationEmailScheduler, sendConfirmationEmailToClient, confirmationEmailErrorMessage, getConfirmationEmailCopyTo } = require("./lib/confirmation-email");
 const {
+  getEventForPortalConfirm,
+  getPortalAccessDeniedReason,
+  portalAccessDeniedMessage,
+  recordClientConfirmation
+} = require("./lib/client-confirmation");
+const {
   getNotificationSettings,
   saveNotificationSettings,
   isEmailNotificationConfigured,
@@ -183,6 +189,17 @@ if (process.env.NODE_ENV === "production" || process.env.TRUST_PROXY === "1") {
 
 const db = initDatabase();
 startConfirmationEmailScheduler(db);
+
+function requirePortalEvent(req, res) {
+  const event = getEventByPortalToken(db, req.params.token);
+  if (event) return event;
+  const reason = getPortalAccessDeniedReason(db, req.params.token);
+  res.status(404).render("portal/error", {
+    title: reason === "confirmed" ? "Dossier confirmé" : "Lien invalide",
+    message: portalAccessDeniedMessage(reason)
+  });
+  return null;
+}
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -968,14 +985,42 @@ app.post("/events/:id/confirmation-email/send", async (req, res) => {
   res.redirect(`/events/${eventId}?tab=client&confirmationEmailSent=1`);
 });
 
-app.get("/portal/:token", (req, res) => {
-  const event = getEventByPortalToken(db, req.params.token);
+app.get("/portal/:token/confirmer", (req, res) => {
+  const event = getEventForPortalConfirm(db, req.params.token);
   if (!event) {
+    const reason = getPortalAccessDeniedReason(db, req.params.token);
     return res.status(404).render("portal/error", {
-      title: "Lien invalide",
-      message: "Ce lien n'est plus valide ou a été désactivé."
+      title: reason === "confirmed" ? "Dossier confirmé" : "Lien invalide",
+      message: portalAccessDeniedMessage(reason)
     });
   }
+
+  res.render("portal/confirmer", {
+    title: `Confirmer — ${clientShortName(event)}`,
+    event
+  });
+});
+
+app.post("/portal/:token/confirmer", (req, res) => {
+  const event = getEventForPortalConfirm(db, req.params.token);
+  if (!event) {
+    const reason = getPortalAccessDeniedReason(db, req.params.token);
+    return res.status(404).render("portal/error", {
+      title: reason === "confirmed" ? "Dossier confirmé" : "Lien invalide",
+      message: portalAccessDeniedMessage(reason)
+    });
+  }
+
+  recordClientConfirmation(db, event.id);
+  res.render("portal/confirmed", {
+    title: "Dossier confirmé — DJ Carl",
+    event
+  });
+});
+
+app.get("/portal/:token", (req, res) => {
+  const event = requirePortalEvent(req, res);
+  if (!event) return;
 
   touchPortalAccess(db, event.id);
   const summary = getEventSummary(db, event.id, event.event_type);
@@ -988,13 +1033,8 @@ app.get("/portal/:token", (req, res) => {
 });
 
 app.get("/portal/:token/questionnaire", (req, res) => {
-  const event = getEventByPortalToken(db, req.params.token);
-  if (!event) {
-    return res.status(404).render("portal/error", {
-      title: "Lien invalide",
-      message: "Ce lien n'est plus valide ou a été désactivé."
-    });
-  }
+  const event = requirePortalEvent(req, res);
+  if (!event) return;
 
   touchPortalAccess(db, event.id);
   const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
@@ -1015,13 +1055,8 @@ app.get("/portal/:token/questionnaire", (req, res) => {
 });
 
 app.post("/portal/:token/questionnaire", async (req, res) => {
-  const event = getEventByPortalToken(db, req.params.token);
-  if (!event) {
-    return res.status(404).render("portal/error", {
-      title: "Lien invalide",
-      message: "Ce lien n'est plus valide ou a été désactivé."
-    });
-  }
+  const event = requirePortalEvent(req, res);
+  if (!event) return;
 
   try {
     const existing = getQuestionnaireForEvent(db, event.id, event.event_type);
@@ -1044,13 +1079,8 @@ app.post("/portal/:token/questionnaire", async (req, res) => {
 });
 
 app.get("/portal/:token/plan-soiree", (req, res) => {
-  const event = getEventByPortalToken(db, req.params.token);
-  if (!event) {
-    return res.status(404).render("portal/error", {
-      title: "Lien invalide",
-      message: "Ce lien n'est plus valide ou a été désactivé."
-    });
-  }
+  const event = requirePortalEvent(req, res);
+  if (!event) return;
 
   touchPortalAccess(db, event.id);
   const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
@@ -1071,13 +1101,8 @@ app.get("/portal/:token/plan-soiree", (req, res) => {
 });
 
 app.post("/portal/:token/plan-soiree", async (req, res) => {
-  const event = getEventByPortalToken(db, req.params.token);
-  if (!event) {
-    return res.status(404).render("portal/error", {
-      title: "Lien invalide",
-      message: "Ce lien n'est plus valide ou a été désactivé."
-    });
-  }
+  const event = requirePortalEvent(req, res);
+  if (!event) return;
 
   try {
     const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);

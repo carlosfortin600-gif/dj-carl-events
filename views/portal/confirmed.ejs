@@ -1,0 +1,18 @@
+<%- include('partials/head', { title }) %>
+
+<main class="container pb-5" style="max-width: 560px;">
+  <div class="card">
+    <div class="card-body p-4 p-md-5 text-center">
+      <h1 class="h4 mb-3">Merci — dossier confirmé</h1>
+      <p class="text-muted mb-4">
+        Votre dossier pour le <strong><%= formatDateFr(event.event_date) %></strong> est confirmé.
+        Votre espace client est maintenant verrouillé.
+      </p>
+      <p class="small text-muted mb-0">
+        Pour toute modification, contactez DJ Carl directement.
+      </p>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
