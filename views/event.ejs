@@ -128,7 +128,8 @@
           confirmationEmailForwarded: typeof confirmationEmailForwarded !== 'undefined' ? confirmationEmailForwarded : false,
           confirmationEmailError: typeof confirmationEmailError !== 'undefined' ? confirmationEmailError : '',
           clientUnconfirmed: typeof clientUnconfirmed !== 'undefined' ? clientUnconfirmed : false,
-          confirmationHistory: typeof confirmationHistory !== 'undefined' ? confirmationHistory : []
+          confirmationHistory: typeof confirmationHistory !== 'undefined' ? confirmationHistory : [],
+          confirmationEmailPreview: typeof confirmationEmailPreview !== 'undefined' ? confirmationEmailPreview : null
         }) %>
 
       <% } else if (tab === 'questionnaire') { %>

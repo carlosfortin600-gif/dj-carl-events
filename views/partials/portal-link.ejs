@@ -161,6 +161,16 @@
       </div>
     <% } %>
 
+    <% if (typeof confirmationEmailPreview !== 'undefined' && confirmationEmailPreview) { %>
+      <details class="mb-3">
+        <summary class="small fw-semibold mb-2" style="cursor:pointer;">Aperçu du courriel</summary>
+        <div class="border rounded p-3 bg-light small">
+          <p class="mb-2"><strong>Objet :</strong> <%= confirmationEmailPreview.subject %></p>
+          <pre class="mb-0 small" style="white-space:pre-wrap;font-family:inherit;"><%= confirmationEmailPreview.text %></pre>
+        </div>
+      </details>
+    <% } %>
+
     <% if (event.confirmation_email_sent_at) { %>
       <p class="small mb-3">
         Dernier envoi :

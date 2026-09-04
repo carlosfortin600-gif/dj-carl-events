@@ -136,7 +136,7 @@ const {
 } = require("./lib/portal-notifications");
 const { summarizePortalChanges } = require("./lib/portal-change-summary");
 const { RESEND_TEST_FROM } = require("./lib/email-send");
-const { startConfirmationEmailScheduler, sendConfirmationEmailToClient, confirmationEmailErrorMessage, getConfirmationEmailCopyTo } = require("./lib/confirmation-email");
+const { startConfirmationEmailScheduler, sendConfirmationEmailToClient, confirmationEmailErrorMessage, getConfirmationEmailCopyTo, getConfirmationEmailPreview } = require("./lib/confirmation-email");
 const {
   getEventForPortalConfirm,
   getPortalAccessDeniedReason,
@@ -734,6 +734,9 @@ app.get("/events/:id", (req, res) => {
     markPortalNotificationsReadForEvent(db, event.id);
   }
 
+  const confirmationEmailPreview =
+    tab === "client" && portalToken ? getConfirmationEmailPreview(event, portalToken) : null;
+
   res.render("event", {
     title: `${clientShortName(event)} — DJ CARL`,
     activeNav: "dashboard",
@@ -794,7 +797,8 @@ app.get("/events/:id", (req, res) => {
     confirmationEmailForwarded: req.query.confirmationEmailForwarded === "1",
     confirmationEmailError: req.query.confirmationEmailError || "",
     clientUnconfirmed: req.query.clientUnconfirmed === "1",
-    confirmationHistory: getConfirmationHistory(db, event.id)
+    confirmationHistory: getConfirmationHistory(db, event.id),
+    confirmationEmailPreview
   });
 });
 
