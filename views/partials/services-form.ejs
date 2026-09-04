@@ -61,28 +61,22 @@
   <h2 class="form-section-title">Animation</h2>
   <div class="row g-3">
     <div class="col-12">
-      <div class="row g-2 align-items-end">
-        <div class="col-md-3 col-lg-2">
-          <label class="form-label d-block">Animation</label>
-          <div class="btn-group btn-group-sm w-100" role="group" aria-label="Animation incluse">
-            <input type="radio" class="btn-check" name="animation_included" id="animation_included_yes" value="yes"
-                   <%= animationIncluded === 'yes' ? 'checked' : '' %>>
-            <label class="btn btn-outline-secondary" for="animation_included_yes">Oui</label>
-            <input type="radio" class="btn-check" name="animation_included" id="animation_included_no" value="no"
-                   <%= animationIncluded === 'no' ? 'checked' : '' %>>
-            <label class="btn btn-outline-secondary" for="animation_included_no">Non</label>
-            <input type="radio" class="btn-check" name="animation_included" id="animation_included_none" value="none"
-                   <%= !animationIncluded ? 'checked' : '' %>>
-            <label class="btn btn-outline-secondary" for="animation_included_none">Aucun</label>
-          </div>
-        </div>
-        <div class="col-md-9 col-lg-10">
-          <label class="form-label" for="animation_notes">Précisions</label>
-          <input type="text" class="form-control" name="animation_notes" id="animation_notes"
-                 value="<%= animationNotes %>"
-                 placeholder="Type d'animation, jeux, notes…">
-        </div>
+      <label class="form-label d-block">Animation</label>
+      <div class="btn-group btn-group-sm mb-2" role="group" aria-label="Animation incluse">
+        <input type="radio" class="btn-check" name="animation_included" id="animation_included_yes" value="yes"
+               <%= animationIncluded === 'yes' ? 'checked' : '' %>>
+        <label class="btn btn-outline-secondary" for="animation_included_yes">Oui</label>
+        <input type="radio" class="btn-check" name="animation_included" id="animation_included_no" value="no"
+               <%= animationIncluded === 'no' ? 'checked' : '' %>>
+        <label class="btn btn-outline-secondary" for="animation_included_no">Non</label>
+        <input type="radio" class="btn-check" name="animation_included" id="animation_included_none" value="none"
+               <%= !animationIncluded ? 'checked' : '' %>>
+        <label class="btn btn-outline-secondary" for="animation_included_none">Aucun</label>
       </div>
+      <label class="form-label" for="animation_notes">Précisions</label>
+      <input type="text" class="form-control" name="animation_notes" id="animation_notes"
+             value="<%= animationNotes %>"
+             placeholder="Type d'animation, jeux, notes…">
     </div>
 
     <% if (supplementaryOptions.length > 0) { %>
