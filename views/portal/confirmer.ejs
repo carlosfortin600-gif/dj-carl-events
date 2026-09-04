@@ -27,8 +27,19 @@
         Pour tout changement par la suite, contactez DJ Carl.
       </div>
 
+      <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger small"><%= error %></div>
+      <% } %>
+
       <form method="post" action="/portal/<%= event.portal_token %>/confirmer"
             onsubmit="return confirm('Confirmer que tout est correct ? Votre dossier sera verrouillé.');">
+        <div class="mb-3">
+          <label class="form-label" for="confirmed_by_name">Nom de la personne qui confirme</label>
+          <input type="text" class="form-control" id="confirmed_by_name" name="confirmed_by_name"
+                 value="<%= typeof confirmedByName !== 'undefined' ? confirmedByName : '' %>"
+                 placeholder="Ex. Marie Tremblay" required autocomplete="name">
+          <div class="form-text">Votre nom complet, tel qu'il apparaîtra sur la confirmation.</div>
+        </div>
         <button type="submit" class="btn btn-success btn-lg w-100">
           Tout est correct — je confirme
         </button>

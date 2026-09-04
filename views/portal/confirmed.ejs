@@ -5,7 +5,10 @@
     <div class="card-body p-4 p-md-5 text-center">
       <h1 class="h4 mb-3">Merci — dossier confirmé</h1>
       <p class="text-muted mb-4">
-        Votre dossier pour le <strong><%= formatDateFr(event.event_date) %></strong> est confirmé.
+        Votre dossier pour le <strong><%= formatDateFr(event.event_date) %></strong> est confirmé
+        <% if (event.client_confirmed_by_name) { %>
+          par <strong><%= event.client_confirmed_by_name %></strong>
+        <% } %>.
         Votre espace client est maintenant verrouillé.
       </p>
       <p class="small text-muted mb-0">

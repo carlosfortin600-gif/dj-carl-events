@@ -141,6 +141,7 @@ const {
   getEventForPortalConfirm,
   getPortalAccessDeniedReason,
   portalAccessDeniedMessage,
+  normalizeConfirmedByName,
   recordClientConfirmation
 } = require("./lib/client-confirmation");
 const {
@@ -1016,10 +1017,20 @@ app.post("/portal/:token/confirmer", (req, res) => {
     });
   }
 
-  recordClientConfirmation(db, event.id);
+  const confirmedByName = normalizeConfirmedByName(req.body?.confirmed_by_name);
+  if (!confirmedByName) {
+    return res.status(400).render("portal/confirmer", {
+      title: `Confirmer — ${clientShortName(event)}`,
+      event,
+      error: "Indiquez le nom de la personne qui confirme.",
+      confirmedByName: String(req.body?.confirmed_by_name || "")
+    });
+  }
+
+  recordClientConfirmation(db, event.id, confirmedByName);
   res.render("portal/confirmed", {
     title: "Dossier confirmé — DJ Carl",
-    event
+    event: { ...event, client_confirmed_by_name: confirmedByName }
   });
 });
 

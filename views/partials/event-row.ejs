@@ -24,7 +24,7 @@
               <span class="badge bg-primary ms-1"><%= ev.checklist.missingCount %> à compléter</span>
             <% } %>
             <% if (ev.client_confirmed_at) { %>
-              <span class="badge bg-success ms-1" title="Confirmé le <%= formatTimestampFr(ev.client_confirmed_at) %>">Client confirmé</span>
+              <span class="badge bg-success ms-1" title="Confirmé le <%= formatTimestampFr(ev.client_confirmed_at) %><% if (ev.client_confirmed_by_name) { %> par <%= ev.client_confirmed_by_name %><% } %>">Client confirmé</span>
             <% } %>
           <% } else if (ev.deleted_at) { %>
             <span class="text-muted mx-1">|</span>
@@ -105,7 +105,8 @@
   <% if (expandable && ev.client_confirmed_at && !(typeof trashMode !== 'undefined' && trashMode)) { %>
     <div class="px-3 pb-2">
       <div class="alert alert-success py-2 small mb-0">
-        <strong>Client confirmé</strong> le <%= formatTimestampFr(ev.client_confirmed_at) %> —
+        <strong>Client confirmé</strong> le <%= formatTimestampFr(ev.client_confirmed_at) %><% if (ev.client_confirmed_by_name) { %>
+        par <strong><%= ev.client_confirmed_by_name %></strong><% } %> —
         le lien client est verrouillé.
       </div>
     </div>

@@ -98,7 +98,8 @@
 
     <% if (event.client_confirmed_at) { %>
       <div class="alert alert-success py-2 small">
-        <strong>Client confirmé</strong> le <%= formatTimestampFr(event.client_confirmed_at) %>.
+        <strong>Client confirmé</strong> le <%= formatTimestampFr(event.client_confirmed_at) %><% if (event.client_confirmed_by_name) { %>
+          par <strong><%= event.client_confirmed_by_name %></strong><% } %>.
         L'accès en ligne est verrouillé — le client ne peut plus modifier son dossier.
       </div>
     <% } %>
