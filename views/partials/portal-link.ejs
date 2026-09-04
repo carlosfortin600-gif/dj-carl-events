@@ -11,7 +11,14 @@
     <% } %>
 
     <% if (typeof confirmationEmailSent !== 'undefined' && confirmationEmailSent) { %>
-      <div class="alert alert-success py-2 small">Courriel de confirmation envoyé au client<% if (typeof confirmationEmailCopyTo !== 'undefined' && confirmationEmailCopyTo) { %> (copie à <%= confirmationEmailCopyTo %>)<% } %>.</div>
+      <div class="alert alert-success py-2 small">
+        <% if (typeof confirmationEmailForwarded !== 'undefined' && confirmationEmailForwarded) { %>
+          Courriel envoyé à <strong><%= confirmationEmailCopyTo || 'votre Gmail' %></strong> (mode test Resend).
+          Transmettez-le au client <strong><%= event.email %></strong>.
+        <% } else { %>
+          Courriel de confirmation envoyé au client<% if (typeof confirmationEmailCopyTo !== 'undefined' && confirmationEmailCopyTo) { %> (copie à <%= confirmationEmailCopyTo %>)<% } %>.
+        <% } %>
+      </div>
     <% } %>
     <% if (typeof confirmationEmailError !== 'undefined' && confirmationEmailError) { %>
       <div class="alert alert-danger py-2 small"><%= confirmationEmailError %></div>
@@ -84,6 +91,9 @@
       <% if (typeof confirmationEmailCopyTo !== 'undefined' && confirmationEmailCopyTo) { %>
         Une copie vous est envoyée à <strong><%= confirmationEmailCopyTo %></strong>.
       <% } %>
+      <span class="d-block mt-1">
+        Sans domaine vérifié sur Resend, le courriel arrive sur votre Gmail — vous le transmettez au client.
+      </span>
     </p>
 
     <% if (event.client_confirmed_at) { %>

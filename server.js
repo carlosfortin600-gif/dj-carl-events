@@ -788,6 +788,7 @@ app.get("/events/:id", (req, res) => {
     emailNotificationConfigured: isEmailNotificationConfigured(db),
     confirmationEmailCopyTo: getConfirmationEmailCopyTo(),
     confirmationEmailSent: req.query.confirmationEmailSent === "1",
+    confirmationEmailForwarded: req.query.confirmationEmailForwarded === "1",
     confirmationEmailError: req.query.confirmationEmailError || ""
   });
 });
@@ -982,7 +983,11 @@ app.post("/events/:id/confirmation-email/send", async (req, res) => {
     );
   }
 
-  res.redirect(`/events/${eventId}?tab=client&confirmationEmailSent=1`);
+  res.redirect(
+    `/events/${eventId}?tab=client&confirmationEmailSent=1${
+      result.forwardedViaDj ? "&confirmationEmailForwarded=1" : ""
+    }`
+  );
 });
 
 app.get("/portal/:token/confirmer", (req, res) => {
