@@ -11,6 +11,31 @@
         <% } %>.
         Votre espace client est maintenant verrouillé.
       </p>
+
+      <% if (typeof confirmationIsReconfirmation !== 'undefined' && confirmationIsReconfirmation) { %>
+        <div class="text-start small mb-4">
+          <p class="fw-semibold mb-2">Modifications depuis votre dernière confirmation :</p>
+          <% if (typeof confirmationChanges !== 'undefined' && confirmationChanges.length) { %>
+            <ul class="mb-0 ps-3">
+              <% confirmationChanges.forEach(function(change) { %>
+                <li class="mb-1">
+                  <strong><%= change.section %></strong> — <%= change.label %> :
+                  <% if (change.before === '—' && change.after !== '—') { %>
+                    <%= change.after %>
+                  <% } else if (change.after === '—' && change.before !== '—') { %>
+                    <%= change.before %> (retiré)
+                  <% } else { %>
+                    <%= change.before %> → <%= change.after %>
+                  <% } %>
+                </li>
+              <% }); %>
+            </ul>
+          <% } else { %>
+            <p class="text-muted mb-0">Aucune modification détectée dans le questionnaire ou le plan de soirée.</p>
+          <% } %>
+        </div>
+      <% } %>
+
       <p class="small text-muted mb-0">
         Pour toute modification, contactez DJ Carl directement.
       </p>

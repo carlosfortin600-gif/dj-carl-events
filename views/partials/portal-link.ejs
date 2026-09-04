@@ -23,6 +23,9 @@
     <% if (typeof confirmationEmailError !== 'undefined' && confirmationEmailError) { %>
       <div class="alert alert-danger py-2 small"><%= confirmationEmailError %></div>
     <% } %>
+    <% if (typeof clientUnconfirmed !== 'undefined' && clientUnconfirmed) { %>
+      <div class="alert alert-success py-2 small">Confirmation client annulée — l'accès en ligne est réactivé. L'historique des confirmations est conservé ci-dessous.</div>
+    <% } %>
 
     <p class="text-muted small mb-3">
       Ce lien est <strong>unique à cet événement</strong>. Envoyez-le par texto ou courriel —
@@ -101,6 +104,60 @@
         <strong>Client confirmé</strong> le <%= formatTimestampFr(event.client_confirmed_at) %><% if (event.client_confirmed_by_name) { %>
           par <strong><%= event.client_confirmed_by_name %></strong><% } %>.
         L'accès en ligne est verrouillé — le client ne peut plus modifier son dossier.
+      </div>
+      <form method="post" action="/events/<%= event.id %>/confirmation/unconfirm" class="mb-3"
+            onsubmit="return confirm('Annuler la confirmation active ? L\\'accès en ligne sera réactivé. L\\'historique sera conservé.');">
+        <button type="submit" class="btn btn-sm btn-outline-warning">Déconfirmer</button>
+      </form>
+    <% } %>
+
+    <% if (typeof confirmationHistory !== 'undefined' && confirmationHistory.length) { %>
+      <div class="border rounded p-3 mb-3 bg-light">
+        <h3 class="h6 mb-3">Historique des confirmations</h3>
+        <% confirmationHistory.forEach(function(record) { %>
+          <div class="small<%= record.sequence < confirmationHistory.length ? ' mb-3 pb-3 border-bottom' : ' mb-0' %>">
+            <div class="d-flex flex-wrap justify-content-between gap-2 mb-1">
+              <strong>Confirmation #<%= record.sequence %></strong>
+              <% if (record.unconfirmed_at) { %>
+                <span class="badge bg-secondary">Déconfirmée</span>
+              <% } else if (event.client_confirmed_at) { %>
+                <span class="badge bg-success">Active</span>
+              <% } else { %>
+                <span class="badge bg-secondary">Archivée</span>
+              <% } %>
+            </div>
+            <div class="text-muted">
+              <%= formatTimestampFr(record.confirmed_at) %>
+              <% if (record.confirmed_by_name) { %>
+                — <strong><%= record.confirmed_by_name %></strong>
+              <% } %>
+            </div>
+            <% if (record.unconfirmed_at) { %>
+              <div class="text-muted mt-1">Déconfirmée le <%= formatTimestampFr(record.unconfirmed_at) %></div>
+            <% } %>
+            <% if (record.hasChanges && record.changes.length) { %>
+              <div class="mt-2">
+                <strong>Modifications depuis la confirmation précédente :</strong>
+                <ul class="mb-0 ps-3 mt-1">
+                  <% record.changes.forEach(function(change) { %>
+                    <li>
+                      <strong><%= change.section %></strong> — <%= change.label %> :
+                      <% if (change.before === '—' && change.after !== '—') { %>
+                        <%= change.after %>
+                      <% } else if (change.after === '—' && change.before !== '—') { %>
+                        <%= change.before %> (retiré)
+                      <% } else { %>
+                        <%= change.before %> → <%= change.after %>
+                      <% } %>
+                    </li>
+                  <% }); %>
+                </ul>
+              </div>
+            <% } else if (record.sequence > 1) { %>
+              <div class="text-muted mt-1">Aucune modification détectée par rapport à la confirmation précédente.</div>
+            <% } %>
+          </div>
+        <% }); %>
       </div>
     <% } %>
 

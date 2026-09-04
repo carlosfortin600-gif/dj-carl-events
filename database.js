@@ -428,6 +428,13 @@ function migrate(db) {
     CREATE INDEX IF NOT EXISTS idx_portal_client_notifications_unread
     ON portal_client_notifications(event_id, read_at, created_at)
   `);
+
+  const {
+    ensureConfirmationHistoryTable,
+    backfillConfirmationHistory
+  } = require("./lib/client-confirmation-history");
+  ensureConfirmationHistoryTable(db);
+  backfillConfirmationHistory(db);
 }
 
 module.exports = {

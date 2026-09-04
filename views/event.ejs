@@ -126,7 +126,9 @@
           confirmationEmailCopyTo: typeof confirmationEmailCopyTo !== 'undefined' ? confirmationEmailCopyTo : '',
           confirmationEmailSent: typeof confirmationEmailSent !== 'undefined' ? confirmationEmailSent : false,
           confirmationEmailForwarded: typeof confirmationEmailForwarded !== 'undefined' ? confirmationEmailForwarded : false,
-          confirmationEmailError: typeof confirmationEmailError !== 'undefined' ? confirmationEmailError : ''
+          confirmationEmailError: typeof confirmationEmailError !== 'undefined' ? confirmationEmailError : '',
+          clientUnconfirmed: typeof clientUnconfirmed !== 'undefined' ? clientUnconfirmed : false,
+          confirmationHistory: typeof confirmationHistory !== 'undefined' ? confirmationHistory : []
         }) %>
 
       <% } else if (tab === 'questionnaire') { %>

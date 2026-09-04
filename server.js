@@ -142,7 +142,9 @@ const {
   getPortalAccessDeniedReason,
   portalAccessDeniedMessage,
   normalizeConfirmedByName,
-  recordClientConfirmation
+  recordClientConfirmation,
+  unconfirmClientDossier,
+  getConfirmationHistory
 } = require("./lib/client-confirmation");
 const {
   getNotificationSettings,
@@ -790,7 +792,9 @@ app.get("/events/:id", (req, res) => {
     confirmationEmailCopyTo: getConfirmationEmailCopyTo(),
     confirmationEmailSent: req.query.confirmationEmailSent === "1",
     confirmationEmailForwarded: req.query.confirmationEmailForwarded === "1",
-    confirmationEmailError: req.query.confirmationEmailError || ""
+    confirmationEmailError: req.query.confirmationEmailError || "",
+    clientUnconfirmed: req.query.clientUnconfirmed === "1",
+    confirmationHistory: getConfirmationHistory(db, event.id)
   });
 });
 
@@ -960,6 +964,25 @@ app.post("/events/:id/portal/toggle", (req, res) => {
   res.redirect(`/events/${eventId}?tab=client&portalToggled=1`);
 });
 
+app.post("/events/:id/confirmation/unconfirm", (req, res) => {
+  const eventId = Number(req.params.id);
+  const event = getEventById(db, eventId);
+  if (!event) {
+    return res.status(404).render("error", {
+      title: "Événement introuvable",
+      activeNav: "dashboard",
+      message: "Cet événement n'existe pas."
+    });
+  }
+
+  if (!event.client_confirmed_at) {
+    return res.redirect(`/events/${eventId}?tab=client`);
+  }
+
+  unconfirmClientDossier(db, eventId);
+  res.redirect(`/events/${eventId}?tab=client&clientUnconfirmed=1`);
+});
+
 app.post("/events/:id/confirmation-email/send", async (req, res) => {
   const eventId = Number(req.params.id);
   const event = getEventById(db, eventId);
@@ -1027,10 +1050,12 @@ app.post("/portal/:token/confirmer", (req, res) => {
     });
   }
 
-  recordClientConfirmation(db, event.id, confirmedByName);
+  const history = recordClientConfirmation(db, event.id, confirmedByName, event.event_type);
   res.render("portal/confirmed", {
     title: "Dossier confirmé — DJ Carl",
-    event: { ...event, client_confirmed_by_name: confirmedByName }
+    event: { ...event, client_confirmed_by_name: confirmedByName },
+    confirmationChanges: history.changes,
+    confirmationIsReconfirmation: history.isReconfirmation
   });
 });
 
