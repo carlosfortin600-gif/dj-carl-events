@@ -136,6 +136,7 @@ const {
 } = require("./lib/portal-notifications");
 const { summarizePortalChanges } = require("./lib/portal-change-summary");
 const { RESEND_TEST_FROM } = require("./lib/email-send");
+const { startConfirmationEmailScheduler, sendConfirmationEmailToClient, confirmationEmailErrorMessage, getConfirmationEmailCopyTo } = require("./lib/confirmation-email");
 const {
   getNotificationSettings,
   saveNotificationSettings,
@@ -181,6 +182,7 @@ if (process.env.NODE_ENV === "production" || process.env.TRUST_PROXY === "1") {
 }
 
 const db = initDatabase();
+startConfirmationEmailScheduler(db);
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -765,7 +767,11 @@ app.get("/events/:id", (req, res) => {
     contractCleared: req.query.contractCleared === "1",
     contractError: req.query.contractError || "",
     lastPortalClientUpdate,
-    portalClientUpdateUnread: tab === "client" || tab === "questionnaire" ? false : portalClientUpdateUnread
+    portalClientUpdateUnread: tab === "client" || tab === "questionnaire" ? false : portalClientUpdateUnread,
+    emailNotificationConfigured: isEmailNotificationConfigured(db),
+    confirmationEmailCopyTo: getConfirmationEmailCopyTo(),
+    confirmationEmailSent: req.query.confirmationEmailSent === "1",
+    confirmationEmailError: req.query.confirmationEmailError || ""
   });
 });
 
@@ -933,6 +939,33 @@ app.post("/events/:id/portal/toggle", (req, res) => {
 
   setPortalEnabled(db, eventId, req.body.enabled === "1");
   res.redirect(`/events/${eventId}?tab=client&portalToggled=1`);
+});
+
+app.post("/events/:id/confirmation-email/send", async (req, res) => {
+  const eventId = Number(req.params.id);
+  const event = getEventById(db, eventId);
+  if (!event) {
+    return res.status(404).render("error", {
+      title: "Événement introuvable",
+      activeNav: "dashboard",
+      message: "Cet événement n'existe pas."
+    });
+  }
+
+  if (!isEmailNotificationConfigured(db)) {
+    return res.redirect(
+      `/events/${eventId}?tab=client&confirmationEmailError=${encodeURIComponent("Courriel non configuré — allez dans Paramètres → Notifications.")}`
+    );
+  }
+
+  const result = await sendConfirmationEmailToClient(db, event, { manual: true });
+  if (!result.ok) {
+    return res.redirect(
+      `/events/${eventId}?tab=client&confirmationEmailError=${encodeURIComponent(confirmationEmailErrorMessage(result))}`
+    );
+  }
+
+  res.redirect(`/events/${eventId}?tab=client&confirmationEmailSent=1`);
 });
 
 app.get("/portal/:token", (req, res) => {

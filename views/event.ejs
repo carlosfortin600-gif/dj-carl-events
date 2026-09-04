@@ -121,7 +121,11 @@
           portalLinks,
           portalRegenerated,
           portalToggled,
-          lastPortalClientUpdate: typeof lastPortalClientUpdate !== 'undefined' ? lastPortalClientUpdate : null
+          lastPortalClientUpdate: typeof lastPortalClientUpdate !== 'undefined' ? lastPortalClientUpdate : null,
+          emailNotificationConfigured: typeof emailNotificationConfigured !== 'undefined' ? emailNotificationConfigured : false,
+          confirmationEmailCopyTo: typeof confirmationEmailCopyTo !== 'undefined' ? confirmationEmailCopyTo : '',
+          confirmationEmailSent: typeof confirmationEmailSent !== 'undefined' ? confirmationEmailSent : false,
+          confirmationEmailError: typeof confirmationEmailError !== 'undefined' ? confirmationEmailError : ''
         }) %>
 
       <% } else if (tab === 'questionnaire') { %>

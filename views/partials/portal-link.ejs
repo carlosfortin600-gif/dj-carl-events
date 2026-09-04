@@ -10,6 +10,13 @@
       <div class="alert alert-success py-2 small">Accès client mis à jour.</div>
     <% } %>
 
+    <% if (typeof confirmationEmailSent !== 'undefined' && confirmationEmailSent) { %>
+      <div class="alert alert-success py-2 small">Courriel de confirmation envoyé au client<% if (typeof confirmationEmailCopyTo !== 'undefined' && confirmationEmailCopyTo) { %> (copie à <%= confirmationEmailCopyTo %>)<% } %>.</div>
+    <% } %>
+    <% if (typeof confirmationEmailError !== 'undefined' && confirmationEmailError) { %>
+      <div class="alert alert-danger py-2 small"><%= confirmationEmailError %></div>
+    <% } %>
+
     <p class="text-muted small mb-3">
       Ce lien est <strong>unique à cet événement</strong>. Envoyez-le par texto ou courriel —
       votre client pourra remplir le questionnaire sans voir vos autres dossiers.
@@ -62,6 +69,49 @@
         <strong><%= lastPortalClientUpdate.kindLabel %></strong>
         — <%= formatTimestampFr(lastPortalClientUpdate.created_at) %>
       </p>
+    <% } %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header bg-white py-3">
+    <h2 class="h6 mb-0">Courriel de confirmation (questionnaire)</h2>
+  </div>
+  <div class="card-body">
+    <p class="text-muted small mb-3">
+      Demande au client de vérifier que son questionnaire et vos échanges sont encore corrects.
+      L'envoi automatique se fait <strong>6 jours avant</strong> l'événement.
+      <% if (typeof confirmationEmailCopyTo !== 'undefined' && confirmationEmailCopyTo) { %>
+        Une copie vous est envoyée à <strong><%= confirmationEmailCopyTo %></strong>.
+      <% } %>
+    </p>
+
+    <% if (event.confirmation_email_sent_at) { %>
+      <p class="small mb-3">
+        Dernier envoi :
+        <strong><%= formatTimestampFr(event.confirmation_email_sent_at) %></strong>
+      </p>
+    <% } else { %>
+      <p class="small text-muted mb-3">Aucun courriel de confirmation envoyé pour cet événement.</p>
+    <% } %>
+
+    <% if (!event.email?.trim()) { %>
+      <div class="alert alert-warning py-2 small mb-0">Ajoutez le courriel du client dans l'onglet Résumé avant d'envoyer.</div>
+    <% } else if (typeof emailNotificationConfigured !== 'undefined' && !emailNotificationConfigured) { %>
+      <div class="alert alert-warning py-2 small mb-0">
+        Courriel non configuré.
+        <a href="/settings/notifications">Paramètres → Notifications</a>
+      </div>
+    <% } else if (!event.portal_enabled) { %>
+      <div class="alert alert-warning py-2 small mb-0">Réactivez l'accès client avant d'envoyer le courriel.</div>
+    <% } else { %>
+      <form method="post" action="/events/<%= event.id %>/confirmation-email/send" class="mb-0"
+            onsubmit="return confirm('Envoyer le courriel de confirmation à <%= event.email %> ?');">
+        <button type="submit" class="btn btn-primary">
+          Envoyer le courriel de confirmation
+        </button>
+      </form>
+      <p class="text-muted small mt-2 mb-0">Destinataire : <%= event.email %></p>
     <% } %>
   </div>
 </div>

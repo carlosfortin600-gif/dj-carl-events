@@ -176,6 +176,9 @@ function migrate(db) {
   if (!columns.includes("end_date")) {
     db.exec("ALTER TABLE events ADD COLUMN end_date TEXT");
   }
+  if (!columns.includes("confirmation_email_sent_at")) {
+    db.exec("ALTER TABLE events ADD COLUMN confirmation_email_sent_at TEXT");
+  }
 
   if (columns.includes("quiz_musical_style")) {
     db.exec(`
