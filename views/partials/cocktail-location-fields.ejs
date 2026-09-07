@@ -2,9 +2,9 @@
   const prefix = typeof fieldPrefix !== 'undefined' ? fieldPrefix : 'cocktail';
   const sectionTitle = typeof locationSectionTitle !== 'undefined' ? locationSectionTitle : 'Cocktail';
   const loc = typeof cocktailData !== 'undefined' ? cocktailData : {};
-  const locationField = prefix + '_location';
-  const placeField = prefix + '_place';
-  const distanceField = prefix + '_dj_distance';
+  const locationField = typeof locationFieldName !== 'undefined' ? locationFieldName : (prefix + '_location');
+  const placeField = typeof placeFieldName !== 'undefined' ? placeFieldName : (prefix + '_place');
+  const distanceField = typeof distanceFieldName !== 'undefined' ? distanceFieldName : (prefix + '_dj_distance');
 %>
 
 <div class="col-12">
@@ -23,8 +23,10 @@
   <input type="text" class="form-control" name="<%= placeField %>" value="<%= loc[placeField] || '' %>"
          placeholder="Ex. : salle adjacente, terrasse, jardin…">
 </div>
+<% if (typeof showDistance === 'undefined' || showDistance) { %>
 <div class="col-md-6">
   <label class="form-label">Distance du DJ au <%= sectionTitle.toLowerCase() %></label>
   <input type="text" class="form-control" name="<%= distanceField %>" value="<%= loc[distanceField] || '' %>"
          placeholder="Ex. : 30 m, 2e étage, même pièce…">
 </div>
+<% } %>

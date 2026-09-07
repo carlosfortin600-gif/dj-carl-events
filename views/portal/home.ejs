@@ -1,8 +1,6 @@
 <%- include('partials/head', { title }) %>
 
 <main class="container pb-5" style="max-width: 720px;">
-  <%- include('../partials/portal-avertissement-banner', { event }) %>
-
   <div class="card portal-welcome mb-4">
     <div class="card-body p-4 text-center">
       <h1 class="h3 mb-2">Bonjour <%= clientShortName(event) %> !</h1>
@@ -17,19 +15,19 @@
     <div class="card-body p-4">
       <h2 class="h5 mb-3">Complétez votre dossier</h2>
       <p class="text-muted">
-        Utilisez cet espace pour consulter votre questionnaire, remplir le <strong>plan de soirée</strong>
-        et nous transmettre vos <strong>préférences musicales</strong>.
+        Utilisez cet espace pour compléter le questionnaire, le <strong>plan de soirée</strong>
+        et vos <strong>préférences musicales</strong>.
       </p>
 
       <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task">
         <div>
           <strong><%= getQuestionnaireLabel(event.event_type) %></strong>
           <div class="small text-muted">
-            Complétez les champs vides — les réponses DJ Carl sont verrouillées
+            Complétez les champs vides — les réponses déjà remplies sont verrouillées
           </div>
         </div>
         <a href="/portal/<%= event.portal_token %>/questionnaire" class="btn btn-outline-primary">
-          Compléter / consulter
+          Accéder au questionnaire
         </a>
       </div>
 

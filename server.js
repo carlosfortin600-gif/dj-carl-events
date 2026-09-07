@@ -105,6 +105,7 @@ const {
   mergePortalQuestionnaire,
   getDjLockedFields
 } = require("./lib/questionnaire-portal-lock");
+const { hasPortalIntroAck, ackPortalIntro } = require("./lib/portal-intro");
 const { getDjNotes, saveDjNotes } = require("./lib/dj-notes");
 const {
   SUBCONTRACTORS,
@@ -212,6 +213,12 @@ function requirePortalEvent(req, res) {
     message: portalAccessDeniedMessage(reason)
   });
   return null;
+}
+
+function requirePortalIntroAck(req, res, event) {
+  if (hasPortalIntroAck(event)) return true;
+  res.redirect(`/portal/${req.params.token}`);
+  return false;
 }
 
 app.set("view engine", "ejs");
@@ -1048,6 +1055,7 @@ app.get("/portal/:token/confirmer", (req, res) => {
       message: portalAccessDeniedMessage(reason)
     });
   }
+  if (!requirePortalIntroAck(req, res, event)) return;
 
   res.render("portal/confirmer", {
     title: `Confirmer — ${clientShortName(event)}`,
@@ -1070,6 +1078,7 @@ app.post("/portal/:token/confirmer", async (req, res) => {
       message: portalAccessDeniedMessage(reason)
     });
   }
+  if (!requirePortalIntroAck(req, res, event)) return;
 
   const confirmedByName = normalizeConfirmedByName(req.body?.confirmed_by_name);
   if (!isValidConfirmedByName(confirmedByName)) {
@@ -1102,11 +1111,23 @@ app.get("/portal/:token/avertissement", (req, res) => {
   const event = requirePortalEvent(req, res);
   if (!event) return;
 
-  touchPortalAccess(db, event.id);
-  res.render("portal/avertissement", {
+  if (!hasPortalIntroAck(event)) {
+    return res.redirect(`/portal/${req.params.token}`);
+  }
+
+  return res.render("portal/avertissement", {
     title: `Avertissement — ${clientShortName(event)}`,
     event
   });
+});
+
+app.post("/portal/:token/intro-ack", (req, res) => {
+  const event = requirePortalEvent(req, res);
+  if (!event) return;
+
+  ackPortalIntro(db, event.id);
+  touchPortalAccess(db, event.id);
+  res.redirect(`/portal/${req.params.token}`);
 });
 
 app.get("/portal/:token", (req, res) => {
@@ -1114,6 +1135,14 @@ app.get("/portal/:token", (req, res) => {
   if (!event) return;
 
   touchPortalAccess(db, event.id);
+
+  if (!hasPortalIntroAck(event)) {
+    return res.render("portal/intro", {
+      title: `Bienvenue — ${clientShortName(event)}`,
+      event
+    });
+  }
+
   const summary = getEventSummary(db, event.id, event.event_type);
 
   res.render("portal/home", {
@@ -1126,6 +1155,7 @@ app.get("/portal/:token", (req, res) => {
 app.post("/portal/:token/questionnaire", async (req, res) => {
   const event = requirePortalEvent(req, res);
   if (!event) return;
+  if (!requirePortalIntroAck(req, res, event)) return;
 
   try {
     const existing = getQuestionnaireForEvent(db, event.id, event.event_type);
@@ -1150,6 +1180,7 @@ app.post("/portal/:token/questionnaire", async (req, res) => {
 app.get("/portal/:token/musique", (req, res) => {
   const event = requirePortalEvent(req, res);
   if (!event) return;
+  if (!requirePortalIntroAck(req, res, event)) return;
 
   touchPortalAccess(db, event.id);
   const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
@@ -1165,6 +1196,7 @@ app.get("/portal/:token/musique", (req, res) => {
 app.post("/portal/:token/musique", async (req, res) => {
   const event = requirePortalEvent(req, res);
   if (!event) return;
+  if (!requirePortalIntroAck(req, res, event)) return;
 
   try {
     const existing = getQuestionnaireForEvent(db, event.id, event.event_type);
@@ -1190,6 +1222,7 @@ app.post("/portal/:token/musique", async (req, res) => {
 app.get("/portal/:token/questionnaire", (req, res) => {
   const event = requirePortalEvent(req, res);
   if (!event) return;
+  if (!requirePortalIntroAck(req, res, event)) return;
 
   touchPortalAccess(db, event.id);
   const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
@@ -1213,6 +1246,7 @@ app.get("/portal/:token/questionnaire", (req, res) => {
 app.get("/portal/:token/plan-soiree", (req, res) => {
   const event = requirePortalEvent(req, res);
   if (!event) return;
+  if (!requirePortalIntroAck(req, res, event)) return;
 
   touchPortalAccess(db, event.id);
   const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
@@ -1235,6 +1269,7 @@ app.get("/portal/:token/plan-soiree", (req, res) => {
 app.post("/portal/:token/plan-soiree", async (req, res) => {
   const event = requirePortalEvent(req, res);
   if (!event) return;
+  if (!requirePortalIntroAck(req, res, event)) return;
 
   try {
     const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);

@@ -21,14 +21,10 @@
           <a href="/portal/<%= event.portal_token %>/plan-soiree" class="btn btn-outline-primary btn-sm">Plan de soirée →</a>
         </div>
       </div>
-      <div class="alert alert-info small mb-2">
-        Les réponses déjà préparées par <strong>DJ Carl</strong> sont verrouillées (badge « DJ Carl »).
-        Complétez les champs encore vides. Pour la musique et le plan de soirée, utilisez les onglets dédiés.
+      <div class="alert alert-info small mb-0">
+        Les réponses déjà remplies sont verrouillées. Complétez les champs encore vides.
+        Pour la musique et le plan de soirée, utilisez les onglets dédiés.
       </div>
-      <p class="small mb-0">
-        <a href="/portal/<%= event.portal_token %>/avertissement" class="fw-semibold">Lire l'avertissement important</a>
-        — ce document n'est pas un contrat.
-      </p>
     </div>
   </div>
 
@@ -59,5 +55,5 @@
   </div>
 </main>
 
-<script src="/js/portal-questionnaire-lock.js?v=1"></script>
+<script src="/js/portal-questionnaire-lock.js?v=2"></script>
 <%- include('partials/footer') %>

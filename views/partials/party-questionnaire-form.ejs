@@ -111,15 +111,11 @@
         </div>
       </div>
       <%- include('cocktail-location-fields', { cocktailData: q.schedule }) %>
-      <div class="col-md-4">
-        <label class="form-label d-block">Équipement DJ fourni au cocktail</label>
-        <div class="btn-group" role="group">
-          <input type="radio" class="btn-check" name="cocktail_equipment_provided" id="cocktail_eq_yes" value="yes" <%= q.schedule.cocktail_equipment_provided === 'yes' ? 'checked' : '' %>>
-          <label class="btn btn-outline-secondary btn-sm" for="cocktail_eq_yes">Oui</label>
-          <input type="radio" class="btn-check" name="cocktail_equipment_provided" id="cocktail_eq_no" value="no" <%= q.schedule.cocktail_equipment_provided === 'no' ? 'checked' : '' %>>
-          <label class="btn btn-outline-secondary btn-sm" for="cocktail_eq_no">Non</label>
-        </div>
-      </div>
+      <%- include('entente-equipment-fields', {
+        locationFieldName: 'cocktail_location',
+        equipmentFieldName: 'cocktail_equipment_provided',
+        equipmentValue: q.schedule.cocktail_equipment_provided
+      }) %>
       <div class="col-12">
         <label class="form-label">Moments spéciaux à prévoir</label>
         <textarea class="form-control" name="special_moments_notes" rows="3"><%= q.schedule.special_moments_notes %></textarea>
@@ -243,7 +239,7 @@
       <textarea class="form-control" name="perfect_evening" rows="4"><%= q.important_questions.perfect_evening %></textarea>
     </div>
     <div class="mb-3">
-      <label class="form-label">Autres informations ou demandes que DJ Carl devrait connaître</label>
+      <label class="form-label">Autres informations ou demandes importantes</label>
       <textarea class="form-control" name="other_info" rows="4"><%= q.important_questions.other_info %></textarea>
     </div>
     <div class="mb-3">
@@ -255,7 +251,7 @@
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Note générale</h2>
     <textarea class="form-control" name="general_notes" rows="4"
-              placeholder="Notes générales, rappels ou précisions pour DJ Carl…"><%= q.general.general_notes || '' %></textarea>
+              placeholder="Notes générales, rappels ou précisions…"><%= q.general.general_notes || '' %></textarea>
   </section>
 
   <% if (!readOnly) { %>
@@ -267,10 +263,11 @@
       <label class="form-check-label" for="q_completed">Marquer le questionnaire comme complété</label>
     </div>
     <% } else { %>
-    <p class="small text-muted mb-0">Les champs marqués « DJ Carl » ne sont pas modifiables.</p>
+    <p class="small text-muted mb-0">Les champs déjà remplis ne sont pas modifiables.</p>
     <% } %>
     <button type="submit" class="btn btn-primary btn-lg"><%= isPortal ? 'Enregistrer mes réponses' : 'Enregistrer le questionnaire' %></button>
   </div>
   <% } %>
 <% if (readOnly) { %></fieldset><% } %>
 </form>
+<script src="/js/questionnaire-location-equipment.js?v=1"></script>

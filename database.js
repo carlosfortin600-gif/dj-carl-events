@@ -185,6 +185,9 @@ function migrate(db) {
   if (!columns.includes("client_confirmed_by_name")) {
     db.exec("ALTER TABLE events ADD COLUMN client_confirmed_by_name TEXT");
   }
+  if (!columns.includes("portal_intro_ack_at")) {
+    db.exec("ALTER TABLE events ADD COLUMN portal_intro_ack_at TEXT");
+  }
 
   if (columns.includes("quiz_musical_style")) {
     db.exec(`

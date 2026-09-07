@@ -1,0 +1,32 @@
+<% 
+  const equipName = typeof equipmentFieldName !== 'undefined' ? equipmentFieldName : 'cocktail_equipment_provided';
+  const soundName = typeof soundFieldName !== 'undefined' ? soundFieldName : '';
+  const equipValue = typeof equipmentValue !== 'undefined' ? equipmentValue : '';
+  const soundValue = typeof soundValue !== 'undefined' ? soundValue : '';
+  const locField = typeof locationFieldName !== 'undefined' ? locationFieldName : 'cocktail_location';
+%>
+
+<div class="col-12 js-location-equipment-group" data-location-field="<%= locField %>">
+  <div class="row g-3">
+    <div class="col-md-6 js-equipment-other-room" hidden>
+      <label class="form-label d-block">Équipement fourni selon l'entente</label>
+      <div class="btn-group" role="group">
+        <input type="radio" class="btn-check" name="<%= equipName %>" id="<%= equipName %>_yes" value="yes" <%= equipValue === 'yes' ? 'checked' : '' %>>
+        <label class="btn btn-outline-secondary btn-sm" for="<%= equipName %>_yes">Oui</label>
+        <input type="radio" class="btn-check" name="<%= equipName %>" id="<%= equipName %>_no" value="no" <%= equipValue === 'no' ? 'checked' : '' %>>
+        <label class="btn btn-outline-secondary btn-sm" for="<%= equipName %>_no">Non</label>
+      </div>
+    </div>
+    <% if (soundName) { %>
+    <div class="col-md-6 js-equipment-same-room" hidden>
+      <label class="form-label d-block">Sono fournie selon l'entente</label>
+      <div class="btn-group" role="group">
+        <input type="radio" class="btn-check" name="<%= soundName %>" id="<%= soundName %>_yes" value="yes" <%= soundValue === 'yes' ? 'checked' : '' %>>
+        <label class="btn btn-outline-secondary btn-sm" for="<%= soundName %>_yes">Oui</label>
+        <input type="radio" class="btn-check" name="<%= soundName %>" id="<%= soundName %>_no" value="no" <%= soundValue === 'no' ? 'checked' : '' %>>
+        <label class="btn btn-outline-secondary btn-sm" for="<%= soundName %>_no">Non</label>
+      </div>
+    </div>
+    <% } %>
+  </div>
+</div>
