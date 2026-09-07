@@ -105,17 +105,25 @@
     </div>
   </div>
 
-  <div class="card mb-4">
-    <div class="card-header bg-white py-3">
-      <h2 class="h5 mb-0">Événements à venir</h2>
-    </div>
-    <div class="list-group list-group-flush">
-      <% if (upcoming.length === 0) { %>
-        <div class="list-group-item text-muted py-4 text-center">Aucun événement à venir</div>
+  <div class="card mb-4 dashboard-upcoming-card">
+    <div class="card-header dashboard-upcoming-header py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div>
+        <h2 class="h4 mb-0">Événements à venir</h2>
+        <% if (upcoming.length > 0) { %>
+          <p class="text-muted small mb-0 mt-1"><%= upcoming.length %> dossier<%= upcoming.length !== 1 ? 's' : '' %> — regroupés par semaine</p>
+        <% } %>
+      </div>
+      <% if (upcoming.length > 0) { %>
+        <span class="badge bg-primary fs-6 px-3 py-2"><%= upcoming.length %></span>
       <% } %>
-      <% upcoming.forEach(function(ev) { %>
-        <%- include('partials/event-row', { ev, expandable: true }) %>
-      <% }); %>
+    </div>
+    <div class="card-body p-0">
+      <%- include('partials/upcoming-by-week', {
+        upcomingByWeek: typeof upcomingByWeek !== 'undefined' ? upcomingByWeek : [],
+        rowType: 'dashboard',
+        expandable: true,
+        emptyMessage: 'Aucun événement à venir'
+      }) %>
     </div>
   </div>
 

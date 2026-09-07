@@ -1,8 +1,10 @@
 <%- include('partials/head', { title }) %>
 
 <main class="container pb-5" style="max-width: 720px;">
-  <%- include('../partials/portal-disclaimer') %>
-
+  <p class="small text-muted mb-3">
+    <a href="/portal/<%= event.portal_token %>/avertissement" class="fw-semibold">Avertissement important</a>
+    — plan de soirée, pas un contrat ; changements sujets à approbation de l'agence.
+  </p>
   <div class="card portal-welcome mb-4">
     <div class="card-body p-4 text-center">
       <h1 class="h3 mb-2">Confirmer votre dossier</h1>

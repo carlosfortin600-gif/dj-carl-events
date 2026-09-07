@@ -5,7 +5,9 @@
     <a href="/portal/<%= event.portal_token %>" class="btn btn-outline-secondary btn-sm">← Retour</a>
   </div>
 
-  <%- include('../partials/portal-disclaimer') %>
+  <% if (saved) { %>
+    <div class="alert alert-success">Merci ! Vos réponses ont été enregistrées.</div>
+  <% } %>
 
   <div class="card mb-4">
     <div class="card-body p-4">
@@ -19,16 +21,19 @@
           <a href="/portal/<%= event.portal_token %>/plan-soiree" class="btn btn-outline-primary btn-sm">Plan de soirée →</a>
         </div>
       </div>
-      <div class="alert alert-info small mb-0">
-        Ce questionnaire a été préparé par <strong>DJ Carl</strong>. Vous pouvez le consulter ici,
-        mais vous ne pouvez pas le modifier. Utilisez les onglets <strong>Plan de soirée</strong>
-        et <strong>Musique</strong> pour vos ajouts.
+      <div class="alert alert-info small mb-2">
+        Les réponses déjà préparées par <strong>DJ Carl</strong> sont verrouillées (badge « DJ Carl »).
+        Complétez les champs encore vides. Pour la musique et le plan de soirée, utilisez les onglets dédiés.
       </div>
+      <p class="small mb-0">
+        <a href="/portal/<%= event.portal_token %>/avertissement" class="fw-semibold">Lire l'avertissement important</a>
+        — ce document n'est pas un contrat.
+      </p>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-body p-4 portal-readonly-questionnaire">
+    <div class="card-body p-4">
       <% if (isWeddingEvent(event.event_type)) { %>
         <%- include('../partials/questionnaire-form', {
           event,
@@ -37,7 +42,7 @@
           timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : [],
           formAction: '/portal/' + event.portal_token + '/questionnaire',
           portalMode: true,
-          readOnlyMode: true
+          djLockedFields: typeof djLockedFields !== 'undefined' ? djLockedFields : []
         }) %>
       <% } else { %>
         <%- include('../partials/party-questionnaire-form', {
@@ -47,11 +52,12 @@
           timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : [],
           formAction: '/portal/' + event.portal_token + '/questionnaire',
           portalMode: true,
-          readOnlyMode: true
+          djLockedFields: typeof djLockedFields !== 'undefined' ? djLockedFields : []
         }) %>
       <% } %>
     </div>
   </div>
 </main>
 
+<script src="/js/portal-questionnaire-lock.js?v=1"></script>
 <%- include('partials/footer') %>

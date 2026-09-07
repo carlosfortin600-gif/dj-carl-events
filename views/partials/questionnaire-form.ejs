@@ -1,6 +1,7 @@
 <% const q = questionnaire.data; %>
 <% const readOnly = typeof readOnlyMode !== 'undefined' && readOnlyMode; %>
 <% const isPortal = typeof portalMode !== 'undefined' && portalMode; %>
+<% const lockedFields = typeof djLockedFields !== 'undefined' ? djLockedFields : []; %>
 <% const ceremony = q.ceremony || { location: '', start_time: '', end_time: '' }; %>
 <% const cocktail = q.cocktail || { cocktail_location: '', cocktail_place: '', cocktail_dj_distance: '', equipment_provided: '', styles: [], requests: '' }; %>
 <% const dinner = q.dinner || { dinner_location: '', dinner_place: '', dinner_dj_distance: '', service_type: '', styles: [], requests: '' }; %>
@@ -9,7 +10,7 @@
   <p class="text-muted small mb-3">Dernière modification : <%= formatTimestampFr(questionnaire.updated_at) %></p>
 <% } %>
 
-<form method="post" action="<%= typeof formAction !== 'undefined' ? formAction : ('/events/' + event.id + '/questionnaire') %>" id="questionnaireForm" data-unsaved-guard>
+<form method="post" action="<%= typeof formAction !== 'undefined' ? formAction : ('/events/' + event.id + '/questionnaire') %>" id="questionnaireForm" data-unsaved-guard<% if (isPortal && lockedFields.length) { %> data-dj-locked-fields="<%= encodeURIComponent(JSON.stringify(lockedFields)) %>"<% } %>>
 <% if (readOnly) { %><fieldset disabled class="portal-readonly-fieldset"><% } %>
 
   <!-- Informations générales -->
@@ -395,11 +396,15 @@
 
   <% if (!readOnly) { %>
   <div class="sticky-save-bar d-flex flex-wrap gap-2 align-items-center justify-content-between">
+    <% if (!isPortal) { %>
     <div class="form-check mb-0">
       <input class="form-check-input" type="checkbox" name="_completed" value="1" id="q_completed"
              <%= q._completed ? 'checked' : '' %>>
       <label class="form-check-label" for="q_completed">Marquer le questionnaire comme complété</label>
     </div>
+    <% } else { %>
+    <p class="small text-muted mb-0">Les champs marqués « DJ Carl » ne sont pas modifiables.</p>
+    <% } %>
     <button type="submit" class="btn btn-primary btn-lg"><%= isPortal ? 'Enregistrer mes réponses' : 'Enregistrer le questionnaire' %></button>
   </div>
   <% } %>

@@ -1,0 +1,36 @@
+<%- include('partials/head', { title }) %>
+
+<main class="container pb-5 portal-avertissement-page" style="max-width: 820px;">
+  <div class="mb-3">
+    <a href="/portal/<%= event.portal_token %>" class="btn btn-outline-secondary btn-sm">← Retour à mon espace</a>
+  </div>
+
+  <div class="card portal-avertissement-card border-2 border-warning">
+    <div class="card-body p-4 p-md-5 text-center">
+      <p class="portal-avertissement-eyebrow text-uppercase fw-semibold text-warning mb-3">Important — à lire</p>
+      <h1 class="portal-avertissement-title mb-4">Ce n'est pas un contrat</h1>
+      <p class="portal-avertissement-lead mb-4">
+        Cet espace client, ce questionnaire et le <strong>plan de soirée</strong>
+        <strong>ne constituent pas un contrat</strong>.
+      </p>
+      <p class="portal-avertissement-body mb-4">
+        Il s'agit d'un <strong>plan de soirée</strong> qui reflète l'entente
+        conclue avec <strong>l'agence</strong> (DJ Carl).
+        Le seul document officiel et juridiquement contraignant demeure le
+        <strong>contrat de l'agence</strong> que vous avez signé.
+      </p>
+      <p class="portal-avertissement-body mb-0 fw-semibold">
+        Tout changement aux informations, à la musique ou au déroulement devra être
+        <strong>approuvé par l'agence</strong> avant d'être considéré comme confirmé.
+      </p>
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="/portal/<%= event.portal_token %>" class="btn btn-primary btn-lg px-4">
+      J'ai compris — continuer
+    </a>
+  </div>
+</main>
+
+<%- include('partials/footer') %>

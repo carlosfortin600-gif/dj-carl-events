@@ -783,6 +783,86 @@ table tr.q-field-missing td:first-child {
   border-radius: 0.5rem;
 }
 
+.dashboard-upcoming-card {
+  border: 2px solid rgba(13, 202, 240, 0.35);
+}
+
+.dashboard-upcoming-header {
+  background: linear-gradient(135deg, #ffffff 0%, #eef9fc 100%);
+  border-bottom: 1px solid rgba(13, 202, 240, 0.2);
+}
+
+.upcoming-by-week {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.upcoming-week-block {
+  border: 1px solid #dee2e6;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #fff;
+}
+
+.upcoming-week-block--current {
+  border-color: var(--dj-accent);
+  box-shadow: 0 0.25rem 1rem rgba(13, 202, 240, 0.15);
+}
+
+.upcoming-week-block--current .upcoming-week-header {
+  background: linear-gradient(135deg, #0dcaf0 0%, #0aa2c0 100%);
+  color: #fff;
+}
+
+.upcoming-week-block--current .upcoming-week-dates {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.upcoming-week-block--current .upcoming-week-count {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #055160;
+}
+
+.upcoming-week-block--next .upcoming-week-header {
+  background: #f0f7ff;
+}
+
+.upcoming-week-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.upcoming-week-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.upcoming-week-dates {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-top: 0.15rem;
+}
+
+.upcoming-week-count {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45em 0.75em;
+}
+
+.upcoming-week-events.list-group-flush .list-group-item {
+  border-left: none;
+  border-right: none;
+}
+
+.upcoming-week-events.list-group-flush .list-group-item:last-child {
+  border-bottom: none;
+}
+
 .calendar-ententes-week-title {
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -805,6 +885,50 @@ table tr.q-field-missing td:first-child {
 
 .portal-legal-notice {
   font-size: 0.95rem;
+}
+
+.portal-dj-locked,
+.portal-readonly-fieldset:disabled .form-control,
+.portal-readonly-fieldset:disabled .form-select,
+.portal-readonly-fieldset:disabled .btn-check + label {
+  background-color: #f1f3f5 !important;
+  cursor: not-allowed;
+}
+
+.portal-dj-lock-badge {
+  font-size: 0.65rem;
+  vertical-align: middle;
+}
+
+.portal-avertissement-page .portal-avertissement-card {
+  background: linear-gradient(180deg, #fffbeb 0%, #ffffff 45%);
+}
+
+.portal-avertissement-eyebrow {
+  letter-spacing: 0.12em;
+  font-size: 0.85rem;
+}
+
+.portal-avertissement-title {
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: #664d03;
+}
+
+.portal-avertissement-lead {
+  font-size: clamp(1.1rem, 3vw, 1.45rem);
+  line-height: 1.45;
+}
+
+.portal-avertissement-body {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  line-height: 1.55;
+  color: #495057;
+}
+
+.portal-avertissement-banner {
+  background: #fffbeb;
 }
 
 .portal-readonly-fieldset {
