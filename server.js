@@ -24,7 +24,9 @@ const {
   BINGO_MUSICAL_STYLE_OPTIONS,
   googleMapsUrl,
   googleMapsDirectionsUrl,
-  sortByTime
+  sortByTime,
+  telHref,
+  formatPhoneDisplay
 } = require("./lib/helpers");
 const {
   loadRouteOrigins,
@@ -136,6 +138,7 @@ const {
   describeMailError
 } = require("./lib/portal-notifications");
 const { summarizePortalChanges } = require("./lib/portal-change-summary");
+const { applyPortalMusicFromBody } = require("./lib/portal-music");
 const { RESEND_TEST_FROM } = require("./lib/email-send");
 const { startConfirmationEmailScheduler, sendConfirmationEmailToClient, confirmationEmailErrorMessage, getConfirmationEmailCopyTo, getConfirmationEmailPreview } = require("./lib/confirmation-email");
 const {
@@ -264,6 +267,8 @@ app.locals.clientFullName = clientFullName;
 app.locals.googleMapsUrl = googleMapsUrl;
 app.locals.googleMapsDirectionsUrl = googleMapsDirectionsUrl;
 app.locals.sortByTime = sortByTime;
+app.locals.telHref = telHref;
+app.locals.formatPhoneDisplay = formatPhoneDisplay;
 app.locals.ROUTE_ORIGIN_OPTIONS = loadRouteOrigins();
 app.locals.resolveRouteOrigin = resolveRouteOrigin;
 app.locals.routeOriginLabel = routeOriginLabel;
@@ -1024,8 +1029,14 @@ app.get("/portal/:token/confirmer", (req, res) => {
   const event = getEventForPortalConfirm(db, req.params.token);
   if (!event) {
     const reason = getPortalAccessDeniedReason(db, req.params.token);
+    const title =
+      reason === "confirmed"
+        ? "Dossier confirmé"
+        : reason === "confirm_not_requested"
+          ? "Confirmation non disponible"
+          : "Lien invalide";
     return res.status(404).render("portal/error", {
-      title: reason === "confirmed" ? "Dossier confirmé" : "Lien invalide",
+      title,
       message: portalAccessDeniedMessage(reason)
     });
   }
@@ -1040,8 +1051,14 @@ app.post("/portal/:token/confirmer", async (req, res) => {
   const event = getEventForPortalConfirm(db, req.params.token);
   if (!event) {
     const reason = getPortalAccessDeniedReason(db, req.params.token);
+    const title =
+      reason === "confirmed"
+        ? "Dossier confirmé"
+        : reason === "confirm_not_requested"
+          ? "Confirmation non disponible"
+          : "Lien invalide";
     return res.status(404).render("portal/error", {
-      title: reason === "confirmed" ? "Dossier confirmé" : "Lien invalide",
+      title,
       message: portalAccessDeniedMessage(reason)
     });
   }
@@ -1087,6 +1104,52 @@ app.get("/portal/:token", (req, res) => {
   });
 });
 
+app.post("/portal/:token/questionnaire", (req, res) => {
+  const event = requirePortalEvent(req, res);
+  if (!event) return;
+  res.redirect(`/portal/${req.params.token}/questionnaire`);
+});
+
+app.get("/portal/:token/musique", (req, res) => {
+  const event = requirePortalEvent(req, res);
+  if (!event) return;
+
+  touchPortalAccess(db, event.id);
+  const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
+
+  res.render("portal/musique", {
+    title: `Musique — ${clientShortName(event)}`,
+    event,
+    questionnaire,
+    saved: req.query.saved === "1"
+  });
+});
+
+app.post("/portal/:token/musique", async (req, res) => {
+  const event = requirePortalEvent(req, res);
+  if (!event) return;
+
+  try {
+    const existing = getQuestionnaireForEvent(db, event.id, event.event_type);
+    const before = JSON.parse(JSON.stringify(existing.data));
+    const data = { ...existing.data };
+    applyPortalMusicFromBody(data, req.body);
+    const changes = summarizePortalChanges({
+      before,
+      after: data,
+      eventType: event.event_type,
+      kind: "musique"
+    });
+    saveQuestionnaireForEvent(db, event.id, event.event_type, data);
+    syncMusicFromQuestionnaireForEvent(db, event.id, event.event_type, data);
+    await notifyDjCarlClientUpdate({ db, event, kind: "musique", req, changes });
+    res.redirect(`/portal/${req.params.token}/musique?saved=1`);
+  } catch (err) {
+    console.error(err);
+    res.redirect(`/portal/${req.params.token}/musique`);
+  }
+});
+
 app.get("/portal/:token/questionnaire", (req, res) => {
   const event = requirePortalEvent(req, res);
   if (!event) return;
@@ -1107,30 +1170,6 @@ app.get("/portal/:token/questionnaire", (req, res) => {
     timelineItems,
     saved: req.query.saved === "1"
   });
-});
-
-app.post("/portal/:token/questionnaire", async (req, res) => {
-  const event = requirePortalEvent(req, res);
-  if (!event) return;
-
-  try {
-    const existing = getQuestionnaireForEvent(db, event.id, event.event_type);
-    const before = existing.data;
-    const data = bodyToQuestionnaireForEvent(req.body, event.event_type);
-    const changes = summarizePortalChanges({
-      before,
-      after: data,
-      eventType: event.event_type,
-      kind: "questionnaire"
-    });
-    saveQuestionnaireForEvent(db, event.id, event.event_type, data);
-    syncMusicFromQuestionnaireForEvent(db, event.id, event.event_type, data);
-    await notifyDjCarlClientUpdate({ db, event, kind: "questionnaire", req, changes });
-    res.redirect(`/portal/${req.params.token}/questionnaire?saved=1`);
-  } catch (err) {
-    console.error(err);
-    res.redirect(`/portal/${req.params.token}/questionnaire`);
-  }
 });
 
 app.get("/portal/:token/plan-soiree", (req, res) => {

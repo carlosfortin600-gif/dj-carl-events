@@ -102,6 +102,19 @@
   </table>
 </div>
 
+<div class="card border-primary mt-4 mb-0">
+  <div class="card-body py-3">
+    <h3 class="h6 mb-2">Fin de la danse / fin de soirée</h3>
+    <label class="form-label" for="expected_end_time">Heure de fin prévue</label>
+    <input type="time" class="form-control form-control-sm" style="max-width: 12rem;" id="expected_end_time"
+           name="expected_end_time" value="<%= (q.general && q.general.expected_end_time) || '' %>">
+    <div class="form-text">
+      Vous pouvez indiquer une heure après minuit — ex. <strong>01:00</strong> pour 1 h du matin.
+      Cette étape apparaîtra à la fin de votre plan de soirée.
+    </div>
+  </div>
+</div>
+
 <template id="clientPlanStepTemplate">
   <div class="row g-2 mb-2 client-plan-row align-items-center">
     <div class="col-6 col-md-2">

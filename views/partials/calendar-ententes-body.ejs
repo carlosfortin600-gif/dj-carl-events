@@ -1,38 +1,25 @@
-<% const list = agreementsList || []; %>
+<% const list = agreementsByWeek || []; %>
+<% const flatList = agreementsList || []; %>
 
-<% if (!list.length) { %>
+<% if (!list.length && !flatList.length) { %>
   <p class="text-muted text-center py-4 mb-0">Aucun événement planifié.</p>
+<% } else if (!list.length) { %>
+  <%- include('calendar-ententes-items', {
+    events: flatList,
+    subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
+    publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false
+  }) %>
 <% } else { %>
-  <div class="calendar-ententes-list">
-    <% list.forEach(function(ev) { %>
-      <div class="calendar-event-card calendar-ententes-item status-border-<%= ev.status %> mb-3">
-        <%- include('calendar-contract-status-summary', { ev }) %>
-
-        <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap mb-2">
-          <div>
-            <div class="fw-semibold"><%= clientShortName(ev) %></div>
-            <div class="text-muted small">
-              <%= formatDateFr(ev.contractStartDate || ev.event_date) %><% if (ev.contractStartTime || ev.start_time) { %> · <%= formatTime(ev.contractStartTime || ev.start_time) %><% } %>
-              · <%= ev.event_type %><% if (ev.venue) { %> · <%= ev.venue %><% } %>
-            </div>
-          </div>
-          <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
-        </div>
-
-        <% if (ev.hasAgreement && ev.agreementSummary) { %>
-          <p class="small text-muted mb-2"><%= ev.agreementSummary %></p>
-        <% } %>
-
-        <div class="d-flex gap-2 mt-2 flex-wrap">
-          <%- include('calendar-contract-btn', {
-            ev,
-            subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
-            showContractLink: typeof showContractLink !== 'undefined' ? showContractLink : true,
-            showAgreementSummary: true,
-            publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false
-          }) %>
-        </div>
-      </div>
+  <div class="calendar-ententes-by-week">
+    <% list.forEach(function(week) { %>
+      <section class="calendar-ententes-week mb-4">
+        <h3 class="calendar-ententes-week-title h6 text-muted mb-2">Semaine du <%= week.weekLabel %></h3>
+        <%- include('calendar-ententes-items', {
+          events: week.events,
+          subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
+          publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false
+        }) %>
+      </section>
     <% }); %>
   </div>
 <% } %>

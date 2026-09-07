@@ -1,13 +1,16 @@
 <% const q = questionnaire.data; %>
+<% const readOnly = typeof readOnlyMode !== 'undefined' && readOnlyMode; %>
+<% const isPortal = typeof portalMode !== 'undefined' && portalMode; %>
 <% const ceremony = q.ceremony || { location: '', start_time: '', end_time: '' }; %>
-<% const cocktail = q.cocktail || { cocktail_location: '', cocktail_place: '', cocktail_dj_distance: '', styles: [], requests: '' }; %>
-<% const dinner = q.dinner || { dinner_location: '', dinner_place: '', dinner_dj_distance: '', styles: [], requests: '' }; %>
+<% const cocktail = q.cocktail || { cocktail_location: '', cocktail_place: '', cocktail_dj_distance: '', equipment_provided: '', styles: [], requests: '' }; %>
+<% const dinner = q.dinner || { dinner_location: '', dinner_place: '', dinner_dj_distance: '', service_type: '', styles: [], requests: '' }; %>
 
 <% if (questionnaire.updated_at) { %>
   <p class="text-muted small mb-3">Dernière modification : <%= formatTimestampFr(questionnaire.updated_at) %></p>
 <% } %>
 
 <form method="post" action="<%= typeof formAction !== 'undefined' ? formAction : ('/events/' + event.id + '/questionnaire') %>" id="questionnaireForm" data-unsaved-guard>
+<% if (readOnly) { %><fieldset disabled class="portal-readonly-fieldset"><% } %>
 
   <!-- Informations générales -->
   <section class="q-section mb-4">
@@ -33,6 +36,13 @@
         <label class="form-label">Heure début du party</label>
         <input type="time" class="form-control" name="party_start_time" value="<%= q.general.party_start_time %>">
       </div>
+      <% if (!isPortal) { %>
+      <div class="col-md-6 col-lg-4">
+        <label class="form-label">Heure de fin prévue</label>
+        <input type="time" class="form-control" name="expected_end_time" value="<%= q.general.expected_end_time || '' %>">
+        <div class="form-text">Ex. 01:00 pour 1 h du matin.</div>
+      </div>
+      <% } %>
     </div>
   </section>
 
@@ -202,6 +212,15 @@
         locationSectionTitle: 'Cocktail',
         cocktailData: cocktail
       }) %>
+      <div class="col-md-4">
+        <label class="form-label d-block">Équipement DJ fourni au cocktail</label>
+        <div class="btn-group" role="group">
+          <input type="radio" class="btn-check" name="cocktail_equipment_provided" id="cocktail_eq_yes" value="yes" <%= cocktail.equipment_provided === 'yes' ? 'checked' : '' %>>
+          <label class="btn btn-outline-secondary btn-sm" for="cocktail_eq_yes">Oui</label>
+          <input type="radio" class="btn-check" name="cocktail_equipment_provided" id="cocktail_eq_no" value="no" <%= cocktail.equipment_provided === 'no' ? 'checked' : '' %>>
+          <label class="btn btn-outline-secondary btn-sm" for="cocktail_eq_no">Non</label>
+        </div>
+      </div>
     </div>
     <%- include('questionnaire-meal-styles', {
       stylesFieldName: 'cocktail_styles',
@@ -215,6 +234,17 @@
   <!-- Repas -->
   <section class="q-section mb-4" id="repas">
     <h2 class="h5 q-section-title">Repas</h2>
+    <div class="row g-3 mb-3">
+      <div class="col-md-4">
+        <label class="form-label d-block">Type de souper</label>
+        <div class="btn-group" role="group">
+          <input type="radio" class="btn-check" name="dinner_service_type" id="dinner_servi" value="servi" <%= dinner.service_type === 'servi' ? 'checked' : '' %>>
+          <label class="btn btn-outline-secondary btn-sm" for="dinner_servi">Servi</label>
+          <input type="radio" class="btn-check" name="dinner_service_type" id="dinner_buffet" value="buffet" <%= dinner.service_type === 'buffet' ? 'checked' : '' %>>
+          <label class="btn btn-outline-secondary btn-sm" for="dinner_buffet">Buffet</label>
+        </div>
+      </div>
+    </div>
     <%- include('questionnaire-meal-styles', {
       stylesFieldName: 'dinner_styles',
       mealStyles: dinner.styles || [],
@@ -225,6 +255,7 @@
     <textarea class="form-control" id="dinner_requests" name="dinner_requests" rows="3" placeholder="Précisions pour la musique pendant le repas…"><%= dinner.requests || '' %></textarea>
   </section>
 
+  <% if (!isPortal) { %>
   <!-- Musique de soirée -->
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Musique de soirée</h2>
@@ -269,6 +300,7 @@
       </div>
     </div>
   </section>
+  <% } %>
 
   <!-- Animation -->
   <section class="q-section mb-4">
@@ -301,15 +333,7 @@
 
   <%- include('questionnaire-special-animation', { q }) %>
 
-  <!-- Plan de soirée (portail client) -->
-  <% if (typeof portalMode !== 'undefined' && portalMode) { %>
-    <%- include('questionnaire-plan-soiree-section', {
-      q,
-      questionnaire,
-      proposedTimelineSteps: typeof proposedTimelineSteps !== 'undefined' ? proposedTimelineSteps : [],
-      timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : []
-    }) %>
-  <% } else { %>
+  <% if (!isPortal) { %>
   <!-- Moments importants -->
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Moments importants</h2>
@@ -363,12 +387,21 @@
     </div>
   </section>
 
+  <section class="q-section mb-4">
+    <h2 class="h5 q-section-title">Note générale</h2>
+    <textarea class="form-control" name="general_notes" rows="4"
+              placeholder="Notes générales, rappels ou précisions pour DJ Carl…"><%= q.general.general_notes || '' %></textarea>
+  </section>
+
+  <% if (!readOnly) { %>
   <div class="sticky-save-bar d-flex flex-wrap gap-2 align-items-center justify-content-between">
     <div class="form-check mb-0">
       <input class="form-check-input" type="checkbox" name="_completed" value="1" id="q_completed"
              <%= q._completed ? 'checked' : '' %>>
       <label class="form-check-label" for="q_completed">Marquer le questionnaire comme complété</label>
     </div>
-    <button type="submit" class="btn btn-primary btn-lg"><%= typeof portalMode !== 'undefined' && portalMode ? 'Enregistrer mes réponses' : 'Enregistrer le questionnaire' %></button>
+    <button type="submit" class="btn btn-primary btn-lg"><%= isPortal ? 'Enregistrer mes réponses' : 'Enregistrer le questionnaire' %></button>
   </div>
+  <% } %>
+<% if (readOnly) { %></fieldset><% } %>
 </form>

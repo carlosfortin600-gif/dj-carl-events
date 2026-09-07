@@ -1,0 +1,53 @@
+<% const q = questionnaire.data; %>
+<% const pm = q.party_music || {}; %>
+<% const isWedding = isWeddingEvent(event.event_type); %>
+
+<form method="post" action="<%= formAction %>" id="portalMusicForm" data-unsaved-guard>
+
+  <section class="q-section mb-4">
+    <h2 class="h5 q-section-title">Musique de soirée</h2>
+    <div class="row g-2 mb-3">
+      <% PARTY_DECADES.forEach(function(decade) { %>
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="party_decades" value="<%= decade %>"
+                   id="portal_pd_<%= decade.replace(/[\s\/]+/g, '_') %>"
+                   <%= (pm.decades || []).includes(decade) ? 'checked' : '' %>>
+            <label class="form-check-label" for="portal_pd_<%= decade.replace(/[\s\/]+/g, '_') %>"><%= decade %></label>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+
+    <label class="form-label">Chansons incontournables</label>
+    <textarea class="form-control mb-3" name="must_play" rows="3"
+              placeholder="Liste libre — artistes, chansons, notes…"><%= pm.must_play || '' %></textarea>
+
+    <div class="row g-3 mt-2">
+      <div class="col-md-6">
+        <label class="form-label">Artistes préférés</label>
+        <textarea class="form-control" name="preferred_artists" rows="2"><%= pm.preferred_artists || '' %></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Chansons interdites</label>
+        <textarea class="form-control" name="forbidden_songs" rows="2"><%= pm.forbidden_songs || '' %></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Styles à éviter</label>
+        <textarea class="form-control" name="avoid_styles" rows="2"><%= pm.avoid_styles || '' %></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Le DJ peut-il accepter les demandes des invités ?</label>
+        <select class="form-select" name="guest_requests">
+          <option value="">— Choisir —</option>
+          <% const guestOptions = isWedding ? GUEST_REQUEST_OPTIONS : PARTY_GUEST_REQUEST_OPTIONS; %>
+          <% guestOptions.forEach(function(opt) { %>
+            <option value="<%= opt.value %>" <%= pm.guest_requests === opt.value ? 'selected' : '' %>><%= opt.label %></option>
+          <% }); %>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <button type="submit" class="btn btn-primary btn-lg">Enregistrer la musique</button>
+</form>

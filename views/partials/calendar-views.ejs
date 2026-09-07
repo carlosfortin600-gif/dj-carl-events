@@ -16,6 +16,7 @@
   const dayEvents = cal.dayEvents;
   const dayGestionDetails = cal.dayGestionDetails;
   const agreementsList = cal.agreementsList;
+  const agreementsByWeek = cal.agreementsByWeek;
 %>
 <% function calUrl(params) {
   const merged = { view: view, date: anchorDate, year: year, month: month };
@@ -54,6 +55,7 @@
     <% if (view === 'ententes') { %>
       <%- include('calendar-ententes-body', {
         agreementsList,
+        agreementsByWeek,
         subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
         publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false
       }) %>

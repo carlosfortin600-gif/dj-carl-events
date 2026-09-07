@@ -5,6 +5,8 @@
     <a href="/portal/<%= event.portal_token %>" class="btn btn-outline-secondary btn-sm">← Retour</a>
   </div>
 
+  <%- include('../partials/portal-disclaimer') %>
+
   <% if (saved) { %>
     <div class="alert alert-success">Merci ! Votre plan de soirée a été enregistré.</div>
   <% } %>

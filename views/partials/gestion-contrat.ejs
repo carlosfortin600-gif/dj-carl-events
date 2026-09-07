@@ -2,38 +2,37 @@
 <% let activeLabel = activeSub; %>
 <% subcontractors.forEach(function(s) { if (s.id === activeSub) activeLabel = s.label; }); %>
 
-<nav class="gestion-contrat-subnav nav nav-tabs flex-nowrap overflow-auto mb-2" aria-label="Sous-traitants">
+<nav class="gestion-contrat-subnav nav nav-tabs flex-nowrap overflow-auto mb-3" aria-label="Sous-traitants">
   <% subcontractors.forEach(function(st) { %>
     <a class="nav-link <%= activeSub === st.id ? 'active' : '' %>"
        href="/events/<%= event.id %>?tab=gestion&gestion=contrat&sousTraitant=<%= st.id %>"><%= st.label %></a>
   <% }); %>
 </nav>
 
-<div class="d-flex flex-wrap gap-2 mb-4">
-  <% subcontractors.forEach(function(st) { %>
-    <a href="/gestion/calendrier/<%= st.id %>"
-       class="btn btn-sm <%= activeSub === st.id ? 'btn-primary' : 'btn-outline-secondary' %>">
-      Calendrier <%= st.label %>
-    </a>
-  <% }); %>
+<div class="gestion-contrat-toolbar d-flex flex-wrap align-items-center gap-2 mb-3">
+  <a href="/gestion/calendrier/<%= activeSub %>?view=ententes"
+     class="btn btn-sm btn-outline-secondary">Ententes par semaine</a>
+  <% if (activeSub && typeof calendarShareLinks !== 'undefined' && calendarShareLinks) { %>
+    <%- include('subcontractor-calendar-link', {
+      subcontractorId: activeSub,
+      subcontractorLabel: activeLabel,
+      calendarShareLinks
+    }) %>
+  <% } %>
 </div>
 
-<% if (activeSub && typeof calendarShareLinks !== 'undefined' && calendarShareLinks) { %>
-  <%- include('subcontractor-calendar-link', {
-    subcontractorId: activeSub,
-    subcontractorLabel: activeLabel,
-    calendarShareLinks
-  }) %>
-<% } %>
-
-<%- include('gestion-contrat-form', {
-  event,
-  contract,
-  contractSaved,
-  contractCleared: typeof contractCleared !== 'undefined' ? contractCleared : false,
-  subcontractorId: activeSub,
-  subcontractorLabel: activeLabel,
-  contractSignLinks: typeof contractSignLinks !== 'undefined' ? contractSignLinks : null,
-  contractSavedInDb: typeof contractSavedInDb !== 'undefined' ? contractSavedInDb : false,
-  calendarShareLinks: typeof calendarShareLinks !== 'undefined' ? calendarShareLinks : null
-}) %>
+<div class="gestion-contrat-panel card border-0 bg-light">
+  <div class="card-body p-3 p-md-4">
+    <%- include('gestion-contrat-form', {
+      event,
+      contract,
+      contractSaved,
+      contractCleared: typeof contractCleared !== 'undefined' ? contractCleared : false,
+      subcontractorId: activeSub,
+      subcontractorLabel: activeLabel,
+      contractSignLinks: typeof contractSignLinks !== 'undefined' ? contractSignLinks : null,
+      contractSavedInDb: typeof contractSavedInDb !== 'undefined' ? contractSavedInDb : false,
+      calendarShareLinks: typeof calendarShareLinks !== 'undefined' ? calendarShareLinks : null
+    }) %>
+  </div>
+</div>

@@ -1,4 +1,6 @@
 <% const q = questionnaire.data; %>
+<% const readOnly = typeof readOnlyMode !== 'undefined' && readOnlyMode; %>
+<% const isPortal = typeof portalMode !== 'undefined' && portalMode; %>
 
 <% if (questionnaire.updated_at) { %>
   <p class="text-muted small mb-3">Dernière modification : <%= formatTimestampFr(questionnaire.updated_at) %></p>
@@ -9,6 +11,7 @@
 </p>
 
 <form method="post" action="<%= typeof formAction !== 'undefined' ? formAction : ('/events/' + event.id + '/questionnaire') %>" id="questionnaireForm" data-unsaved-guard>
+<% if (readOnly) { %><fieldset disabled class="portal-readonly-fieldset"><% } %>
 
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Informations générales</h2>
@@ -21,27 +24,22 @@
         <label class="form-label">Heure début du party</label>
         <input type="time" class="form-control" name="party_start_time" value="<%= q.general.party_start_time %>">
       </div>
+      <% if (!isPortal) { %>
       <div class="col-md-4">
         <label class="form-label">Heure de fin prévue</label>
         <input type="time" class="form-control" name="expected_end_time" value="<%= q.general.expected_end_time %>">
+        <div class="form-text">Ex. 01:00 pour 1 h du matin — apparaît en fin de plan.</div>
       </div>
+      <% } %>
       <div class="col-12">
         <label class="form-label">Notes sur la célébration</label>
         <input type="text" class="form-control" name="celebration_notes" value="<%= q.general.celebration_notes %>" placeholder="Ex. : 40e anniversaire, party de bureau, fête de Noël…">
       </div>
-    </div>
-    <p class="text-muted small mt-3 mb-2">Tranche d'âge des invités</p>
-    <div class="row g-2 mb-3">
-      <% AGE_GROUPS.forEach(function(age) { %>
-        <div class="col-6 col-md-4 col-lg-3">
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="age_groups" value="<%= age %>"
-                   id="age_<%= age.replace(/\s+/g, '_') %>"
-                   <%= q.general.age_groups.includes(age) ? 'checked' : '' %>>
-            <label class="form-check-label" for="age_<%= age.replace(/\s+/g, '_') %>"><%= age %></label>
-          </div>
-        </div>
-      <% }); %>
+      <div class="col-md-6">
+        <label class="form-label">Tranche d'âge des invités</label>
+        <input type="text" class="form-control" name="age_range" value="<%= q.general.age_range || '' %>"
+               placeholder="Ex. : 25–45 ans, tous âges, principalement 30–50 ans…">
+      </div>
     </div>
     <p class="fw-semibold mb-2">Thème pour la soirée</p>
     <div class="row g-2">
@@ -94,6 +92,15 @@
         </div>
       </div>
       <div class="col-md-4">
+        <label class="form-label d-block">Type de souper</label>
+        <div class="btn-group" role="group">
+          <input type="radio" class="btn-check" name="meal_service_type" id="meal_servi" value="servi" <%= q.schedule.meal_service_type === 'servi' ? 'checked' : '' %>>
+          <label class="btn btn-outline-secondary btn-sm" for="meal_servi">Servi</label>
+          <input type="radio" class="btn-check" name="meal_service_type" id="meal_buffet" value="buffet" <%= q.schedule.meal_service_type === 'buffet' ? 'checked' : '' %>>
+          <label class="btn btn-outline-secondary btn-sm" for="meal_buffet">Buffet</label>
+        </div>
+      </div>
+      <div class="col-md-4">
         <label class="form-label d-block">Discours / annonces prévus</label>
         <div class="btn-group" role="group">
           <input type="radio" class="btn-check" name="speeches_planned" id="speech_yes" value="yes" <%= q.schedule.speeches_planned === 'yes' ? 'checked' : '' %>>
@@ -103,6 +110,15 @@
         </div>
       </div>
       <%- include('cocktail-location-fields', { cocktailData: q.schedule }) %>
+      <div class="col-md-4">
+        <label class="form-label d-block">Équipement DJ fourni au cocktail</label>
+        <div class="btn-group" role="group">
+          <input type="radio" class="btn-check" name="cocktail_equipment_provided" id="cocktail_eq_yes" value="yes" <%= q.schedule.cocktail_equipment_provided === 'yes' ? 'checked' : '' %>>
+          <label class="btn btn-outline-secondary btn-sm" for="cocktail_eq_yes">Oui</label>
+          <input type="radio" class="btn-check" name="cocktail_equipment_provided" id="cocktail_eq_no" value="no" <%= q.schedule.cocktail_equipment_provided === 'no' ? 'checked' : '' %>>
+          <label class="btn btn-outline-secondary btn-sm" for="cocktail_eq_no">Non</label>
+        </div>
+      </div>
       <div class="col-12">
         <label class="form-label">Moments spéciaux à prévoir</label>
         <textarea class="form-control" name="special_moments_notes" rows="3"><%= q.schedule.special_moments_notes %></textarea>
@@ -110,6 +126,7 @@
     </div>
   </section>
 
+  <% if (!isPortal) { %>
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Musique de soirée</h2>
     <div class="row g-2 mb-3">
@@ -151,6 +168,7 @@
       </div>
     </div>
   </section>
+  <% } %>
 
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Animation</h2>
@@ -181,14 +199,7 @@
 
   <%- include('questionnaire-special-animation', { q }) %>
 
-  <% if (typeof portalMode !== 'undefined' && portalMode) { %>
-    <%- include('questionnaire-plan-soiree-section', {
-      q,
-      questionnaire,
-      proposedTimelineSteps: typeof proposedTimelineSteps !== 'undefined' ? proposedTimelineSteps : [],
-      timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : []
-    }) %>
-  <% } else { %>
+  <% if (!isPortal) { %>
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Moments importants</h2>
     <div class="table-responsive">
@@ -240,12 +251,21 @@
     </div>
   </section>
 
+  <section class="q-section mb-4">
+    <h2 class="h5 q-section-title">Note générale</h2>
+    <textarea class="form-control" name="general_notes" rows="4"
+              placeholder="Notes générales, rappels ou précisions pour DJ Carl…"><%= q.general.general_notes || '' %></textarea>
+  </section>
+
+  <% if (!readOnly) { %>
   <div class="sticky-save-bar d-flex flex-wrap gap-2 align-items-center justify-content-between">
     <div class="form-check mb-0">
       <input class="form-check-input" type="checkbox" name="_completed" value="1" id="q_completed"
              <%= q._completed ? 'checked' : '' %>>
       <label class="form-check-label" for="q_completed">Marquer le questionnaire comme complété</label>
     </div>
-    <button type="submit" class="btn btn-primary btn-lg"><%= typeof portalMode !== 'undefined' && portalMode ? 'Enregistrer mes réponses' : 'Enregistrer le questionnaire' %></button>
+    <button type="submit" class="btn btn-primary btn-lg"><%= isPortal ? 'Enregistrer mes réponses' : 'Enregistrer le questionnaire' %></button>
   </div>
+  <% } %>
+<% if (readOnly) { %></fieldset><% } %>
 </form>

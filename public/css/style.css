@@ -777,7 +777,48 @@ table tr.q-field-missing td:first-child {
 }
 
 .calendar-ententes-item {
-  padding: 0.85rem 1rem;
+  padding: 0.65rem 0.85rem;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.5rem;
+}
+
+.calendar-ententes-week-title {
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.calendar-ententes-by-week .calendar-ententes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.gestion-contrat-panel {
+  border-radius: 0.75rem;
+}
+
+.gestion-contrat-toolbar {
+  padding-bottom: 0.25rem;
+}
+
+.portal-legal-notice {
+  font-size: 0.95rem;
+}
+
+.portal-readonly-fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.portal-readonly-fieldset:disabled .form-control,
+.portal-readonly-fieldset:disabled .form-select,
+.portal-readonly-fieldset:disabled .btn-check + label {
+  opacity: 1;
+  color: inherit;
 }
 
 .calendar-ententes-list .calendar-agreement-summary {

@@ -1,6 +1,8 @@
 <%- include('partials/head', { title }) %>
 
 <main class="container pb-5" style="max-width: 720px;">
+  <%- include('../partials/portal-disclaimer') %>
+
   <div class="card portal-welcome mb-4">
     <div class="card-body p-4 text-center">
       <h1 class="h3 mb-2">Bonjour <%= clientShortName(event) %> !</h1>
@@ -15,69 +17,45 @@
     <div class="card-body p-4">
       <h2 class="h5 mb-3">Complétez votre dossier</h2>
       <p class="text-muted">
-        Utilisez cet espace pour remplir le questionnaire, le <strong>plan de soirée</strong> et nous transmettre vos préférences musicales et le déroulement souhaité de votre soirée.
+        Utilisez cet espace pour consulter votre questionnaire, remplir le <strong>plan de soirée</strong>
+        et nous transmettre vos <strong>préférences musicales</strong>.
       </p>
 
-      <% if (event.event_type === 'Mariage') { %>
-        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task <%= summary.questionnaireComplete ? 'portal-task-done' : '' %>">
-          <div>
-            <strong>Questionnaire mariage</strong>
-            <div class="small text-muted">
-              <%= summary.questionnaireComplete ? 'Complété — modifiable à tout moment' : 'Informations générales, musique, animation…' %>
-            </div>
+      <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task">
+        <div>
+          <strong><%= getQuestionnaireLabel(event.event_type) %></strong>
+          <div class="small text-muted">
+            Consultation seulement — préparé par DJ Carl
           </div>
-          <a href="/portal/<%= event.portal_token %>/questionnaire" class="btn btn-primary">
-            <%= summary.questionnaireComplete ? 'Modifier' : 'Commencer' %>
-          </a>
         </div>
-        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task mt-3">
-          <div>
-            <strong>Plan de soirée</strong>
-            <div class="small text-muted">
-              Choisissez vos moments, heures et étapes personnalisées
-            </div>
-          </div>
-          <a href="/portal/<%= event.portal_token %>/plan-soiree" class="btn btn-outline-primary">
-            Choisir mon plan
-          </a>
-        </div>
-      <% } else { %>
-        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task <%= summary.questionnaireComplete ? 'portal-task-done' : '' %>">
-          <div>
-            <strong><%= getQuestionnaireLabel(event.event_type) %></strong>
-            <div class="small text-muted">
-              <%= summary.questionnaireComplete ? 'Complété — vous pouvez le modifier à tout moment' : 'À remplir' %>
-            </div>
-          </div>
-          <a href="/portal/<%= event.portal_token %>/questionnaire" class="btn btn-primary">
-            <%= summary.questionnaireComplete ? 'Modifier' : 'Commencer' %>
-          </a>
-        </div>
-        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task mt-3">
-          <div>
-            <strong>Plan de soirée</strong>
-            <div class="small text-muted">
-              Choisissez vos moments, heures et étapes personnalisées
-            </div>
-          </div>
-          <a href="/portal/<%= event.portal_token %>/plan-soiree" class="btn btn-outline-primary">
-            Choisir mon plan
-          </a>
-        </div>
-      <% } %>
-    </div>
-  </div>
+        <a href="/portal/<%= event.portal_token %>/questionnaire" class="btn btn-outline-secondary">
+          Consulter
+        </a>
+      </div>
 
-  <div class="card border-success mb-4">
-    <div class="card-body p-4">
-      <h2 class="h6 mb-2">Tout est encore correct ?</h2>
-      <p class="text-muted small mb-3">
-        Vérifiez votre questionnaire et votre plan de soirée. Si tout correspond à vos souhaits,
-        confirmez votre dossier (il sera verrouillé ensuite).
-      </p>
-      <a href="/portal/<%= event.portal_token %>/confirmer" class="btn btn-success">
-        Confirmer mon dossier
-      </a>
+      <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task mt-3">
+        <div>
+          <strong>Plan de soirée</strong>
+          <div class="small text-muted">
+            Choisissez vos moments, heures et étapes personnalisées
+          </div>
+        </div>
+        <a href="/portal/<%= event.portal_token %>/plan-soiree" class="btn btn-outline-primary">
+          Choisir mon plan
+        </a>
+      </div>
+
+      <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task mt-3">
+        <div>
+          <strong>Musique</strong>
+          <div class="small text-muted">
+            Décennies, chansons incontournables, styles à éviter…
+          </div>
+        </div>
+        <a href="/portal/<%= event.portal_token %>/musique" class="btn btn-primary">
+          Mes préférences musicales
+        </a>
+      </div>
     </div>
   </div>
 
@@ -108,6 +86,16 @@
               <a href="<%= googleMapsUrl(event.address) %>" target="_blank" rel="noopener noreferrer"><%= event.address %></a>
             <% } else { %>
               <%= event.address %>
+            <% } %>
+          </dd>
+        <% } %>
+        <% if (event.phone) { %>
+          <dt class="col-sm-4">Téléphone</dt>
+          <dd class="col-sm-8">
+            <% if (telHref(event.phone)) { %>
+              <a href="<%= telHref(event.phone) %>"><%= formatPhoneDisplay(event.phone) %></a>
+            <% } else { %>
+              <%= formatPhoneDisplay(event.phone) %>
             <% } %>
           </dd>
         <% } %>

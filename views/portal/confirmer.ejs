@@ -1,6 +1,8 @@
 <%- include('partials/head', { title }) %>
 
 <main class="container pb-5" style="max-width: 720px;">
+  <%- include('../partials/portal-disclaimer') %>
+
   <div class="card portal-welcome mb-4">
     <div class="card-body p-4 text-center">
       <h1 class="h3 mb-2">Confirmer votre dossier</h1>
@@ -19,6 +21,7 @@
       <div class="d-flex flex-wrap gap-2 mb-4">
         <a href="/portal/<%= event.portal_token %>" class="btn btn-outline-primary btn-sm">Revoir mon espace client</a>
         <a href="/portal/<%= event.portal_token %>/questionnaire" class="btn btn-outline-secondary btn-sm">Questionnaire</a>
+        <a href="/portal/<%= event.portal_token %>/musique" class="btn btn-outline-secondary btn-sm">Musique</a>
         <a href="/portal/<%= event.portal_token %>/plan-soiree" class="btn btn-outline-secondary btn-sm">Plan de soirée</a>
       </div>
 
