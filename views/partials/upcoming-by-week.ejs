@@ -11,7 +11,9 @@
       <section class="upcoming-week-block mb-4<%= week.isCurrentWeek ? ' upcoming-week-block--current' : '' %><%= week.isNextWeek ? ' upcoming-week-block--next' : '' %>">
         <header class="upcoming-week-header">
           <div class="upcoming-week-header-text">
-            <h3 class="upcoming-week-title mb-0"><%= week.heading %></h3>
+            <h3 class="upcoming-week-title mb-0">
+              <%= week.headingWithTotal || week.heading %>
+            </h3>
             <p class="upcoming-week-dates mb-0"><%= week.weekLabel %></p>
           </div>
           <span class="badge upcoming-week-count"><%= week.eventCount %> événement<%= week.eventCount !== 1 ? 's' : '' %></span>
