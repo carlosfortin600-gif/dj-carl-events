@@ -454,8 +454,12 @@ function shouldSkipQuestionnaireField(form, name) {
     if (hasCocktail === "no") return true;
   }
   if (name === "evening_theme_other") {
+    if (getQuestionnaireRadioValue(form, "thematic_evening") === "no") return true;
     const hasOther = form.querySelector('input[name="evening_themes"][value="Autre"]:checked');
     if (!hasOther) return true;
+  }
+  if (name === "evening_themes" || name.startsWith("evening_themes:")) {
+    if (getQuestionnaireRadioValue(form, "thematic_evening") === "no") return true;
   }
 
   return false;
