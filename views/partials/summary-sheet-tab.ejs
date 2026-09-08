@@ -33,7 +33,11 @@
               <th scope="row" class="summary-sheet-label"><%= r.label %></th>
               <td class="summary-sheet-value">
                 <% if (r.link && r.value !== '—') { %>
-                  <a href="<%= r.link %>" target="_blank" rel="noopener noreferrer"><%= r.value %></a>
+                  <% if (String(r.link).startsWith('tel:') || String(r.link).startsWith('mailto:')) { %>
+                    <a href="<%= r.link %>"><%= r.value %></a>
+                  <% } else { %>
+                    <a href="<%= r.link %>" target="_blank" rel="noopener noreferrer"><%= r.value %></a>
+                  <% } %>
                 <% } else { %>
                   <%= r.value %>
                 <% } %>

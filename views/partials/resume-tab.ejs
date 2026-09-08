@@ -25,6 +25,9 @@
             <label class="form-label" for="phone">Téléphone</label>
             <input type="tel" class="form-control phone-input" id="phone" name="phone"
                    value="<%= event.phone || '' %>">
+            <% if (event.phone && telHref(event.phone)) { %>
+              <a href="<%= telHref(event.phone) %>" class="small d-inline-block mt-1">Composer</a>
+            <% } %>
           </div>
           <div class="col-md-6">
             <label class="form-label" for="email">Courriel</label>
@@ -54,6 +57,9 @@
           <label class="form-label" for="phone">Téléphone</label>
             <input type="tel" class="form-control phone-input" id="phone" name="phone"
                    value="<%= event.phone || '' %>">
+            <% if (event.phone && telHref(event.phone)) { %>
+              <a href="<%= telHref(event.phone) %>" class="small d-inline-block mt-1">Composer</a>
+            <% } %>
         </div>
         <div class="col-md-6">
           <label class="form-label" for="email">Courriel</label>

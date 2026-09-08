@@ -13,6 +13,9 @@
       <label class="form-label" for="day_contact_phone">Téléphone</label>
       <input type="tel" class="form-control phone-input" id="day_contact_phone" name="day_contact_phone"
              value="<%= contact.phone || '' %>" placeholder="514-555-1234">
+      <% if (contact.phone && telHref(contact.phone)) { %>
+        <a href="<%= telHref(contact.phone) %>" class="small d-inline-block mt-1">Composer</a>
+      <% } %>
     </div>
     <div class="col-md-4">
       <label class="form-label" for="day_contact_email">Courriel</label>

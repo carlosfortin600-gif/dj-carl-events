@@ -1,0 +1,8 @@
+<% const phoneValue = typeof value !== 'undefined' ? value : ''; %>
+<% const href = telHref(phoneValue); %>
+<% const label = formatPhoneDisplay(phoneValue); %>
+<% if (href && label !== '—') { %>
+  <a href="<%= href %>" class="<%= typeof linkClass !== 'undefined' ? linkClass : '' %>"><%= label %></a>
+<% } else { %>
+  <%= label %>
+<% } %>

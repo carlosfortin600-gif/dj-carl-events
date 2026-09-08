@@ -90,11 +90,7 @@
         <% if (event.phone) { %>
           <dt class="col-sm-4">Téléphone</dt>
           <dd class="col-sm-8">
-            <% if (telHref(event.phone)) { %>
-              <a href="<%= telHref(event.phone) %>"><%= formatPhoneDisplay(event.phone) %></a>
-            <% } else { %>
-              <%= formatPhoneDisplay(event.phone) %>
-            <% } %>
+            <%- include('../partials/phone-link', { value: event.phone }) %>
           </dd>
         <% } %>
       </dl>
