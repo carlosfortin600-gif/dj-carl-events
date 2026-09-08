@@ -53,6 +53,7 @@ function initDatabase() {
       end_time TEXT,
       venue TEXT,
       address TEXT,
+      city TEXT,
       guest_count INTEGER,
       status TEXT NOT NULL DEFAULT 'a_completer',
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
@@ -187,6 +188,9 @@ function migrate(db) {
   }
   if (!columns.includes("portal_intro_ack_at")) {
     db.exec("ALTER TABLE events ADD COLUMN portal_intro_ack_at TEXT");
+  }
+  if (!columns.includes("city")) {
+    db.exec("ALTER TABLE events ADD COLUMN city TEXT");
   }
 
   if (columns.includes("quiz_musical_style")) {

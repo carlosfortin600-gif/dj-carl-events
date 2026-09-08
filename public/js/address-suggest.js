@@ -45,6 +45,11 @@
             delete input.dataset.geoLat;
             delete input.dataset.geoLon;
           }
+          const form = input.closest("form");
+          const cityInput = form?.querySelector("#city");
+          if (cityInput && item.city) {
+            cityInput.value = item.city;
+          }
           hideList();
           input.dispatchEvent(new Event("input", { bubbles: true }));
           input.dispatchEvent(new Event("change", { bubbles: true }));

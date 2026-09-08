@@ -127,7 +127,7 @@
                  value="<%= event.guest_count != null ? event.guest_count : '' %>"
                  placeholder="—">
         </div>
-        <div class="col-12">
+        <div class="col-md-8">
           <label class="form-label" for="address">Adresse</label>
           <div class="address-suggest-wrap">
             <input type="text" class="form-control address-suggest" id="address" name="address"
@@ -139,6 +139,11 @@
              id="address-map-link"
              class="small mt-1 d-inline-block <%= event.address && event.address.trim() ? '' : 'd-none' %>"
              target="_blank" rel="noopener noreferrer">Ouvrir dans Google Maps</a>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="city">Ville</label>
+          <input type="text" class="form-control" id="city" name="city"
+                 value="<%= event.city || '' %>" placeholder="Ex. : Beloeil, Jonquière">
         </div>
         <div class="col-12" id="route-time-block">
           <label class="form-label" for="route_origin_custom">Adresse de départ (temps de route)</label>
