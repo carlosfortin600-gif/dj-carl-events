@@ -24,7 +24,7 @@
        class="calendar-day <%= dayEvents.length ? 'has-events' : '' %> <%= isSelected ? 'selected' : '' %>">
       <span class="calendar-day-num"><%= day %></span>
       <% dayEvents.slice(0, 3).forEach(function(ev) { %>
-        <span class="calendar-event-dot status-dot-<%= ev.status %>" title="<%= clientShortName(ev) %>"></span>
+        <span class="calendar-event-dot status-dot-<%= ev.status %>" title="<%= calendarEventTitle(ev) %>"></span>
       <% }); %>
       <% if (dayEvents.length > 3) { %>
         <span class="calendar-more">+<%= dayEvents.length - 3 %></span>

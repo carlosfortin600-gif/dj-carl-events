@@ -9,7 +9,7 @@
       <div class="calendar-event-card calendar-day-event status-border-<%= ev.status %>">
         <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
           <div>
-            <strong><%= clientShortName(ev) %></strong>
+            <strong><%= calendarEventTitle(ev) %></strong>
             <div class="text-muted small">
               <%= ev.event_type %>
               <% if (ev.calendarTime || ev.start_time) { %> · <%= formatTime(ev.calendarTime || ev.start_time) %><% } %>

@@ -26,7 +26,12 @@ const {
   googleMapsDirectionsUrl,
   sortByTime,
   telHref,
-  formatPhoneDisplay
+  formatPhoneDisplay,
+  clientShortName,
+  clientFullName,
+  calendarEventTitle,
+  eventCity,
+  clientCompanyName
 } = require("./lib/helpers");
 const {
   loadRouteOrigins,
@@ -49,9 +54,7 @@ const {
   updateEventStatus,
   deleteEvent,
   restoreEvent,
-  permanentlyDeleteEvent,
-  clientShortName,
-  clientFullName
+  permanentlyDeleteEvent
 } = require("./lib/events-db");
 const {
   bodyToQuestionnaire,
@@ -276,6 +279,9 @@ app.locals.statusLabel = statusLabel;
 app.locals.statusBadgeClass = statusBadgeClass;
 app.locals.clientShortName = clientShortName;
 app.locals.clientFullName = clientFullName;
+app.locals.calendarEventTitle = calendarEventTitle;
+app.locals.eventCity = eventCity;
+app.locals.clientCompanyName = clientCompanyName;
 app.locals.googleMapsUrl = googleMapsUrl;
 app.locals.googleMapsDirectionsUrl = googleMapsDirectionsUrl;
 app.locals.sortByTime = sortByTime;
