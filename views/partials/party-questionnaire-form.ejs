@@ -107,21 +107,21 @@
         </div>
       </div>
       <div class="col-md-4">
-        <label class="form-label d-block">Type de souper</label>
-        <div class="btn-group" role="group">
-          <input type="radio" class="btn-check" name="meal_service_type" id="meal_servi" value="servi" <%= q.schedule.meal_service_type === 'servi' ? 'checked' : '' %>>
-          <label class="btn btn-outline-secondary btn-sm" for="meal_servi">Servi</label>
-          <input type="radio" class="btn-check" name="meal_service_type" id="meal_buffet" value="buffet" <%= q.schedule.meal_service_type === 'buffet' ? 'checked' : '' %>>
-          <label class="btn btn-outline-secondary btn-sm" for="meal_buffet">Buffet</label>
-        </div>
-      </div>
-      <div class="col-md-4">
         <label class="form-label d-block">Discours / annonces prévus</label>
         <div class="btn-group" role="group">
           <input type="radio" class="btn-check" name="speeches_planned" id="speech_yes" value="yes" <%= q.schedule.speeches_planned === 'yes' ? 'checked' : '' %>>
           <label class="btn btn-outline-primary btn-sm" for="speech_yes">Oui</label>
           <input type="radio" class="btn-check" name="speeches_planned" id="speech_no" value="no" <%= q.schedule.speeches_planned === 'no' ? 'checked' : '' %>>
           <label class="btn btn-outline-primary btn-sm" for="speech_no">Non</label>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label d-block">Type de souper</label>
+        <div class="btn-group" role="group">
+          <input type="radio" class="btn-check" name="meal_service_type" id="meal_servi" value="servi" <%= q.schedule.meal_service_type === 'servi' ? 'checked' : '' %>>
+          <label class="btn btn-outline-secondary btn-sm" for="meal_servi">Servi</label>
+          <input type="radio" class="btn-check" name="meal_service_type" id="meal_buffet" value="buffet" <%= q.schedule.meal_service_type === 'buffet' ? 'checked' : '' %>>
+          <label class="btn btn-outline-secondary btn-sm" for="meal_buffet">Buffet</label>
         </div>
       </div>
       <div class="col-12 js-cocktail-location-suite" data-location-field="cocktail_location" data-equipment-field="cocktail_equipment_provided">
