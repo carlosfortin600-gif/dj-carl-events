@@ -88,49 +88,53 @@
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Déroulement</h2>
     <div class="row g-3">
-      <div class="col-md-4">
-        <label class="form-label d-block">Cocktail / accueil</label>
-        <div class="btn-group" role="group">
-          <input type="radio" class="btn-check" name="has_cocktail" id="cocktail_yes" value="yes" <%= q.schedule.has_cocktail === 'yes' ? 'checked' : '' %>>
-          <label class="btn btn-outline-primary btn-sm" for="cocktail_yes">Oui</label>
-          <input type="radio" class="btn-check" name="has_cocktail" id="cocktail_no" value="no" <%= q.schedule.has_cocktail === 'no' ? 'checked' : '' %>>
-          <label class="btn btn-outline-primary btn-sm" for="cocktail_no">Non</label>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label d-block">Bouchée</label>
-        <div class="btn-group" role="group">
-          <input type="radio" class="btn-check" name="meal_bouchee" id="bouchee_yes" value="yes" <%= q.schedule.meal_bouchee === 'yes' ? 'checked' : '' %>>
-          <label class="btn btn-outline-primary btn-sm" for="bouchee_yes">Oui</label>
-          <input type="radio" class="btn-check" name="meal_bouchee" id="bouchee_no" value="no" <%= q.schedule.meal_bouchee === 'no' ? 'checked' : '' %>>
-          <label class="btn btn-outline-primary btn-sm" for="bouchee_no">Non</label>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label d-block">Repas / souper</label>
-        <div class="btn-group" role="group">
-          <input type="radio" class="btn-check" name="has_meal" id="meal_yes" value="yes" <%= q.schedule.has_meal === 'yes' ? 'checked' : '' %>>
-          <label class="btn btn-outline-primary btn-sm" for="meal_yes">Oui</label>
-          <input type="radio" class="btn-check" name="has_meal" id="meal_no" value="no" <%= q.schedule.has_meal === 'no' ? 'checked' : '' %>>
-          <label class="btn btn-outline-primary btn-sm" for="meal_no">Non</label>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label d-block">Type de souper</label>
-        <div class="btn-group" role="group">
-          <input type="radio" class="btn-check" name="meal_service_type" id="meal_servi" value="servi" <%= q.schedule.meal_service_type === 'servi' ? 'checked' : '' %>>
-          <label class="btn btn-outline-secondary btn-sm" for="meal_servi">Servi</label>
-          <input type="radio" class="btn-check" name="meal_service_type" id="meal_buffet" value="buffet" <%= q.schedule.meal_service_type === 'buffet' ? 'checked' : '' %>>
-          <label class="btn btn-outline-secondary btn-sm" for="meal_buffet">Buffet</label>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <label class="form-label d-block">Discours / annonces prévus</label>
-        <div class="btn-group" role="group">
-          <input type="radio" class="btn-check" name="speeches_planned" id="speech_yes" value="yes" <%= q.schedule.speeches_planned === 'yes' ? 'checked' : '' %>>
-          <label class="btn btn-outline-primary btn-sm" for="speech_yes">Oui</label>
-          <input type="radio" class="btn-check" name="speeches_planned" id="speech_no" value="no" <%= q.schedule.speeches_planned === 'no' ? 'checked' : '' %>>
-          <label class="btn btn-outline-primary btn-sm" for="speech_no">Non</label>
+      <div class="col-12 overflow-x-auto pb-1">
+        <div class="row row-cols-5 g-2 g-md-3 align-items-end flex-nowrap" style="min-width: 52rem;">
+          <div class="col">
+            <label class="form-label d-block small mb-1">Cocktail / accueil</label>
+            <div class="btn-group" role="group">
+              <input type="radio" class="btn-check" name="has_cocktail" id="cocktail_yes" value="yes" <%= q.schedule.has_cocktail === 'yes' ? 'checked' : '' %>>
+              <label class="btn btn-outline-primary btn-sm" for="cocktail_yes">Oui</label>
+              <input type="radio" class="btn-check" name="has_cocktail" id="cocktail_no" value="no" <%= q.schedule.has_cocktail === 'no' ? 'checked' : '' %>>
+              <label class="btn btn-outline-primary btn-sm" for="cocktail_no">Non</label>
+            </div>
+          </div>
+          <div class="col">
+            <label class="form-label d-block small mb-1">Bouchée</label>
+            <div class="btn-group" role="group">
+              <input type="radio" class="btn-check" name="meal_bouchee" id="bouchee_yes" value="yes" <%= q.schedule.meal_bouchee === 'yes' ? 'checked' : '' %>>
+              <label class="btn btn-outline-primary btn-sm" for="bouchee_yes">Oui</label>
+              <input type="radio" class="btn-check" name="meal_bouchee" id="bouchee_no" value="no" <%= q.schedule.meal_bouchee === 'no' ? 'checked' : '' %>>
+              <label class="btn btn-outline-primary btn-sm" for="bouchee_no">Non</label>
+            </div>
+          </div>
+          <div class="col">
+            <label class="form-label d-block small mb-1">Repas / souper</label>
+            <div class="btn-group" role="group">
+              <input type="radio" class="btn-check" name="has_meal" id="meal_yes" value="yes" <%= q.schedule.has_meal === 'yes' ? 'checked' : '' %>>
+              <label class="btn btn-outline-primary btn-sm" for="meal_yes">Oui</label>
+              <input type="radio" class="btn-check" name="has_meal" id="meal_no" value="no" <%= q.schedule.has_meal === 'no' ? 'checked' : '' %>>
+              <label class="btn btn-outline-primary btn-sm" for="meal_no">Non</label>
+            </div>
+          </div>
+          <div class="col">
+            <label class="form-label d-block small mb-1">Type de souper</label>
+            <div class="btn-group" role="group">
+              <input type="radio" class="btn-check" name="meal_service_type" id="meal_servi" value="servi" <%= q.schedule.meal_service_type === 'servi' ? 'checked' : '' %>>
+              <label class="btn btn-outline-secondary btn-sm" for="meal_servi">Servi</label>
+              <input type="radio" class="btn-check" name="meal_service_type" id="meal_buffet" value="buffet" <%= q.schedule.meal_service_type === 'buffet' ? 'checked' : '' %>>
+              <label class="btn btn-outline-secondary btn-sm" for="meal_buffet">Buffet</label>
+            </div>
+          </div>
+          <div class="col">
+            <label class="form-label d-block small mb-1">Discours / annonces</label>
+            <div class="btn-group" role="group">
+              <input type="radio" class="btn-check" name="speeches_planned" id="speech_yes" value="yes" <%= q.schedule.speeches_planned === 'yes' ? 'checked' : '' %>>
+              <label class="btn btn-outline-primary btn-sm" for="speech_yes">Oui</label>
+              <input type="radio" class="btn-check" name="speeches_planned" id="speech_no" value="no" <%= q.schedule.speeches_planned === 'no' ? 'checked' : '' %>>
+              <label class="btn btn-outline-primary btn-sm" for="speech_no">Non</label>
+            </div>
+          </div>
         </div>
       </div>
       <div class="col-12 js-cocktail-location-suite" data-location-field="cocktail_location" data-equipment-field="cocktail_equipment_provided">
