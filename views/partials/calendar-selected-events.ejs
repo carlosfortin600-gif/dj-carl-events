@@ -10,7 +10,7 @@
             <div>
               <strong><%= calendarEventTitle(ev) %></strong>
               <span class="text-muted mx-1">|</span>
-              <%= ev.event_type %>
+              <%= eventTypeLabel(ev.event_type) %>
               <span class="text-muted mx-1">|</span>
               <%= ev.venue || '—' %>
               <span class="badge <%= statusBadgeClass(ev.status) %> ms-2"><%= statusLabel(ev.status) %></span>

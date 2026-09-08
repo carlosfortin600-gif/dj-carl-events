@@ -18,6 +18,7 @@ const {
   formatDateTimeRangeFr,
   endDatetimeLocalValue,
   statusLabel,
+  eventTypeLabel,
   statusBadgeClass,
   parseAllServices,
   splitServicesForForm,
@@ -278,6 +279,7 @@ app.locals.formatDateTimeRangeFr = formatDateTimeRangeFr;
 app.locals.endDatetimeLocalValue = endDatetimeLocalValue;
 app.locals.datetimeLocalValue = datetimeLocalValue;
 app.locals.statusLabel = statusLabel;
+app.locals.eventTypeLabel = eventTypeLabel;
 app.locals.statusBadgeClass = statusBadgeClass;
 app.locals.clientShortName = clientShortName;
 app.locals.clientFullName = clientFullName;

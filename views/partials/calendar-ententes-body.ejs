@@ -16,7 +16,7 @@
         <h3 class="calendar-ententes-week-title h6 text-muted mb-2 d-flex flex-wrap justify-content-between align-items-center gap-2">
           <span>Semaine du <%= week.weekLabel %></span>
           <% if (week.contractsTotalLabel) { %>
-            <span class="calendar-ententes-week-total">Total contrats : <strong><%= week.contractsTotalLabel %></strong></span>
+            <span class="calendar-ententes-week-total">Total prix chargé : <strong><%= week.contractsTotalLabel %></strong></span>
           <% } %>
         </h3>
         <%- include('calendar-ententes-items', {

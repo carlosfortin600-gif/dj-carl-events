@@ -11,7 +11,7 @@
           <div>
             <strong><%= calendarEventTitle(ev) %></strong>
             <div class="text-muted small">
-              <%= ev.event_type %>
+              <%= eventTypeLabel(ev.event_type) %>
               <% if (ev.calendarTime || ev.start_time) { %> · <%= formatTime(ev.calendarTime || ev.start_time) %><% } %>
               <% if (ev.venue) { %> · <%= ev.venue %><% } %>
             </div>
