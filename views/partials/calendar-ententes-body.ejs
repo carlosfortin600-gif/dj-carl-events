@@ -13,7 +13,12 @@
   <div class="calendar-ententes-by-week">
     <% list.forEach(function(week) { %>
       <section class="calendar-ententes-week mb-4">
-        <h3 class="calendar-ententes-week-title h6 text-muted mb-2">Semaine du <%= week.weekLabel %></h3>
+        <h3 class="calendar-ententes-week-title h6 text-muted mb-2 d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <span>Semaine du <%= week.weekLabel %></span>
+          <% if (week.contractsTotalLabel) { %>
+            <span class="calendar-ententes-week-total">Total contrats : <strong><%= week.contractsTotalLabel %></strong></span>
+          <% } %>
+        </h3>
         <%- include('calendar-ententes-items', {
           events: week.events,
           subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',

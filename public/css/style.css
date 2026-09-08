@@ -920,6 +920,12 @@ table tr.q-field-missing td:first-child {
   font-size: 0.75rem;
 }
 
+.calendar-ententes-week-total {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.8rem;
+}
+
 .calendar-ententes-by-week .calendar-ententes-list {
   display: flex;
   flex-direction: column;
