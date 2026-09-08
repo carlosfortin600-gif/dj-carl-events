@@ -100,6 +100,15 @@
             </div>
           </div>
           <div class="flex-shrink-0">
+            <label class="form-label d-block">Bouchée</label>
+            <div class="btn-group" role="group">
+              <input type="radio" class="btn-check" name="meal_bouchee" id="bouchee_yes" value="yes" <%= q.schedule.meal_bouchee === 'yes' ? 'checked' : '' %>>
+              <label class="btn btn-outline-primary btn-sm" for="bouchee_yes">Oui</label>
+              <input type="radio" class="btn-check" name="meal_bouchee" id="bouchee_no" value="no" <%= q.schedule.meal_bouchee === 'no' ? 'checked' : '' %>>
+              <label class="btn btn-outline-primary btn-sm" for="bouchee_no">Non</label>
+            </div>
+          </div>
+          <div class="flex-shrink-0">
             <label class="form-label d-block">Repas / souper</label>
             <div class="btn-group" role="group">
               <input type="radio" class="btn-check" name="has_meal" id="meal_yes" value="yes" <%= q.schedule.has_meal === 'yes' ? 'checked' : '' %>>
@@ -124,13 +133,6 @@
               <label class="btn btn-outline-primary btn-sm" for="speech_yes">Oui</label>
               <input type="radio" class="btn-check" name="speeches_planned" id="speech_no" value="no" <%= q.schedule.speeches_planned === 'no' ? 'checked' : '' %>>
               <label class="btn btn-outline-primary btn-sm" for="speech_no">Non</label>
-            </div>
-          </div>
-          <div class="flex-shrink-0 pb-1">
-            <div class="form-check mb-0">
-              <input class="form-check-input" type="checkbox" name="meal_bouchee" id="meal_bouchee" value="yes"
-                     <%= q.schedule.meal_bouchee === 'yes' ? 'checked' : '' %>>
-              <label class="form-check-label" for="meal_bouchee">Bouchée</label>
             </div>
           </div>
         </div>
