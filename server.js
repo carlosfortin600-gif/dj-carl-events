@@ -1128,7 +1128,23 @@ app.post("/portal/:token/intro-ack", (req, res) => {
   ackPortalIntro(res, event);
   ackPortalIntroDb(db, event.id);
   touchPortalAccess(db, event.id);
-  res.redirect(`/portal/${req.params.token}`);
+  res.redirect(`/portal/${req.params.token}/dossier`);
+});
+
+app.get("/portal/:token/dossier", (req, res) => {
+  const event = requirePortalEvent(req, res);
+  if (!event) return;
+  if (!requirePortalIntroAck(req, res, event)) return;
+
+  touchPortalAccess(db, event.id);
+
+  const summary = getEventSummary(db, event.id, event.event_type);
+
+  res.render("portal/home", {
+    title: `${clientShortName(event)} — DJ Carl`,
+    event,
+    summary
+  });
 });
 
 app.get("/portal/:token", (req, res) => {
@@ -1137,19 +1153,9 @@ app.get("/portal/:token", (req, res) => {
 
   touchPortalAccess(db, event.id);
 
-  if (!hasPortalIntroAck(req, event)) {
-    return res.render("portal/intro", {
-      title: `Bienvenue — ${clientShortName(event)}`,
-      event
-    });
-  }
-
-  const summary = getEventSummary(db, event.id, event.event_type);
-
-  res.render("portal/home", {
-    title: `${clientShortName(event)} — DJ Carl`,
-    event,
-    summary
+  return res.render("portal/intro", {
+    title: `Bienvenue — ${clientShortName(event)}`,
+    event
   });
 });
 
