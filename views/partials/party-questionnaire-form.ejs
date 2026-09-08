@@ -37,14 +37,9 @@
         <label class="form-label">Notes sur la célébration</label>
         <input type="text" class="form-control" name="celebration_notes" value="<%= q.general.celebration_notes %>" placeholder="Ex. : 40e anniversaire, party de bureau, fête de Noël…">
       </div>
-      <div class="col-md-6">
-        <label class="form-label">Tranche d'âge des invités</label>
-        <input type="text" class="form-control" name="age_range" value="<%= q.general.age_range || '' %>"
-               placeholder="Ex. : 25–45 ans, principalement 30–50 ans…">
-      </div>
-      <div class="col-md-6">
-        <label class="form-label d-block">Âge</label>
-        <div class="d-flex flex-wrap gap-2">
+      <div class="col-12">
+        <label class="form-label d-block mb-2">Tranche d'âge des invités</label>
+        <div class="d-flex flex-wrap gap-3">
           <% AGE_GROUPS.forEach(function(age) { %>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" name="age_groups" value="<%= age %>"
