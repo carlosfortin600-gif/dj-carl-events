@@ -30,6 +30,7 @@ const {
   clientShortName,
   clientFullName,
   calendarEventTitle,
+  calendarEventPrimary,
   eventCity,
   clientCompanyName
 } = require("./lib/helpers");
@@ -280,6 +281,7 @@ app.locals.statusBadgeClass = statusBadgeClass;
 app.locals.clientShortName = clientShortName;
 app.locals.clientFullName = clientFullName;
 app.locals.calendarEventTitle = calendarEventTitle;
+app.locals.calendarEventPrimary = calendarEventPrimary;
 app.locals.eventCity = eventCity;
 app.locals.clientCompanyName = clientCompanyName;
 app.locals.googleMapsUrl = googleMapsUrl;

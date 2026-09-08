@@ -20,15 +20,30 @@
     <% const dateStr = year + '-' + String(month).padStart(2, '0') + '-' + String(day).padStart(2, '0'); %>
     <% const dayEvents = byDate[dateStr] || []; %>
     <% const isSelected = selectedDate === dateStr; %>
-    <a href="<%= dayUrl(dateStr) %>"
-       class="calendar-day <%= dayEvents.length ? 'has-events' : '' %> <%= isSelected ? 'selected' : '' %>">
-      <span class="calendar-day-num"><%= day %></span>
-      <% dayEvents.slice(0, 3).forEach(function(ev) { %>
-        <span class="calendar-event-dot status-dot-<%= ev.status %>" title="<%= calendarEventTitle(ev) %>"></span>
-      <% }); %>
-      <% if (dayEvents.length > 3) { %>
-        <span class="calendar-more">+<%= dayEvents.length - 3 %></span>
+    <div class="calendar-day <%= dayEvents.length ? 'has-events' : '' %> <%= isSelected ? 'selected' : '' %>">
+      <a href="<%= dayUrl(dateStr) %>" class="calendar-day-head text-decoration-none">
+        <span class="calendar-day-num"><%= day %></span>
+      </a>
+      <% if (dayEvents.length) { %>
+        <div class="calendar-month-events">
+          <% dayEvents.forEach(function(ev) { %>
+            <% const city = eventCity(ev); %>
+            <div class="calendar-month-event status-border-<%= ev.status %>">
+              <div class="calendar-month-event-name"><%= calendarEventPrimary(ev) %></div>
+              <% if (city) { %>
+                <div class="calendar-month-event-city"><%= city %></div>
+              <% } %>
+              <% if (ev.phone) { %>
+                <% if (telHref(ev.phone)) { %>
+                  <a href="<%= telHref(ev.phone) %>" class="calendar-month-event-phone"><%= formatPhoneDisplay(ev.phone) %></a>
+                <% } else { %>
+                  <div class="calendar-month-event-phone text-muted"><%= formatPhoneDisplay(ev.phone) %></div>
+                <% } %>
+              <% } %>
+            </div>
+          <% }); %>
+        </div>
       <% } %>
-    </a>
+    </div>
   <% } %>
 </div>

@@ -568,12 +568,63 @@ table tr.q-field-missing td:first-child {
   border: 1px solid #e9ecef;
   border-radius: 8px;
   padding: 6px;
-  text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: column;
   gap: 4px;
   transition: background-color 0.15s ease;
+}
+
+.calendar-day-head {
+  color: inherit;
+  align-self: flex-start;
+}
+
+.calendar-day-head:hover .calendar-day-num {
+  color: var(--dj-accent);
+}
+
+.calendar-month-events {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.calendar-month-event {
+  border-left: 3px solid #dee2e6;
+  padding: 2px 0 2px 6px;
+  font-size: 0.68rem;
+  line-height: 1.25;
+  min-width: 0;
+}
+
+.calendar-month-event-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-month-event-city,
+.calendar-month-event-phone {
+  color: #6c757d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-month-event-phone {
+  text-decoration: none;
+}
+
+.calendar-month-event-phone:hover {
+  text-decoration: underline;
+}
+
+.calendar-day.has-events {
+  min-height: 96px;
 }
 
 .calendar-day:hover {
@@ -1139,11 +1190,17 @@ table tr.q-field-missing td:first-child {
 
 @media (max-width: 576px) {
   .calendar-day {
-    min-height: 52px;
+    min-height: 64px;
     padding: 4px;
+  }
+  .calendar-day.has-events {
+    min-height: 80px;
   }
   .calendar-day-num {
     font-size: 0.8rem;
+  }
+  .calendar-month-event {
+    font-size: 0.62rem;
   }
 }
 
