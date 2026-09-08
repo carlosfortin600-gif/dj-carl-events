@@ -418,12 +418,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("/resume", (req, res) => {
-  const { eventsList, eventsByWeek } = getResumeEventsList(db);
+  const { eventsList, eventsByWeek, chargedGrandTotalLabel } = getResumeEventsList(db);
   res.render("resume", {
     title: "Résumé — DJ CARL",
     activeNav: "resume",
     eventsList,
-    eventsByWeek
+    eventsByWeek,
+    chargedGrandTotalLabel
   });
 });
 

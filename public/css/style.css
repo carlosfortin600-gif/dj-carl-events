@@ -1012,6 +1012,11 @@ table tr.q-field-missing td:first-child {
   gap: 0.75rem;
 }
 
+.resume-grand-total {
+  font-weight: 700;
+  color: var(--dj-accent, #0dcaf0);
+}
+
 .resume-event-row {
   display: flex;
   align-items: flex-start;
