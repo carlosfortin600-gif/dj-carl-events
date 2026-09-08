@@ -449,9 +449,26 @@ function shouldSkipQuestionnaireField(form, name) {
   if (name.startsWith("mother_son_") && name !== "mother_son_enabled") {
     if (getQuestionnaireRadioValue(form, "mother_son_enabled") === "no") return true;
   }
-  if (["cocktail_location", "cocktail_place", "cocktail_dj_distance"].includes(name)) {
+  if (["cocktail_location", "cocktail_equipment_provided"].includes(name)) {
     const hasCocktail = getQuestionnaireRadioValue(form, "has_cocktail");
     if (hasCocktail === "no") return true;
+  }
+  if (name === "cocktail_place") {
+    const hasCocktail = getQuestionnaireRadioValue(form, "has_cocktail");
+    if (hasCocktail === "no") return true;
+    const location = getQuestionnaireRadioValue(form, "cocktail_location");
+    if (!location || location === "same_room") return true;
+  }
+  if (name === "cocktail_dj_distance") {
+    const hasCocktail = getQuestionnaireRadioValue(form, "has_cocktail");
+    if (hasCocktail === "no") return true;
+    const location = getQuestionnaireRadioValue(form, "cocktail_location");
+    if (!location || location === "same_room") return true;
+    if (getQuestionnaireRadioValue(form, "cocktail_equipment_provided") !== "yes") return true;
+  }
+  if (name === "cocktail_equipment_provided") {
+    const location = getQuestionnaireRadioValue(form, "cocktail_location");
+    if (location !== "other_room" && location !== "outside") return true;
   }
   if (name === "evening_theme_other") {
     if (getQuestionnaireRadioValue(form, "thematic_evening") === "no") return true;

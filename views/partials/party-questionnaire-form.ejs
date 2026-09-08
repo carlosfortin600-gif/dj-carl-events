@@ -124,13 +124,20 @@
           <label class="btn btn-outline-primary btn-sm" for="speech_no">Non</label>
         </div>
       </div>
-      <%- include('cocktail-location-fields', { cocktailData: q.schedule }) %>
-      <%- include('entente-equipment-fields', {
-        locationFieldName: 'cocktail_location',
-        equipmentFieldName: 'cocktail_equipment_provided',
-        equipmentValue: q.schedule.cocktail_equipment_provided,
-        otherRoomQuestionLabel: 'Y a-t-il un deuxième kit de son ?'
-      }) %>
+      <div class="col-12 js-cocktail-location-suite" data-location-field="cocktail_location" data-equipment-field="cocktail_equipment_provided">
+        <div class="row g-3">
+          <%- include('cocktail-location-fields', {
+            cocktailData: q.schedule,
+            equipmentValue: q.schedule.cocktail_equipment_provided
+          }) %>
+          <%- include('entente-equipment-fields', {
+            locationFieldName: 'cocktail_location',
+            equipmentFieldName: 'cocktail_equipment_provided',
+            equipmentValue: q.schedule.cocktail_equipment_provided,
+            otherRoomQuestionLabel: 'Y a-t-il un deuxième kit de son ?'
+          }) %>
+        </div>
+      </div>
       <div class="col-12">
         <label class="form-label">Moments spéciaux à prévoir</label>
         <textarea class="form-control" name="special_moments_notes" rows="3"><%= q.schedule.special_moments_notes %></textarea>
@@ -285,5 +292,5 @@
   <% } %>
 <% if (readOnly) { %></fieldset><% } %>
 </form>
-<script src="/js/questionnaire-location-equipment.js?v=1"></script>
+<script src="/js/questionnaire-location-equipment.js?v=2"></script>
 <script src="/js/party-questionnaire-form.js?v=1"></script>

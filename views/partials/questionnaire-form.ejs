@@ -216,11 +216,12 @@
   <!-- Cocktail -->
   <section class="q-section mb-4" id="cocktail">
     <h2 class="h5 q-section-title">Cocktail</h2>
-    <div class="row g-3 mb-3">
+    <div class="row g-3 mb-3 js-cocktail-location-suite" data-location-field="cocktail_location" data-equipment-field="cocktail_equipment_provided">
       <%- include('cocktail-location-fields', {
         fieldPrefix: 'cocktail',
         locationSectionTitle: 'Cocktail',
-        cocktailData: cocktail
+        cocktailData: cocktail,
+        equipmentValue: cocktail.equipment_provided
       }) %>
       <%- include('entente-equipment-fields', {
         locationFieldName: 'cocktail_location',
@@ -416,4 +417,4 @@
   <% } %>
 <% if (readOnly) { %></fieldset><% } %>
 </form>
-<script src="/js/questionnaire-location-equipment.js?v=1"></script>
+<script src="/js/questionnaire-location-equipment.js?v=2"></script>

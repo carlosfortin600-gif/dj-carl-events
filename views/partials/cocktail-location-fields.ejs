@@ -5,6 +5,13 @@
   const locationField = typeof locationFieldName !== 'undefined' ? locationFieldName : (prefix + '_location');
   const placeField = typeof placeFieldName !== 'undefined' ? placeFieldName : (prefix + '_place');
   const distanceField = typeof distanceFieldName !== 'undefined' ? distanceFieldName : (prefix + '_dj_distance');
+  const locationValue = loc[locationField] || '';
+  const kitValue = typeof equipmentValue !== 'undefined'
+    ? equipmentValue
+    : (loc.cocktail_equipment_provided || loc.equipment_provided || '');
+  const isOtherLocation = locationValue === 'other_room' || locationValue === 'outside';
+  const hidePlace = !locationValue || locationValue === 'same_room';
+  const hideDistance = hidePlace || !isOtherLocation || kitValue !== 'yes';
 %>
 
 <div class="col-12">
@@ -13,20 +20,20 @@
     <% COCKTAIL_LOCATION_OPTIONS.forEach(function(opt) { %>
       <input type="radio" class="btn-check" name="<%= locationField %>"
              id="<%= prefix %>_loc_<%= opt.value %>" value="<%= opt.value %>"
-             <%= loc[locationField] === opt.value ? 'checked' : '' %>>
+             <%= locationValue === opt.value ? 'checked' : '' %>>
       <label class="btn btn-outline-secondary btn-sm" for="<%= prefix %>_loc_<%= opt.value %>"><%= opt.label %></label>
     <% }); %>
   </div>
 </div>
-<div class="col-md-6">
+<div class="col-md-6 js-cocktail-place-row" <%= hidePlace ? 'hidden' : '' %>>
   <label class="form-label">Lieu / endroit</label>
-  <input type="text" class="form-control" name="<%= placeField %>" value="<%= loc[placeField] || '' %>"
+  <input type="text" class="form-control js-cocktail-place-input" name="<%= placeField %>" value="<%= loc[placeField] || '' %>"
          placeholder="Ex. : salle adjacente, terrasse, jardin…">
 </div>
 <% if (typeof showDistance === 'undefined' || showDistance) { %>
-<div class="col-md-6">
+<div class="col-md-6 js-cocktail-distance-row" <%= hideDistance ? 'hidden' : '' %>>
   <label class="form-label">Distance du DJ au <%= sectionTitle.toLowerCase() %></label>
-  <input type="text" class="form-control" name="<%= distanceField %>" value="<%= loc[distanceField] || '' %>"
+  <input type="text" class="form-control js-cocktail-distance-input" name="<%= distanceField %>" value="<%= loc[distanceField] || '' %>"
          placeholder="Ex. : 30 m, 2e étage, même pièce…">
 </div>
 <% } %>
