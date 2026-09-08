@@ -1,4 +1,4 @@
-<% const activeSub = typeof sousTraitant !== 'undefined' ? sousTraitant : 'mario'; %>
+<% const activeSub = typeof sousTraitant !== 'undefined' ? sousTraitant : DEFAULT_SUBCONTRACTOR_ID; %>
 <% let activeLabel = activeSub; %>
 <% subcontractors.forEach(function(s) { if (s.id === activeSub) activeLabel = s.label; }); %>
 

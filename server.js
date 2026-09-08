@@ -113,6 +113,7 @@ const { hasPortalIntroAck, ackPortalIntro, ackPortalIntroDb } = require("./lib/p
 const { getDjNotes, saveDjNotes } = require("./lib/dj-notes");
 const {
   SUBCONTRACTORS,
+  DEFAULT_SUBCONTRACTOR_ID,
   getSubcontractorContract,
   saveSubcontractorContract,
   saveSubcontractorSignatureOnly,
@@ -315,6 +316,7 @@ app.locals.isWeddingEvent = isWeddingEvent;
 app.locals.getQuestionnaireLabel = getQuestionnaireLabel;
 app.locals.formatFileSize = formatFileSize;
 app.locals.queryString = queryString;
+app.locals.DEFAULT_SUBCONTRACTOR_ID = DEFAULT_SUBCONTRACTOR_ID;
 
 app.get("/api/health", (req, res) => {
   const tables = db
@@ -710,7 +712,7 @@ app.get("/events/:id", (req, res) => {
   const sousTraitant =
     gestionSection === "contrat" && isValidSubcontractor(req.query.sousTraitant)
       ? req.query.sousTraitant
-      : "mario";
+      : DEFAULT_SUBCONTRACTOR_ID;
   const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
   const portalToken = ensurePortalToken(db, event.id);
   const portalLinks = getPortalLinks(req, portalToken);
