@@ -225,7 +225,8 @@
       <%- include('entente-equipment-fields', {
         locationFieldName: 'cocktail_location',
         equipmentFieldName: 'cocktail_equipment_provided',
-        equipmentValue: cocktail.equipment_provided
+        equipmentValue: cocktail.equipment_provided,
+        otherRoomQuestionLabel: 'Y a-t-il un deuxième kit de son ?'
       }) %>
     </div>
     <%- include('questionnaire-meal-styles', {

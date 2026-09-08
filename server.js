@@ -105,7 +105,7 @@ const {
   mergePortalQuestionnaire,
   getDjLockedFields
 } = require("./lib/questionnaire-portal-lock");
-const { hasPortalIntroAck, ackPortalIntro } = require("./lib/portal-intro");
+const { hasPortalIntroAck, ackPortalIntro, ackPortalIntroDb } = require("./lib/portal-intro");
 const { getDjNotes, saveDjNotes } = require("./lib/dj-notes");
 const {
   SUBCONTRACTORS,
@@ -216,7 +216,7 @@ function requirePortalEvent(req, res) {
 }
 
 function requirePortalIntroAck(req, res, event) {
-  if (hasPortalIntroAck(event)) return true;
+  if (hasPortalIntroAck(req, event)) return true;
   res.redirect(`/portal/${req.params.token}`);
   return false;
 }
@@ -1111,7 +1111,7 @@ app.get("/portal/:token/avertissement", (req, res) => {
   const event = requirePortalEvent(req, res);
   if (!event) return;
 
-  if (!hasPortalIntroAck(event)) {
+  if (!hasPortalIntroAck(req, event)) {
     return res.redirect(`/portal/${req.params.token}`);
   }
 
@@ -1125,7 +1125,8 @@ app.post("/portal/:token/intro-ack", (req, res) => {
   const event = requirePortalEvent(req, res);
   if (!event) return;
 
-  ackPortalIntro(db, event.id);
+  ackPortalIntro(res, event);
+  ackPortalIntroDb(db, event.id);
   touchPortalAccess(db, event.id);
   res.redirect(`/portal/${req.params.token}`);
 });
@@ -1136,7 +1137,7 @@ app.get("/portal/:token", (req, res) => {
 
   touchPortalAccess(db, event.id);
 
-  if (!hasPortalIntroAck(event)) {
+  if (!hasPortalIntroAck(req, event)) {
     return res.render("portal/intro", {
       title: `Bienvenue — ${clientShortName(event)}`,
       event

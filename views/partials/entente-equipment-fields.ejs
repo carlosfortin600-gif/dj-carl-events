@@ -4,12 +4,15 @@
   const equipSelected = typeof equipmentValue !== 'undefined' ? equipmentValue : '';
   const soundSelected = typeof soundValue !== 'undefined' ? soundValue : '';
   const locField = typeof locationFieldName !== 'undefined' ? locationFieldName : 'cocktail_location';
+  const otherRoomLabel = typeof otherRoomQuestionLabel !== 'undefined'
+    ? otherRoomQuestionLabel
+    : "Équipement fourni selon l'entente";
 %>
 
 <div class="col-12 js-location-equipment-group" data-location-field="<%= locField %>">
   <div class="row g-3">
     <div class="col-md-6 js-equipment-other-room" hidden>
-      <label class="form-label d-block">Équipement fourni selon l'entente</label>
+      <label class="form-label d-block"><%= otherRoomLabel %></label>
       <div class="btn-group" role="group">
         <input type="radio" class="btn-check" name="<%= equipName %>" id="<%= equipName %>_yes" value="yes" <%= equipSelected === 'yes' ? 'checked' : '' %>>
         <label class="btn btn-outline-secondary btn-sm" for="<%= equipName %>_yes">Oui</label>
