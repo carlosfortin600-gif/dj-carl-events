@@ -18,7 +18,7 @@ Le site **https://djcarl.ca** a une **configuration de référence validée**. T
 ## Thématiques (`#thematiques`)
 
 - Titre : **« Une soirée thématique, clé en main. »**
-- Onglets : **Croisière** / **Country** / **Oscar** (`data-theme`: `cruise` | `country` | `oscar`).
+- Onglets : **Croisière** / **Country** / **Oscar** / **Gatsby** (`data-theme`: `cruise` | `country` | `oscar` | `gatsby`).
 
 ### Croisière
 
@@ -44,6 +44,11 @@ Le site **https://djcarl.ca** a une **configuration de référence validée**. T
 - Liste décor sous la photo : toile de fond cinéma / Oscars ; accessoires glam.
 - Animation : nominations personnalisées ; affichage sur **écran géant** ; **« Un micro sera là pour les discours »**.
 - **Pas** de bloc photobooth 2 h sur cet onglet (volontaire).
+
+### Gatsby
+
+- Photo `img/theme-gatsby.jpg` : écran skyline Art Déco, rideaux noirs, vases or + plumes d’autruche, uplights dorés — **pas de filigrane caméra**, **pas** d’overlay type Oscar.
+- Blocs : décor (liste) → highlight plumes/or/jazz → animation → **Photobooth animé — 2 heures** (lead + note table bistro), comme Croisière/Country.
 
 ## Services (`#services`)
 

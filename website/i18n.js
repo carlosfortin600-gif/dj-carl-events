@@ -17,10 +17,17 @@ const I18N = {
       events: "Événements",
       reviews: "Avis",
       menu: "Menu",
-      lang: "Langue"
+      lang: "Langue",
+      soundOn: "Son on",
+      soundOff: "Son off"
+    },
+    enter: {
+      title: "Touchez pour entrer",
+      hint: "L’ambiance DJ Carl démarre ici"
     },
     bio: {
       button: "Biographie",
+      partner: "DJ exclusif <strong>Les Productions Hugues Pomerleau</strong>",
       eyebrow: "BIOGRAPHIE",
       title: "DJ Carl — L’expérience au service de votre soirée",
       p1: "Né dans une famille de musiciens, <strong>la musique fait partie de ma vie depuis toujours.</strong> Du rétro au country, du rock à la pop, en passant par le dance, l’électro et la musique québécoise, cette diversité musicale est devenue l’une de mes plus grandes forces.",
@@ -83,7 +90,8 @@ const I18N = {
       tabs: {
         cruise: "🚢 Croisière",
         country: "🤠 Country",
-        oscar: "🎬 Oscar"
+        oscar: "🎬 Oscar",
+        gatsby: "🥂 Gatsby"
       },
       cruise: {
         title: "🚢 Thématique croisière",
@@ -144,8 +152,8 @@ const I18N = {
           "Trophée style Oscars",
           "Tapis rouge et barrières velvet",
           "Projecteurs et éclairage glam",
-          "Un paparazzi prendra des photos sur le tapis rouge",
-          "<strong>Une hôtesse remettra les trophées</strong>"
+          "<strong>Une hôtesse remettra les trophées</strong>",
+          "et un micro sera là pour les discours"
         ],
         decorIntro: "<strong>Installation d’un décor comprenant notamment :</strong>",
         decor: [
@@ -159,6 +167,31 @@ const I18N = {
           "Nominations affichées sur <strong>écran géant</strong>",
           "Un micro sera là pour les discours"
         ]
+      },
+      gatsby: {
+        title: "🥂 Thématique Gatsby",
+        lead: "Transformez la salle en soirée Gatsby des années 20!",
+        photoAlt: "Décor Gatsby Art Déco : écran skyline, rideaux noirs, vases dorés et plumes d’autruche",
+        decorIntro: "Installation d’un décor comprenant notamment :",
+        decor: [
+          "Écran géant et toile style Art Déco, skyline",
+          "Rideaux noirs",
+          "Vases dorés et plumes d’autruche",
+          "Éclairage uplight doré",
+          "Plancher qui reflète les lumières"
+        ],
+        highlight: "Plumes, or et jazz : <strong>la salle devient un club des années 20</strong> dès l’entrée, parfait pour les photos et pour lancer le party.",
+        animTitle: "🎤 Animation thématique",
+        animLead: "Plusieurs types d’animations peuvent être intégrés à la soirée et adaptés à la thématique Gatsby :",
+        anim: [
+          "Playlist jazz, swing et hits des années 20",
+          "Animations et jeux adaptés au thème Gatsby",
+          "Quiz et tirages style Great Gatsby",
+          "Animations personnalisées selon votre groupe et le déroulement de la soirée"
+        ],
+        photoTitle: "📸 Photobooth animé — 2 heures",
+        photoLead: "Animation du photobooth pendant 2 heures, avec accessoires pour permettre aux invités de prendre des photos amusantes et créer de beaux souvenirs de la soirée.",
+        photoNote: "À prévoir sur place : une table bistro ou une petite table pour disposer les accessoires du photobooth."
       }
     },
     demos: {
@@ -242,6 +275,7 @@ const I18N = {
       lead2: "Activité parfaite pendant le souper.",
       lead3: "Pop, disco, années 80, Noël, country, hits québécois…",
       examples: "Exemples de bingo",
+      hint: "Forme un X pour gagner",
       win: "BINGO !",
       titles: {
         pop: "BINGO MUSICAL POP",
@@ -330,9 +364,21 @@ const I18N = {
       eyebrow: "SERVICES",
       title: "Tout ce qu’il faut pour créer l’ambiance.",
       lead: "Combinez plusieurs expériences pour bâtir une soirée unique.",
-      dj: { title: "DJ & animation", text: "Musique adaptée à votre monde, animation naturelle et gestion du rythme de la soirée." },
-      lights: { title: "Éclairage intelligent", text: "Effets lumineux et uplights pour transformer la salle et le plancher de danse." },
-      karaoke: { title: "Karaoké", text: "Micros sans fil et vaste sélection de chansons pour faire participer vos invités." },
+      dj: {
+        title: "DJ & animation",
+        text: "Musique adaptée à votre monde, animation naturelle et gestion du rythme de la soirée.",
+        photoAlt: "DJ Carl aux platines lors d’une soirée"
+      },
+      lights: {
+        title: "Éclairage intelligent",
+        text: "Effets lumineux et uplights pour transformer la salle et le plancher de danse.",
+        photoAlt: "Faisceaux bleus et uplights en salle lors d’un événement"
+      },
+      karaoke: {
+        title: "Karaoké",
+        text: "Micros sans fil et vaste sélection de chansons pour faire participer vos invités.",
+        photoAlt: "Soirée karaoké avec écran de paroles, platines et salle qui chante"
+      },
       photo: {
         title: "Photobooth",
         text: "Une activité amusante qui permet à vos invités de créer des souvenirs de la soirée.",
@@ -340,7 +386,8 @@ const I18N = {
       },
       themes: {
         title: "Soirées thématiques",
-        text: "Décor, costumes et animations adaptés à votre concept — croisière, country, Oscars et plus encore. Une formule clé en main qui plonge vos invités dans l’univers choisi, du premier regard jusqu’au party."
+        text: "Décor, costumes et animations adaptés à votre concept — croisière, country, Oscars et plus encore. Une formule clé en main qui plonge vos invités dans l’univers choisi, du premier regard jusqu’au party.",
+        photoAlt: "Décor thématique croisière avec quai, toile de fond et photobooth"
       },
       quiz: { title: "Quiz musical", text: "Les invités répondent sur leur cellulaire. Questions 100 % personnalisées, ou adaptées au concept : années 80, disco, country, etc." },
       bingo: { title: "Bingo musical", text: "Plusieurs styles selon votre soirée. Activité parfaite pendant le souper." },
@@ -470,10 +517,17 @@ const I18N = {
       events: "Events",
       reviews: "Reviews",
       menu: "Menu",
-      lang: "Language"
+      lang: "Language",
+      soundOn: "Sound on",
+      soundOff: "Sound off"
+    },
+    enter: {
+      title: "Tap to enter",
+      hint: "The DJ Carl vibe starts here"
     },
     bio: {
       button: "Biography",
+      partner: "Exclusive DJ for <strong>Les Productions Hugues Pomerleau</strong>",
       eyebrow: "BIOGRAPHY",
       title: "DJ Carl — Experience in service of your night",
       p1: "Born into a family of musicians, <strong>music has always been part of my life.</strong> From retro to country, rock to pop, dance, electro and Quebec music, that range became one of my greatest strengths.",
@@ -536,7 +590,8 @@ const I18N = {
       tabs: {
         cruise: "🚢 Cruise",
         country: "🤠 Country",
-        oscar: "🎬 Oscar"
+        oscar: "🎬 Oscar",
+        gatsby: "🥂 Gatsby"
       },
       cruise: {
         title: "🚢 Cruise theme",
@@ -597,8 +652,8 @@ const I18N = {
           "Oscar-style trophy",
           "Red carpet and velvet stanchions",
           "Spotlights and glamorous lighting",
-          "A paparazzi will take photos on the red carpet",
-          "<strong>A hostess will present the trophies</strong>"
+          "<strong>A hostess will present the trophies</strong>",
+          "and a mic will be there for the speeches"
         ],
         decorIntro: "<strong>A themed setup that can include:</strong>",
         decor: [
@@ -612,6 +667,31 @@ const I18N = {
           "Nominations displayed on the <strong>giant screen</strong>",
           "A microphone will be there for the speeches"
         ]
+      },
+      gatsby: {
+        title: "🥂 Gatsby theme",
+        lead: "Turn the room into a 1920s Gatsby night!",
+        photoAlt: "Gatsby Art Deco décor: skyline screen, black curtains, gold vases and ostrich feathers",
+        decorIntro: "A themed setup that can include:",
+        decor: [
+          "Giant screen and Art Deco skyline backdrop",
+          "Black curtains",
+          "Gold vases and ostrich feathers",
+          "Warm golden uplighting",
+          "A glossy floor that mirrors the lights"
+        ],
+        highlight: "Feathers, gold and jazz: <strong>the room becomes a 1920s club</strong> from the moment guests walk in — perfect for photos and to kick off the party.",
+        animTitle: "🎤 Themed entertainment",
+        animLead: "Several kinds of entertainment can be woven into the night and adapted to the Gatsby theme:",
+        anim: [
+          "Jazz, swing and 1920s hits on the playlist",
+          "Games and activities matched to the Gatsby theme",
+          "Quizzes and draws in Great Gatsby style",
+          "Custom activities for your group and the flow of the night"
+        ],
+        photoTitle: "📸 Hosted photobooth — 2 hours",
+        photoLead: "Photobooth hosting for 2 hours, with props so guests can take fun photos and create great memories of the night.",
+        photoNote: "Please provide on site: a bistro table or small table for the photobooth props."
       }
     },
     demos: {
@@ -695,6 +775,7 @@ const I18N = {
       lead2: "Perfect during dinner.",
       lead3: "Pop, disco, 80s, Christmas, country, Quebec hits…",
       examples: "Sample bingo themes",
+      hint: "Form an X to win",
       win: "BINGO!",
       titles: {
         pop: "POP MUSIC BINGO",
@@ -783,9 +864,21 @@ const I18N = {
       eyebrow: "SERVICES",
       title: "Everything you need to set the mood.",
       lead: "Mix and match experiences to build a night that feels unique.",
-      dj: { title: "DJ & hosting", text: "Music that fits your crowd, natural hosting and a night that stays on pace." },
-      lights: { title: "Intelligent lighting", text: "Light effects and uplights that transform the room and the dance floor." },
-      karaoke: { title: "Karaoke", text: "Wireless mics and a huge song list to get your guests in the show." },
+      dj: {
+        title: "DJ & hosting",
+        text: "Music that fits your crowd, natural hosting and a night that stays on pace.",
+        photoAlt: "DJ Carl at the decks during a party"
+      },
+      lights: {
+        title: "Intelligent lighting",
+        text: "Light effects and uplights that transform the room and the dance floor.",
+        photoAlt: "Blue beams and uplights lighting a banquet room"
+      },
+      karaoke: {
+        title: "Karaoke",
+        text: "Wireless mics and a huge song list to get your guests in the show.",
+        photoAlt: "Karaoke night with lyrics screen, DJ booth and a room full of singers"
+      },
       photo: {
         title: "Photobooth",
         text: "A fun activity so guests leave with memories of the night.",
@@ -793,7 +886,8 @@ const I18N = {
       },
       themes: {
         title: "Themed nights",
-        text: "Décor, costumes and entertainment matched to your concept — cruise, country, Oscars and more. A turnkey package that immerses your guests in the world you chose, from the first look to the dance floor."
+        text: "Décor, costumes and entertainment matched to your concept — cruise, country, Oscars and more. A turnkey package that immerses your guests in the world you chose, from the first look to the dance floor.",
+        photoAlt: "Cruise theme setup with boarding dock, backdrop and photobooth"
       },
       quiz: { title: "Music quiz", text: "Guests answer on their phones. Questions 100% custom, or matched to the concept: 80s, disco, country, and more." },
       bingo: { title: "Music bingo", text: "Several styles depending on the night. Perfect during dinner." },
