@@ -44,6 +44,27 @@
         <div class="form-text">Ex. 01:00 pour 1 h du matin.</div>
       </div>
       <% } %>
+      <% const weddingHasColor = q.general.wedding_has_color || (q.general.wedding_color ? 'yes' : ''); %>
+      <div class="col-12">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <span class="form-label mb-0">Couleur spécifique pour le mariage</span>
+          <div class="btn-group btn-group-sm" role="group" aria-label="Couleur spécifique pour le mariage">
+            <input type="radio" class="btn-check" name="wedding_has_color" id="wedding_has_color_yes" value="yes"
+                   <%= weddingHasColor === 'yes' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="wedding_has_color_yes">Oui</label>
+            <input type="radio" class="btn-check" name="wedding_has_color" id="wedding_has_color_no" value="no"
+                   <%= weddingHasColor === 'no' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="wedding_has_color_no">Non</label>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4" id="wedding_color_fields" <%= weddingHasColor !== 'yes' ? 'hidden' : '' %>>
+        <label class="form-label" for="wedding_color">Couleur(s)</label>
+        <input type="text" class="form-control" id="wedding_color" name="wedding_color"
+               value="<%= q.general.wedding_color || '' %>"
+               placeholder="Ex. : rose gold et blanc"
+               <%= weddingHasColor !== 'yes' ? 'disabled' : '' %>>
+      </div>
     </div>
   </section>
 

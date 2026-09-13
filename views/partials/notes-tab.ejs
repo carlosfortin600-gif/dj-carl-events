@@ -10,6 +10,13 @@
   <input type="hidden" name="return_tab" value="notes">
 
   <section class="form-section form-section-notes mb-4">
+    <h2 class="form-section-title">Commentaire client</h2>
+    <p class="text-muted small mb-2">Ce que le client a mentionné (demandes, préférences, rappels importants…).</p>
+    <textarea class="form-control" id="tech_client_comment" name="tech_client_comment" rows="5"
+              placeholder="Ex. : préfère moins de country, annonce spéciale pour la grand-mère…"><%= djNotes.tech_client_comment || '' %></textarea>
+  </section>
+
+  <section class="form-section form-section-notes mb-4">
     <h2 class="form-section-title">Notes libres</h2>
     <textarea class="form-control" id="dj_notes_content" name="content" rows="14"
               placeholder="Vos notes privées pour cet événement…"><%= djNotes.content || '' %></textarea>

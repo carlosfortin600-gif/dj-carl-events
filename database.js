@@ -318,6 +318,27 @@ function migrate(db) {
   if (!djNotesColumns.includes("tech_questionnaire_sent_time")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_questionnaire_sent_time TEXT");
   }
+  if (!djNotesColumns.includes("tech_trailer_location")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_trailer_location TEXT");
+  }
+  if (!djNotesColumns.includes("tech_entry_distance")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_entry_distance TEXT");
+  }
+  if (!djNotesColumns.includes("tech_entry_doors")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_entry_doors TEXT");
+  }
+  if (!djNotesColumns.includes("tech_entry_procedure")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_entry_procedure TEXT");
+  }
+  if (!djNotesColumns.includes("tech_floor_plan_requested")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_floor_plan_requested TEXT");
+  }
+  if (!djNotesColumns.includes("tech_floor_plan_notes")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_floor_plan_notes TEXT");
+  }
+  if (!djNotesColumns.includes("tech_client_comment")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_client_comment TEXT");
+  }
 
   db.exec(`
     UPDATE dj_notes

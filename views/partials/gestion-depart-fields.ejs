@@ -29,6 +29,55 @@
     </div>
   </div>
 
+  <div class="border rounded p-3 bg-light mb-4">
+    <h3 class="h6 mb-3">Procédure pour entrer</h3>
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label" for="tech_entry_distance">Distance</label>
+        <input type="text" class="form-control" id="tech_entry_distance" name="tech_entry_distance"
+               value="<%= djNotes.tech_entry_distance || '' %>"
+               placeholder="Ex. : 50 m du stationnement à la salle">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label" for="tech_entry_doors">Nombre de portes</label>
+        <input type="text" class="form-control" id="tech_entry_doors" name="tech_entry_doors"
+               value="<%= djNotes.tech_entry_doors || '' %>"
+               placeholder="Ex. : 2">
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="tech_entry_procedure">Procédure / notes d'accès</label>
+        <textarea class="form-control" id="tech_entry_procedure" name="tech_entry_procedure" rows="3"
+                  placeholder="Escaliers, ascenseur, code d'accès, contact sur place…"><%= djNotes.tech_entry_procedure || '' %></textarea>
+      </div>
+    </div>
+  </div>
+
+  <% const floorPlanRequested = djNotes.tech_floor_plan_requested
+    || (djNotes.tech_floor_plan_notes ? 'yes' : 'no'); %>
+  <div class="border rounded p-3 bg-light mb-4">
+    <h3 class="h6 mb-3">Plan de salle</h3>
+    <div class="row g-3">
+      <div class="col-12">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <span class="fw-semibold">Plan de salle demandé</span>
+          <div class="btn-group btn-group-sm" role="group" aria-label="Plan de salle demandé">
+            <input type="radio" class="btn-check" name="tech_floor_plan_requested" id="tech_floor_plan_yes" value="yes"
+                   <%= floorPlanRequested === 'yes' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="tech_floor_plan_yes">Oui</label>
+            <input type="radio" class="btn-check" name="tech_floor_plan_requested" id="tech_floor_plan_no" value="no"
+                   <%= floorPlanRequested === 'no' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="tech_floor_plan_no">Non</label>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <label class="form-label" for="tech_floor_plan_notes">Notes (plan reçu, contact, fichier dans Gestion…)</label>
+        <textarea class="form-control" id="tech_floor_plan_notes" name="tech_floor_plan_notes" rows="2"
+                  placeholder="Ex. : demandé le 12 sept., reçu par courriel…"><%= djNotes.tech_floor_plan_notes || '' %></textarea>
+      </div>
+    </div>
+  </div>
+
   <% const clientCalled = djNotes.tech_client_called
     || ((djNotes.tech_client_call_date || djNotes.tech_client_call_time) ? 'yes' : 'no'); %>
   <div class="border rounded p-3 bg-light mb-4">
