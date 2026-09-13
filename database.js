@@ -126,6 +126,19 @@ function initDatabase() {
     );
 
     CREATE INDEX IF NOT EXISTS idx_event_files_event ON event_files(event_id, uploaded_at);
+
+    CREATE TABLE IF NOT EXISTS event_time_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_id INTEGER NOT NULL,
+      activity TEXT NOT NULL,
+      logged_date TEXT NOT NULL,
+      logged_time TEXT,
+      duration_hours REAL NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_event_time_logs_event ON event_time_logs(event_id, logged_date, logged_time);
   `);
 
   migrate(db);
@@ -452,6 +465,17 @@ function migrate(db) {
       FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
     )
   `);
+  const trailerDefaultsApplied = db
+    .prepare("SELECT value FROM app_meta WHERE key = 'trailer_rental_defaults_2026_11'")
+    .get();
+  if (!trailerDefaultsApplied) {
+    const { applyTrailerDefaultsToActiveEvents } = require("./lib/trailer-defaults");
+    applyTrailerDefaultsToActiveEvents(db);
+    db.prepare(
+      "INSERT OR REPLACE INTO app_meta (key, value) VALUES ('trailer_rental_defaults_2026_11', '1')"
+    ).run();
+  }
+
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_portal_client_notifications_unread
     ON portal_client_notifications(event_id, read_at, created_at)

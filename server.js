@@ -171,6 +171,18 @@ const {
 } = require("./lib/app-settings");
 const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, getSubcontractorAgreementsList, queryString } = require("./lib/calendar");
 const { getResumeEventsList, getEventAgreementStatuses } = require("./lib/resume");
+const {
+  TIME_SPENT_ACTIVITIES,
+  TIME_SPENT_DURATIONS,
+  formatDurationHours,
+  activityLabel,
+  formatLoggedAt,
+  getTimeSpentLogs,
+  getTimeSpentTotalHours,
+  addTimeSpentLog,
+  deleteTimeSpentLog,
+  defaultLoggedDatetime
+} = require("./lib/time-spent");
 const { importDatabaseFromFile } = require("./lib/import-database");
 const {
   MAX_FILE_SIZE,
@@ -319,6 +331,11 @@ app.locals.getQuestionnaireLabel = getQuestionnaireLabel;
 app.locals.formatFileSize = formatFileSize;
 app.locals.queryString = queryString;
 app.locals.DEFAULT_SUBCONTRACTOR_ID = DEFAULT_SUBCONTRACTOR_ID;
+app.locals.TIME_SPENT_ACTIVITIES = TIME_SPENT_ACTIVITIES;
+app.locals.TIME_SPENT_DURATIONS = TIME_SPENT_DURATIONS;
+app.locals.formatDurationHours = formatDurationHours;
+app.locals.activityLabel = activityLabel;
+app.locals.formatLoggedAt = formatLoggedAt;
 
 app.get("/api/health", (req, res) => {
   const tables = db
@@ -708,7 +725,7 @@ app.get("/events/:id", (req, res) => {
   const tab = req.query.tab || "resume";
   const gestionSection =
     tab === "gestion"
-      ? ["location", "contrat", "depart", "fichiers"].includes(req.query.gestion)
+      ? ["location", "contrat", "depart", "temps", "fichiers"].includes(req.query.gestion)
         ? req.query.gestion
         : "location"
       : null;
@@ -737,6 +754,10 @@ app.get("/events/:id", (req, res) => {
   });
   const missingQuestions = getQuestionnaireMissing(event.event_type, questionnaire.data);
   const eventFiles = getEventFiles(db, event.id);
+  const timeSpentLogs = gestionSection === "temps" ? getTimeSpentLogs(db, event.id) : [];
+  const timeSpentTotalHours =
+    gestionSection === "temps" ? getTimeSpentTotalHours(db, event.id) : 0;
+  const timeSpentDefaultDatetime = defaultLoggedDatetime(event.event_date);
   let subcontractorContract =
     gestionSection === "contrat"
       ? getSubcontractorContract(db, event.id, sousTraitant)
@@ -823,6 +844,12 @@ app.get("/events/:id", (req, res) => {
     contractSaved: req.query.contractSaved === "1",
     contractCleared: req.query.contractCleared === "1",
     contractError: req.query.contractError || "",
+    timeSpentLogs,
+    timeSpentTotalHours,
+    timeSpentDefaultDatetime,
+    timeSpentSaved: req.query.timeSpentSaved === "1",
+    timeSpentDeleted: req.query.timeSpentDeleted === "1",
+    timeSpentError: req.query.timeSpentError || "",
     lastPortalClientUpdate,
     portalClientUpdateUnread: tab === "client" || tab === "questionnaire" ? false : portalClientUpdateUnread,
     emailNotificationConfigured: isEmailNotificationConfigured(db),
@@ -1399,6 +1426,31 @@ app.post("/events/:id/music/save", (req, res) => {
   saveMusicForEvent(db, eventId, event.event_type, req.body);
   syncQuestionnaireFromMusicForEvent(db, eventId, event.event_type);
   res.redirect(eventRedirect(eventId, "musique", { musicSaved: "1" }));
+});
+
+app.post("/events/:id/gestion/temps/add", (req, res) => {
+  const eventId = Number(req.params.id);
+  if (!getEventById(db, eventId)) return res.status(404).send("Not found");
+
+  const result = addTimeSpentLog(db, eventId, req.body);
+  if (!result.ok) {
+    return res.redirect(
+      gestionRedirect(eventId, {
+        gestion: "temps",
+        timeSpentError: result.error
+      })
+    );
+  }
+
+  res.redirect(gestionRedirect(eventId, { gestion: "temps", timeSpentSaved: "1" }));
+});
+
+app.post("/events/:id/gestion/temps/:logId/delete", (req, res) => {
+  const eventId = Number(req.params.id);
+  const logId = Number(req.params.logId);
+  if (!getEventById(db, eventId)) return res.status(404).send("Not found");
+  deleteTimeSpentLog(db, eventId, logId);
+  res.redirect(gestionRedirect(eventId, { gestion: "temps", timeSpentDeleted: "1" }));
 });
 
 app.post("/events/:id/notes/save", (req, res) => {

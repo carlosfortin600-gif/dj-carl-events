@@ -19,6 +19,12 @@
 <% if (filesError) { %>
   <div class="alert alert-danger"><%= filesError %></div>
 <% } %>
+<% if (typeof timeSpentSaved !== 'undefined' && timeSpentSaved) { %>
+  <div class="alert alert-success">Temps passé enregistré.</div>
+<% } %>
+<% if (typeof timeSpentDeleted !== 'undefined' && timeSpentDeleted) { %>
+  <div class="alert alert-success">Entrée supprimée.</div>
+<% } %>
 
 <%- include('gestion-nav', { event, gestionSection }) %>
 
@@ -58,6 +64,15 @@
     contractSignLinks: typeof contractSignLinks !== 'undefined' ? contractSignLinks : null,
     contractSavedInDb: typeof contractSavedInDb !== 'undefined' ? contractSavedInDb : false,
     calendarShareLinks: typeof calendarShareLinks !== 'undefined' ? calendarShareLinks : null
+  }) %>
+
+<% } else if (gestionSection === 'temps') { %>
+  <%- include('gestion-temps-passe', {
+    event,
+    timeSpentLogs,
+    timeSpentTotalHours,
+    timeSpentDefaultDatetime,
+    timeSpentError: typeof timeSpentError !== 'undefined' ? timeSpentError : ''
   }) %>
 
 <% } else if (gestionSection === 'fichiers') { %>
