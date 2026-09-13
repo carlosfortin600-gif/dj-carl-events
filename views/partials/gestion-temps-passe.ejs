@@ -45,6 +45,11 @@
         <div class="col-md-2">
           <button type="submit" class="btn btn-primary w-100">Ajouter</button>
         </div>
+        <div class="col-12">
+          <label class="form-label" for="time_spent_description">Descriptif</label>
+          <input type="text" class="form-control" id="time_spent_description" name="description"
+                 placeholder="Ex. : appel avec la mariée, recherche chanson entrée, montage playlist…">
+        </div>
       </div>
     </div>
   </form>
@@ -66,6 +71,7 @@
         <thead class="table-light">
           <tr>
             <th>Activité</th>
+            <th>Descriptif</th>
             <th>Date et heure</th>
             <th>Durée</th>
             <th class="text-end" style="width: 6rem;"></th>
@@ -75,6 +81,7 @@
           <% logs.forEach(function(log) { %>
             <tr>
               <td><%= activityLabel(log.activity) %></td>
+              <td class="text-break"><%= log.description || '—' %></td>
               <td><%= formatLoggedAt(log.logged_date, log.logged_time) %></td>
               <td><%= formatDurationHours(log.duration_hours) %></td>
               <td class="text-end">

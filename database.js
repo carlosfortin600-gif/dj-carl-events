@@ -134,6 +134,7 @@ function initDatabase() {
       logged_date TEXT NOT NULL,
       logged_time TEXT,
       duration_hours REAL NOT NULL,
+      description TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
       FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
     );
@@ -351,6 +352,11 @@ function migrate(db) {
   }
   if (!djNotesColumns.includes("tech_client_comment")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_client_comment TEXT");
+  }
+
+  const timeLogColumns = db.prepare("PRAGMA table_info(event_time_logs)").all().map((c) => c.name);
+  if (timeLogColumns.length && !timeLogColumns.includes("description")) {
+    db.exec("ALTER TABLE event_time_logs ADD COLUMN description TEXT");
   }
 
   db.exec(`
