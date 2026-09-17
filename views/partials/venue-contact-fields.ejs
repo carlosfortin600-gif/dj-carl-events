@@ -10,14 +10,26 @@
              value="<%= contact.name || '' %>" placeholder="Nom complet">
       <div class="mt-3">
         <span class="form-label d-block">Brouillard technique autorisé</span>
-        <div class="btn-group btn-group-sm" role="group" aria-label="Brouillard technique autorisé">
-          <input type="radio" class="btn-check" name="venue_contact_technical_fog_allowed" id="venue_contact_technical_fog_yes" value="yes"
-                 <%= contact.technical_fog_allowed === 'yes' ? 'checked' : '' %>>
-          <label class="btn btn-outline-secondary" for="venue_contact_technical_fog_yes">Oui</label>
-          <input type="radio" class="btn-check" name="venue_contact_technical_fog_allowed" id="venue_contact_technical_fog_no" value="no"
-                 <%= contact.technical_fog_allowed === 'no' ? 'checked' : '' %>>
-          <label class="btn btn-outline-secondary" for="venue_contact_technical_fog_no">Non</label>
-        </div>
+        <% if (typeof isPortal !== 'undefined' && isPortal) { %>
+          <% const fogLabel = contact.technical_fog_allowed === 'yes' ? 'Oui'
+            : contact.technical_fog_allowed === 'no' ? 'Non' : 'Non confirmé'; %>
+          <div class="portal-fog-readonly border rounded px-3 py-2 bg-light"
+               role="button" tabindex="0"
+               aria-label="Brouillard technique autorisé — information"
+               data-portal-fog-message="DJ Carl contactera le responsable de la salle pour confirmer si le brouillard technique est autorisé.">
+            <strong><%= fogLabel %></strong>
+            <p class="text-muted small mb-0 mt-1">Cliquez pour plus d'information.</p>
+          </div>
+        <% } else { %>
+          <div class="btn-group btn-group-sm" role="group" aria-label="Brouillard technique autorisé">
+            <input type="radio" class="btn-check" name="venue_contact_technical_fog_allowed" id="venue_contact_technical_fog_yes" value="yes"
+                   <%= contact.technical_fog_allowed === 'yes' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="venue_contact_technical_fog_yes">Oui</label>
+            <input type="radio" class="btn-check" name="venue_contact_technical_fog_allowed" id="venue_contact_technical_fog_no" value="no"
+                   <%= contact.technical_fog_allowed === 'no' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="venue_contact_technical_fog_no">Non</label>
+          </div>
+        <% } %>
       </div>
     </div>
     <div class="col-md-4">

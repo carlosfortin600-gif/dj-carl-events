@@ -34,5 +34,28 @@
     }
   }
 
+  function bindPortalFogReadonly() {
+    const message =
+      "DJ Carl contactera le responsable de la salle pour confirmer si le brouillard technique est autorisé.";
+
+    document.querySelectorAll(".portal-fog-readonly").forEach((el) => {
+      if (el.dataset.portalFogBound === "1") return;
+      el.dataset.portalFogBound = "1";
+
+      function showFogInfo() {
+        window.alert(el.dataset.portalFogMessage || message);
+      }
+
+      el.addEventListener("click", showFogInfo);
+      el.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          showFogInfo();
+        }
+      });
+    });
+  }
+
   document.querySelectorAll("[data-dj-locked-fields]").forEach(applyPortalQuestionnaireLocks);
+  bindPortalFogReadonly();
 })();

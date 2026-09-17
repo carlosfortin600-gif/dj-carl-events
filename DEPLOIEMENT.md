@@ -122,7 +122,7 @@ Après ça, vos Push GitHub **ne effaceront plus** les événements.
 Dans le Terminal :
 
 ```bash
-cd /Users/djcarl/Documents/DJ/Concepts/DJ-Carl-Quiz/events
+cd /Users/djcarl/Documents/DJ/Concepts/dj-carl-events/events
 npm run export-db
 ```
 
@@ -142,7 +142,7 @@ Environment → `DATA_DIR` = `/var/data`
 3. Sur votre Mac, dans un **nouveau** Terminal :
 
 ```bash
-cd /Users/djcarl/Documents/DJ/Concepts/DJ-Carl-Quiz/events
+cd /Users/djcarl/Documents/DJ/Concepts/dj-carl-events/events
 scp dist/djcarl-upload.db VOTRE_COMMANDE_SSH:/var/data/djcarl.db
 ```
 

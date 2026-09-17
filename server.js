@@ -108,7 +108,7 @@ const { getQuestionnaireMissing } = require("./lib/questionnaire-missing");
 const {
   stampDjLockedFields,
   mergePortalQuestionnaire,
-  getDjLockedFields
+  getPortalLockedFields
 } = require("./lib/questionnaire-portal-lock");
 const { hasPortalIntroAck, ackPortalIntro, ackPortalIntroDb } = require("./lib/portal-intro");
 const { getDjNotes, saveDjNotes } = require("./lib/dj-notes");
@@ -1283,7 +1283,7 @@ app.get("/portal/:token/questionnaire", (req, res) => {
     title: `${getQuestionnaireLabel(event.event_type)} — ${clientShortName(event)}`,
     event,
     questionnaire,
-    djLockedFields: getDjLockedFields(questionnaire.data, event.event_type),
+    djLockedFields: getPortalLockedFields(questionnaire.data, event.event_type),
     proposedTimelineSteps,
     timelineItems,
     saved: req.query.saved === "1"

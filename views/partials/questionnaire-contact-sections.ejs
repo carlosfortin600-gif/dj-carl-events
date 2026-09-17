@@ -2,4 +2,4 @@
 <% const venueContact = typeof venueContactData !== 'undefined' ? venueContactData : { name: '', phone: '', email: '', technical_fog_allowed: '' }; %>
 
 <%- include('day-contact-fields', { dayContact }) %>
-<%- include('venue-contact-fields', { venueContact }) %>
+<%- include('venue-contact-fields', { venueContact, isPortal: typeof isPortal !== 'undefined' && isPortal }) %>
