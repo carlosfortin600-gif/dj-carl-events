@@ -353,6 +353,15 @@ function migrate(db) {
   if (!djNotesColumns.includes("tech_client_comment")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_client_comment TEXT");
   }
+  if (!djNotesColumns.includes("tech_email_rdv_sent")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_email_rdv_sent TEXT");
+  }
+  if (!djNotesColumns.includes("tech_email_rdv_date")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_email_rdv_date TEXT");
+  }
+  if (!djNotesColumns.includes("tech_email_rdv_time")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_email_rdv_time TEXT");
+  }
 
   const timeLogColumns = db.prepare("PRAGMA table_info(event_time_logs)").all().map((c) => c.name);
   if (timeLogColumns.length && !timeLogColumns.includes("description")) {

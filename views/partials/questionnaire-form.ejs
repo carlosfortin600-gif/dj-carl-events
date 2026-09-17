@@ -68,8 +68,6 @@
     </div>
   </section>
 
-  <%- include('day-contact-fields', { dayContact: q.day_contact }) %>
-
   <!-- Cérémonie -->
   <section class="q-section mb-4" id="ceremonie">
     <h2 class="h5 q-section-title">Cérémonie</h2>
@@ -398,6 +396,11 @@
     </div>
   </section>
   <% } %>
+
+  <%- include('questionnaire-contact-sections', {
+    dayContactData: q.day_contact,
+    venueContactData: q.venue_contact
+  }) %>
 
   <!-- Questions importantes -->
   <section class="q-section mb-4">

@@ -3,6 +3,8 @@
 <% const isPortal = typeof portalMode !== 'undefined' && portalMode; %>
 <% const lockedFields = typeof djLockedFields !== 'undefined' ? djLockedFields : []; %>
 <% const thematicEvening = q.general.thematic_evening || ((q.general.evening_themes || []).length || q.general.evening_theme_other ? 'yes' : ''); %>
+<% const cocktail = q.cocktail || { styles: [], requests: '' }; %>
+<% const dinner = q.dinner || { styles: [], requests: '' }; %>
 
 <% if (questionnaire.updated_at) { %>
   <p class="text-muted small mb-3">Dernière modification : <%= formatTimestampFr(questionnaire.updated_at) %></p>
@@ -83,8 +85,6 @@
     </div>
   </section>
 
-  <%- include('day-contact-fields', { dayContact: q.day_contact }) %>
-
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Déroulement</h2>
     <div class="row g-3">
@@ -156,6 +156,31 @@
         <textarea class="form-control" name="special_moments_notes" rows="3"><%= q.schedule.special_moments_notes %></textarea>
       </div>
     </div>
+  </section>
+
+  <section class="q-section mb-4">
+    <h2 class="h5 q-section-title">Musique cocktail</h2>
+    <%- include('questionnaire-meal-styles', {
+      stylesFieldName: 'cocktail_styles',
+      mealStyles: cocktail.styles || [],
+      stylesIdPrefix: 'pcs',
+      stylesLabel: 'Styles désirés'
+    }) %>
+    <label class="form-label" for="cocktail_requests">Demandes spéciales pour le cocktail</label>
+    <textarea class="form-control" id="cocktail_requests" name="cocktail_requests" rows="3"><%= cocktail.requests || '' %></textarea>
+  </section>
+
+  <section class="q-section mb-4">
+    <h2 class="h5 q-section-title">Musique souper</h2>
+    <%- include('questionnaire-meal-styles', {
+      stylesFieldName: 'dinner_styles',
+      mealStyles: dinner.styles || [],
+      stylesIdPrefix: 'pds',
+      stylesLabel: 'Style(s) de musique'
+    }) %>
+    <label class="form-label" for="dinner_requests">Commentaires</label>
+    <textarea class="form-control" id="dinner_requests" name="dinner_requests" rows="3"
+              placeholder="Précisions pour la musique pendant le repas…"><%= dinner.requests || '' %></textarea>
   </section>
 
   <% if (!isPortal) { %>
@@ -266,6 +291,11 @@
     </div>
   </section>
   <% } %>
+
+  <%- include('questionnaire-contact-sections', {
+    dayContactData: q.day_contact,
+    venueContactData: q.venue_contact
+  }) %>
 
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Questions importantes</h2>

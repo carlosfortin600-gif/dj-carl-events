@@ -107,6 +107,15 @@
           <% } %>
         </div>
         <div class="resume-event-row-location-item mt-1">
+          <span class="resume-event-row-location-need-label">E-mail RDV</span>
+          <strong class="resume-event-row-location-need-value"><%= ev.emailRdvSent ? 'Oui' : 'Non' %></strong>
+          <% if (ev.emailRdvSent && ev.emailRdvAt) { %>
+            <span class="text-muted mx-1">·</span>
+            <span>Date</span>
+            <strong class="resume-event-row-location-rented-value"><%= ev.emailRdvAt %></strong>
+          <% } %>
+        </div>
+        <div class="resume-event-row-location-item mt-1">
           <span class="resume-event-row-location-need-label">Rappel</span>
           <strong class="resume-event-row-location-need-value"><%= ev.callbackName || '—' %></strong>
           <% if (ev.callbackAt) { %>

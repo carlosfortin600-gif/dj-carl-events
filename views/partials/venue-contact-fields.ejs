@@ -1,0 +1,37 @@
+<% const contact = typeof venueContact !== 'undefined' ? venueContact : { name: '', phone: '', email: '', technical_fog_allowed: '' }; %>
+
+<section class="q-section mb-4">
+  <h2 class="h5 q-section-title">Personne responsable de la salle</h2>
+  <p class="text-muted small mb-3">Coordonnées du responsable ou coordonnateur de la salle de réception.</p>
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label" for="venue_contact_name">Nom</label>
+      <input type="text" class="form-control" id="venue_contact_name" name="venue_contact_name"
+             value="<%= contact.name || '' %>" placeholder="Nom complet">
+      <div class="mt-3">
+        <span class="form-label d-block">Brouillard technique autorisé</span>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Brouillard technique autorisé">
+          <input type="radio" class="btn-check" name="venue_contact_technical_fog_allowed" id="venue_contact_technical_fog_yes" value="yes"
+                 <%= contact.technical_fog_allowed === 'yes' ? 'checked' : '' %>>
+          <label class="btn btn-outline-secondary" for="venue_contact_technical_fog_yes">Oui</label>
+          <input type="radio" class="btn-check" name="venue_contact_technical_fog_allowed" id="venue_contact_technical_fog_no" value="no"
+                 <%= contact.technical_fog_allowed === 'no' ? 'checked' : '' %>>
+          <label class="btn btn-outline-secondary" for="venue_contact_technical_fog_no">Non</label>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="venue_contact_phone">Téléphone</label>
+      <input type="tel" class="form-control phone-input" id="venue_contact_phone" name="venue_contact_phone"
+             value="<%= contact.phone || '' %>" placeholder="514-555-1234">
+      <% if (contact.phone && telHref(contact.phone)) { %>
+        <a href="<%= telHref(contact.phone) %>" class="small d-inline-block mt-1">Composer</a>
+      <% } %>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="venue_contact_email">Courriel</label>
+      <input type="email" class="form-control" id="venue_contact_email" name="venue_contact_email"
+             value="<%= contact.email || '' %>" placeholder="contact@exemple.com">
+    </div>
+  </div>
+</section>

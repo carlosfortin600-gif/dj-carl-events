@@ -1,0 +1,5 @@
+<% const dayContact = typeof dayContactData !== 'undefined' ? dayContactData : { name: '', phone: '', email: '' }; %>
+<% const venueContact = typeof venueContactData !== 'undefined' ? venueContactData : { name: '', phone: '', email: '', technical_fog_allowed: '' }; %>
+
+<%- include('day-contact-fields', { dayContact }) %>
+<%- include('venue-contact-fields', { venueContact }) %>

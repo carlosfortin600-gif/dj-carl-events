@@ -661,6 +661,7 @@ initQuestionnaireMissingHighlight();
   bindToggle("tech_trailer_yes", "tech_trailer_no", "tech_trailer_fields");
   bindToggle("tech_room_yes", "tech_room_no", "tech_room_fields");
   bindToggle("tech_client_called_yes", "tech_client_called_no", "tech_client_call_fields");
+  bindToggle("tech_email_rdv_sent_yes", "tech_email_rdv_sent_no", "tech_email_rdv_fields");
   bindToggle("tech_questionnaire_sent_yes", "tech_questionnaire_sent_no", "tech_questionnaire_sent_fields");
   bindToggle("wedding_has_color_yes", "wedding_has_color_no", "wedding_color_fields");
 })();

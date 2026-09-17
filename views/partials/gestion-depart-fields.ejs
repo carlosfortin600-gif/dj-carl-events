@@ -80,10 +80,12 @@
 
   <% const clientCalled = djNotes.tech_client_called
     || ((djNotes.tech_client_call_date || djNotes.tech_client_call_time) ? 'yes' : 'no'); %>
+  <% const emailRdvSent = djNotes.tech_email_rdv_sent
+    || ((djNotes.tech_email_rdv_date || djNotes.tech_email_rdv_time) ? 'yes' : 'no'); %>
   <div class="border rounded p-3 bg-light mb-4">
     <h3 class="h6 mb-3">Client</h3>
     <div class="row g-3">
-      <div class="col-12">
+      <div class="col-md-6">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
           <span class="fw-semibold">Client appelé</span>
           <div class="btn-group btn-group-sm" role="group" aria-label="Client appelé">
@@ -96,6 +98,19 @@
           </div>
         </div>
       </div>
+      <div class="col-md-6">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <span class="fw-semibold">E-mail pour prendre RDV envoyé</span>
+          <div class="btn-group btn-group-sm" role="group" aria-label="E-mail pour prendre RDV envoyé">
+            <input type="radio" class="btn-check" name="tech_email_rdv_sent" id="tech_email_rdv_sent_yes" value="yes"
+                   <%= emailRdvSent === 'yes' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="tech_email_rdv_sent_yes">Oui</label>
+            <input type="radio" class="btn-check" name="tech_email_rdv_sent" id="tech_email_rdv_sent_no" value="no"
+                   <%= emailRdvSent === 'no' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="tech_email_rdv_sent_no">Non</label>
+          </div>
+        </div>
+      </div>
       <div id="tech_client_call_fields" class="col-md-6" <%= clientCalled === 'no' ? 'hidden' : '' %>>
         <label class="form-label" for="tech_client_call_datetime">Date de l'appel</label>
         <%- include('datetime-fr-field', {
@@ -104,6 +119,16 @@
           value: endDatetimeLocalValue(event.event_date, djNotes.tech_client_call_date, djNotes.tech_client_call_time),
           displayValue: djNotes.tech_client_call_date
             ? formatDateTimeFr(djNotes.tech_client_call_date, djNotes.tech_client_call_time) : ''
+        }) %>
+      </div>
+      <div id="tech_email_rdv_fields" class="col-md-6" <%= emailRdvSent === 'no' ? 'hidden' : '' %>>
+        <label class="form-label" for="tech_email_rdv_datetime">Date d'envoi du courriel</label>
+        <%- include('datetime-fr-field', {
+          id: 'tech_email_rdv_datetime',
+          name: 'tech_email_rdv_datetime',
+          value: endDatetimeLocalValue(event.event_date, djNotes.tech_email_rdv_date, djNotes.tech_email_rdv_time),
+          displayValue: djNotes.tech_email_rdv_date
+            ? formatDateTimeFr(djNotes.tech_email_rdv_date, djNotes.tech_email_rdv_time) : ''
         }) %>
       </div>
       <div class="col-md-6">
