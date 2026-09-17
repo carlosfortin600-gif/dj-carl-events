@@ -91,9 +91,35 @@
     });
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initLocationEquipment);
-  } else {
+  function initClearableRadios() {
+    document.querySelectorAll("[data-radio-clearable]").forEach((group) => {
+      if (group.dataset.radioClearableBound === "1") return;
+      group.dataset.radioClearableBound = "1";
+
+      group.querySelectorAll('input[type="radio"]').forEach((radio) => {
+        radio.addEventListener("mousedown", () => {
+          radio.dataset.wasChecked = radio.checked ? "1" : "0";
+        });
+        radio.addEventListener("click", (event) => {
+          if (radio.dataset.wasChecked === "1") {
+            radio.checked = false;
+            radio.dataset.wasChecked = "0";
+            event.preventDefault();
+            radio.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+        });
+      });
+    });
+  }
+
+  function initQuestionnaireFormHelpers() {
     initLocationEquipment();
+    initClearableRadios();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initQuestionnaireFormHelpers);
+  } else {
+    initQuestionnaireFormHelpers();
   }
 })();
