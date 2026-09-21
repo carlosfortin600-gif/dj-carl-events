@@ -1,0 +1,44 @@
+<% const logs = typeof emailRdvSentLogs !== 'undefined' ? emailRdvSentLogs : []; %>
+<% const compact = typeof compactPanel !== 'undefined' && compactPanel; %>
+<% const returnPath = typeof returnTo !== 'undefined' ? returnTo : '/'; %>
+<% const defaultSentDt = typeof defaultSentDatetime !== 'undefined' ? defaultSentDatetime : defaultQuestionnaireSentDatetime(); %>
+
+<div class="email-rdv-sent-panel<%= compact ? ' email-rdv-sent-panel--compact' : '' %>" onclick="event.stopPropagation()">
+  <div class="email-rdv-sent-panel-label fw-semibold<%= compact ? ' text-muted small' : '' %>">
+    E-mail pour prendre RDV envoyé
+  </div>
+
+  <% if (logs.length) { %>
+    <ul class="email-rdv-sent-log-list list-unstyled mb-2<%= compact ? ' small' : '' %>">
+      <% logs.forEach(function(log) { %>
+        <li class="email-rdv-sent-log-item d-flex flex-wrap align-items-center gap-2<%= compact ? ' mb-1' : ' mb-2' %>">
+          <span><%= formatDateTimeFr(log.sent_date, log.sent_time) %></span>
+          <form method="post"
+                action="/events/<%= eventId %>/email-rdv-sent/<%= log.id %>/delete"
+                class="d-inline mb-0"
+                onsubmit="return confirm('Supprimer cet envoi ?');">
+            <input type="hidden" name="returnTo" value="<%= returnPath %>">
+            <button type="submit" class="btn btn-link btn-sm p-0 text-danger">Supprimer</button>
+          </form>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p class="text-muted<%= compact ? ' small' : '' %> mb-2">Aucun envoi enregistré.</p>
+  <% } %>
+
+  <form method="post"
+        action="/events/<%= eventId %>/email-rdv-sent/add"
+        class="email-rdv-sent-add-form d-flex flex-wrap align-items-center gap-2<%= compact ? ' small' : '' %>"
+        data-email-rdv-sent-add-form>
+    <input type="hidden" name="returnTo" value="<%= returnPath %>">
+    <span class="text-muted">Ajouter</span>
+    <%- include('datetime-fr-field', {
+      id: 'email_rdv_sent_add_' + eventId + (compact ? '_compact' : ''),
+      name: 'sent_datetime',
+      value: defaultSentDt,
+      displayValue: defaultSentDt ? formatDateTimeFr(defaultSentDt.slice(0, 10), defaultSentDt.slice(11, 16)) : ''
+    }) %>
+    <button type="submit" class="btn btn-sm btn-outline-primary">Ajouter</button>
+  </form>
+</div>

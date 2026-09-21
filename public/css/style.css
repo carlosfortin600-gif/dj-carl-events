@@ -1345,8 +1345,17 @@ table tr.q-field-missing td:first-child {
   padding-left: 0;
 }
 
-.questionnaire-sent-add-form .datetime-fr-picker {
+.questionnaire-sent-add-form .datetime-fr-picker,
+.email-rdv-sent-add-form .datetime-fr-picker {
   min-width: 12rem;
+}
+
+.email-rdv-sent-panel {
+  margin-top: 0;
+}
+
+.email-rdv-sent-panel-label {
+  margin-bottom: 0.35rem;
 }
 
 .event-row-questionnaire-sent {

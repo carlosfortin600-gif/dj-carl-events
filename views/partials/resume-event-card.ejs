@@ -98,7 +98,7 @@
       <div class="resume-event-row-field resume-event-row-client small">
         <span class="resume-event-row-label">Client</span>
         <div class="resume-event-row-location-item">
-          <span class="resume-event-row-location-need-label">Appelé</span>
+          <span class="resume-event-row-location-need-label">Contacté</span>
           <strong class="resume-event-row-location-need-value"><%= ev.clientCalled ? 'Oui' : 'Non' %></strong>
           <% if (ev.clientCalled && ev.clientCallAt) { %>
             <span class="text-muted mx-1">·</span>
@@ -108,11 +108,20 @@
         </div>
         <div class="resume-event-row-location-item mt-1">
           <span class="resume-event-row-location-need-label">E-mail RDV</span>
-          <strong class="resume-event-row-location-need-value"><%= ev.emailRdvSent ? 'Oui' : 'Non' %></strong>
-          <% if (ev.emailRdvSent && ev.emailRdvAt) { %>
-            <span class="text-muted mx-1">·</span>
-            <span>Date</span>
-            <strong class="resume-event-row-location-rented-value"><%= ev.emailRdvAt %></strong>
+          <% if (ev.emailRdvSentLogs && ev.emailRdvSentLogs.length) { %>
+            <strong class="resume-event-row-location-need-value"><%= ev.emailRdvSentLogs.length %> envoi<%= ev.emailRdvSentLogs.length !== 1 ? 's' : '' %></strong>
+            <span class="d-block text-muted small mt-1">
+              <% ev.emailRdvSentLogs.forEach(function(log, i) { %>
+                <%= formatDateTimeFr(log.sent_date, log.sent_time) %><%= i < ev.emailRdvSentLogs.length - 1 ? ' · ' : '' %>
+              <% }); %>
+            </span>
+          <% } else { %>
+            <strong class="resume-event-row-location-need-value"><%= ev.emailRdvSent ? 'Oui' : 'Non' %></strong>
+            <% if (ev.emailRdvSent && ev.emailRdvAt) { %>
+              <span class="text-muted mx-1">·</span>
+              <span>Date</span>
+              <strong class="resume-event-row-location-rented-value"><%= ev.emailRdvAt %></strong>
+            <% } %>
           <% } %>
         </div>
         <div class="resume-event-row-location-item mt-1">

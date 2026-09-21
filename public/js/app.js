@@ -661,12 +661,11 @@ initQuestionnaireMissingHighlight();
   bindToggle("tech_trailer_yes", "tech_trailer_no", "tech_trailer_fields");
   bindToggle("tech_room_yes", "tech_room_no", "tech_room_fields");
   bindToggle("tech_client_called_yes", "tech_client_called_no", "tech_client_call_fields");
-  bindToggle("tech_email_rdv_sent_yes", "tech_email_rdv_sent_no", "tech_email_rdv_fields");
   bindToggle("wedding_has_color_yes", "wedding_has_color_no", "wedding_color_fields");
 })();
 
-(function initQuestionnaireSentPanels() {
-  document.querySelectorAll("[data-questionnaire-sent-add-form]").forEach((form) => {
+(function initSentLogPanels() {
+  document.querySelectorAll("[data-questionnaire-sent-add-form], [data-email-rdv-sent-add-form]").forEach((form) => {
     form.addEventListener("click", (event) => event.stopPropagation());
   });
 })();

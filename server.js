@@ -119,6 +119,12 @@ const {
   defaultSentDatetime
 } = require("./lib/questionnaire-sent-log");
 const {
+  getEmailRdvSentLogs,
+  addEmailRdvSentLog,
+  deleteEmailRdvSentLog,
+  defaultSentDatetime: defaultEmailRdvSentDatetime
+} = require("./lib/email-rdv-sent-log");
+const {
   SUBCONTRACTORS,
   DEFAULT_SUBCONTRACTOR_ID,
   getSubcontractorContract,
@@ -751,6 +757,7 @@ app.get("/events/:id", (req, res) => {
   const music = getMusicDataForEvent(db, event.id, event.event_type);
   const djNotes = getDjNotes(db, event.id);
   const questionnaireSentLogs = getQuestionnaireSentLogs(db, event.id);
+  const emailRdvSentLogs = getEmailRdvSentLogs(db, event.id);
   const eventAgreementStatuses = getEventAgreementStatuses(db, event.id);
   const summarySheet = buildSummarySheet({
     event,
@@ -758,7 +765,9 @@ app.get("/events/:id", (req, res) => {
     questionnaire,
     music,
     timelineItems,
-    djNotes
+    djNotes,
+    questionnaireSentLogs,
+    emailRdvSentLogs
   });
   const missingQuestions = getQuestionnaireMissing(event.event_type, questionnaire.data);
   const eventFiles = getEventFiles(db, event.id);
@@ -817,6 +826,8 @@ app.get("/events/:id", (req, res) => {
     djNotes,
     questionnaireSentLogs,
     questionnaireSentDefaultDatetime: defaultSentDatetime(),
+    emailRdvSentLogs,
+    emailRdvSentDefaultDatetime: defaultEmailRdvSentDatetime(),
     eventAgreementStatuses,
     summarySheet,
     missingQuestions,
@@ -1491,6 +1502,26 @@ app.post("/events/:id/questionnaire-sent/:logId/delete", (req, res) => {
   const logId = Number(req.params.logId);
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
   deleteQuestionnaireSentLog(db, eventId, logId);
+  const returnTo = req.body.returnTo?.trim() || "/";
+  res.redirect(returnTo);
+});
+
+app.post("/events/:id/email-rdv-sent/add", (req, res) => {
+  const eventId = Number(req.params.id);
+  if (!getEventById(db, eventId)) return res.status(404).send("Not found");
+  const result = addEmailRdvSentLog(db, eventId, req.body);
+  const returnTo = req.body.returnTo?.trim() || "/";
+  if (!result.ok) {
+    return res.redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}emailRdvSentError=1`);
+  }
+  res.redirect(returnTo);
+});
+
+app.post("/events/:id/email-rdv-sent/:logId/delete", (req, res) => {
+  const eventId = Number(req.params.id);
+  const logId = Number(req.params.logId);
+  if (!getEventById(db, eventId)) return res.status(404).send("Not found");
+  deleteEmailRdvSentLog(db, eventId, logId);
   const returnTo = req.body.returnTo?.trim() || "/";
   res.redirect(returnTo);
 });

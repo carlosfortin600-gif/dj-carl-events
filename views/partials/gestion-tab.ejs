@@ -58,6 +58,18 @@
   }) %>
 
   <div class="border rounded p-3 bg-light mt-4">
+    <h3 class="h6 mb-3">Courriels</h3>
+    <%- include('email-rdv-sent-panel', {
+      eventId: event.id,
+      emailRdvSentLogs: typeof emailRdvSentLogs !== 'undefined' ? emailRdvSentLogs : [],
+      returnTo: '/events/' + event.id + '?tab=gestion&gestion=depart',
+      defaultSentDatetime: typeof emailRdvSentDefaultDatetime !== 'undefined'
+        ? emailRdvSentDefaultDatetime
+        : defaultQuestionnaireSentDatetime()
+    }) %>
+  </div>
+
+  <div class="border rounded p-3 bg-light mt-4">
     <h3 class="h6 mb-3">Questionnaire</h3>
     <%- include('questionnaire-sent-panel', {
       eventId: event.id,
