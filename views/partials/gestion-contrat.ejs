@@ -1,11 +1,14 @@
 <% const activeSub = typeof sousTraitant !== 'undefined' ? sousTraitant : DEFAULT_SUBCONTRACTOR_ID; %>
+<% const agreementStatuses = typeof eventAgreementStatuses !== 'undefined' ? eventAgreementStatuses : []; %>
 <% let activeLabel = activeSub; %>
 <% subcontractors.forEach(function(s) { if (s.id === activeSub) activeLabel = s.label; }); %>
 
 <nav class="gestion-contrat-subnav nav nav-tabs flex-nowrap overflow-auto mb-3" aria-label="Sous-traitants">
   <% subcontractors.forEach(function(st) { %>
-    <a class="nav-link <%= activeSub === st.id ? 'active' : '' %>"
-       href="/events/<%= event.id %>?tab=gestion&gestion=contrat&sousTraitant=<%= st.id %>"><%= st.label %></a>
+    <% const stStatus = agreementStatuses.find(function(s) { return s.id === st.id; }); %>
+    <% const stSigned = stStatus ? stStatus.signed : false; %>
+    <a class="nav-link <%= activeSub === st.id ? 'active' : '' %><%= stSigned ? ' gestion-contrat-tab--signed' : '' %>"
+       href="/events/<%= event.id %>?tab=gestion&gestion=contrat&sousTraitant=<%= st.id %>"><%= st.label %><% if (stSigned) { %> ✓<% } %></a>
   <% }); %>
 </nav>
 

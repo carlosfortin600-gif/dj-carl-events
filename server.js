@@ -144,6 +144,7 @@ const {
   deleteSubcontractorContract,
   datetimeLocalValue,
   isValidSubcontractor,
+  isContractFullySigned,
   getSubcontractorLabel
 } = require("./lib/subcontractor-contracts");
 const {
@@ -350,6 +351,7 @@ app.locals.getQuestionnaireLabel = getQuestionnaireLabel;
 app.locals.formatFileSize = formatFileSize;
 app.locals.queryString = queryString;
 app.locals.DEFAULT_SUBCONTRACTOR_ID = DEFAULT_SUBCONTRACTOR_ID;
+app.locals.isContractFullySigned = isContractFullySigned;
 app.locals.TIME_SPENT_ACTIVITIES = TIME_SPENT_ACTIVITIES;
 app.locals.TIME_SPENT_DURATIONS = TIME_SPENT_DURATIONS;
 app.locals.formatDurationHours = formatDurationHours;

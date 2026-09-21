@@ -1,11 +1,11 @@
-<div class="contract-status-summary border rounded px-3 py-2 mb-2 bg-light">
+<div class="contract-status-summary border rounded px-3 py-2 mb-2 bg-light<%= ev.agreementSigned ? ' contract-status-summary--signed' : '' %>">
   <div class="row g-2 g-md-3 small align-items-center">
     <div class="col-6 col-md-auto">
       <span class="text-muted">Entente</span>
-      <strong class="ms-1"><%= ev.agreementPassed ? 'Oui' : 'Non' %></strong>
+      <strong class="ms-1 <%= ev.agreementSigned ? 'text-success' : '' %>"><%= ev.agreementPassed ? 'Oui' : 'Non' %></strong>
     </div>
     <div class="col-6 col-md-auto">
-      <span class="text-muted">Signé</span>
+      <span class="<%= ev.agreementSigned ? 'text-success' : 'text-muted' %>">Signé</span>
       <strong class="ms-1 <%= ev.agreementSigned ? 'text-success' : '' %>"><%= ev.agreementSigned ? 'Oui' : 'Non' %></strong>
     </div>
     <div class="col-6 col-md-auto">

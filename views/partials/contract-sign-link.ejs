@@ -1,6 +1,7 @@
-<div class="card border-info mb-4">
-  <div class="card-header bg-info text-dark py-3">
-    <h2 class="h6 mb-0">Envoyer pour signature</h2>
+<% const contractFullySigned = !!(contract.signature_contractant && contract.signature_subcontractor); %>
+<div class="card mb-4 <%= contractFullySigned ? 'border-success contract-sign-card--signed' : 'border-info' %>">
+  <div class="card-header py-3 <%= contractFullySigned ? 'bg-success text-white' : 'bg-info text-dark' %>">
+    <h2 class="h6 mb-0"><%= contractFullySigned ? 'Contrat signé' : 'Envoyer pour signature' %></h2>
   </div>
   <div class="card-body">
     <ol class="small text-muted mb-3 ps-3">
@@ -29,7 +30,11 @@
       <a href="<%= contractSignLinks.primary %>" target="_blank" rel="noopener" class="btn btn-sm btn-primary">Ouvrir le lien de signature</a>
     </div>
 
-    <% if (contract.signature_subcontractor) { %>
+    <% if (contractFullySigned) { %>
+      <div class="alert alert-success py-2 small mt-3 mb-0">
+        <strong>Contrat signé par les deux parties.</strong> Utilisez <strong>Ouvrir pour impression</strong> pour le PDF.
+      </div>
+    <% } else if (contract.signature_subcontractor) { %>
       <div class="alert alert-success py-2 small mt-3 mb-0">
         Signature du sous-traitant reçue<% if (contract.signature_subcontractor_date || contract.updated_at) { %>
           le <%= formatTimestampFr(contract.signature_subcontractor_date || contract.updated_at) %><% } %>.

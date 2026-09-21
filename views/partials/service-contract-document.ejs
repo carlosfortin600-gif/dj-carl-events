@@ -5,6 +5,7 @@
   </div>
 
   <% const subName = contract.full_name || (typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : 'Sous-traitant'); %>
+  <% const contractFullySigned = !!(contract.signature_contractant && contract.signature_subcontractor); %>
 
   <p class="mb-4">
     Entre <strong>DJ Carl</strong> (ci-après « le contractant ») et
@@ -72,7 +73,7 @@
       <% } else { %>
         <div class="service-contract-signature-line"></div>
       <% } %>
-      <p class="small text-muted mb-0 mt-1">
+      <p class="small mb-0 mt-1 <%= contractFullySigned && contract.signature_contractant ? 'text-success fw-semibold' : 'text-muted' %>">
         <% if (contract.signature_contractant) { %>
           Signé le <%= formatTimestampFr(contract.signature_contractant_date || contract.updated_at) %>
         <% } else { %>
@@ -87,7 +88,7 @@
       <% } else { %>
         <div class="service-contract-signature-line"></div>
       <% } %>
-      <p class="small text-muted mb-0 mt-1">
+      <p class="small mb-0 mt-1 <%= contractFullySigned && contract.signature_subcontractor ? 'text-success fw-semibold' : 'text-muted' %>">
         <% if (contract.signature_subcontractor) { %>
           Signé le <%= formatTimestampFr(contract.signature_subcontractor_date || contract.updated_at) %>
         <% } else { %>

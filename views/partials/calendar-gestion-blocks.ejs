@@ -25,9 +25,9 @@
   <% if (gestionDetails.contracts.length) { %>
     <div class="list-group list-group-flush calendar-day-list <%= compact ? 'mb-0' : 'mb-4' %>">
       <% gestionDetails.contracts.forEach(function(ct) { %>
-        <div class="list-group-item <%= compact ? 'py-1 px-0 border-0' : 'py-2' %> calendar-day-gestion calendar-day-gestion-contrat">
+        <div class="list-group-item <%= compact ? 'py-1 px-0 border-0' : 'py-2' %> calendar-day-gestion calendar-day-gestion-contrat<%= ct.signed ? ' calendar-day-gestion-contrat--signed' : '' %>">
           <div class="d-flex justify-content-between align-items-start gap-2">
-            <span class="small <%= compact ? 'calendar-gestion-summary-compact' : '' %>"><%= ct.summary %></span>
+            <span class="small <%= compact ? 'calendar-gestion-summary-compact' : '' %><%= ct.signed ? ' text-success fw-semibold' : '' %>"><%= ct.summary %></span>
             <a href="<%= ct.gestionUrl %>" class="btn btn-outline-primary btn-sm flex-shrink-0 <%= compact ? 'btn-xs-compact' : '' %>">Gestion</a>
           </div>
         </div>

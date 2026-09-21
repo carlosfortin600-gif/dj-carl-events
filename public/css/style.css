@@ -1224,6 +1224,43 @@ table tr.q-field-missing td:first-child {
   gap: 0.35rem 0;
 }
 
+.resume-event-row-entente-item--signed {
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.35rem;
+  background: rgba(var(--bs-success-rgb), 0.08);
+}
+
+.contract-status-summary--signed {
+  border-color: rgba(var(--bs-success-rgb), 0.45) !important;
+  background: rgba(var(--bs-success-rgb), 0.08) !important;
+}
+
+.contract-signed-cell {
+  background: rgba(var(--bs-success-rgb), 0.08);
+}
+
+.gestion-contrat-tab--signed:not(.active) {
+  color: var(--bs-success) !important;
+}
+
+.gestion-contrat-tab--signed.active {
+  border-color: var(--bs-success);
+  color: var(--bs-success);
+}
+
+.calendar-ententes-item--signed {
+  border-left-color: var(--bs-success) !important;
+  background: rgba(var(--bs-success-rgb), 0.05);
+}
+
+.calendar-day-gestion-contrat--signed {
+  background: rgba(var(--bs-success-rgb), 0.08);
+}
+
+.service-contract-print--signed {
+  box-shadow: 0 0 0 2px rgba(var(--bs-success-rgb), 0.25) !important;
+}
+
 .resume-event-row-entente-contract {
   display: inline-flex;
   flex-wrap: wrap;

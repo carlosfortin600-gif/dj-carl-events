@@ -3,8 +3,8 @@
     ? ev.contractSignUrl
     : ev.contractUrl; %>
   <% if (contractHref) { %>
-    <a href="<%= contractHref %>" class="btn btn-primary btn-sm <%= (typeof compact !== 'undefined' && compact) ? 'btn-xs-compact mt-1' : '' %>" target="_blank" rel="noopener">
-      Contrat <%= subcontractorLabel %>
+    <a href="<%= contractHref %>" class="btn btn-sm <%= ev.agreementSigned ? 'btn-success' : 'btn-primary' %> <%= (typeof compact !== 'undefined' && compact) ? 'btn-xs-compact mt-1' : '' %>" target="_blank" rel="noopener">
+      Contrat <%= subcontractorLabel %><% if (ev.agreementSigned) { %> ✓<% } %>
     </a>
   <% } %>
 <% } %>

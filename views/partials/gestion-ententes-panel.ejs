@@ -7,7 +7,7 @@
           <tr>
             <th></th>
             <% eventAgreementStatuses.forEach(function(st) { %>
-              <th class="text-center"><%= st.label %></th>
+              <th class="text-center<%= st.signed ? ' text-success' : '' %>"><%= st.label %></th>
             <% }); %>
           </tr>
         </thead>
@@ -15,13 +15,13 @@
           <tr>
             <td class="text-muted">Entente passée</td>
             <% eventAgreementStatuses.forEach(function(st) { %>
-              <td class="text-center fw-semibold"><%= st.passed ? 'Oui' : 'Non' %></td>
+              <td class="text-center fw-semibold<%= st.signed ? ' text-success' : '' %>"><%= st.passed ? 'Oui' : 'Non' %></td>
             <% }); %>
           </tr>
-          <tr>
+          <tr class="<%= eventAgreementStatuses.some(function(st) { return st.signed; }) ? 'contract-signed-row' : '' %>">
             <td class="text-muted">Signé</td>
             <% eventAgreementStatuses.forEach(function(st) { %>
-              <td class="text-center fw-semibold <%= st.signed ? 'text-success' : '' %>"><%= st.signed ? 'Oui' : 'Non' %></td>
+              <td class="text-center fw-semibold<%= st.signed ? ' text-success contract-signed-cell' : '' %>"><%= st.signed ? 'Oui' : 'Non' %></td>
             <% }); %>
           </tr>
         </tbody>
@@ -31,7 +31,7 @@
       <% eventAgreementStatuses.forEach(function(st) { %>
         <div class="d-flex flex-wrap gap-1 align-items-center">
           <a href="/events/<%= event.id %>?tab=gestion&gestion=contrat&sousTraitant=<%= st.id %>"
-             class="btn btn-sm btn-outline-primary">Contrat <%= st.label %></a>
+             class="btn btn-sm <%= st.signed ? 'btn-success' : 'btn-outline-primary' %>">Contrat <%= st.label %></a>
           <%- include('contract-delete-form', {
             event,
             subcontractorId: st.id,
