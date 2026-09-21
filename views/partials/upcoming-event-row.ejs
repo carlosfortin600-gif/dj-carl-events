@@ -3,6 +3,20 @@
     <div class="flex-grow-1">
       <div class="upcoming-event-line text-break">
         <strong><%= formatDateFr(ev.event_date) %></strong>
+        <% if (ev.start_time || ev.end_time) { %>
+          <span class="text-muted mx-1">|</span>
+          <span>
+            <% if (ev.start_time) { %><%= formatTime(ev.start_time) %><% } %>
+            <% if (ev.start_time && ev.end_time) { %> à <% } %>
+            <% if (ev.end_time) { %>
+              <% if (ev.end_date && ev.end_date !== ev.event_date) { %>
+                <%= formatDateTimeFr(ev.end_date, ev.end_time) %>
+              <% } else { %>
+                <%= formatTime(ev.end_time) %>
+              <% } %>
+            <% } %>
+          </span>
+        <% } %>
         <span class="text-muted mx-1">|</span>
         <%= clientShortName(ev) %>
         <span class="text-muted mx-1">|</span>
@@ -20,7 +34,7 @@
         questionnaireSentLogs: ev.questionnaireSentLogs || [],
         returnTo: '/',
         compactPanel: true,
-        defaultSentDatetime: defaultQuestionnaireSentDatetime()
+        showAddForm: false
       }) %>
     </div>
     <a href="/events/<%= ev.id %>" class="btn btn-outline-primary btn-sm flex-shrink-0">Ouvrir</a>
