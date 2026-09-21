@@ -1,0 +1,35 @@
+<% const months = typeof upcomingByMonth !== 'undefined' ? upcomingByMonth : (typeof eventsByMonth !== 'undefined' ? eventsByMonth : []); %>
+<% const monthRowType = typeof rowType !== 'undefined' ? rowType : 'dashboard'; %>
+
+<% if (!months.length) { %>
+  <div class="upcoming-by-month-empty text-muted py-4 text-center">
+    <%= typeof emptyMessage !== 'undefined' ? emptyMessage : 'Aucun événement à venir' %>
+  </div>
+<% } else { %>
+  <div class="upcoming-by-month">
+    <% months.forEach(function(month) { %>
+      <section class="upcoming-month-block mb-4<%= month.isCurrentMonth ? ' upcoming-month-block--current' : '' %><%= month.isNextMonth ? ' upcoming-month-block--next' : '' %>">
+        <header class="upcoming-month-header">
+          <div class="upcoming-month-header-text">
+            <h3 class="upcoming-month-title mb-0">
+              <%= month.headingWithTotal || month.heading %>
+            </h3>
+            <% if (month.isCurrentMonth || month.isNextMonth) { %>
+              <p class="upcoming-month-subtitle mb-0"><%= month.monthLabel %></p>
+            <% } %>
+          </div>
+          <span class="badge upcoming-month-count"><%= month.eventCount %> événement<%= month.eventCount !== 1 ? 's' : '' %></span>
+        </header>
+        <div class="upcoming-month-events <%= monthRowType === 'resume' ? 'resume-events-list' : 'list-group list-group-flush' %>">
+          <% month.events.forEach(function(ev) { %>
+            <% if (monthRowType === 'resume') { %>
+              <%- include('resume-event-card', { ev }) %>
+            <% } else { %>
+              <%- include('event-row', { ev, expandable: typeof expandable !== 'undefined' ? expandable : true }) %>
+            <% } %>
+          <% }); %>
+        </div>
+      </section>
+    <% }); %>
+  </div>
+<% } %>
