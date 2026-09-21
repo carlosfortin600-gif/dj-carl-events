@@ -33,12 +33,8 @@
               <% if (city) { %>
                 <div class="calendar-month-event-city"><%= city %></div>
               <% } %>
-              <% if (ev.phone) { %>
-                <% if (telHref(ev.phone)) { %>
-                  <a href="<%= telHref(ev.phone) %>" class="calendar-month-event-phone"><%= formatPhoneDisplay(ev.phone) %></a>
-                <% } else { %>
-                  <div class="calendar-month-event-phone text-muted"><%= formatPhoneDisplay(ev.phone) %></div>
-                <% } %>
+              <% if (ev.thematicSummary) { %>
+                <div class="calendar-month-event-thematic"><%= ev.thematicSummary %></div>
               <% } %>
             </div>
           <% }); %>

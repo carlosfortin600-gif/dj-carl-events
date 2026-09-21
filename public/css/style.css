@@ -608,19 +608,11 @@ table tr.q-field-missing td:first-child {
 }
 
 .calendar-month-event-city,
-.calendar-month-event-phone {
+.calendar-month-event-thematic {
   color: #6c757d;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.calendar-month-event-phone {
-  text-decoration: none;
-}
-
-.calendar-month-event-phone:hover {
-  text-decoration: underline;
 }
 
 .calendar-day.has-events {
