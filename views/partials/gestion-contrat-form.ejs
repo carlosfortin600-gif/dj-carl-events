@@ -5,10 +5,16 @@
     <h2 class="form-section-title mb-1">Contrat de service — <%= subLabel %></h2>
     <p class="text-muted small mb-0">Contrat simple entre DJ Carl et le sous-traitant pour cet événement.</p>
   </div>
-  <div class="d-flex flex-wrap gap-2">
+  <div class="d-flex flex-wrap gap-2 align-items-center">
     <a href="/gestion/calendrier/<%= subId %>" class="btn btn-outline-secondary btn-sm">Calendrier <%= subLabel %></a>
     <a href="/events/<%= event.id %>/gestion/contrat/<%= subId %>/print" target="_blank" rel="noopener"
        class="btn btn-outline-primary btn-sm">Ouvrir pour impression</a>
+    <%- include('contract-delete-form', {
+      event,
+      subcontractorId: subId,
+      subcontractorLabel: subLabel,
+      buttonClass: 'btn-outline-danger btn-sm'
+    }) %>
   </div>
 </div>
 
@@ -108,12 +114,12 @@
   <button type="submit" form="contract-main-form-<%= subId %>" class="btn btn-primary btn-lg">
     Enregistrer le contrat
   </button>
-  <% if (typeof contractSavedInDb !== 'undefined' && contractSavedInDb) { %>
-    <form method="post" action="/events/<%= event.id %>/gestion/contrat/<%= subId %>/clear" class="mb-0"
-          onsubmit="return confirm('Supprimer ce contrat ? Toutes les données et signatures seront effacées.');">
-      <button type="submit" class="btn btn-outline-danger btn-lg">Supprimer le contrat</button>
-    </form>
-  <% } %>
+  <%- include('contract-delete-form', {
+    event,
+    subcontractorId: subId,
+    subcontractorLabel: subLabel,
+    buttonClass: 'btn-outline-danger btn-lg'
+  }) %>
 </div>
 
 <div class="service-contract-print card border-0 shadow-sm no-print-preview">

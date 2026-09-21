@@ -1,0 +1,12 @@
+<form method="post"
+      action="/events/<%= event.id %>/gestion/contrat/<%= subcontractorId %>/clear"
+      class="d-inline mb-0 contract-delete-form"
+      onsubmit="return confirm('Supprimer le contrat<%= typeof subcontractorLabel !== 'undefined' && subcontractorLabel ? ' de ' + subcontractorLabel : '' %> ? Toutes les données et signatures seront effacées.');">
+  <% if (typeof returnGestion !== 'undefined' && returnGestion) { %>
+    <input type="hidden" name="return_gestion" value="<%= returnGestion %>">
+  <% } %>
+  <button type="submit"
+          class="btn <%= typeof buttonClass !== 'undefined' ? buttonClass : 'btn-outline-danger btn-sm' %>">
+    <%= typeof buttonLabel !== 'undefined' ? buttonLabel : 'Supprimer le contrat' %>
+  </button>
+</form>

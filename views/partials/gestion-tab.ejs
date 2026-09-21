@@ -45,12 +45,17 @@
     <input type="hidden" name="return_tab" value="gestion">
     <input type="hidden" name="save_scope" value="depart">
     <input type="hidden" name="gestion_section" value="depart">
-    <%- include('gestion-depart-fields', { event, djNotes, eventAgreementStatuses }) %>
+    <%- include('gestion-depart-fields', { event, djNotes }) %>
     <% if (djNotes.updated_at) { %>
       <p class="text-muted small">Dernière modification : <%= formatTimestampFr(djNotes.updated_at) %></p>
     <% } %>
     <button type="submit" class="btn btn-primary btn-lg">Enregistrer</button>
   </form>
+
+  <%- include('gestion-ententes-panel', {
+    event,
+    eventAgreementStatuses: typeof eventAgreementStatuses !== 'undefined' ? eventAgreementStatuses : []
+  }) %>
 
   <div class="border rounded p-3 bg-light mt-4">
     <h3 class="h6 mb-3">Questionnaire</h3>
