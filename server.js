@@ -1527,9 +1527,10 @@ app.post("/events/:id/gestion/contrat/:subcontractor/clear", (req, res) => {
   if (!isValidSubcontractor(subcontractor)) return res.status(404).send("Not found");
 
   deleteSubcontractorContract(db, eventId, subcontractor);
+  const returnGestion = req.body.return_gestion === "depart" ? "depart" : "contrat";
   res.redirect(
     gestionRedirect(eventId, {
-      gestion: "contrat",
+      gestion: returnGestion,
       sousTraitant: subcontractor,
       contractCleared: "1"
     })

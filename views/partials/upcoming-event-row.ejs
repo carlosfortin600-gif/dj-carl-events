@@ -4,6 +4,8 @@
       <div class="upcoming-event-line text-break">
         <strong><%= formatDateFr(ev.event_date) %></strong>
         <span class="text-muted mx-1">|</span>
+        <%= clientShortName(ev) %>
+        <span class="text-muted mx-1">|</span>
         <%= eventCity(ev) || '—' %>
         <span class="text-muted mx-1">|</span>
         <%= ev.event_type %>

@@ -12,7 +12,7 @@
   </div>
 </div>
 
-<form method="post" action="/events/<%= event.id %>/gestion/contrat/<%= subId %>/save" data-unsaved-guard class="no-print mb-4 contract-form" data-contract-date-form>
+<form method="post" action="/events/<%= event.id %>/gestion/contrat/<%= subId %>/save" id="contract-main-form-<%= subId %>" data-unsaved-guard class="no-print mb-3 contract-form" data-contract-date-form>
   <input type="hidden" name="return_gestion" value="contrat">
   <input type="hidden" name="return_sous_traitant" value="<%= subId %>">
 
@@ -100,17 +100,21 @@
   </section>
 
   <% if (contract.updated_at) { %>
-    <p class="text-muted small">Dernière modification : <%= formatTimestampFr(contract.updated_at) %></p>
+    <p class="text-muted small mb-3">Dernière modification : <%= formatTimestampFr(contract.updated_at) %></p>
   <% } %>
-  <button type="submit" class="btn btn-primary btn-lg">Enregistrer le contrat</button>
 </form>
 
-<% if (typeof contractSavedInDb !== 'undefined' && contractSavedInDb) { %>
-  <form method="post" action="/events/<%= event.id %>/gestion/contrat/<%= subId %>/clear" class="no-print mb-4"
-        onsubmit="return confirm('Effacer ce contrat ? Toutes les données et signatures seront supprimées.');">
-    <button type="submit" class="btn btn-outline-danger">Effacer le contrat</button>
-  </form>
-<% } %>
+<div class="d-flex flex-wrap gap-2 align-items-center no-print mb-4">
+  <button type="submit" form="contract-main-form-<%= subId %>" class="btn btn-primary btn-lg">
+    Enregistrer le contrat
+  </button>
+  <% if (typeof contractSavedInDb !== 'undefined' && contractSavedInDb) { %>
+    <form method="post" action="/events/<%= event.id %>/gestion/contrat/<%= subId %>/clear" class="mb-0"
+          onsubmit="return confirm('Supprimer ce contrat ? Toutes les données et signatures seront effacées.');">
+      <button type="submit" class="btn btn-outline-danger btn-lg">Supprimer le contrat</button>
+    </form>
+  <% } %>
+</div>
 
 <div class="service-contract-print card border-0 shadow-sm no-print-preview">
   <div class="card-body p-4 p-md-5">
