@@ -1,6 +1,6 @@
 <% const logs = typeof questionnaireSentLogs !== 'undefined' ? questionnaireSentLogs : []; %>
 <% const compact = typeof compactPanel !== 'undefined' && compactPanel; %>
-<% const showAddForm = typeof showAddForm === 'undefined' ? true : showAddForm; %>
+<% const showAddFormEnabled = typeof locals.showAddForm !== 'undefined' ? locals.showAddForm : true; %>
 <% const returnPath = typeof returnTo !== 'undefined' ? returnTo : '/'; %>
 <% const defaultSentDt = typeof defaultSentDatetime !== 'undefined' ? defaultSentDatetime : ''; %>
 <% const eventDateValue = typeof eventDate !== 'undefined' ? eventDate : ''; %>
@@ -27,7 +27,7 @@
     <p class="text-muted<%= compact ? ' small' : '' %> mb-2">Aucun envoi enregistré.</p>
   <% } %>
 
-  <% if (showAddForm) { %>
+  <% if (showAddFormEnabled) { %>
     <form method="post"
           action="/events/<%= eventId %>/questionnaire-sent/add"
           class="questionnaire-sent-add-form d-flex flex-wrap align-items-center gap-2<%= compact ? ' small' : '' %>"
