@@ -164,13 +164,28 @@ function initDatabase() {
 
     CREATE INDEX IF NOT EXISTS idx_event_email_rdv_sent_logs_event
       ON event_email_rdv_sent_logs(event_id, sent_date, sent_time);
+
+    CREATE TABLE IF NOT EXISTS event_client_contact_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_id INTEGER NOT NULL,
+      contact_date TEXT NOT NULL,
+      contact_time TEXT,
+      note TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_event_client_contact_logs_event
+      ON event_client_contact_logs(event_id, contact_date, contact_time);
   `);
 
   migrate(db);
   const { migrateLegacyQuestionnaireSentLogs } = require("./lib/questionnaire-sent-log");
   const { migrateLegacyEmailRdvSentLogs } = require("./lib/email-rdv-sent-log");
+  const { migrateLegacyClientContactLogs } = require("./lib/client-contact-log");
   migrateLegacyQuestionnaireSentLogs(db);
   migrateLegacyEmailRdvSentLogs(db);
+  migrateLegacyClientContactLogs(db);
   return db;
 }
 

@@ -52,6 +52,17 @@
     <button type="submit" class="btn btn-primary btn-lg">Enregistrer</button>
   </form>
 
+  <div class="border rounded p-3 bg-light mt-4">
+    <%- include('client-contact-panel', {
+      eventId: event.id,
+      clientContactLogs: typeof clientContactLogs !== 'undefined' ? clientContactLogs : [],
+      returnTo: '/events/' + event.id + '?tab=gestion&gestion=depart',
+      defaultContactDatetime: typeof clientContactDefaultDatetime !== 'undefined'
+        ? clientContactDefaultDatetime
+        : defaultQuestionnaireSentDatetime()
+    }) %>
+  </div>
+
   <%- include('gestion-ententes-panel', {
     event,
     eventAgreementStatuses: typeof eventAgreementStatuses !== 'undefined' ? eventAgreementStatuses : []

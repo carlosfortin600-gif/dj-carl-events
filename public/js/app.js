@@ -660,12 +660,32 @@ initQuestionnaireMissingHighlight();
 
   bindToggle("tech_trailer_yes", "tech_trailer_no", "tech_trailer_fields");
   bindToggle("tech_room_yes", "tech_room_no", "tech_room_fields");
-  bindToggle("tech_client_called_yes", "tech_client_called_no", "tech_client_call_fields");
   bindToggle("wedding_has_color_yes", "wedding_has_color_no", "wedding_color_fields");
 })();
 
+(function initClientContactPanels() {
+  document.querySelectorAll("[data-client-contact-add-toggle]").forEach((btn) => {
+    const formId = btn.getAttribute("aria-controls");
+    const form = formId
+      ? document.getElementById(formId)
+      : btn.closest(".client-contact-panel")?.querySelector("[data-client-contact-add-form]");
+    if (!form) return;
+
+    btn.addEventListener("click", () => {
+      const opening = form.hidden;
+      form.hidden = !opening;
+      btn.setAttribute("aria-expanded", opening ? "true" : "false");
+      if (opening) {
+        form.querySelector(".datetime-fr-display, .datetime-fr-time")?.focus();
+      }
+    });
+  });
+})();
+
 (function initSentLogPanels() {
-  document.querySelectorAll("[data-questionnaire-sent-add-form], [data-email-rdv-sent-add-form]").forEach((form) => {
+  document.querySelectorAll(
+    "[data-questionnaire-sent-add-form], [data-email-rdv-sent-add-form], [data-client-contact-add-form]"
+  ).forEach((form) => {
     form.addEventListener("click", (event) => event.stopPropagation());
   });
 })();

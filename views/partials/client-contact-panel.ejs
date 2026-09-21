@@ -1,0 +1,66 @@
+<% const logs = typeof clientContactLogs !== 'undefined' ? clientContactLogs : []; %>
+<% const returnPath = typeof returnTo !== 'undefined' ? returnTo : '/'; %>
+<% const defaultContactDt = typeof defaultContactDatetime !== 'undefined'
+  ? defaultContactDatetime
+  : defaultQuestionnaireSentDatetime(); %>
+
+<div class="client-contact-panel">
+  <div class="client-contact-panel-header d-flex flex-wrap align-items-center gap-2 mb-2">
+    <span class="fw-semibold">Client contacté</span>
+    <button type="button"
+            class="btn btn-sm btn-outline-primary client-contact-add-toggle rounded-circle"
+            data-client-contact-add-toggle
+            aria-expanded="false"
+            aria-controls="client_contact_add_form_<%= eventId %>"
+            title="Ajouter une communication">+</button>
+  </div>
+
+  <% if (logs.length) { %>
+    <ul class="client-contact-log-list list-unstyled mb-2">
+      <% logs.forEach(function(log) { %>
+        <li class="client-contact-log-item d-flex flex-wrap align-items-center gap-2 mb-1">
+          <span><%= formatContactAt(log.contact_date, log.contact_time, log.note) %></span>
+          <form method="post"
+                action="/events/<%= eventId %>/client-contact/<%= log.id %>/delete"
+                class="d-inline mb-0"
+                onsubmit="return confirm('Supprimer cette communication ?');">
+            <input type="hidden" name="returnTo" value="<%= returnPath %>">
+            <button type="submit" class="btn btn-link btn-sm p-0 text-danger">Supprimer</button>
+          </form>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p class="text-muted small mb-2">Aucune communication enregistrée.</p>
+  <% } %>
+
+  <form method="post"
+        action="/events/<%= eventId %>/client-contact/add"
+        id="client_contact_add_form_<%= eventId %>"
+        class="client-contact-add-form border rounded p-2 bg-white"
+        data-client-contact-add-form
+        hidden>
+    <input type="hidden" name="returnTo" value="<%= returnPath %>">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-5">
+        <label class="form-label small mb-1" for="client_contact_datetime_<%= eventId %>">Date et heure</label>
+        <%- include('datetime-fr-field', {
+          id: 'client_contact_datetime_' + eventId,
+          name: 'contact_datetime',
+          value: defaultContactDt,
+          displayValue: defaultContactDt
+            ? formatDateTimeFr(defaultContactDt.slice(0, 10), defaultContactDt.slice(11, 16))
+            : ''
+        }) %>
+      </div>
+      <div class="col-md-5">
+        <label class="form-label small mb-1" for="client_contact_note_<%= eventId %>">Type / notes</label>
+        <input type="text" class="form-control form-control-sm" id="client_contact_note_<%= eventId %>"
+               name="note" placeholder="Ex. : appel, texto, courriel…">
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-sm btn-primary w-100">Ajouter</button>
+      </div>
+    </div>
+  </form>
+</div>

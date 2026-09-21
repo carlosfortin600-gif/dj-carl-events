@@ -125,6 +125,13 @@ const {
   defaultSentDatetime: defaultEmailRdvSentDatetime
 } = require("./lib/email-rdv-sent-log");
 const {
+  getClientContactLogs,
+  addClientContactLog,
+  deleteClientContactLog,
+  defaultContactDatetime,
+  formatContactAt
+} = require("./lib/client-contact-log");
+const {
   SUBCONTRACTORS,
   DEFAULT_SUBCONTRACTOR_ID,
   getSubcontractorContract,
@@ -349,6 +356,7 @@ app.locals.formatDurationHours = formatDurationHours;
 app.locals.activityLabel = activityLabel;
 app.locals.formatLoggedAt = formatLoggedAt;
 app.locals.defaultQuestionnaireSentDatetime = defaultSentDatetime;
+app.locals.formatContactAt = formatContactAt;
 
 app.get("/api/health", (req, res) => {
   const tables = db
@@ -758,6 +766,7 @@ app.get("/events/:id", (req, res) => {
   const djNotes = getDjNotes(db, event.id);
   const questionnaireSentLogs = getQuestionnaireSentLogs(db, event.id);
   const emailRdvSentLogs = getEmailRdvSentLogs(db, event.id);
+  const clientContactLogs = getClientContactLogs(db, event.id);
   const eventAgreementStatuses = getEventAgreementStatuses(db, event.id);
   const summarySheet = buildSummarySheet({
     event,
@@ -767,7 +776,8 @@ app.get("/events/:id", (req, res) => {
     timelineItems,
     djNotes,
     questionnaireSentLogs,
-    emailRdvSentLogs
+    emailRdvSentLogs,
+    clientContactLogs
   });
   const missingQuestions = getQuestionnaireMissing(event.event_type, questionnaire.data);
   const eventFiles = getEventFiles(db, event.id);
@@ -828,6 +838,8 @@ app.get("/events/:id", (req, res) => {
     questionnaireSentDefaultDatetime: defaultSentDatetime(),
     emailRdvSentLogs,
     emailRdvSentDefaultDatetime: defaultEmailRdvSentDatetime(),
+    clientContactLogs,
+    clientContactDefaultDatetime: defaultContactDatetime(),
     eventAgreementStatuses,
     summarySheet,
     missingQuestions,
@@ -1522,6 +1534,26 @@ app.post("/events/:id/email-rdv-sent/:logId/delete", (req, res) => {
   const logId = Number(req.params.logId);
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
   deleteEmailRdvSentLog(db, eventId, logId);
+  const returnTo = req.body.returnTo?.trim() || "/";
+  res.redirect(returnTo);
+});
+
+app.post("/events/:id/client-contact/add", (req, res) => {
+  const eventId = Number(req.params.id);
+  if (!getEventById(db, eventId)) return res.status(404).send("Not found");
+  const result = addClientContactLog(db, eventId, req.body);
+  const returnTo = req.body.returnTo?.trim() || "/";
+  if (!result.ok) {
+    return res.redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}clientContactError=1`);
+  }
+  res.redirect(returnTo);
+});
+
+app.post("/events/:id/client-contact/:logId/delete", (req, res) => {
+  const eventId = Number(req.params.id);
+  const logId = Number(req.params.logId);
+  if (!getEventById(db, eventId)) return res.status(404).send("Not found");
+  deleteClientContactLog(db, eventId, logId);
   const returnTo = req.body.returnTo?.trim() || "/";
   res.redirect(returnTo);
 });

@@ -1358,6 +1358,22 @@ table tr.q-field-missing td:first-child {
   margin-bottom: 0.35rem;
 }
 
+.client-contact-panel-header .client-contact-add-toggle {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.client-contact-add-form .datetime-fr-picker {
+  min-width: 12rem;
+}
+
+.client-contact-add-form[hidden] {
+  display: none !important;
+}
+
 .event-row-questionnaire-sent {
   max-width: 100%;
 }
