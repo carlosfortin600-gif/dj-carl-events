@@ -52,6 +52,19 @@
     <button type="submit" class="btn btn-primary btn-lg">Enregistrer</button>
   </form>
 
+  <div class="border rounded p-3 bg-light mt-4">
+    <h3 class="h6 mb-3">Questionnaire</h3>
+    <%- include('questionnaire-sent-panel', {
+      eventId: event.id,
+      eventDate: event.event_date,
+      questionnaireSentLogs: typeof questionnaireSentLogs !== 'undefined' ? questionnaireSentLogs : [],
+      returnTo: '/events/' + event.id + '?tab=gestion&gestion=depart',
+      defaultSentDatetime: typeof questionnaireSentDefaultDatetime !== 'undefined'
+        ? questionnaireSentDefaultDatetime
+        : defaultQuestionnaireSentDatetime()
+    }) %>
+  </div>
+
 <% } else if (gestionSection === 'contrat') { %>
   <%- include('gestion-contrat', {
     event,

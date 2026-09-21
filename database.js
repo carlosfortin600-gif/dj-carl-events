@@ -140,9 +140,23 @@ function initDatabase() {
     );
 
     CREATE INDEX IF NOT EXISTS idx_event_time_logs_event ON event_time_logs(event_id, logged_date, logged_time);
+
+    CREATE TABLE IF NOT EXISTS event_questionnaire_sent_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_id INTEGER NOT NULL,
+      sent_date TEXT NOT NULL,
+      sent_time TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+      FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_event_questionnaire_sent_logs_event
+      ON event_questionnaire_sent_logs(event_id, sent_date, sent_time);
   `);
 
   migrate(db);
+  const { migrateLegacyQuestionnaireSentLogs } = require("./lib/questionnaire-sent-log");
+  migrateLegacyQuestionnaireSentLogs(db);
   return db;
 }
 

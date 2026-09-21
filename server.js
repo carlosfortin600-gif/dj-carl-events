@@ -113,6 +113,12 @@ const {
 const { hasPortalIntroAck, ackPortalIntro, ackPortalIntroDb } = require("./lib/portal-intro");
 const { getDjNotes, saveDjNotes } = require("./lib/dj-notes");
 const {
+  getQuestionnaireSentLogs,
+  addQuestionnaireSentLog,
+  deleteQuestionnaireSentLog,
+  defaultSentDatetime
+} = require("./lib/questionnaire-sent-log");
+const {
   SUBCONTRACTORS,
   DEFAULT_SUBCONTRACTOR_ID,
   getSubcontractorContract,
@@ -336,6 +342,7 @@ app.locals.TIME_SPENT_DURATIONS = TIME_SPENT_DURATIONS;
 app.locals.formatDurationHours = formatDurationHours;
 app.locals.activityLabel = activityLabel;
 app.locals.formatLoggedAt = formatLoggedAt;
+app.locals.defaultQuestionnaireSentDatetime = defaultSentDatetime;
 
 app.get("/api/health", (req, res) => {
   const tables = db
@@ -743,6 +750,7 @@ app.get("/events/:id", (req, res) => {
   );
   const music = getMusicDataForEvent(db, event.id, event.event_type);
   const djNotes = getDjNotes(db, event.id);
+  const questionnaireSentLogs = getQuestionnaireSentLogs(db, event.id);
   const eventAgreementStatuses = getEventAgreementStatuses(db, event.id);
   const summarySheet = buildSummarySheet({
     event,
@@ -807,6 +815,8 @@ app.get("/events/:id", (req, res) => {
     proposedTimelineSteps,
     music,
     djNotes,
+    questionnaireSentLogs,
+    questionnaireSentDefaultDatetime: defaultSentDatetime(),
     eventAgreementStatuses,
     summarySheet,
     missingQuestions,
@@ -1465,12 +1475,24 @@ app.post("/events/:id/notes/save", (req, res) => {
   res.redirect(eventRedirect(eventId, returnTab, params));
 });
 
-app.post("/events/:id/questionnaire-sent", (req, res) => {
+app.post("/events/:id/questionnaire-sent/add", (req, res) => {
   const eventId = Number(req.params.id);
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
-  saveDjNotes(db, eventId, { ...req.body, save_scope: "questionnaire_sent" });
-  const returnTo = req.body.returnTo?.trim();
-  res.redirect(returnTo || "/");
+  const result = addQuestionnaireSentLog(db, eventId, req.body);
+  const returnTo = req.body.returnTo?.trim() || "/";
+  if (!result.ok) {
+    return res.redirect(`${returnTo}${returnTo.includes("?") ? "&" : "?"}questionnaireSentError=1`);
+  }
+  res.redirect(returnTo);
+});
+
+app.post("/events/:id/questionnaire-sent/:logId/delete", (req, res) => {
+  const eventId = Number(req.params.id);
+  const logId = Number(req.params.logId);
+  if (!getEventById(db, eventId)) return res.status(404).send("Not found");
+  deleteQuestionnaireSentLog(db, eventId, logId);
+  const returnTo = req.body.returnTo?.trim() || "/";
+  res.redirect(returnTo);
 });
 
 app.post("/events/:id/gestion/contrat/:subcontractor/save", (req, res) => {

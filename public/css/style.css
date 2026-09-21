@@ -919,6 +919,16 @@ table tr.q-field-missing td:first-child {
   color: #0a58ca;
 }
 
+.upcoming-event-row {
+  border-left: none;
+  border-right: none;
+}
+
+.upcoming-event-line {
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
 .upcoming-week-block {
   border: 1px solid #dee2e6;
   border-radius: 0.75rem;
@@ -1317,6 +1327,26 @@ table tr.q-field-missing td:first-child {
   min-width: 2rem;
   transition: transform 0.2s ease;
   pointer-events: none;
+}
+
+.questionnaire-sent-panel {
+  margin-top: 0.65rem;
+}
+
+.questionnaire-sent-panel--compact {
+  margin-top: 0.5rem;
+}
+
+.questionnaire-sent-panel-label {
+  margin-bottom: 0.35rem;
+}
+
+.questionnaire-sent-log-list {
+  padding-left: 0;
+}
+
+.questionnaire-sent-add-form .datetime-fr-picker {
+  min-width: 12rem;
 }
 
 .event-row-questionnaire-sent {
