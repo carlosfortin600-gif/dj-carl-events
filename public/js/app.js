@@ -218,6 +218,17 @@ function isSamePage(url) {
   return navigationTarget(url) === navigationTarget(window.location.href);
 }
 
+const SAVE_SUCCESS_URL =
+  /(?:^|[?&])(?:\w*[Ss]aved|filesUploaded|fileDeleted|contractCleared|portalRegenerated|portalToggled|clientUnconfirmed|statusUpdated|created|addCalendar)=1(?:&|$|#)/;
+const SAVE_ERROR_URL = /(?:^|[?&])(?:\w*Error|resumeError)=/i;
+
+function isSuccessfulSaveResponse(response) {
+  if (!response?.ok) return false;
+  const url = response.url || "";
+  if (SAVE_ERROR_URL.test(url)) return false;
+  return SAVE_SUCCESS_URL.test(url);
+}
+
 async function saveFormViaFetch(form) {
   const body = new URLSearchParams();
   form.querySelectorAll("input, select, textarea").forEach((el) => {
@@ -241,15 +252,10 @@ async function saveFormViaFetch(form) {
     },
     body,
     credentials: "same-origin",
-    redirect: "manual"
+    redirect: "follow"
   });
 
-  if (response.status >= 300 && response.status < 400) {
-    const location = response.headers.get("Location") || "";
-    return /Saved=1/.test(location);
-  }
-
-  return response.ok;
+  return isSuccessfulSaveResponse(response);
 }
 
 function ensureUnsavedModal() {
@@ -318,7 +324,12 @@ async function handleNavigationAttempt(url) {
 
   if (choice === "save") {
     for (const form of dirtyForms) {
-      const saved = await saveFormViaFetch(form);
+      let saved = false;
+      try {
+        saved = await saveFormViaFetch(form);
+      } catch (err) {
+        console.error(err);
+      }
       if (!saved) {
         alert("Impossible d'enregistrer. Vérifiez les champs obligatoires.");
         return;
