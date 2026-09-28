@@ -160,7 +160,9 @@ function isFormDirty(form) {
 }
 
 function getDirtyGuardedForms() {
-  return [...document.querySelectorAll("form[data-unsaved-guard]")].filter(isFormDirty);
+  return [...document.querySelectorAll("form[data-unsaved-guard]")]
+    .filter(isFormDirty)
+    .filter(isFormVisible);
 }
 
 function markFormClean(form) {
@@ -220,42 +222,65 @@ function isSamePage(url) {
 
 const SAVE_SUCCESS_URL =
   /(?:^|[?&])(?:\w*[Ss]aved|filesUploaded|fileDeleted|contractCleared|portalRegenerated|portalToggled|clientUnconfirmed|statusUpdated|created|addCalendar)=1(?:&|$|#)/;
-const SAVE_ERROR_URL = /(?:^|[?&])(?:\w*Error|resumeError)=/i;
+const SAVE_ERROR_URL = /(?:^|[?&])(?:\w*Error|resumeError|saveError)=/i;
 
-function isSuccessfulSaveResponse(response) {
-  if (!response?.ok) return false;
-  const url = response.url || "";
+function isSuccessfulSaveUrl(url) {
+  if (!url || url === "about:blank") return false;
   if (SAVE_ERROR_URL.test(url)) return false;
   return SAVE_SUCCESS_URL.test(url);
 }
 
-async function saveFormViaFetch(form) {
-  const body = new URLSearchParams();
-  form.querySelectorAll("input, select, textarea").forEach((el) => {
-    if (!el.name || el.disabled) return;
-    if (el.type === "checkbox") {
-      if (el.checked) body.append(el.name, el.value);
-    } else if (el.type === "radio") {
-      if (el.checked) body.append(el.name, el.value);
-    } else if (el.type === "file") {
-      return;
-    } else {
-      body.append(el.name, el.value);
-    }
-  });
+function isFormVisible(form) {
+  if (typeof form.checkVisibility === "function") {
+    return form.checkVisibility();
+  }
+  return Boolean(form.offsetParent);
+}
 
-  const response = await fetch(form.action, {
-    method: (form.method || "POST").toUpperCase(),
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-      Accept: "text/html,application/json"
-    },
-    body,
-    credentials: "same-origin",
-    redirect: "follow"
-  });
+function shouldSkipSaveForm(form) {
+  const action = form.getAttribute("action") || "";
+  if (action.includes("/timeline/add")) {
+    const title = form.querySelector('[name="title"]');
+    if (title && !String(title.value || "").trim()) return true;
+  }
+  return false;
+}
 
-  return isSuccessfulSaveResponse(response);
+function saveFormViaNativeSubmit(form) {
+  return new Promise((resolve) => {
+    const iframeName = `unsaved-save-${Date.now()}`;
+    const iframe = document.createElement("iframe");
+    iframe.name = iframeName;
+    iframe.hidden = true;
+    iframe.setAttribute("aria-hidden", "true");
+    document.body.appendChild(iframe);
+
+    const previousTarget = form.getAttribute("target");
+    let settled = false;
+
+    const finish = (ok) => {
+      if (settled) return;
+      settled = true;
+      iframe.removeEventListener("load", onLoad);
+      if (previousTarget === null) form.removeAttribute("target");
+      else form.setAttribute("target", previousTarget);
+      iframe.remove();
+      resolve(ok);
+    };
+
+    const onLoad = () => {
+      try {
+        finish(isSuccessfulSaveUrl(iframe.contentWindow.location.href));
+      } catch {
+        finish(false);
+      }
+    };
+
+    iframe.addEventListener("load", onLoad);
+    form.setAttribute("target", iframeName);
+    form.requestSubmit();
+    window.setTimeout(() => finish(false), 30000);
+  });
 }
 
 function ensureUnsavedModal() {
@@ -324,9 +349,13 @@ async function handleNavigationAttempt(url) {
 
   if (choice === "save") {
     for (const form of dirtyForms) {
+      if (shouldSkipSaveForm(form)) {
+        markFormClean(form);
+        continue;
+      }
       let saved = false;
       try {
-        saved = await saveFormViaFetch(form);
+        saved = await saveFormViaNativeSubmit(form);
       } catch (err) {
         console.error(err);
       }

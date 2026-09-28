@@ -987,7 +987,7 @@ app.post("/events/:id/resume/save", (req, res) => {
     res.redirect(`/events/${eventId}?tab=resume&resumeSaved=1`);
   } catch (err) {
     console.error(err);
-    res.redirect(`/events/${eventId}?tab=resume`);
+    res.redirect(`/events/${eventId}?tab=resume&saveError=1`);
   }
 });
 
@@ -1011,7 +1011,7 @@ app.post("/events/:id/questionnaire", (req, res) => {
     res.redirect(`/events/${eventId}?tab=questionnaire&questionnaireSaved=1`);
   } catch (err) {
     console.error(err);
-    res.redirect(`/events/${eventId}?tab=questionnaire`);
+    res.redirect(`/events/${eventId}?tab=questionnaire&saveError=1`);
   }
 });
 
@@ -1382,7 +1382,9 @@ app.post("/notifications/:id/read", (req, res) => {
 app.post("/events/:id/timeline/add", (req, res) => {
   const eventId = Number(req.params.id);
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
-  if (!req.body.title?.trim()) return res.redirect(eventRedirect(eventId, "timeline"));
+  if (!req.body.title?.trim()) {
+    return res.redirect(eventRedirect(eventId, "timeline", { saveError: "1" }));
+  }
   addTimelineItem(db, eventId, req.body);
   res.redirect(eventRedirect(eventId, "timeline", { timelineSaved: "1" }));
 });
