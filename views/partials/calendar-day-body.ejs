@@ -18,6 +18,9 @@
             </div>
             <%- include('calendar-agreement-summary', { ev, showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false }) %>
             <div class="d-flex gap-2 mt-2 flex-wrap">
+              <% if (typeof canOpenEvent !== 'undefined' && canOpenEvent) { %>
+                <a href="/events/<%= ev.id %>" class="btn btn-outline-primary btn-sm">Ouvrir l'événement</a>
+              <% } %>
               <%- include('calendar-contract-btn', {
                 ev,
                 subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',

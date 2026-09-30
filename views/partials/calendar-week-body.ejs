@@ -16,7 +16,13 @@
         <% } else { %>
           <% day.events.forEach(function(ev) { %>
             <div class="calendar-week-event calendar-event-card status-border-<%= ev.status %>">
-              <div class="calendar-week-event-title"><%= calendarEventPrimary(ev) %></div>
+              <div class="calendar-week-event-title">
+                <% if (typeof canOpenEvent !== 'undefined' && canOpenEvent) { %>
+                  <a href="/events/<%= ev.id %>" class="text-decoration-none text-body calendar-week-event-open"><%= calendarEventPrimary(ev) %></a>
+                <% } else { %>
+                  <%= calendarEventPrimary(ev) %>
+                <% } %>
+              </div>
               <div class="calendar-week-event-meta small text-muted">
                 <%= eventCity(ev) || '—' %>
                 <% if (ev.calendarTime || ev.start_time) { %> · <%= formatTime(ev.calendarTime || ev.start_time) %><% } %>

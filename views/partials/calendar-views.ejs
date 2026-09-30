@@ -17,6 +17,10 @@
   const dayGestionDetails = cal.dayGestionDetails;
   const agreementsList = cal.agreementsList;
   const agreementsByWeek = cal.agreementsByWeek;
+  const calendarCanOpenEvent =
+    typeof canOpenEvent !== 'undefined'
+      ? canOpenEvent
+      : !(typeof publicCalendarMode !== 'undefined' && publicCalendarMode);
 %>
 <% function calUrl(params) {
   const merged = { view: view, date: anchorDate, year: year, month: month };
@@ -60,7 +64,7 @@
         publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false
       }) %>
     <% } else if (view === 'month') { %>
-      <%- include('calendar-month-body', { calendarBasePath, view, anchorDate, year, month, byDate, daysInMonth, firstWeekday, selectedDate }) %>
+      <%- include('calendar-month-body', { calendarBasePath, view, anchorDate, year, month, byDate, daysInMonth, firstWeekday, selectedDate, canOpenEvent: calendarCanOpenEvent }) %>
     <% } else if (view === 'week') { %>
       <%- include('calendar-week-body', {
         calendarBasePath, view, anchorDate, year, month, weekDays,
@@ -68,7 +72,8 @@
         subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
         showDayGestionDetails: typeof showDayGestionDetails !== 'undefined' ? showDayGestionDetails : false,
         publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false,
-        showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false
+        showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false,
+        canOpenEvent: calendarCanOpenEvent
       }) %>
     <% } else { %>
       <%- include('calendar-day-body', {
@@ -78,7 +83,8 @@
         showDayGestionDetails: typeof showDayGestionDetails !== 'undefined' ? showDayGestionDetails : false,
         publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false,
         showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false,
-        dayGestionDetails: dayGestionDetails
+        dayGestionDetails: dayGestionDetails,
+        canOpenEvent: calendarCanOpenEvent
       }) %>
     <% } %>
 

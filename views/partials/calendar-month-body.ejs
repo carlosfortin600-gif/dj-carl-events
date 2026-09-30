@@ -27,13 +27,23 @@
       <% if (dayEvents.length) { %>
         <div class="calendar-month-events">
           <% dayEvents.forEach(function(ev) { %>
-            <div class="calendar-month-event status-border-<%= ev.status %>">
-              <div class="calendar-month-event-name"><%= calendarEventPrimary(ev) %></div>
-              <div class="calendar-month-event-city"><%= eventCity(ev) || '—' %></div>
-              <% if (ev.thematicSummary) { %>
-                <div class="calendar-month-event-thematic"><%= ev.thematicSummary %></div>
-              <% } %>
-            </div>
+            <% if (typeof canOpenEvent !== 'undefined' && canOpenEvent) { %>
+              <a href="/events/<%= ev.id %>" class="calendar-month-event calendar-month-event-link status-border-<%= ev.status %>">
+                <div class="calendar-month-event-name"><%= calendarEventPrimary(ev) %></div>
+                <div class="calendar-month-event-city"><%= eventCity(ev) || '—' %></div>
+                <% if (ev.thematicSummary) { %>
+                  <div class="calendar-month-event-thematic"><%= ev.thematicSummary %></div>
+                <% } %>
+              </a>
+            <% } else { %>
+              <div class="calendar-month-event status-border-<%= ev.status %>">
+                <div class="calendar-month-event-name"><%= calendarEventPrimary(ev) %></div>
+                <div class="calendar-month-event-city"><%= eventCity(ev) || '—' %></div>
+                <% if (ev.thematicSummary) { %>
+                  <div class="calendar-month-event-thematic"><%= ev.thematicSummary %></div>
+                <% } %>
+              </div>
+            <% } %>
           <% }); %>
         </div>
       <% } %>

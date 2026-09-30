@@ -600,6 +600,23 @@ table tr.q-field-missing td:first-child {
   min-width: 0;
 }
 
+a.calendar-month-event-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+a.calendar-month-event-link:hover {
+  background-color: rgba(13, 202, 240, 0.14);
+  color: inherit;
+}
+
+.calendar-week-event-open:hover {
+  text-decoration: underline !important;
+}
+
 .calendar-month-event-name {
   font-weight: 600;
   overflow: hidden;
