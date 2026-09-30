@@ -9,9 +9,10 @@
       <div class="calendar-event-card calendar-day-event status-border-<%= ev.status %>">
         <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
           <div>
-            <strong><%= calendarEventTitle(ev) %></strong>
+            <strong><%= calendarEventPrimary(ev) %></strong>
             <div class="text-muted small">
-              <%= eventTypeLabel(ev.event_type) %>
+              <%= eventCity(ev) || '—' %>
+              · <%= eventTypeLabel(ev.event_type) %>
               <% if (ev.calendarTime || ev.start_time) { %> · <%= formatTime(ev.calendarTime || ev.start_time) %><% } %>
               <% if (ev.venue) { %> · <%= ev.venue %><% } %>
             </div>

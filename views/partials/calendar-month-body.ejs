@@ -27,12 +27,9 @@
       <% if (dayEvents.length) { %>
         <div class="calendar-month-events">
           <% dayEvents.forEach(function(ev) { %>
-            <% const city = eventCity(ev); %>
             <div class="calendar-month-event status-border-<%= ev.status %>">
               <div class="calendar-month-event-name"><%= calendarEventPrimary(ev) %></div>
-              <% if (city) { %>
-                <div class="calendar-month-event-city"><%= city %></div>
-              <% } %>
+              <div class="calendar-month-event-city"><%= eventCity(ev) || '—' %></div>
               <% if (ev.thematicSummary) { %>
                 <div class="calendar-month-event-thematic"><%= ev.thematicSummary %></div>
               <% } %>
