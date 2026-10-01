@@ -1221,9 +1221,78 @@ a.calendar-month-event-link:hover {
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
+.resume-event-row-gestion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
 .resume-event-row-location {
   flex: 1 1 10rem;
   min-width: 10rem;
+}
+
+.resume-event-row-employee {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.resume-employee-need-value {
+  font-size: 1.05em;
+}
+
+.resume-event-row-entente-block {
+  border-top: 2px solid rgba(13, 110, 253, 0.2);
+  padding-top: 0.65rem;
+  margin-top: 0.5rem !important;
+}
+
+.resume-event-row-entente-heading {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #0d6efd;
+  margin-bottom: 0.45rem;
+}
+
+.resume-event-row-entente-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.35;
+  padding: 0.4rem 0.55rem;
+  border-radius: 0.4rem;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.resume-event-row-entente-line + .resume-event-row-entente-line {
+  margin-top: 0.35rem;
+}
+
+.resume-event-row-entente-line--signed {
+  background: rgba(25, 135, 84, 0.1);
+}
+
+.resume-event-row-entente-line--signed .resume-event-row-entente-name,
+.resume-event-row-entente-line--signed .resume-event-row-entente-signed {
+  color: #198754;
+}
+
+.resume-event-row-entente-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.resume-event-row-entente-signed {
+  font-size: 0.95rem;
+}
+
+.resume-event-row-entente-line--empty {
+  justify-content: flex-start;
+  font-size: 0.92rem;
 }
 
 .resume-event-row-location-item + .resume-event-row-location-item {
