@@ -1199,6 +1199,23 @@ a.calendar-month-event-link:hover {
   letter-spacing: -0.02em;
 }
 
+.gestion-entente-dt {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+}
+
+.gestion-entente-dd {
+  font-size: 1rem;
+}
+
+.gestion-entente-status-list li + li {
+  margin-top: 0.2rem;
+}
+
 .resume-event-row-field {
   display: flex;
   flex-direction: column;

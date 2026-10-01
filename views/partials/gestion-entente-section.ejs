@@ -1,0 +1,83 @@
+<% 
+  const thematic = typeof gestionThematicSummary !== 'undefined' ? gestionThematicSummary : null;
+  const employeeYes = djNotes.tech_employee_needed === 'yes';
+  const agreements = typeof eventAgreementStatuses !== 'undefined' ? eventAgreementStatuses : [];
+%>
+
+<section class="form-section gestion-entente-section mb-4">
+  <h2 class="form-section-title mb-3">Entente — vue d'ensemble</h2>
+  <dl class="row g-3 gestion-entente-overview mb-0">
+    <div class="col-md-6">
+      <dt class="gestion-entente-dt">Date</dt>
+      <dd class="gestion-entente-dd mb-0">
+        <strong><%= formatDateFr(event.event_date) %></strong>
+        <% if (event.start_time || event.end_time) { %>
+          <span class="text-muted d-block small mt-1">
+            <% if (event.start_time) { %><%= formatTime(event.start_time) %><% } %>
+            <% if (event.start_time && event.end_time) { %> → <% } %>
+            <% if (event.end_time) { %>
+              <% if (event.end_date && event.end_date !== event.event_date) { %>
+                <%= formatDateTimeFr(event.end_date, event.end_time) %>
+              <% } else { %>
+                <%= formatTime(event.end_time) %>
+              <% } %>
+            <% } %>
+          </span>
+        <% } %>
+      </dd>
+    </div>
+    <div class="col-md-6">
+      <dt class="gestion-entente-dt">Type de soirée</dt>
+      <dd class="gestion-entente-dd mb-0">
+        <strong><%= event.event_type %></strong>
+        <% if (event.event_type !== 'Mariage') { %>
+          <span class="text-muted d-block small mt-1"><%= thematic || '—' %></span>
+        <% } %>
+      </dd>
+    </div>
+    <div class="col-md-6">
+      <dt class="gestion-entente-dt">Besoin employé</dt>
+      <dd class="gestion-entente-dd mb-0">
+        <strong class="<%= employeeYes ? 'text-primary' : '' %>"><%= employeeYes ? 'Oui' : 'Non' %></strong>
+        <span class="text-muted small d-block mt-1">Modifiable ci-dessous — visible sur la page Résumé.</span>
+      </dd>
+    </div>
+    <div class="col-md-6">
+      <dt class="gestion-entente-dt">Entente(s)</dt>
+      <dd class="gestion-entente-dd mb-0">
+        <% const passed = agreements.filter(function(st) { return st.passed; }); %>
+        <% if (passed.length) { %>
+          <ul class="list-unstyled mb-0 gestion-entente-status-list">
+            <% passed.forEach(function(st) { %>
+              <li class="<%= st.signed ? 'text-success fw-semibold' : '' %>">
+                <%= st.label %> — Signé <strong><%= st.signed ? 'Oui' : 'Non' %></strong>
+              </li>
+            <% }); %>
+          </ul>
+        <% } else { %>
+          <span class="text-muted">Aucune entente enregistrée</span>
+        <% } %>
+      </dd>
+    </div>
+  </dl>
+</section>
+
+<%- include('gestion-employee-needed-panel', {
+  event,
+  djNotes,
+  employeePanelProminent: true,
+  employeePanelGestionSection: 'entente'
+}) %>
+
+<%- include('gestion-ententes-panel', {
+  event,
+  eventAgreementStatuses: agreements,
+  returnGestion: 'entente',
+  alwaysShow: true
+}) %>
+
+<p class="text-muted small mt-3 mb-0">
+  <a href="/events/<%= event.id %>?tab=gestion&gestion=contrat&sousTraitant=<%= DEFAULT_SUBCONTRACTOR_ID %>">Préparer ou modifier un contrat sous-traitant</a>
+  ·
+  <a href="/resume">Voir la page Résumé</a>
+</p>

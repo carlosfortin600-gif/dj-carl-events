@@ -7,13 +7,16 @@
   const yesId = panelId + '_yes';
   const noId = panelId + '_no';
   const activeSub = typeof sousTraitant !== 'undefined' ? sousTraitant : '';
+  const gestionSection = typeof employeePanelGestionSection !== 'undefined'
+    ? employeePanelGestionSection
+    : 'contrat';
 %>
 
 <% if (prominent) { %>
 <form method="post" action="/events/<%= event.id %>/notes/save" class="gestion-employee-needed-banner mb-4" data-unsaved-guard>
   <input type="hidden" name="return_tab" value="gestion">
   <input type="hidden" name="save_scope" value="employee">
-  <input type="hidden" name="gestion_section" value="contrat">
+  <input type="hidden" name="gestion_section" value="<%= gestionSection %>">
   <% if (activeSub) { %>
     <input type="hidden" name="sous_traitant" value="<%= activeSub %>">
   <% } %>

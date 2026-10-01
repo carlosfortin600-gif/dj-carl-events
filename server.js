@@ -115,6 +115,7 @@ const {
 } = require("./lib/questionnaire-portal-lock");
 const { hasPortalIntroAck, ackPortalIntro, ackPortalIntroDb } = require("./lib/portal-intro");
 const { getDjNotes, saveDjNotes } = require("./lib/dj-notes");
+const { getThematicSummariesForEventIds } = require("./lib/party-questionnaire");
 const {
   getQuestionnaireSentLogs,
   addQuestionnaireSentLog,
@@ -814,7 +815,7 @@ function renderEventDetailPage(req, res) {
   const tab = req.query.tab || "resume";
   const gestionSection =
     tab === "gestion"
-      ? ["location", "contrat", "depart", "temps", "fichiers"].includes(req.query.gestion)
+      ? ["location", "entente", "contrat", "depart", "temps", "fichiers"].includes(req.query.gestion)
         ? req.query.gestion
         : "location"
       : null;
@@ -832,6 +833,8 @@ function renderEventDetailPage(req, res) {
   );
   const music = getMusicDataForEvent(db, event.id, event.event_type);
   const djNotes = getDjNotes(db, event.id);
+  const gestionThematicSummary =
+    getThematicSummariesForEventIds(db, [event.id])[event.id] || null;
   const questionnaireSentLogs = getQuestionnaireSentLogs(db, event.id);
   const emailRdvSentLogs = getEmailRdvSentLogs(db, event.id);
   const clientContactLogs = getClientContactLogs(db, event.id);
@@ -936,6 +939,7 @@ function renderEventDetailPage(req, res) {
     fileDeleted: req.query.fileDeleted === "1",
     filesError: req.query.filesError || "",
     gestionSection,
+    gestionThematicSummary,
     sousTraitant,
     subcontractors: getSubcontractors(db),
     subcontractorContract,
@@ -1656,7 +1660,9 @@ app.post("/events/:id/gestion/contrat/:subcontractor/clear", (req, res) => {
   if (!isValidSubcontractor(db, subcontractor)) return res.status(404).send("Not found");
 
   deleteSubcontractorContract(db, eventId, subcontractor);
-  const returnGestion = req.body.return_gestion === "depart" ? "depart" : "contrat";
+  const returnGestion = ["depart", "entente"].includes(req.body.return_gestion)
+    ? req.body.return_gestion
+    : "contrat";
   res.redirect(
     gestionRedirect(eventId, {
       gestion: returnGestion,

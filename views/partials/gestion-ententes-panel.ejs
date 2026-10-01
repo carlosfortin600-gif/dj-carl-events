@@ -1,12 +1,14 @@
-<% if (typeof eventAgreementStatuses !== 'undefined' && eventAgreementStatuses.length) { %>
-  <div class="border rounded p-3 bg-light mt-4">
-    <h3 class="h6 mb-3">Ententes</h3>
+<% const showEntentesPanel = (typeof alwaysShow !== 'undefined' && alwaysShow) || (typeof eventAgreementStatuses !== 'undefined' && eventAgreementStatuses.length); %>
+<% const ententeReturnGestion = typeof returnGestion !== 'undefined' ? returnGestion : 'depart'; %>
+<% if (showEntentesPanel) { %>
+  <div class="border rounded p-3 bg-light mt-4 gestion-ententes-detail">
+    <h3 class="h5 mb-3">Détail des ententes</h3>
     <div class="table-responsive">
       <table class="table table-sm table-bordered mb-0 bg-white">
         <thead class="table-light">
           <tr>
             <th></th>
-            <% eventAgreementStatuses.forEach(function(st) { %>
+            <% (eventAgreementStatuses || []).forEach(function(st) { %>
               <th class="text-center<%= st.signed ? ' text-success' : '' %>"><%= st.label %></th>
             <% }); %>
           </tr>
@@ -14,13 +16,13 @@
         <tbody>
           <tr>
             <td class="text-muted">Entente passée</td>
-            <% eventAgreementStatuses.forEach(function(st) { %>
+            <% (eventAgreementStatuses || []).forEach(function(st) { %>
               <td class="text-center fw-semibold<%= st.signed ? ' text-success' : '' %>"><%= st.passed ? 'Oui' : 'Non' %></td>
             <% }); %>
           </tr>
-          <tr class="<%= eventAgreementStatuses.some(function(st) { return st.signed; }) ? 'contract-signed-row' : '' %>">
+          <tr class="<%= (eventAgreementStatuses || []).some(function(st) { return st.signed; }) ? 'contract-signed-row' : '' %>">
             <td class="text-muted">Signé</td>
-            <% eventAgreementStatuses.forEach(function(st) { %>
+            <% (eventAgreementStatuses || []).forEach(function(st) { %>
               <td class="text-center fw-semibold<%= st.signed ? ' text-success contract-signed-cell' : '' %>"><%= st.signed ? 'Oui' : 'Non' %></td>
             <% }); %>
           </tr>
@@ -28,7 +30,7 @@
       </table>
     </div>
     <div class="d-flex flex-wrap gap-2 mt-3">
-      <% eventAgreementStatuses.forEach(function(st) { %>
+      <% (eventAgreementStatuses || []).forEach(function(st) { %>
         <div class="d-flex flex-wrap gap-1 align-items-center">
           <a href="/events/<%= event.id %>?tab=gestion&gestion=contrat&sousTraitant=<%= st.id %>"
              class="btn btn-sm <%= st.signed ? 'btn-success' : 'btn-outline-primary' %>">Contrat <%= st.label %></a>
@@ -36,7 +38,7 @@
             event,
             subcontractorId: st.id,
             subcontractorLabel: st.label,
-            returnGestion: 'depart',
+            returnGestion: ententeReturnGestion,
             buttonClass: 'btn-sm btn-outline-danger',
             buttonLabel: 'Supprimer le contrat'
           }) %>
