@@ -1769,6 +1769,28 @@ app.post("/events/:id/status", (req, res) => {
   }
 });
 
+app.use((err, req, res, next) => {
+  if (err.type !== "entity.too.large") return next(err);
+
+  const contractSave = req.path.match(
+    /^\/events\/(\d+)\/gestion\/contrat\/([^/]+)\/save$/
+  );
+  if (contractSave) {
+    const eventId = contractSave[1];
+    const subcontractor = contractSave[2];
+    return res.redirect(
+      gestionRedirect(eventId, {
+        gestion: "contrat",
+        sousTraitant: subcontractor,
+        contractError:
+          "Enregistrement trop volumineux (souvent les signatures). Modifiez les dates sans retoucher les signatures, ou effacez puis resignez."
+      })
+    );
+  }
+
+  res.status(413).send("Données trop volumineuses.");
+});
+
 app.use((req, res) => {
   res.status(404).render("error", {
     title: "Page introuvable",
