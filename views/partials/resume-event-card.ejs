@@ -98,39 +98,27 @@
       <div class="resume-event-row-field resume-event-row-client small">
         <span class="resume-event-row-label">Client</span>
         <div class="resume-event-row-location-item">
-          <span class="resume-event-row-location-need-label">Contacté</span>
-          <% if (ev.clientContactLogs && ev.clientContactLogs.length) { %>
-            <strong class="resume-event-row-location-need-value"><%= ev.clientContactLogs.length %> comm.<%= ev.clientContactLogs.length !== 1 ? 's' : '' %></strong>
-            <span class="d-block text-muted small mt-1">
-              <% ev.clientContactLogs.forEach(function(log, i) { %>
-                <%= formatContactAt(log.contact_date, log.contact_time, log.note) %><%= i < ev.clientContactLogs.length - 1 ? ' · ' : '' %>
-              <% }); %>
-            </span>
+          <span class="resume-event-row-location-need-label">Communication</span>
+          <% const latestComm = ev.clientContactLogs && ev.clientContactLogs.length
+            ? formatContactAt(ev.clientContactLogs[0].contact_date, ev.clientContactLogs[0].contact_time, ev.clientContactLogs[0].note)
+            : (ev.clientCalled && ev.clientCallAt ? ev.clientCallAt : null); %>
+          <% if (latestComm) { %>
+            <strong class="resume-event-row-location-need-value d-block mt-1"><%= latestComm %></strong>
           <% } else { %>
-            <strong class="resume-event-row-location-need-value"><%= ev.clientCalled ? 'Oui' : 'Non' %></strong>
-            <% if (ev.clientCalled && ev.clientCallAt) { %>
-              <span class="text-muted mx-1">·</span>
-              <span>Date</span>
-              <strong class="resume-event-row-location-rented-value"><%= ev.clientCallAt %></strong>
-            <% } %>
+            <strong class="resume-event-row-location-need-value">—</strong>
           <% } %>
         </div>
         <div class="resume-event-row-location-item mt-1">
-          <span class="resume-event-row-location-need-label">E-mail RDV</span>
-          <% if (ev.emailRdvSentLogs && ev.emailRdvSentLogs.length) { %>
-            <strong class="resume-event-row-location-need-value"><%= ev.emailRdvSentLogs.length %> envoi<%= ev.emailRdvSentLogs.length !== 1 ? 's' : '' %></strong>
-            <span class="d-block text-muted small mt-1">
-              <% ev.emailRdvSentLogs.forEach(function(log, i) { %>
-                <%= formatDateTimeFr(log.sent_date, log.sent_time) %><%= i < ev.emailRdvSentLogs.length - 1 ? ' · ' : '' %>
-              <% }); %>
-            </span>
+          <span class="resume-event-row-location-need-label">Questionnaire envoyé</span>
+          <% if (ev.questionnaireSent && ev.questionnaireSentAt) { %>
+            <strong class="resume-event-row-location-need-value">Oui</strong>
+            <span class="text-muted mx-1">·</span>
+            <span>Date</span>
+            <strong class="resume-event-row-location-rented-value"><%= ev.questionnaireSentAt %></strong>
+          <% } else if (ev.questionnaireSent) { %>
+            <strong class="resume-event-row-location-need-value">Oui</strong>
           <% } else { %>
-            <strong class="resume-event-row-location-need-value"><%= ev.emailRdvSent ? 'Oui' : 'Non' %></strong>
-            <% if (ev.emailRdvSent && ev.emailRdvAt) { %>
-              <span class="text-muted mx-1">·</span>
-              <span>Date</span>
-              <strong class="resume-event-row-location-rented-value"><%= ev.emailRdvAt %></strong>
-            <% } %>
+            <strong class="resume-event-row-location-need-value">Non</strong>
           <% } %>
         </div>
         <div class="resume-event-row-location-item mt-1">

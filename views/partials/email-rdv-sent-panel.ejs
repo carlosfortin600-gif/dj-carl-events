@@ -15,7 +15,7 @@
           <span><%= formatDateTimeFr(log.sent_date, log.sent_time) %></span>
           <form method="post"
                 action="/events/<%= eventId %>/email-rdv-sent/<%= log.id %>/delete"
-                class="d-inline mb-0"
+                class="d-inline mb-0">
             <input type="hidden" name="returnTo" value="<%= returnPath %>">
             <button type="submit" class="btn btn-link btn-sm p-0 text-danger">Supprimer</button>
           </form>
