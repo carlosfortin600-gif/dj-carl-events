@@ -962,9 +962,6 @@ function renderEventDetailPage(req, res) {
 
 app.get("/events/:id", renderEventDetailPage);
 
-/** Après un POST+303, certains clients renvoient POST ici — afficher la fiche au lieu d'une 404. */
-app.post("/events/:id", renderEventDetailPage);
-
 app.post("/events/:id/files/upload", (req, res) => {
   const eventId = Number(req.params.id);
   const event = getEventById(db, eventId);
@@ -1737,6 +1734,9 @@ app.post("/events/:id/status", (req, res) => {
     res.redirect(`/events/${eventId}?tab=resume`);
   }
 });
+
+/** Après un POST+303, certains clients renvoient POST sur /events/:id — afficher la fiche (enregistré en fin de routes). */
+app.post("/events/:id", renderEventDetailPage);
 
 app.use((err, req, res, next) => {
   if (err.type !== "entity.too.large") return next(err);

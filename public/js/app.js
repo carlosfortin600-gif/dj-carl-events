@@ -713,9 +713,75 @@ initQuestionnaireMissingHighlight();
 })();
 
 (function initTimeSpentAddForm() {
+  function eventPageFromTimeSpentForm(form) {
+    return String(form.action || "").replace(/\/gestion\/temps\/add\/?$/, "");
+  }
+
+  function resolveRedirectUrl(location) {
+    const target = String(location || "").trim();
+    if (!target) return null;
+    if (target.startsWith("http://") || target.startsWith("https://")) return target;
+    return `${window.location.origin}${target.startsWith("/") ? target : `/${target}`}`;
+  }
+
   document.querySelectorAll("[data-time-spent-add-form]").forEach((form) => {
-    form.addEventListener("submit", () => {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
       window.DateFormatFr?.syncAllDatetimePickers?.(form);
+
+      const submitBtn = form.querySelector('[type="submit"]');
+      const originalLabel = submitBtn?.textContent;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Enregistrement…";
+      }
+
+      const eventPage = eventPageFromTimeSpentForm(form);
+      const body = new URLSearchParams(new FormData(form));
+
+      const sendOnce = () =>
+        fetch(form.action, {
+          method: "POST",
+          body,
+          credentials: "same-origin",
+          redirect: "manual"
+        });
+
+      try {
+        let res = await sendOnce();
+        if (res.status === 0 || res.status >= 500) {
+          await new Promise((r) => setTimeout(r, 1500));
+          res = await sendOnce();
+        }
+
+        const location = res.headers.get("Location");
+        if ((res.status === 303 || res.status === 302 || res.status === 301) && location) {
+          window.location.assign(resolveRedirectUrl(location));
+          return;
+        }
+
+        if (res.ok) {
+          window.location.assign(`${eventPage}?tab=gestion&gestion=temps&timeSpentSaved=1`);
+          return;
+        }
+
+        window.location.assign(
+          `${eventPage}?tab=gestion&gestion=temps&timeSpentError=${encodeURIComponent(
+            "Enregistrement impossible — réessayez."
+          )}`
+        );
+      } catch {
+        window.location.assign(
+          `${eventPage}?tab=gestion&gestion=temps&timeSpentError=${encodeURIComponent(
+            "Connexion interrompue — actualisez pour voir si l'entrée est dans l'historique."
+          )}`
+        );
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          if (originalLabel) submitBtn.textContent = originalLabel;
+        }
+      }
     });
   });
 })();
