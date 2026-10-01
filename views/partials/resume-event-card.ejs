@@ -104,19 +104,12 @@
                   <span class="resume-location-pair">
                     <span class="resume-event-row-entente-name"><%= st.label %></span>
                     <span class="resume-location-sep" aria-hidden="true">·</span>
-                    <span>Passée <strong>Oui</strong></span>
+                    <span>Passée <strong><%= st.passed ? 'Oui' : 'Non' %></strong></span>
                     <span class="resume-location-sep" aria-hidden="true">·</span>
                     <span class="<%= st.signed ? 'text-success' : '' %>">Signée <strong><%= st.signed ? 'Oui' : 'Non' %></strong></span>
                   </span>
                 </div>
               <% }); %>
-            </div>
-          <% } else if (ev.employeeNeeded) { %>
-            <div class="resume-event-row-ententes mt-2 pt-2">
-              <div class="resume-event-row-location-item resume-event-row-entente-item">
-                <span class="resume-event-row-location-type">Entente</span>
-                <span class="text-muted">Aucun contrat enregistré</span>
-              </div>
             </div>
           <% } %>
         </div>

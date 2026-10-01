@@ -5,7 +5,7 @@
   <div class="mb-4 d-flex flex-wrap justify-content-between align-items-start gap-2">
     <div>
       <h1 class="h3 mb-1">Ententes</h1>
-      <p class="text-muted small mb-0">Lecture seule — une ligne par contrat sous-traitant. Ligne <span class="text-danger fw-semibold">rouge</span> si le besoin d’employé est <strong>Non</strong>.</p>
+      <p class="text-muted small mb-0">Lecture seule — une ligne par contrat enregistré (ou une ligne par sous-traitant si besoin employé sans contrat). Ligne <span class="text-danger fw-semibold">rouge</span> si le besoin d’employé est <strong>Non</strong>.</p>
     </div>
     <%- include('partials/export-all-dossiers-btn', {
       exportUpcomingCount: typeof upcomingEventCount !== 'undefined' ? upcomingEventCount : 0,
