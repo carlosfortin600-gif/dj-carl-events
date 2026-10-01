@@ -1,3 +1,6 @@
+const { applyAppTimezoneToProcess } = require("./lib/app-timezone");
+applyAppTimezoneToProcess();
+
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
@@ -122,7 +125,7 @@ const {
   getEmailRdvSentLogs,
   addEmailRdvSentLog,
   deleteEmailRdvSentLog,
-  defaultSentDatetime: defaultEmailRdvSentDatetime
+  defaultEmailRdvSentDatetime
 } = require("./lib/email-rdv-sent-log");
 const {
   getClientContactLogs,
@@ -1614,6 +1617,19 @@ app.post("/events/:id/client-contact/:logId/delete", (req, res) => {
   res.redirect(returnTo);
 });
 
+app.get("/events/:id/gestion/contrat/:subcontractor/signatures.json", (req, res) => {
+  const eventId = Number(req.params.id);
+  const subcontractor = req.params.subcontractor;
+  if (!getEventById(db, eventId)) return res.status(404).json({ error: "Not found" });
+  if (!isValidSubcontractor(db, subcontractor)) return res.status(404).json({ error: "Not found" });
+
+  const contract = getSubcontractorContract(db, eventId, subcontractor);
+  res.json({
+    signature_contractant: contract.signature_contractant || "",
+    signature_subcontractor: contract.signature_subcontractor || ""
+  });
+});
+
 app.post("/events/:id/gestion/contrat/:subcontractor/save", (req, res) => {
   const eventId = Number(req.params.id);
   const subcontractor = req.params.subcontractor;
@@ -1801,6 +1817,8 @@ app.use((req, res) => {
 
 app.listen(PORT, HOST, () => {
   const base = process.env.PUBLIC_URL || `http://localhost:${PORT}`;
+  const { APP_TIMEZONE } = require("./lib/app-timezone");
   console.log(`DJ Carl Events — ${base}`);
+  console.log(`Fuseau horaire app : ${APP_TIMEZONE} (TZ=${process.env.TZ || "—"})`);
   console.log(`Base SQLite : ${DB_PATH}${isPersistentStorage() ? " (persistante)" : ""}`);
 });

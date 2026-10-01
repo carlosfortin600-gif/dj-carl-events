@@ -120,6 +120,48 @@
     });
   }
 
+  function applySignaturePayload(form, payload) {
+    if (!form || !payload) return;
+
+    form.querySelectorAll("[data-signature-pad]").forEach((wrap) => {
+      const field = wrap.dataset.signatureField;
+      if (!field) return;
+      const existing = payload[field] || "";
+      const hiddenInput = wrap.querySelector('input[type="hidden"]');
+      if (hiddenInput) hiddenInput.value = existing;
+      wrap.dataset.signatureInitial = existing;
+      const pad = wrap._signaturePad;
+      if (pad) {
+        if (existing) pad.load(existing);
+        else pad.clear();
+      }
+    });
+
+    document.querySelectorAll("[data-signature-preview]").forEach((img) => {
+      const field = img.dataset.signaturePreview;
+      const dataUrl = payload[field];
+      if (!dataUrl) return;
+      img.src = dataUrl;
+      img.hidden = false;
+      const placeholder = document.querySelector(
+        `[data-signature-preview-placeholder="${field}"]`
+      );
+      if (placeholder) placeholder.hidden = true;
+    });
+  }
+
+  function loadDeferredContractSignatures(form) {
+    const url = form?.dataset?.contractSignaturesUrl;
+    if (!url) return Promise.resolve();
+
+    return fetch(url, { credentials: "same-origin" })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload) => {
+        if (payload) applySignaturePayload(form, payload);
+      })
+      .catch(() => {});
+  }
+
   document.querySelectorAll("[data-signature-pad]").forEach((wrap) => {
     const canvas = wrap.querySelector("canvas");
     const hiddenInput = wrap.querySelector('input[type="hidden"]');
@@ -133,6 +175,10 @@
     if (clearBtn && pad) {
       clearBtn.addEventListener("click", () => pad.clear());
     }
+  });
+
+  document.querySelectorAll("form[data-contract-signatures-url]").forEach((form) => {
+    loadDeferredContractSignatures(form);
   });
 
   if (!document.documentElement.dataset.signatureSubmitPrep) {

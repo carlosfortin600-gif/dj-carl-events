@@ -5,7 +5,11 @@
   </div>
 
   <% const subName = contract.full_name || (typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : 'Sous-traitant'); %>
-  <% const contractFullySigned = !!(contract.signature_contractant && contract.signature_subcontractor); %>
+  <% const showSigContractant = !!(contract.signature_contractant || (typeof hasSignatureContractant !== 'undefined' && hasSignatureContractant)); %>
+  <% const showSigSubcontractor = !!(contract.signature_subcontractor || (typeof hasSignatureSubcontractor !== 'undefined' && hasSignatureSubcontractor)); %>
+  <% const contractFullySigned = (typeof lazySignaturePreview !== 'undefined' && lazySignaturePreview)
+    ? !!(typeof hasSignatureContractant !== 'undefined' && hasSignatureContractant && typeof hasSignatureSubcontractor !== 'undefined' && hasSignatureSubcontractor)
+    : !!(contract.signature_contractant && contract.signature_subcontractor); %>
 
   <p class="mb-4">
     Entre <strong>DJ Carl</strong> (ci-après « le contractant ») et
@@ -68,13 +72,16 @@
   <div class="row g-4 mt-2 service-contract-signatures">
     <div class="col-md-6">
       <p class="mb-2"><strong>DJ Carl</strong><br><span class="text-muted small">Contractant</span></p>
-      <% if (contract.signature_contractant) { %>
+      <% if (typeof lazySignaturePreview !== 'undefined' && lazySignaturePreview && typeof hasSignatureContractant !== 'undefined' && hasSignatureContractant) { %>
+        <img src="" alt="Signature DJ Carl" class="service-contract-signature-img" data-signature-preview="signature_contractant" hidden>
+        <div class="service-contract-signature-line" data-signature-preview-placeholder="signature_contractant"></div>
+      <% } else if (contract.signature_contractant) { %>
         <img src="<%= contract.signature_contractant %>" alt="Signature DJ Carl" class="service-contract-signature-img">
       <% } else { %>
         <div class="service-contract-signature-line"></div>
       <% } %>
-      <p class="small mb-0 mt-1 <%= contractFullySigned && contract.signature_contractant ? 'text-success fw-semibold' : 'text-muted' %>">
-        <% if (contract.signature_contractant) { %>
+      <p class="small mb-0 mt-1 <%= contractFullySigned && showSigContractant ? 'text-success fw-semibold' : 'text-muted' %>">
+        <% if (showSigContractant) { %>
           Signé le <%= formatTimestampFr(contract.signature_contractant_date || contract.updated_at) %>
         <% } else { %>
           Signature
@@ -83,13 +90,16 @@
     </div>
     <div class="col-md-6">
       <p class="mb-2"><strong><%= subName %></strong><br><span class="text-muted small">Sous-traitant</span></p>
-      <% if (contract.signature_subcontractor) { %>
+      <% if (typeof lazySignaturePreview !== 'undefined' && lazySignaturePreview && typeof hasSignatureSubcontractor !== 'undefined' && hasSignatureSubcontractor) { %>
+        <img src="" alt="Signature sous-traitant" class="service-contract-signature-img" data-signature-preview="signature_subcontractor" hidden>
+        <div class="service-contract-signature-line" data-signature-preview-placeholder="signature_subcontractor"></div>
+      <% } else if (contract.signature_subcontractor) { %>
         <img src="<%= contract.signature_subcontractor %>" alt="Signature sous-traitant" class="service-contract-signature-img">
       <% } else { %>
         <div class="service-contract-signature-line"></div>
       <% } %>
-      <p class="small mb-0 mt-1 <%= contractFullySigned && contract.signature_subcontractor ? 'text-success fw-semibold' : 'text-muted' %>">
-        <% if (contract.signature_subcontractor) { %>
+      <p class="small mb-0 mt-1 <%= contractFullySigned && showSigSubcontractor ? 'text-success fw-semibold' : 'text-muted' %>">
+        <% if (showSigSubcontractor) { %>
           Signé le <%= formatTimestampFr(contract.signature_subcontractor_date || contract.updated_at) %>
         <% } else { %>
           Signature
