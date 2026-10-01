@@ -52,20 +52,32 @@
           <div class="resume-event-row-location small">
             <span class="resume-event-row-label d-block mb-1">Location</span>
             <div class="resume-event-row-location-item">
-              <span class="resume-event-row-location-need-label">Hôtel — besoin</span>
-              <strong class="resume-event-row-location-need-value"><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong><% if (ev.hotelNeeded) { %>
-                <span class="text-muted mx-1">·</span>
-                <span class="resume-event-row-location-rented-label">Loué</span>
-                <strong class="resume-event-row-location-rented-value"><%= ev.hotelRented ? 'Oui' : 'Non' %></strong>
-              <% } %>
+              <span class="resume-event-row-location-type">Hôtel</span>
+              <span class="resume-location-pair">
+                <span>Besoin <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong></span>
+                <% if (ev.hotelNeeded) { %>
+                  <span class="resume-location-sep" aria-hidden="true">·</span>
+                  <% if (ev.hotelRented) { %>
+                    <span>Loué <strong>Oui</strong></span>
+                  <% } else { %>
+                    <span class="resume-location-client-provided">Fournie par le client</span>
+                  <% } %>
+                <% } %>
+              </span>
             </div>
             <div class="resume-event-row-location-item">
-              <span class="resume-event-row-location-need-label">Trailer — besoin</span>
-              <strong class="resume-event-row-location-need-value"><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong><% if (ev.trailerNeeded) { %>
-                <span class="text-muted mx-1">·</span>
-                <span class="resume-event-row-location-rented-label">Loué</span>
-                <strong class="resume-event-row-location-rented-value"><%= ev.trailerRented ? 'Oui' : 'Non' %></strong>
-              <% } %>
+              <span class="resume-event-row-location-type">Trailer</span>
+              <span class="resume-location-pair">
+                <span>Besoin <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong></span>
+                <% if (ev.trailerNeeded) { %>
+                  <span class="resume-location-sep" aria-hidden="true">·</span>
+                  <% if (ev.trailerRented) { %>
+                    <span>Loué <strong>Oui</strong></span>
+                  <% } else { %>
+                    <span class="resume-location-client-provided">Fournie par le client</span>
+                  <% } %>
+                <% } %>
+              </span>
             </div>
           </div>
 
@@ -97,8 +109,8 @@
 
       <div class="resume-event-row-field resume-event-row-client small">
         <span class="resume-event-row-label">Client</span>
-        <div class="resume-event-row-location-item">
-          <span class="resume-event-row-location-need-label">Communication</span>
+        <div class="resume-event-row-client-item">
+          <span class="resume-event-row-client-item-label">Communication</span>
           <% const latestComm = ev.clientContactLogs && ev.clientContactLogs.length
             ? formatContactAt(ev.clientContactLogs[0].contact_date, ev.clientContactLogs[0].contact_time, ev.clientContactLogs[0].note)
             : (ev.clientCalled && ev.clientCallAt ? ev.clientCallAt : null); %>
@@ -108,8 +120,8 @@
             <strong class="resume-event-row-location-need-value">—</strong>
           <% } %>
         </div>
-        <div class="resume-event-row-location-item mt-1">
-          <span class="resume-event-row-location-need-label">Questionnaire envoyé</span>
+        <div class="resume-event-row-client-item">
+          <span class="resume-event-row-client-item-label">Questionnaire envoyé</span>
           <% if (ev.questionnaireSent && ev.questionnaireSentAt) { %>
             <strong class="resume-event-row-location-need-value">Oui</strong>
             <span class="text-muted mx-1">·</span>
@@ -121,8 +133,8 @@
             <strong class="resume-event-row-location-need-value">Non</strong>
           <% } %>
         </div>
-        <div class="resume-event-row-location-item mt-1">
-          <span class="resume-event-row-location-need-label">Rappel</span>
+        <div class="resume-event-row-client-item">
+          <span class="resume-event-row-client-item-label">Rappel</span>
           <strong class="resume-event-row-location-need-value"><%= ev.callbackName || '—' %></strong>
           <% if (ev.callbackAt) { %>
             <span class="text-muted mx-1">·</span>

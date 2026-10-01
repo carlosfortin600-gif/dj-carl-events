@@ -1145,8 +1145,20 @@ a.calendar-month-event-link:hover {
 }
 
 .resume-event-row-line-secondary {
-  padding-top: 0.15rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: 0.65rem;
+  margin-top: 0.15rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  gap: 1.25rem 2rem;
+}
+
+.resume-event-row-line-secondary > .resume-event-row-field {
+  padding-left: 1.25rem;
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.resume-event-row-line-secondary > .resume-event-row-field:first-child {
+  padding-left: 0;
+  border-left: none;
 }
 
 .resume-event-row-name {
@@ -1192,22 +1204,65 @@ a.calendar-month-event-link:hover {
 }
 
 .resume-event-row-location-item + .resume-event-row-location-item {
-  margin-top: 0.2rem;
+  margin-top: 0.45rem;
 }
 
 .resume-event-row-location-item {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.15rem 0;
+  gap: 0.35rem 0.65rem;
+}
+
+.resume-event-row-location-type {
+  font-weight: 600;
+  min-width: 3.25rem;
+}
+
+.resume-location-pair {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.4rem;
+}
+
+.resume-location-sep {
+  color: #adb5bd;
+  user-select: none;
+}
+
+.resume-location-client-provided {
+  color: #495057;
+  font-style: italic;
 }
 
 .resume-event-row-location-need-value {
-  margin-left: 1in;
+  margin-left: 0;
 }
 
 .resume-event-row-location-rented-value {
-  margin-left: 1in;
+  margin-left: 0;
+}
+
+.resume-event-row-client-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-top: 0.65rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.resume-event-row-client-item:first-of-type {
+  margin-top: 0.35rem;
+}
+
+.resume-event-row-client-item-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .resume-event-row-ententes {
@@ -1302,6 +1357,12 @@ a.calendar-month-event-link:hover {
 
   .resume-event-row-action {
     align-self: flex-start;
+  }
+
+  .resume-event-row-line-secondary > .resume-event-row-field {
+    padding-left: 0;
+    border-left: none;
+    flex: 1 1 100%;
   }
 }
 
