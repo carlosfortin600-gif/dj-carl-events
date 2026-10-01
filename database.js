@@ -502,6 +502,20 @@ function migrate(db) {
     ON subcontractor_calendar_tokens(access_token)
   `);
 
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS subcontractors (
+      id TEXT PRIMARY KEY,
+      label TEXT NOT NULL UNIQUE COLLATE NOCASE,
+      service_description TEXT,
+      payment_terms TEXT,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+    )
+  `);
+
+  const { seedSubcontractorsIfEmpty } = require("./lib/subcontractors-registry");
+  seedSubcontractorsIfEmpty(db);
+
   const timelineReordered = db
     .prepare("SELECT value FROM app_meta WHERE key = 'timeline_reordered_by_time'")
     .get();

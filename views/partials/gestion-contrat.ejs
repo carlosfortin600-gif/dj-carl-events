@@ -3,6 +3,13 @@
 <% let activeLabel = activeSub; %>
 <% subcontractors.forEach(function(s) { if (s.id === activeSub) activeLabel = s.label; }); %>
 
+<% if (typeof subcontractorAdded !== 'undefined' && subcontractorAdded) { %>
+  <div class="alert alert-success">Sous-traitant ajouté. Sélectionnez son onglet pour préparer un contrat.</div>
+<% } %>
+<% if (typeof subcontractorError !== 'undefined' && subcontractorError) { %>
+  <div class="alert alert-danger"><%= subcontractorError %></div>
+<% } %>
+
 <nav class="gestion-contrat-subnav nav nav-tabs flex-nowrap overflow-auto mb-3" aria-label="Sous-traitants">
   <% subcontractors.forEach(function(st) { %>
     <% const stStatus = agreementStatuses.find(function(s) { return s.id === st.id; }); %>
@@ -10,7 +17,17 @@
     <a class="nav-link <%= activeSub === st.id ? 'active' : '' %><%= stSigned ? ' gestion-contrat-tab--signed' : '' %>"
        href="/events/<%= event.id %>?tab=gestion&gestion=contrat&sousTraitant=<%= st.id %>"><%= st.label %><% if (stSigned) { %> ✓<% } %></a>
   <% }); %>
+  <button type="button" class="nav-link btn btn-link text-primary px-2 py-1" data-bs-toggle="collapse" data-bs-target="#addSubcontractorForm" aria-expanded="false" aria-controls="addSubcontractorForm">+ Ajouter</button>
 </nav>
+
+<div class="collapse mb-3" id="addSubcontractorForm">
+  <div class="card card-body border-primary-subtle bg-light py-3">
+    <%- include('subcontractor-add-form', {
+      returnTo: '/events/' + event.id + '?tab=gestion&gestion=contrat&sousTraitant=' + encodeURIComponent(activeSub),
+      formIdPrefix: 'gestionSubAdd'
+    }) %>
+  </div>
+</div>
 
 <div class="gestion-contrat-toolbar d-flex flex-wrap align-items-center gap-2 mb-3">
   <a href="/gestion/calendrier/<%= activeSub %>?view=ententes"

@@ -1,0 +1,8 @@
+<form method="post" action="/gestion/sous-traitants/add" class="subcontractor-add-form d-flex flex-wrap gap-2 align-items-end mt-3 pt-3 border-top">
+  <input type="hidden" name="returnTo" value="<%= typeof returnTo !== 'undefined' ? returnTo : '/calendar' %>">
+  <div class="flex-grow-1" style="min-width: 12rem;">
+    <label class="form-label small fw-semibold mb-1" for="<%= typeof formIdPrefix !== 'undefined' ? formIdPrefix : 'subAdd' %>_label">Ajouter un sous-traitant</label>
+    <input type="text" class="form-control form-control-sm" id="<%= typeof formIdPrefix !== 'undefined' ? formIdPrefix : 'subAdd' %>_label" name="label" required maxlength="120" placeholder="Nom complet">
+  </div>
+  <button type="submit" class="btn btn-sm btn-primary">+ Ajouter</button>
+</form>

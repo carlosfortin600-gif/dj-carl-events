@@ -132,8 +132,11 @@ const {
   formatContactAt
 } = require("./lib/client-contact-log");
 const {
-  SUBCONTRACTORS,
   DEFAULT_SUBCONTRACTOR_ID,
+  getSubcontractors,
+  addSubcontractor
+} = require("./lib/subcontractors-registry");
+const {
   getSubcontractorContract,
   saveSubcontractorContract,
   saveSubcontractorSignatureOnly,
@@ -229,6 +232,25 @@ function gestionRedirect(eventId, params = {}) {
   if (sousTraitant) query.sousTraitant = sousTraitant;
   const qs = new URLSearchParams(query).toString();
   return `/events/${eventId}?${qs}`;
+}
+
+function safeReturnPath(path) {
+  const value = String(path || "").trim();
+  if (!value.startsWith("/") || value.startsWith("//")) return null;
+  return value;
+}
+
+function redirectWithSearchParams(res, returnPath, params) {
+  const path = safeReturnPath(returnPath) || "/calendar";
+  const [pathname, query = ""] = path.split("?");
+  const search = new URLSearchParams(query);
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== null && value !== undefined && value !== "") {
+      search.set(key, String(value));
+    }
+  }
+  const qs = search.toString();
+  res.redirect(qs ? `${pathname}?${qs}` : pathname);
 }
 
 const app = express();
@@ -546,17 +568,45 @@ app.get("/calendar", (req, res) => {
     includeDayGestion: true
   });
 
+  const calendarQuery = queryString({
+    view: cal.view,
+    date: cal.view === "month" ? null : cal.anchorDate,
+    year: cal.view === "month" ? cal.year : null,
+    month: cal.view === "month" ? cal.month : null
+  });
+
   res.render("calendar", {
     title: "Calendrier — DJ CARL",
     activeNav: "calendar",
     cal,
-    subcontractorCalendarLinks: getAllSubcontractorCalendarLinks(db, req)
+    subcontractorCalendarLinks: getAllSubcontractorCalendarLinks(db, req),
+    subcontractorCalendarReturnTo: calendarQuery ? `/calendar?${calendarQuery}` : "/calendar",
+    subcontractorAdded: req.query.subcontractorAdded === "1",
+    subcontractorError: req.query.subcontractorError || ""
   });
+});
+
+app.post("/gestion/sous-traitants/add", (req, res) => {
+  const result = addSubcontractor(db, req.body.label);
+  const returnTo = safeReturnPath(req.body.returnTo) || "/calendar";
+
+  if (!result.ok) {
+    return redirectWithSearchParams(res, returnTo, {
+      subcontractorError: result.error
+    });
+  }
+
+  const params = { subcontractorAdded: "1", sousTraitant: result.id };
+  if (returnTo.includes("gestion=contrat")) {
+    params.gestion = "contrat";
+    params.tab = "gestion";
+  }
+  redirectWithSearchParams(res, returnTo, params);
 });
 
 app.get("/gestion/calendrier/:subcontractor", (req, res) => {
   const subcontractorId = req.params.subcontractor;
-  if (!isValidSubcontractor(subcontractorId)) {
+  if (!isValidSubcontractor(db, subcontractorId)) {
     return res.status(404).render("error", {
       title: "Page introuvable",
       activeNav: "dashboard",
@@ -575,11 +625,11 @@ app.get("/gestion/calendrier/:subcontractor", (req, res) => {
   const calendarShareLinks = getSubcontractorCalendarLinks(req, calendarToken);
 
   res.render("subcontractor-calendar", {
-    title: `Calendrier ${getSubcontractorLabel(subcontractorId)} — DJ CARL`,
+    title: `Calendrier ${getSubcontractorLabel(db, subcontractorId)} — DJ CARL`,
     activeNav: "calendar",
     subcontractorId,
-    subcontractorLabel: getSubcontractorLabel(subcontractorId),
-    subcontractors: SUBCONTRACTORS,
+    subcontractorLabel: getSubcontractorLabel(db, subcontractorId),
+    subcontractors: getSubcontractors(db),
     calendarShareLinks,
     cal
   });
@@ -753,7 +803,7 @@ app.get("/events/:id", (req, res) => {
         : "location"
       : null;
   const sousTraitant =
-    gestionSection === "contrat" && isValidSubcontractor(req.query.sousTraitant)
+    gestionSection === "contrat" && isValidSubcontractor(db, req.query.sousTraitant)
       ? req.query.sousTraitant
       : DEFAULT_SUBCONTRACTOR_ID;
   const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
@@ -871,7 +921,7 @@ app.get("/events/:id", (req, res) => {
     filesError: req.query.filesError || "",
     gestionSection,
     sousTraitant,
-    subcontractors: SUBCONTRACTORS,
+    subcontractors: getSubcontractors(db),
     subcontractorContract,
     contractSignLinks,
     contractSavedInDb,
@@ -879,6 +929,8 @@ app.get("/events/:id", (req, res) => {
     contractSaved: req.query.contractSaved === "1",
     contractCleared: req.query.contractCleared === "1",
     contractError: req.query.contractError || "",
+    subcontractorAdded: req.query.subcontractorAdded === "1",
+    subcontractorError: req.query.subcontractorError || "",
     timeSpentLogs,
     timeSpentTotalHours,
     timeSpentDefaultDatetime,
@@ -1566,7 +1618,7 @@ app.post("/events/:id/gestion/contrat/:subcontractor/save", (req, res) => {
   const eventId = Number(req.params.id);
   const subcontractor = req.params.subcontractor;
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
-  if (!isValidSubcontractor(subcontractor)) return res.status(404).send("Not found");
+  if (!isValidSubcontractor(db, subcontractor)) return res.status(404).send("Not found");
 
   const result = saveSubcontractorContract(db, eventId, subcontractor, req.body);
   if (!result.ok) {
@@ -1591,7 +1643,7 @@ app.post("/events/:id/gestion/contrat/:subcontractor/clear", (req, res) => {
   const eventId = Number(req.params.id);
   const subcontractor = req.params.subcontractor;
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
-  if (!isValidSubcontractor(subcontractor)) return res.status(404).send("Not found");
+  if (!isValidSubcontractor(db, subcontractor)) return res.status(404).send("Not found");
 
   deleteSubcontractorContract(db, eventId, subcontractor);
   const returnGestion = req.body.return_gestion === "depart" ? "depart" : "contrat";
@@ -1652,11 +1704,10 @@ app.get("/events/:id/gestion/contrat/:subcontractor/print", (req, res) => {
   const subcontractor = req.params.subcontractor;
   const event = getEventById(db, eventId);
   if (!event) return res.status(404).send("Not found");
-  if (!isValidSubcontractor(subcontractor)) return res.status(404).send("Not found");
+  if (!isValidSubcontractor(db, subcontractor)) return res.status(404).send("Not found");
 
   const contract = getSubcontractorContract(db, eventId, subcontractor);
-  const subcontractorLabel =
-    SUBCONTRACTORS.find((s) => s.id === subcontractor)?.label || subcontractor;
+  const subcontractorLabel = getSubcontractorLabel(db, subcontractor);
   const pagePath = `/events/${eventId}/gestion/contrat/${subcontractor}/print`;
   const pageUrl = `${req.protocol}://${req.get("host")}${pagePath}`;
   const backUrl = `/events/${eventId}?tab=gestion&gestion=contrat&sousTraitant=${subcontractor}`;

@@ -17,5 +17,9 @@
         </div>
       </div>
     <% }); %>
+    <%- include('subcontractor-add-form', {
+      returnTo: typeof returnTo !== 'undefined' ? returnTo : '/calendar',
+      formIdPrefix: 'calSubAdd'
+    }) %>
   </div>
 </div>

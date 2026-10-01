@@ -9,6 +9,13 @@
     <h1 class="h3 mb-0">Calendrier</h1>
   </div>
 
+  <% if (typeof subcontractorAdded !== 'undefined' && subcontractorAdded) { %>
+    <div class="alert alert-success">Sous-traitant ajouté.</div>
+  <% } %>
+  <% if (typeof subcontractorError !== 'undefined' && subcontractorError) { %>
+    <div class="alert alert-danger"><%= subcontractorError %></div>
+  <% } %>
+
   <%- include('partials/calendar-views', {
     calendarBasePath: '/calendar',
     showContractLink: false,
@@ -18,7 +25,10 @@
   }) %>
 
   <% if (typeof subcontractorCalendarLinks !== 'undefined' && subcontractorCalendarLinks) { %>
-    <%- include('partials/subcontractor-calendar-links-card', { subcontractorCalendarLinks }) %>
+    <%- include('partials/subcontractor-calendar-links-card', {
+      subcontractorCalendarLinks,
+      returnTo: typeof subcontractorCalendarReturnTo !== 'undefined' ? subcontractorCalendarReturnTo : '/calendar'
+    }) %>
   <% } %>
 </main>
 
