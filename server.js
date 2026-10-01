@@ -142,6 +142,7 @@ const {
   getSubcontractors,
   addSubcontractor
 } = require("./lib/subcontractors-registry");
+const { notifyContractSignedIfNeeded } = require("./lib/contract-signed-email");
 const {
   getSubcontractorContract,
   saveSubcontractorContract,
@@ -1639,8 +1640,19 @@ app.post("/events/:id/gestion/contrat/:subcontractor/save", (req, res) => {
   if (!isValidSubcontractor(db, subcontractor)) return res.status(404).send("Not found");
 
   try {
+    const beforeContract = getSubcontractorContract(db, eventId, subcontractor);
     const result = saveSubcontractorContract(db, eventId, subcontractor, req.body);
     if (result.ok) {
+      notifyContractSignedIfNeeded({
+        db,
+        req,
+        eventId,
+        subcontractorId: subcontractor,
+        beforeContract,
+        afterContract: getSubcontractorContract(db, eventId, subcontractor)
+      }).catch((err) => {
+        console.error("Contract signed email failed:", err);
+      });
       saveDjNotes(db, eventId, {
         save_scope: "employee",
         tech_employee_needed: "yes"
@@ -1713,7 +1725,7 @@ app.get("/signer/contrat/:token", (req, res) => {
   });
 });
 
-app.post("/signer/contrat/:token", (req, res) => {
+app.post("/signer/contrat/:token", async (req, res) => {
   const match = getContractBySignToken(db, req.params.token);
   if (!match) {
     return res.status(404).render("error", {
@@ -1727,12 +1739,25 @@ app.post("/signer/contrat/:token", (req, res) => {
     return res.redirect(`/signer/contrat/${req.params.token}?error=signature`);
   }
 
+  const beforeContract = getSubcontractorContract(db, match.eventId, match.subcontractorId);
   saveSubcontractorSignatureOnly(
     db,
     match.eventId,
     match.subcontractorId,
     req.body.signature_subcontractor
   );
+  try {
+    await notifyContractSignedIfNeeded({
+      db,
+      req,
+      eventId: match.eventId,
+      subcontractorId: match.subcontractorId,
+      beforeContract,
+      afterContract: getSubcontractorContract(db, match.eventId, match.subcontractorId)
+    });
+  } catch (err) {
+    console.error("Contract signed email failed:", err);
+  }
   res.redirect(`/signer/contrat/${req.params.token}?signed=1`);
 });
 
