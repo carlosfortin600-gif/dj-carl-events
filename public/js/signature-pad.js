@@ -15,6 +15,16 @@
     const displayWidth = rect.width;
     const displayHeight = rect.height;
 
+    const fillWhite = () => {
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    };
+
+    fillWhite();
+
     const syncHidden = () => {
       if (!hasInk) {
         hiddenInput.value = "";
@@ -30,7 +40,7 @@
       if (!dataUrl) return;
       const img = new Image();
       img.onload = () => {
-        ctx.clearRect(0, 0, displayWidth, displayHeight);
+        fillWhite();
         ctx.drawImage(img, 0, 0, displayWidth, displayHeight);
         hasInk = true;
         if (!opts.keepStoredValue) syncHidden();
@@ -83,7 +93,7 @@
     return {
       syncHidden,
       clear() {
-        ctx.clearRect(0, 0, displayWidth, displayHeight);
+        fillWhite();
         hasInk = false;
         hiddenInput.value = "";
       },
