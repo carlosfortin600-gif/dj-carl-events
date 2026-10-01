@@ -860,6 +860,7 @@ function renderEventDetailPage(req, res) {
   const clientContactLogs = getClientContactLogs(db, event.id);
   const eventAgreementStatuses = getEventAgreementStatuses(db, event.id);
   const summarySheet = buildSummarySheet({
+    db,
     event,
     services,
     questionnaire,
