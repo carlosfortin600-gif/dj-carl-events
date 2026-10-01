@@ -712,6 +712,14 @@ initQuestionnaireMissingHighlight();
   });
 })();
 
+(function initTimeSpentAddForm() {
+  document.querySelectorAll("[data-time-spent-add-form]").forEach((form) => {
+    form.addEventListener("submit", () => {
+      window.DateFormatFr?.syncAllDatetimePickers?.(form);
+    });
+  });
+})();
+
 (function initCustomServiceInputs() {
   document.querySelectorAll("[data-custom-service-input]").forEach((input) => {
     const slot = input.dataset.customServiceInput;

@@ -16,7 +16,7 @@
     <div class="alert alert-danger py-2"><%= timeSpentError %></div>
   <% } %>
 
-  <form method="post" action="/events/<%= event.id %>/gestion/temps/add" class="card bg-light mb-4">
+  <form method="post" action="/events/<%= event.id %>/gestion/temps/add" class="card bg-light mb-4" data-time-spent-add-form>
     <div class="card-body">
       <div class="row g-3 align-items-end">
         <div class="col-md-3">
@@ -42,7 +42,7 @@
           <select class="form-select" id="time_spent_duration_hours" name="duration_hours" required>
             <option value="">— Choisir —</option>
             <% durations.forEach(function(item) { %>
-              <option value="<%= item.value %>"><%= item.label %></option>
+              <option value="<%= String(item.value) %>"><%= item.label %></option>
             <% }); %>
           </select>
         </div>

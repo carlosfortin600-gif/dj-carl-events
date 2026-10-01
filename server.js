@@ -793,7 +793,7 @@ app.get("/events/:id/calendar.ics", (req, res) => {
   }
 });
 
-app.get("/events/:id", (req, res) => {
+function renderEventDetailPage(req, res) {
   const event = getEventById(db, Number(req.params.id));
   if (!event) {
     return res.status(404).render("error", {
@@ -958,7 +958,12 @@ app.get("/events/:id", (req, res) => {
     questionnaireEmailError: req.query.questionnaireEmailError || "",
     questionnaireEmailPreview
   });
-});
+}
+
+app.get("/events/:id", renderEventDetailPage);
+
+/** Après un POST+303, certains clients renvoient POST ici — afficher la fiche au lieu d'une 404. */
+app.post("/events/:id", renderEventDetailPage);
 
 app.post("/events/:id/files/upload", (req, res) => {
   const eventId = Number(req.params.id);
