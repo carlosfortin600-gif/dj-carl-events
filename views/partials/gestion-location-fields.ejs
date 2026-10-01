@@ -3,23 +3,9 @@
     || ((djNotes.tech_trailer_start || djNotes.tech_trailer_end) ? 'yes' : 'no');
   const roomNeeded = djNotes.tech_room_needed
     || ((djNotes.tech_room_location || djNotes.tech_room_start || djNotes.tech_room_end) ? 'yes' : 'no');
-  const employeeNeeded = djNotes.tech_employee_needed || 'no';
 %>
 
-<section class="form-section form-section-technique-employee mb-4">
-  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
-    <h2 class="form-section-title mb-0">Employé / sous-traitant</h2>
-    <div class="btn-group btn-group-sm" role="group" aria-label="Besoin d'un employé">
-      <input type="radio" class="btn-check" name="tech_employee_needed" id="tech_employee_yes" value="yes"
-             <%= employeeNeeded === 'yes' ? 'checked' : '' %>>
-      <label class="btn btn-outline-secondary" for="tech_employee_yes">Besoin — Oui</label>
-      <input type="radio" class="btn-check" name="tech_employee_needed" id="tech_employee_no" value="no"
-             <%= employeeNeeded === 'no' ? 'checked' : '' %>>
-      <label class="btn btn-outline-secondary" for="tech_employee_no">Non</label>
-    </div>
-  </div>
-  <p class="text-muted small mb-0 mt-2">Indique si un employé ou sous-traitant est requis pour cet événement. Le contrat se prépare dans l’onglet Contrat sous-traitant.</p>
-</section>
+<%- include('gestion-employee-needed-panel', { event, djNotes, employeePanelProminent: false }) %>
 
 <section class="form-section form-section-technique-trailer mb-4">
   <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">

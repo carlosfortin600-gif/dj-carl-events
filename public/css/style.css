@@ -1187,6 +1187,18 @@ a.calendar-month-event-link:hover {
   color: #495057;
 }
 
+.gestion-employee-needed-banner {
+  border: 2px solid rgba(13, 110, 253, 0.35);
+  border-radius: 0.75rem;
+  background: linear-gradient(180deg, rgba(13, 110, 253, 0.08) 0%, rgba(13, 110, 253, 0.02) 100%);
+  padding: 1.15rem 1.25rem;
+}
+
+.gestion-employee-needed-title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
 .resume-event-row-field {
   display: flex;
   flex-direction: column;

@@ -1506,19 +1506,31 @@ app.post("/events/:id/notes/save", (req, res) => {
   try {
     saveDjNotes(db, eventId, req.body);
     const returnTab = req.body.return_tab === "gestion" ? "gestion" : "notes";
-    const params = { notesSaved: "1" };
     if (returnTab === "gestion") {
-      params.gestion = req.body.gestion_section || req.body.save_scope || "location";
+      const gestionParams = {
+        notesSaved: "1",
+        gestion: req.body.gestion_section || req.body.save_scope || "location"
+      };
+      if (req.body.sous_traitant?.trim()) {
+        gestionParams.sousTraitant = req.body.sous_traitant.trim();
+      }
+      return res.redirect(gestionRedirect(eventId, gestionParams));
     }
-    res.redirect(eventRedirect(eventId, returnTab, params));
+    res.redirect(eventRedirect(eventId, returnTab, { notesSaved: "1" }));
   } catch (err) {
     console.error("Notes save failed:", err);
     const returnTab = req.body.return_tab === "gestion" ? "gestion" : "notes";
-    const params = { notesError: "Enregistrement impossible — réessayez." };
     if (returnTab === "gestion") {
-      params.gestion = req.body.gestion_section || req.body.save_scope || "location";
+      const gestionParams = {
+        notesError: "Enregistrement impossible — réessayez.",
+        gestion: req.body.gestion_section || req.body.save_scope || "location"
+      };
+      if (req.body.sous_traitant?.trim()) {
+        gestionParams.sousTraitant = req.body.sous_traitant.trim();
+      }
+      return res.redirect(gestionRedirect(eventId, gestionParams));
     }
-    res.redirect(eventRedirect(eventId, returnTab, params));
+    res.redirect(eventRedirect(eventId, returnTab, { notesError: "Enregistrement impossible — réessayez." }));
   }
 });
 
@@ -1603,6 +1615,12 @@ app.post("/events/:id/gestion/contrat/:subcontractor/save", (req, res) => {
 
   try {
     const result = saveSubcontractorContract(db, eventId, subcontractor, req.body);
+    if (result.ok) {
+      saveDjNotes(db, eventId, {
+        save_scope: "employee",
+        tech_employee_needed: "yes"
+      });
+    }
     if (!result.ok) {
       return res.redirect(
         gestionRedirect(eventId, {

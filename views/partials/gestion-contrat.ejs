@@ -10,6 +10,13 @@
   <div class="alert alert-danger"><%= subcontractorError %></div>
 <% } %>
 
+<%- include('gestion-employee-needed-panel', {
+  event,
+  djNotes: typeof djNotes !== 'undefined' ? djNotes : {},
+  sousTraitant: activeSub,
+  employeePanelProminent: true
+}) %>
+
 <nav class="gestion-contrat-subnav nav nav-tabs flex-nowrap overflow-auto mb-3" aria-label="Sous-traitants">
   <% subcontractors.forEach(function(st) { %>
     <% const stStatus = agreementStatuses.find(function(s) { return s.id === st.id; }); %>

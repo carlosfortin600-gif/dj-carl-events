@@ -1,0 +1,46 @@
+<% 
+  const employeeNeeded = (typeof djNotes !== 'undefined' && djNotes.tech_employee_needed)
+    ? djNotes.tech_employee_needed
+    : 'no';
+  const prominent = typeof employeePanelProminent !== 'undefined' && employeePanelProminent;
+  const panelId = prominent ? 'gestionEmployeeContrat' : 'gestionEmployeeLocation';
+  const yesId = panelId + '_yes';
+  const noId = panelId + '_no';
+  const activeSub = typeof sousTraitant !== 'undefined' ? sousTraitant : '';
+%>
+
+<% if (prominent) { %>
+<form method="post" action="/events/<%= event.id %>/notes/save" class="gestion-employee-needed-banner mb-4" data-unsaved-guard>
+  <input type="hidden" name="return_tab" value="gestion">
+  <input type="hidden" name="save_scope" value="employee">
+  <input type="hidden" name="gestion_section" value="contrat">
+  <% if (activeSub) { %>
+    <input type="hidden" name="sous_traitant" value="<%= activeSub %>">
+  <% } %>
+<% } %>
+
+<section class="form-section form-section-technique-employee mb-0<%= prominent ? ' gestion-employee-needed-banner-inner' : ' mb-4' %>">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+    <h2 class="<%= prominent ? 'h4 mb-0 gestion-employee-needed-title' : 'form-section-title mb-0' %>">
+      Besoin d'un employé / sous-traitant ?
+    </h2>
+    <div class="btn-group <%= prominent ? '' : 'btn-group-sm' %>" role="group" aria-label="Besoin d'un employé">
+      <input type="radio" class="btn-check" name="tech_employee_needed" id="<%= yesId %>" value="yes"
+             <%= employeeNeeded === 'yes' ? 'checked' : '' %>>
+      <label class="btn btn-outline-primary <%= prominent ? 'px-4 py-2 fw-semibold' : 'btn-outline-secondary' %>" for="<%= yesId %>">Oui</label>
+      <input type="radio" class="btn-check" name="tech_employee_needed" id="<%= noId %>" value="no"
+             <%= employeeNeeded === 'no' ? 'checked' : '' %>>
+      <label class="btn btn-outline-primary <%= prominent ? 'px-4 py-2 fw-semibold' : 'btn-outline-secondary' %>" for="<%= noId %>">Non</label>
+    </div>
+  </div>
+  <% if (prominent) { %>
+    <p class="text-muted small mb-0 mt-2">Réponse visible sur la page <strong>Résumé</strong> (section Employé). Enregistrer un contrat met automatiquement <strong>Oui</strong>.</p>
+    <button type="submit" class="btn btn-primary mt-3">Enregistrer le besoin d'employé</button>
+  <% } else { %>
+    <p class="text-muted small mb-0 mt-2">Même réglage que dans Contrat sous-traitant — visible sur la page Résumé.</p>
+  <% } %>
+</section>
+
+<% if (prominent) { %>
+</form>
+<% } %>
