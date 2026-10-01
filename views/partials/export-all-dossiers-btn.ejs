@@ -1,0 +1,16 @@
+<% 
+  const count = typeof exportUpcomingCount !== 'undefined' ? exportUpcomingCount : 0;
+  const returnTo = typeof exportReturnTo !== 'undefined' ? exportReturnTo : '/';
+  const large = typeof exportBtnLarge !== 'undefined' && exportBtnLarge;
+%>
+<% if (count > 0) { %>
+  <a href="/export/dossiers.zip?returnTo=<%= encodeURIComponent(returnTo) %>"
+     class="btn btn-outline-primary<%= large ? ' btn-lg px-4' : '' %>">
+    Télécharger tous les dossiers PDF (ZIP)
+  </a>
+<% } else { %>
+  <span class="btn btn-outline-secondary<%= large ? ' btn-lg' : '' %> disabled" aria-disabled="true"
+        title="Aucun événement à venir">
+    Télécharger tous les dossiers PDF (ZIP)
+  </span>
+<% } %>

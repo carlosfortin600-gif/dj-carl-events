@@ -36,7 +36,8 @@ const {
   calendarEventTitle,
   calendarEventPrimary,
   eventCity,
-  clientCompanyName
+  clientCompanyName,
+  todayLocal
 } = require("./lib/helpers");
 const {
   loadRouteOrigins,
@@ -504,18 +505,27 @@ app.get("/resume", (req, res) => {
     activeNav: "resume",
     eventsList,
     eventsByMonth,
-    chargedGrandTotalLabel
+    chargedGrandTotalLabel,
+    exportEmpty: req.query.exportEmpty === "1"
   });
 });
 
 app.get("/ententes", (req, res) => {
   const { rows, rowsByMonth, rowCount } = getEntentesPageData(db);
+  const upcomingEventCount = db
+    .prepare(
+      `SELECT COUNT(*) AS n FROM events WHERE deleted_at IS NULL AND event_date >= ?`
+    )
+    .get(todayLocal()).n;
+
   res.render("ententes", {
     title: "Ententes — DJ CARL",
     activeNav: "ententes",
     rows,
     rowsByMonth,
-    rowCount
+    rowCount,
+    upcomingEventCount,
+    exportEmpty: req.query.exportEmpty === "1"
   });
 });
 
@@ -571,7 +581,9 @@ app.get("/export/dossiers.zip", async (req, res) => {
   try {
     const result = await buildAllEventsDossierZip(db);
     if (!result) {
-      return res.redirect("/?exportEmpty=1");
+      const back = safeReturnPath(req.query.returnTo) || "/";
+      const sep = back.includes("?") ? "&" : "?";
+      return res.redirect(`${back}${sep}exportEmpty=1`);
     }
 
     res.setHeader("Content-Type", "application/zip");
