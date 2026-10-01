@@ -1498,13 +1498,23 @@ app.post("/events/:id/gestion/temps/:logId/delete", (req, res) => {
 app.post("/events/:id/notes/save", (req, res) => {
   const eventId = Number(req.params.id);
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
-  saveDjNotes(db, eventId, req.body);
-  const returnTab = req.body.return_tab === "gestion" ? "gestion" : "notes";
-  const params = { notesSaved: "1" };
-  if (returnTab === "gestion") {
-    params.gestion = req.body.gestion_section || req.body.save_scope || "location";
+  try {
+    saveDjNotes(db, eventId, req.body);
+    const returnTab = req.body.return_tab === "gestion" ? "gestion" : "notes";
+    const params = { notesSaved: "1" };
+    if (returnTab === "gestion") {
+      params.gestion = req.body.gestion_section || req.body.save_scope || "location";
+    }
+    res.redirect(eventRedirect(eventId, returnTab, params));
+  } catch (err) {
+    console.error("Notes save failed:", err);
+    const returnTab = req.body.return_tab === "gestion" ? "gestion" : "notes";
+    const params = { notesError: "Enregistrement impossible — réessayez." };
+    if (returnTab === "gestion") {
+      params.gestion = req.body.gestion_section || req.body.save_scope || "location";
+    }
+    res.redirect(eventRedirect(eventId, returnTab, params));
   }
-  res.redirect(eventRedirect(eventId, returnTab, params));
 });
 
 app.post("/events/:id/questionnaire-sent/add", (req, res) => {

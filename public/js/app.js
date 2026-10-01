@@ -228,41 +228,75 @@ function shouldSkipSaveForm(form) {
   return false;
 }
 
-function saveFormViaNativeSubmit(form) {
-  return new Promise((resolve) => {
-    const iframeName = `unsaved-save-${Date.now()}`;
-    const iframe = document.createElement("iframe");
-    iframe.name = iframeName;
-    iframe.hidden = true;
-    iframe.setAttribute("aria-hidden", "true");
-    document.body.appendChild(iframe);
+function resolveFormPostAction(form, submitter) {
+  if (submitter?.hasAttribute("formaction")) {
+    return submitter.getAttribute("formaction");
+  }
+  return form.getAttribute("action") || window.location.href;
+}
 
-    const previousTarget = form.getAttribute("target");
-    let settled = false;
+function resolveRedirectUrl(location) {
+  const target = String(location || "").trim();
+  if (!target) return null;
+  if (target.startsWith("http://") || target.startsWith("https://")) return target;
+  return `${window.location.origin}${target.startsWith("/") ? target : `/${target}`}`;
+}
 
-    const finish = (ok) => {
-      if (settled) return;
-      settled = true;
-      iframe.removeEventListener("load", onLoad);
-      if (previousTarget === null) form.removeAttribute("target");
-      else form.setAttribute("target", previousTarget);
-      iframe.remove();
-      resolve(ok);
-    };
+function shouldUseFetchFormSubmit(form) {
+  if (!form || form.tagName !== "FORM") return false;
+  if (form.dataset.nativeSubmit === "true") return false;
+  const method = String(form.getAttribute("method") || "get").toLowerCase();
+  if (method !== "post") return false;
+  const enctype = String(form.getAttribute("enctype") || "").toLowerCase();
+  if (enctype.includes("multipart/form-data")) return false;
+  const action = form.getAttribute("action") || "";
+  if (!action || action.startsWith("#") || action.startsWith("javascript:")) return false;
+  try {
+    const url = new URL(action, window.location.origin);
+    if (url.origin !== window.location.origin) return false;
+  } catch {
+    return false;
+  }
+  return true;
+}
 
-    const onLoad = () => {
-      try {
-        finish(isSuccessfulSaveUrl(iframe.contentWindow.location.href));
-      } catch {
-        finish(false);
-      }
-    };
+async function postFormViaFetch(form, submitter) {
+  window.DateFormatFr?.syncAllDatetimePickers?.(form);
+  const action = resolveFormPostAction(form, submitter);
+  const body = new URLSearchParams(new FormData(form, submitter || undefined));
 
-    iframe.addEventListener("load", onLoad);
-    form.setAttribute("target", iframeName);
-    form.requestSubmit();
-    window.setTimeout(() => finish(false), 30000);
-  });
+  const sendOnce = () =>
+    fetch(action, {
+      method: "POST",
+      body,
+      credentials: "same-origin",
+      redirect: "manual"
+    });
+
+  let res = await sendOnce();
+  for (let attempt = 0; attempt < 2 && (res.status === 0 || res.status >= 500); attempt += 1) {
+    await new Promise((r) => setTimeout(r, 2000));
+    res = await sendOnce();
+  }
+
+  const location = res.headers.get("Location");
+  if ((res.status === 303 || res.status === 302 || res.status === 301) && location) {
+    return { ok: true, url: resolveRedirectUrl(location) };
+  }
+  if (res.ok) {
+    return { ok: true, url: window.location.href };
+  }
+  return { ok: false, url: null };
+}
+
+async function saveFormViaNativeSubmit(form) {
+  try {
+    const result = await postFormViaFetch(form, null);
+    if (!result.ok || !result.url) return false;
+    return isSuccessfulSaveUrl(result.url);
+  } catch {
+    return false;
+  }
 }
 
 function ensureUnsavedModal() {
@@ -712,78 +746,58 @@ initQuestionnaireMissingHighlight();
   });
 })();
 
-(function initTimeSpentAddForm() {
-  function eventPageFromTimeSpentForm(form) {
-    return String(form.action || "").replace(/\/gestion\/temps\/add\/?$/, "");
-  }
+(function initFetchFormSubmit() {
+  document.addEventListener(
+    "submit",
+    async (event) => {
+      const form = event.target;
+      if (!shouldUseFetchFormSubmit(form)) return;
 
-  function resolveRedirectUrl(location) {
-    const target = String(location || "").trim();
-    if (!target) return null;
-    if (target.startsWith("http://") || target.startsWith("https://")) return target;
-    return `${window.location.origin}${target.startsWith("/") ? target : `/${target}`}`;
-  }
-
-  document.querySelectorAll("[data-time-spent-add-form]").forEach((form) => {
-    form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      window.DateFormatFr?.syncAllDatetimePickers?.(form);
 
-      const submitBtn = form.querySelector('[type="submit"]');
-      const originalLabel = submitBtn?.textContent;
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Enregistrement…";
-      }
+      const submitter = event.submitter;
+      const buttons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+      const activeBtn =
+        submitter && (submitter.type === "submit" || submitter.hasAttribute("formaction"))
+          ? submitter
+          : form.querySelector('[type="submit"]');
+      const originalLabels = new Map();
 
-      const eventPage = eventPageFromTimeSpentForm(form);
-      const body = new URLSearchParams(new FormData(form));
-
-      const sendOnce = () =>
-        fetch(form.action, {
-          method: "POST",
-          body,
-          credentials: "same-origin",
-          redirect: "manual"
-        });
+      buttons.forEach((btn) => {
+        originalLabels.set(btn, btn.tagName === "INPUT" ? btn.value : btn.textContent);
+        btn.disabled = true;
+        if (btn === activeBtn) {
+          if (btn.tagName === "INPUT") btn.value = "Enregistrement…";
+          else btn.textContent = "Enregistrement…";
+        }
+      });
 
       try {
-        let res = await sendOnce();
-        if (res.status === 0 || res.status >= 500) {
-          await new Promise((r) => setTimeout(r, 1500));
-          res = await sendOnce();
-        }
-
-        const location = res.headers.get("Location");
-        if ((res.status === 303 || res.status === 302 || res.status === 301) && location) {
-          window.location.assign(resolveRedirectUrl(location));
+        const result = await postFormViaFetch(form, submitter);
+        if (result.ok && result.url) {
+          allowNavigation = true;
+          window.location.assign(result.url);
           return;
         }
-
-        if (res.ok) {
-          window.location.assign(`${eventPage}?tab=gestion&gestion=temps&timeSpentSaved=1`);
-          return;
-        }
-
-        window.location.assign(
-          `${eventPage}?tab=gestion&gestion=temps&timeSpentError=${encodeURIComponent(
-            "Enregistrement impossible — réessayez."
-          )}`
+        alert(
+          "Enregistrement impossible — le serveur met peut-être quelques secondes à démarrer. Réessayez."
         );
       } catch {
-        window.location.assign(
-          `${eventPage}?tab=gestion&gestion=temps&timeSpentError=${encodeURIComponent(
-            "Connexion interrompue — actualisez pour voir si l'entrée est dans l'historique."
-          )}`
+        alert(
+          "Connexion interrompue. Attendez quelques secondes, actualisez la page et vérifiez si vos données sont enregistrées."
         );
       } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          if (originalLabel) submitBtn.textContent = originalLabel;
-        }
+        buttons.forEach((btn) => {
+          btn.disabled = false;
+          const original = originalLabels.get(btn);
+          if (original == null) return;
+          if (btn.tagName === "INPUT") btn.value = original;
+          else btn.textContent = original;
+        });
       }
-    });
-  });
+    },
+    true
+  );
 })();
 
 (function initCustomServiceInputs() {
