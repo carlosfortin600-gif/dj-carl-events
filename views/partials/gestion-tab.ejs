@@ -44,14 +44,6 @@
     <button type="submit" class="btn btn-primary btn-lg">Enregistrer</button>
   </form>
 
-<% } else if (gestionSection === 'entente') { %>
-  <%- include('gestion-entente-section', {
-    event,
-    djNotes,
-    gestionThematicSummary: typeof gestionThematicSummary !== 'undefined' ? gestionThematicSummary : null,
-    eventAgreementStatuses: typeof eventAgreementStatuses !== 'undefined' ? eventAgreementStatuses : []
-  }) %>
-
 <% } else if (gestionSection === 'depart') { %>
   <form method="post" action="/events/<%= event.id %>/notes/save" data-unsaved-guard>
     <input type="hidden" name="return_tab" value="gestion">

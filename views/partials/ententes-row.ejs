@@ -1,0 +1,35 @@
+<div class="ententes-row status-border-<%= row.status %><%= row.employeeNeeded ? '' : ' ententes-row--no-need' %><%= row.signed ? ' ententes-row--signed' : '' %>">
+  <div class="ententes-row-date">
+    <span class="ententes-row-label">Date</span>
+    <strong><%= formatDateFr(row.eventDate) %></strong>
+    <% if (row.startTime) { %>
+      <span class="text-muted small d-block"><%= formatTime(row.startTime) %></span>
+    <% } %>
+  </div>
+  <div class="ententes-row-client">
+    <a href="/events/<%= row.eventId %>?tab=gestion&gestion=contrat&sousTraitant=<%= row.subcontractorId %>" class="fw-semibold text-decoration-none"><%= row.clientLabel %></a>
+  </div>
+  <div class="ententes-row-type">
+    <span class="ententes-row-label">Type de soirée</span>
+    <span><%= row.eventType %></span>
+    <% if (row.eventType !== 'Mariage') { %>
+      <span class="text-muted small d-block"><%= row.thematicSummary || '—' %></span>
+    <% } %>
+  </div>
+  <div class="ententes-row-need">
+    <span class="ententes-row-label">Besoin</span>
+    <strong><%= row.employeeNeeded ? 'Oui' : 'Non' %></strong>
+  </div>
+  <div class="ententes-row-sub">
+    <span class="ententes-row-label">Contrat</span>
+    <strong><%= row.subcontractorLabel %></strong>
+  </div>
+  <div class="ententes-row-passed">
+    <span class="ententes-row-label">Entente passée</span>
+    <strong><%= row.agreementPassed ? 'Oui' : 'Non' %></strong>
+  </div>
+  <div class="ententes-row-signed">
+    <span class="ententes-row-label">Signée</span>
+    <strong class="<%= row.signed ? 'text-success' : '' %>"><%= row.signed ? 'Oui' : 'Non' %></strong>
+  </div>
+</div>

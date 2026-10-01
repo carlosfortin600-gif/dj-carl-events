@@ -194,6 +194,7 @@ const {
 } = require("./lib/app-settings");
 const { parseMonthParam, parseViewParam, getCalendarViewData, getSubcontractorCalendarData, getSubcontractorAgreementsList, queryString } = require("./lib/calendar");
 const { getResumeEventsList, getEventAgreementStatuses } = require("./lib/resume");
+const { getEntentesPageData } = require("./lib/ententes-list");
 const {
   TIME_SPENT_ACTIVITIES,
   TIME_SPENT_DURATIONS,
@@ -508,7 +509,14 @@ app.get("/resume", (req, res) => {
 });
 
 app.get("/ententes", (req, res) => {
-  res.redirect(301, "/resume");
+  const { rows, rowsByMonth, rowCount } = getEntentesPageData(db);
+  res.render("ententes", {
+    title: "Ententes — DJ CARL",
+    activeNav: "ententes",
+    rows,
+    rowsByMonth,
+    rowCount
+  });
 });
 
 app.get("/settings/notifications", (req, res) => {
@@ -815,7 +823,7 @@ function renderEventDetailPage(req, res) {
   const tab = req.query.tab || "resume";
   const gestionSection =
     tab === "gestion"
-      ? ["location", "entente", "contrat", "depart", "temps", "fichiers"].includes(req.query.gestion)
+      ? ["location", "contrat", "depart", "temps", "fichiers"].includes(req.query.gestion)
         ? req.query.gestion
         : "location"
       : null;
