@@ -7,7 +7,7 @@
     <% } %>
   </div>
   <div class="ententes-row-client">
-    <a href="/events/<%= row.eventId %>?tab=gestion&gestion=contrat&sousTraitant=<%= row.subcontractorId %>" class="fw-semibold text-decoration-none"><%= row.clientLabel %></a>
+    <a href="/events/<%= row.eventId %>?tab=gestion&gestion=contrat" class="fw-semibold text-decoration-none"><%= row.clientLabel %></a>
   </div>
   <div class="ententes-row-type">
     <span class="ententes-row-label">Type de soirée</span>
@@ -21,15 +21,15 @@
     <strong><%= row.employeeNeeded ? 'Oui' : 'Non' %></strong>
   </div>
   <div class="ententes-row-sub">
-    <span class="ententes-row-label">Contrat</span>
-    <strong><%= row.subcontractorLabel %></strong>
+    <span class="ententes-row-label">Contrat(s)</span>
+    <strong><%= row.contractSummary %></strong>
   </div>
   <div class="ententes-row-passed">
     <span class="ententes-row-label">Entente passée</span>
-    <strong><%= row.agreementPassed ? 'Oui' : 'Non' %></strong>
+    <strong><%= row.agreementPassedLabel %></strong>
   </div>
   <div class="ententes-row-signed">
     <span class="ententes-row-label">Signée</span>
-    <strong class="<%= row.signed ? 'text-success' : '' %>"><%= row.signed ? 'Oui' : 'Non' %></strong>
+    <strong class="<%= row.signed ? 'text-success' : (row.signedLabel === 'Partiel' ? 'text-warning' : '') %>"><%= row.signedLabel %></strong>
   </div>
 </div>
