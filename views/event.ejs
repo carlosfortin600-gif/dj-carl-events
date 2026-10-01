@@ -186,7 +186,14 @@
           fileDeleted: typeof fileDeleted !== 'undefined' ? fileDeleted : false,
           filesError: typeof filesError !== 'undefined' ? filesError : '',
           maxFileSize: typeof maxFileSize !== 'undefined' ? maxFileSize : 0,
-          maxFilesPerUpload: typeof maxFilesPerUpload !== 'undefined' ? maxFilesPerUpload : 10
+          maxFilesPerUpload: typeof maxFilesPerUpload !== 'undefined' ? maxFilesPerUpload : 10,
+          timeSpentLogs: typeof timeSpentLogs !== 'undefined' ? timeSpentLogs : [],
+          timeSpentTotalHours: typeof timeSpentTotalHours !== 'undefined' ? timeSpentTotalHours : 0,
+          timeSpentDefaultDatetime: typeof timeSpentDefaultDatetime !== 'undefined' ? timeSpentDefaultDatetime : '',
+          timeSpentSaved: typeof timeSpentSaved !== 'undefined' ? timeSpentSaved : false,
+          timeSpentDeleted: typeof timeSpentDeleted !== 'undefined' ? timeSpentDeleted : false,
+          timeSpentError: typeof timeSpentError !== 'undefined' ? timeSpentError : '',
+          clientContactLogged: typeof clientContactLogged !== 'undefined' ? clientContactLogged : false
         }) %>
 
       <% } else if (tab === 'services') { %>

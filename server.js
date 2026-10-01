@@ -793,21 +793,6 @@ app.get("/events/:id/calendar.ics", (req, res) => {
   }
 });
 
-app.post("/events/:id", (req, res) => {
-  const eventId = Number(req.params.id);
-  if (!Number.isFinite(eventId)) {
-    return res.status(404).render("error", {
-      title: "Page introuvable",
-      activeNav: "",
-      message: "La page demandée n'existe pas."
-    });
-  }
-  const query = req.originalUrl.includes("?")
-    ? req.originalUrl.slice(req.originalUrl.indexOf("?"))
-    : "";
-  res.redirect(303, `/events/${eventId}${query}`);
-});
-
 app.get("/events/:id", (req, res) => {
   const event = getEventById(db, Number(req.params.id));
   if (!event) {
@@ -1475,19 +1460,29 @@ app.post("/events/:id/gestion/temps/add", (req, res) => {
   const eventId = Number(req.params.id);
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
 
-  const result = addTimeSpentLog(db, eventId, req.body);
-  if (!result.ok) {
-    return res.redirect(
+  try {
+    const result = addTimeSpentLog(db, eventId, req.body);
+    if (!result.ok) {
+      return res.redirect(
+        gestionRedirect(eventId, {
+          gestion: "temps",
+          timeSpentError: result.error
+        })
+      );
+    }
+
+    const query = { gestion: "temps", timeSpentSaved: "1" };
+    if (result.clientContactLogged) query.clientContactLogged = "1";
+    res.redirect(gestionRedirect(eventId, query));
+  } catch (err) {
+    console.error("Time spent add failed:", err);
+    res.redirect(
       gestionRedirect(eventId, {
         gestion: "temps",
-        timeSpentError: result.error
+        timeSpentError: "Enregistrement impossible — réessayez."
       })
     );
   }
-
-  const query = { gestion: "temps", timeSpentSaved: "1" };
-  if (result.clientContactLogged) query.clientContactLogged = "1";
-  res.redirect(gestionRedirect(eventId, query));
 });
 
 app.post("/events/:id/gestion/temps/:logId/delete", (req, res) => {
