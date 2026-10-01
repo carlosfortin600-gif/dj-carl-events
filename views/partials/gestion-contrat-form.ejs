@@ -201,6 +201,9 @@
   syncEndMin();
 
   form.addEventListener("submit", (event) => {
+    if (window.DateFormatFr?.syncAllDatetimePickers) {
+      window.DateFormatFr.syncAllDatetimePickers(form);
+    }
     if (!isEndBeforeStart()) return;
     event.preventDefault();
     alert("La date de fin doit être au minimum la date et l'heure de début.");

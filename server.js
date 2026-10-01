@@ -316,7 +316,7 @@ if (IMPORT_SECRET) {
   );
 }
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 app.use(express.json());
 app.use("/js", (req, res, next) => {
   res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -1620,23 +1620,34 @@ app.post("/events/:id/gestion/contrat/:subcontractor/save", (req, res) => {
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
   if (!isValidSubcontractor(db, subcontractor)) return res.status(404).send("Not found");
 
-  const result = saveSubcontractorContract(db, eventId, subcontractor, req.body);
-  if (!result.ok) {
-    return res.redirect(
+  try {
+    const result = saveSubcontractorContract(db, eventId, subcontractor, req.body);
+    if (!result.ok) {
+      return res.redirect(
+        gestionRedirect(eventId, {
+          gestion: "contrat",
+          sousTraitant: subcontractor,
+          contractError: result.error
+        })
+      );
+    }
+    res.redirect(
       gestionRedirect(eventId, {
         gestion: "contrat",
         sousTraitant: subcontractor,
-        contractError: result.error
+        contractSaved: "1"
+      })
+    );
+  } catch (err) {
+    console.error("Contract save failed:", err);
+    res.redirect(
+      gestionRedirect(eventId, {
+        gestion: "contrat",
+        sousTraitant: subcontractor,
+        contractError: "Enregistrement impossible. Réessayez ou contactez le support."
       })
     );
   }
-  res.redirect(
-    gestionRedirect(eventId, {
-      gestion: "contrat",
-      sousTraitant: subcontractor,
-      contractSaved: "1"
-    })
-  );
 });
 
 app.post("/events/:id/gestion/contrat/:subcontractor/clear", (req, res) => {

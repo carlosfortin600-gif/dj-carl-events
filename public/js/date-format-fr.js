@@ -126,6 +126,32 @@
     sync();
   }
 
+  function syncDatetimePicker(wrap) {
+    const dateNative = wrap.querySelector(".datetime-date-native");
+    const timeInput = wrap.querySelector(".datetime-fr-time");
+    const combined = wrap.querySelector(".datetime-fr-combined");
+    const display = wrap.querySelector(".datetime-fr-display");
+    if (!dateNative || !timeInput || !combined) return;
+
+    const date = dateNative.value;
+    const time = timeInput.value;
+    if (date && time) {
+      combined.value = `${date}T${time}`;
+    } else if (date) {
+      combined.value = `${date}T00:00`;
+    } else {
+      combined.value = "";
+    }
+    if (display) {
+      display.value = date ? formatDateFr(date) : "";
+    }
+  }
+
+  function syncAllDatetimePickers(root) {
+    const scope = root && root.querySelectorAll ? root : document;
+    scope.querySelectorAll(".datetime-fr-picker").forEach(syncDatetimePicker);
+  }
+
   function initPickers() {
     document.querySelectorAll(".date-fr-picker").forEach((wrap) => {
       bindPicker(wrap, (native, display) => {
@@ -141,16 +167,7 @@
       if (!dateNative || !timeInput || !combined || !display) return;
 
       function sync() {
-        const date = dateNative.value;
-        const time = timeInput.value;
-        if (date && time) {
-          combined.value = `${date}T${time}`;
-        } else if (date) {
-          combined.value = `${date}T00:00`;
-        } else {
-          combined.value = "";
-        }
-        display.value = date ? formatDateFr(date) : "";
+        syncDatetimePicker(wrap);
       }
 
       function openDate() {
@@ -181,6 +198,19 @@
 
       sync();
     });
+
+    if (!document.documentElement.dataset.datetimeSubmitSync) {
+      document.documentElement.dataset.datetimeSubmitSync = "1";
+      document.addEventListener(
+        "submit",
+        (event) => {
+          const form = event.target;
+          if (!form || form.tagName !== "FORM") return;
+          syncAllDatetimePickers(form);
+        },
+        true
+      );
+    }
   }
 
   global.DateFormatFr = {
@@ -188,6 +218,7 @@
     formatDateTimeFr,
     formatDateTimeLocal,
     formatDateRangeFr,
+    syncAllDatetimePickers,
     initPickers
   };
 })(window);
