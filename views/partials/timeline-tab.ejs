@@ -131,7 +131,6 @@
               </form>
               <button type="button" class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#editItem<%= item.id %>">Modifier</button>
               <form method="post" action="/events/<%= event.id %>/timeline/<%= item.id %>/delete" class="d-inline"
-                    onsubmit="return confirm('Supprimer cette étape ?');">
                 <button type="submit" class="btn btn-outline-danger">Supprimer</button>
               </form>
             </div>

@@ -28,24 +28,6 @@ document.querySelectorAll("[data-copy-target]").forEach((btn) => {
   });
 });
 
-document.querySelectorAll(".event-delete-form").forEach((form) => {
-  form.addEventListener("submit", (e) => {
-    const name = form.dataset.confirmName || "ce client";
-    const date = form.dataset.confirmDate || "";
-    const msg = `Voulez-vous vraiment supprimer l'événement de ${name}${date ? ` — ${date}` : ""} ?\n\nIl sera déplacé dans la corbeille. Vous pourrez le restaurer plus tard.`;
-    if (!confirm(msg)) e.preventDefault();
-  });
-});
-
-document.querySelectorAll(".event-destroy-form").forEach((form) => {
-  form.addEventListener("submit", (e) => {
-    const name = form.dataset.confirmName || "ce client";
-    const date = form.dataset.confirmDate || "";
-    const msg = `SUPPRIMER DÉFINITIVEMENT l'événement de ${name}${date ? ` — ${date}` : ""} ?\n\nCette action est irréversible. Questionnaire, musique, plan de soirée et toutes les données seront effacés.`;
-    if (!confirm(msg)) e.preventDefault();
-  });
-});
-
 document.querySelectorAll("[data-event-toggle]").forEach((header) => {
   const id = header.dataset.eventToggle;
   const panel = document.getElementById(`eventChecklist${id}`);

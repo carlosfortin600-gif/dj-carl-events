@@ -16,7 +16,6 @@
           <form method="post"
                 action="/events/<%= eventId %>/questionnaire-sent/<%= log.id %>/delete"
                 class="d-inline mb-0"
-                onsubmit="return confirm('Supprimer cet envoi ?');">
             <input type="hidden" name="returnTo" value="<%= returnPath %>">
             <button type="submit" class="btn btn-link btn-sm p-0 text-danger">Supprimer</button>
           </form>

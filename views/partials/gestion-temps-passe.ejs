@@ -89,8 +89,7 @@
               <td><%= formatLoggedAt(log.logged_date, log.logged_time) %></td>
               <td><%= formatDurationHours(log.duration_hours) %></td>
               <td class="text-end">
-                <form method="post" action="/events/<%= event.id %>/gestion/temps/<%= log.id %>/delete" class="d-inline"
-                      onsubmit="return confirm('Supprimer cette entrée ?');">
+                <form method="post" action="/events/<%= event.id %>/gestion/temps/<%= log.id %>/delete" class="d-inline">
                   <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
                 </form>
               </td>

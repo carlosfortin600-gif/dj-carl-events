@@ -165,7 +165,6 @@ const { buildEventIcs, buildEventIcsFilename } = require("./lib/event-ics");
 const { applyPlanSoireeFromBody } = require("./lib/plan-soiree");
 const {
   notifyDjCarlClientUpdate,
-  notifyDjCarlClientConfirmation,
   getUnreadPortalNotifications,
   getUnreadPortalNotificationCount,
   getLastPortalClientUpdate,
@@ -178,17 +177,13 @@ const {
 const { summarizePortalChanges } = require("./lib/portal-change-summary");
 const { applyPortalMusicFromBody } = require("./lib/portal-music");
 const { RESEND_TEST_FROM } = require("./lib/email-send");
-const { startConfirmationEmailScheduler, sendConfirmationEmailToClient, confirmationEmailErrorMessage, getConfirmationEmailCopyTo, getConfirmationEmailPreview } = require("./lib/confirmation-email");
+const { getPortalAccessDeniedReason, portalAccessDeniedMessage } = require("./lib/client-confirmation");
 const {
-  getEventForPortalConfirm,
-  getPortalAccessDeniedReason,
-  portalAccessDeniedMessage,
-  normalizeConfirmedByName,
-  isValidConfirmedByName,
-  recordClientConfirmation,
-  unconfirmClientDossier,
-  getConfirmationHistory
-} = require("./lib/client-confirmation");
+  sendQuestionnaireInviteEmail,
+  questionnaireInviteEmailErrorMessage,
+  getQuestionnaireInviteEmailPreview,
+  getQuestionnaireInviteCopyTo
+} = require("./lib/questionnaire-invite-email");
 const {
   getNotificationSettings,
   saveNotificationSettings,
@@ -265,14 +260,13 @@ if (process.env.NODE_ENV === "production" || process.env.TRUST_PROXY === "1") {
 }
 
 const db = initDatabase();
-startConfirmationEmailScheduler(db);
 
 function requirePortalEvent(req, res) {
   const event = getEventByPortalToken(db, req.params.token);
   if (event) return event;
   const reason = getPortalAccessDeniedReason(db, req.params.token);
   res.status(404).render("portal/error", {
-    title: reason === "confirmed" ? "Dossier confirmé" : "Lien invalide",
+    title: "Lien invalide",
     message: portalAccessDeniedMessage(reason)
   });
   return null;
@@ -871,8 +865,8 @@ app.get("/events/:id", (req, res) => {
     markPortalNotificationsReadForEvent(db, event.id);
   }
 
-  const confirmationEmailPreview =
-    tab === "client" && portalToken ? getConfirmationEmailPreview(event, portalToken) : null;
+  const questionnaireEmailPreview =
+    tab === "client" && portalToken ? getQuestionnaireInviteEmailPreview(event, portalToken) : null;
 
   res.render("event", {
     title: `${clientShortName(event)} — DJ CARL`,
@@ -944,13 +938,11 @@ app.get("/events/:id", (req, res) => {
     lastPortalClientUpdate,
     portalClientUpdateUnread: tab === "client" || tab === "questionnaire" ? false : portalClientUpdateUnread,
     emailNotificationConfigured: isEmailNotificationConfigured(db),
-    confirmationEmailCopyTo: getConfirmationEmailCopyTo(),
-    confirmationEmailSent: req.query.confirmationEmailSent === "1",
-    confirmationEmailForwarded: req.query.confirmationEmailForwarded === "1",
-    confirmationEmailError: req.query.confirmationEmailError || "",
-    clientUnconfirmed: req.query.clientUnconfirmed === "1",
-    confirmationHistory: getConfirmationHistory(db, event.id),
-    confirmationEmailPreview
+    questionnaireEmailCopyTo: getQuestionnaireInviteCopyTo(),
+    questionnaireEmailSent: req.query.questionnaireEmailSent === "1",
+    questionnaireEmailForwarded: req.query.questionnaireEmailForwarded === "1",
+    questionnaireEmailError: req.query.questionnaireEmailError || "",
+    questionnaireEmailPreview
   });
 });
 
@@ -1121,26 +1113,7 @@ app.post("/events/:id/portal/toggle", (req, res) => {
   res.redirect(`/events/${eventId}?tab=client&portalToggled=1`);
 });
 
-app.post("/events/:id/confirmation/unconfirm", (req, res) => {
-  const eventId = Number(req.params.id);
-  const event = getEventById(db, eventId);
-  if (!event) {
-    return res.status(404).render("error", {
-      title: "Événement introuvable",
-      activeNav: "dashboard",
-      message: "Cet événement n'existe pas."
-    });
-  }
-
-  if (!event.client_confirmed_at) {
-    return res.redirect(`/events/${eventId}?tab=client`);
-  }
-
-  unconfirmClientDossier(db, eventId);
-  res.redirect(`/events/${eventId}?tab=client&clientUnconfirmed=1`);
-});
-
-app.post("/events/:id/confirmation-email/send", async (req, res) => {
+app.post("/events/:id/questionnaire-email/send", async (req, res) => {
   const eventId = Number(req.params.id);
   const event = getEventById(db, eventId);
   if (!event) {
@@ -1153,89 +1126,30 @@ app.post("/events/:id/confirmation-email/send", async (req, res) => {
 
   if (!isEmailNotificationConfigured(db)) {
     return res.redirect(
-      `/events/${eventId}?tab=client&confirmationEmailError=${encodeURIComponent("Courriel non configuré — allez dans Paramètres → Notifications.")}`
+      `/events/${eventId}?tab=client&questionnaireEmailError=${encodeURIComponent("Courriel non configuré — allez dans Paramètres → Notifications.")}`
     );
   }
 
-  const result = await sendConfirmationEmailToClient(db, event, { manual: true });
+  const result = await sendQuestionnaireInviteEmail(db, event);
   if (!result.ok) {
     return res.redirect(
-      `/events/${eventId}?tab=client&confirmationEmailError=${encodeURIComponent(confirmationEmailErrorMessage(result))}`
+      `/events/${eventId}?tab=client&questionnaireEmailError=${encodeURIComponent(questionnaireInviteEmailErrorMessage(result))}`
     );
   }
 
   res.redirect(
-    `/events/${eventId}?tab=client&confirmationEmailSent=1${
-      result.forwardedViaDj ? "&confirmationEmailForwarded=1" : ""
+    `/events/${eventId}?tab=client&questionnaireEmailSent=1${
+      result.forwardedViaDj ? "&questionnaireEmailForwarded=1" : ""
     }`
   );
 });
 
 app.get("/portal/:token/confirmer", (req, res) => {
-  const event = getEventForPortalConfirm(db, req.params.token);
-  if (!event) {
-    const reason = getPortalAccessDeniedReason(db, req.params.token);
-    const title =
-      reason === "confirmed"
-        ? "Dossier confirmé"
-        : reason === "confirm_not_requested"
-          ? "Confirmation non disponible"
-          : "Lien invalide";
-    return res.status(404).render("portal/error", {
-      title,
-      message: portalAccessDeniedMessage(reason)
-    });
-  }
-  if (!requirePortalIntroAck(req, res, event)) return;
-
-  res.render("portal/confirmer", {
-    title: `Confirmer — ${clientShortName(event)}`,
-    event
-  });
+  res.redirect(`/portal/${req.params.token}`);
 });
 
-app.post("/portal/:token/confirmer", async (req, res) => {
-  const event = getEventForPortalConfirm(db, req.params.token);
-  if (!event) {
-    const reason = getPortalAccessDeniedReason(db, req.params.token);
-    const title =
-      reason === "confirmed"
-        ? "Dossier confirmé"
-        : reason === "confirm_not_requested"
-          ? "Confirmation non disponible"
-          : "Lien invalide";
-    return res.status(404).render("portal/error", {
-      title,
-      message: portalAccessDeniedMessage(reason)
-    });
-  }
-  if (!requirePortalIntroAck(req, res, event)) return;
-
-  const confirmedByName = normalizeConfirmedByName(req.body?.confirmed_by_name);
-  if (!isValidConfirmedByName(confirmedByName)) {
-    return res.status(400).render("portal/confirmer", {
-      title: `Confirmer — ${clientShortName(event)}`,
-      event,
-      error: "Indiquez le nom complet de la personne qui confirme (au moins 2 caractères).",
-      confirmedByName: String(req.body?.confirmed_by_name || "")
-    });
-  }
-
-  const history = recordClientConfirmation(db, event.id, confirmedByName, event.event_type);
-  await notifyDjCarlClientConfirmation({
-    db,
-    event: { ...event, client_confirmed_by_name: confirmedByName },
-    req,
-    confirmedByName,
-    changes: history.changes,
-    isReconfirmation: history.isReconfirmation
-  });
-  res.render("portal/confirmed", {
-    title: "Dossier confirmé — DJ Carl",
-    event: { ...event, client_confirmed_by_name: confirmedByName },
-    confirmationChanges: history.changes,
-    confirmationIsReconfirmation: history.isReconfirmation
-  });
+app.post("/portal/:token/confirmer", (req, res) => {
+  res.redirect(`/portal/${req.params.token}`);
 });
 
 app.get("/portal/:token/avertissement", (req, res) => {

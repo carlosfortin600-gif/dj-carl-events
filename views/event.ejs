@@ -129,13 +129,11 @@
           portalToggled,
           lastPortalClientUpdate: typeof lastPortalClientUpdate !== 'undefined' ? lastPortalClientUpdate : null,
           emailNotificationConfigured: typeof emailNotificationConfigured !== 'undefined' ? emailNotificationConfigured : false,
-          confirmationEmailCopyTo: typeof confirmationEmailCopyTo !== 'undefined' ? confirmationEmailCopyTo : '',
-          confirmationEmailSent: typeof confirmationEmailSent !== 'undefined' ? confirmationEmailSent : false,
-          confirmationEmailForwarded: typeof confirmationEmailForwarded !== 'undefined' ? confirmationEmailForwarded : false,
-          confirmationEmailError: typeof confirmationEmailError !== 'undefined' ? confirmationEmailError : '',
-          clientUnconfirmed: typeof clientUnconfirmed !== 'undefined' ? clientUnconfirmed : false,
-          confirmationHistory: typeof confirmationHistory !== 'undefined' ? confirmationHistory : [],
-          confirmationEmailPreview: typeof confirmationEmailPreview !== 'undefined' ? confirmationEmailPreview : null
+          questionnaireEmailCopyTo: typeof questionnaireEmailCopyTo !== 'undefined' ? questionnaireEmailCopyTo : '',
+          questionnaireEmailSent: typeof questionnaireEmailSent !== 'undefined' ? questionnaireEmailSent : false,
+          questionnaireEmailForwarded: typeof questionnaireEmailForwarded !== 'undefined' ? questionnaireEmailForwarded : false,
+          questionnaireEmailError: typeof questionnaireEmailError !== 'undefined' ? questionnaireEmailError : '',
+          questionnaireEmailPreview: typeof questionnaireEmailPreview !== 'undefined' ? questionnaireEmailPreview : null
         }) %>
 
       <% } else if (tab === 'questionnaire') { %>
