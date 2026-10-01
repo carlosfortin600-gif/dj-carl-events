@@ -316,6 +316,18 @@ if (IMPORT_SECRET) {
 
 app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 app.use(express.json());
+
+/** After POST, use 303 so clients never re-POST to GET-only URLs (404 « Page introuvable »). */
+app.use((req, res, next) => {
+  if (req.method !== "POST") return next();
+  const redirect = res.redirect.bind(res);
+  res.redirect = (statusOrUrl, maybeUrl) => {
+    if (typeof statusOrUrl === "number") return redirect(statusOrUrl, maybeUrl);
+    return redirect(303, statusOrUrl);
+  };
+  next();
+});
+
 app.use("/js", (req, res, next) => {
   res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   next();
@@ -779,6 +791,21 @@ app.get("/events/:id/calendar.ics", (req, res) => {
     console.error("Calendar ICS:", err.message);
     res.status(500).send("Impossible de générer le fichier calendrier.");
   }
+});
+
+app.post("/events/:id", (req, res) => {
+  const eventId = Number(req.params.id);
+  if (!Number.isFinite(eventId)) {
+    return res.status(404).render("error", {
+      title: "Page introuvable",
+      activeNav: "",
+      message: "La page demandée n'existe pas."
+    });
+  }
+  const query = req.originalUrl.includes("?")
+    ? req.originalUrl.slice(req.originalUrl.indexOf("?"))
+    : "";
+  res.redirect(303, `/events/${eventId}${query}`);
 });
 
 app.get("/events/:id", (req, res) => {
