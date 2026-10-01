@@ -317,11 +317,16 @@ if (IMPORT_SECRET) {
 app.use(express.urlencoded({ extended: true, limit: "15mb" }));
 app.use(express.json());
 
-/** After POST, use 303 so clients never re-POST to GET-only URLs (404 « Page introuvable »). */
+/** POST : 303 pour navigateur ; JSON { redirect } pour enregistrements fetch (Safari). */
 app.use((req, res, next) => {
   if (req.method !== "POST") return next();
   const redirect = res.redirect.bind(res);
+  const fetchSave = req.get("X-Fetch-Save") === "1";
   res.redirect = (statusOrUrl, maybeUrl) => {
+    const url = typeof statusOrUrl === "number" ? maybeUrl : statusOrUrl;
+    if (fetchSave && url) {
+      return res.status(200).json({ ok: true, redirect: url });
+    }
     if (typeof statusOrUrl === "number") return redirect(statusOrUrl, maybeUrl);
     return redirect(303, statusOrUrl);
   };

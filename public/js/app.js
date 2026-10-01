@@ -260,23 +260,90 @@ function shouldUseFetchFormSubmit(form) {
   return true;
 }
 
-async function postFormViaFetch(form, submitter) {
+const SERVER_WAKE_DELAYS_MS = [0, 3000, 4000, 5000, 6000, 7000, 8000];
+let serverWakePromise = null;
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function pingHealthOnce() {
+  const res = await fetch("/api/health", { cache: "no-store", credentials: "same-origin" });
+  return res.ok;
+}
+
+async function ensureServerAwake(onProgress) {
+  for (let i = 0; i < SERVER_WAKE_DELAYS_MS.length; i += 1) {
+    if (SERVER_WAKE_DELAYS_MS[i] > 0) {
+      onProgress?.(
+        i === 1 ? "Démarrage du serveur…" : `Démarrage du serveur (${i}/${SERVER_WAKE_DELAYS_MS.length - 1})…`
+      );
+      await sleep(SERVER_WAKE_DELAYS_MS[i]);
+    }
+    try {
+      if (await pingHealthOnce()) return true;
+    } catch {
+      // Render peut être en veille
+    }
+  }
+  return false;
+}
+
+function startServerWarmOnPageLoad() {
+  serverWakePromise = ensureServerAwake();
+}
+
+async function postFormViaFetch(form, submitter, onProgress) {
   window.DateFormatFr?.syncAllDatetimePickers?.(form);
+  if (serverWakePromise) {
+    await serverWakePromise;
+  } else {
+    await ensureServerAwake(onProgress);
+  }
+
   const action = resolveFormPostAction(form, submitter);
   const body = new URLSearchParams(new FormData(form, submitter || undefined));
+  const fetchOpts = {
+    method: "POST",
+    body,
+    credentials: "same-origin",
+    redirect: "manual",
+    headers: {
+      "X-Fetch-Save": "1",
+      Accept: "application/json, text/plain, */*"
+    }
+  };
 
-  const sendOnce = () =>
-    fetch(action, {
-      method: "POST",
-      body,
-      credentials: "same-origin",
-      redirect: "manual"
-    });
+  const sendOnce = () => fetch(action, fetchOpts);
 
-  let res = await sendOnce();
-  for (let attempt = 0; attempt < 2 && (res.status === 0 || res.status >= 500); attempt += 1) {
-    await new Promise((r) => setTimeout(r, 2000));
-    res = await sendOnce();
+  let res = null;
+  for (let attempt = 0; attempt < SERVER_WAKE_DELAYS_MS.length; attempt += 1) {
+    if (attempt > 0) {
+      onProgress?.(`Enregistrement… nouvelle tentative (${attempt + 1})`);
+      await sleep(SERVER_WAKE_DELAYS_MS[attempt]);
+    }
+    try {
+      res = await sendOnce();
+    } catch {
+      res = null;
+    }
+    if (!res) continue;
+    if (res.status === 200 || res.status === 303 || res.status === 302 || res.status === 301) break;
+    if (res.status >= 400 && res.status < 500 && res.status !== 408 && res.status !== 429) break;
+  }
+
+  if (!res) return { ok: false, url: null };
+
+  const contentType = res.headers.get("Content-Type") || "";
+  if (contentType.includes("application/json")) {
+    try {
+      const data = await res.json();
+      if (data?.ok && data.redirect) {
+        return { ok: true, url: resolveRedirectUrl(data.redirect) };
+      }
+    } catch {
+      // fallback ci-dessous
+    }
   }
 
   const location = res.headers.get("Location");
@@ -746,6 +813,8 @@ initQuestionnaireMissingHighlight();
   });
 })();
 
+startServerWarmOnPageLoad();
+
 (function initFetchFormSubmit() {
   document.addEventListener(
     "submit",
@@ -772,8 +841,13 @@ initQuestionnaireMissingHighlight();
         }
       });
 
+      const setProgress = (message) => {
+        if (!activeBtn || activeBtn.tagName === "INPUT") return;
+        activeBtn.textContent = message;
+      };
+
       try {
-        const result = await postFormViaFetch(form, submitter);
+        const result = await postFormViaFetch(form, submitter, setProgress);
         if (result.ok && result.url) {
           allowNavigation = true;
           window.location.assign(result.url);

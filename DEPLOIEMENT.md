@@ -102,6 +102,17 @@ npm start
 **Important :** sans disque persistant, chaque déploiement (Push GitHub) **efface** vos événements en ligne.
 Configurez d'abord le disque ci-dessous, puis importez une fois.
 
+### Serveur toujours actif (éviter 20–50 s d’attente)
+
+Sur le **plan gratuit**, Render **endort** l’app après ~15 min sans visite. Le premier enregistrement peut échouer ou être très lent.
+
+**Options :**
+
+1. **Gratuit — ping automatique** : le dépôt inclut `.github/workflows/render-keepalive.yml` (GitHub Actions toutes les 10 min). Vérifiez que **Actions** est activé sur le repo GitHub.
+2. **Payant — toujours allumé** : Render → **dj-carl-events** → **Settings** → passer l’instance en **Starter** (ou supérieur) avec **Auto-sleep désactivé** / instance always-on selon l’offre Render actuelle.
+
+L’app réveille aussi le serveur au chargement de page et réessaie l’enregistrement plusieurs fois.
+
 ### Disque persistant Render (obligatoire en production)
 
 1. Render → **dj-carl-events** → **Disks** → **Add Disk**
