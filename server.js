@@ -119,7 +119,8 @@ const {
   getQuestionnaireSentLogs,
   addQuestionnaireSentLog,
   deleteQuestionnaireSentLog,
-  defaultSentDatetime
+  defaultSentDatetime,
+  formatSentAt
 } = require("./lib/questionnaire-sent-log");
 const {
   getEmailRdvSentLogs,
@@ -377,6 +378,7 @@ app.locals.formatDurationHours = formatDurationHours;
 app.locals.activityLabel = activityLabel;
 app.locals.formatLoggedAt = formatLoggedAt;
 app.locals.defaultQuestionnaireSentDatetime = defaultSentDatetime;
+app.locals.formatSentAt = formatSentAt;
 app.locals.formatContactAt = formatContactAt;
 
 app.get("/api/health", (req, res) => {
@@ -1115,33 +1117,40 @@ app.post("/events/:id/portal/toggle", (req, res) => {
 
 app.post("/events/:id/questionnaire-email/send", async (req, res) => {
   const eventId = Number(req.params.id);
-  const event = getEventById(db, eventId);
-  if (!event) {
-    return res.status(404).render("error", {
-      title: "Événement introuvable",
-      activeNav: "dashboard",
-      message: "Cet événement n'existe pas."
-    });
-  }
+  try {
+    const event = getEventById(db, eventId);
+    if (!event) {
+      return res.status(404).render("error", {
+        title: "Événement introuvable",
+        activeNav: "dashboard",
+        message: "Cet événement n'existe pas."
+      });
+    }
 
-  if (!isEmailNotificationConfigured(db)) {
-    return res.redirect(
-      `/events/${eventId}?tab=client&questionnaireEmailError=${encodeURIComponent("Courriel non configuré — allez dans Paramètres → Notifications.")}`
+    if (!isEmailNotificationConfigured(db)) {
+      return res.redirect(
+        `/events/${eventId}?tab=client&questionnaireEmailError=${encodeURIComponent("Courriel non configuré — allez dans Paramètres → Notifications.")}`
+      );
+    }
+
+    const result = await sendQuestionnaireInviteEmail(db, event);
+    if (!result.ok) {
+      return res.redirect(
+        `/events/${eventId}?tab=client&questionnaireEmailError=${encodeURIComponent(questionnaireInviteEmailErrorMessage(result))}`
+      );
+    }
+
+    res.redirect(
+      `/events/${eventId}?tab=client&questionnaireEmailSent=1${
+        result.forwardedViaDj ? "&questionnaireEmailForwarded=1" : ""
+      }`
+    );
+  } catch (err) {
+    console.error("Questionnaire email route:", err);
+    res.redirect(
+      `/events/${eventId}?tab=client&questionnaireEmailError=${encodeURIComponent("Envoi impossible — réessayez ou vérifiez Paramètres → Notifications.")}`
     );
   }
-
-  const result = await sendQuestionnaireInviteEmail(db, event);
-  if (!result.ok) {
-    return res.redirect(
-      `/events/${eventId}?tab=client&questionnaireEmailError=${encodeURIComponent(questionnaireInviteEmailErrorMessage(result))}`
-    );
-  }
-
-  res.redirect(
-    `/events/${eventId}?tab=client&questionnaireEmailSent=1${
-      result.forwardedViaDj ? "&questionnaireEmailForwarded=1" : ""
-    }`
-  );
 });
 
 app.get("/portal/:token/confirmer", (req, res) => {

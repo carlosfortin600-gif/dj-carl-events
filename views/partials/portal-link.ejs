@@ -18,6 +18,10 @@
         <% } else { %>
           Courriel questionnaire envoyé au client<% if (typeof questionnaireEmailCopyTo !== 'undefined' && questionnaireEmailCopyTo) { %> (copie à <%= questionnaireEmailCopyTo %>)<% } %>.
         <% } %>
+        <% const justSent = typeof questionnaireSentLogs !== 'undefined' && questionnaireSentLogs.length ? questionnaireSentLogs[0] : null; %>
+        <% if (justSent) { %>
+          <span class="d-block mt-1">Date d'envoi : <strong><%= formatSentAt(justSent.sent_date, justSent.sent_time) %></strong></span>
+        <% } %>
       </div>
     <% } %>
     <% if (typeof questionnaireEmailError !== 'undefined' && questionnaireEmailError) { %>
@@ -92,10 +96,19 @@
       <% } %>
     </p>
 
+    <% const lastQuestionnaireEmail = typeof questionnaireSentLogs !== 'undefined' && questionnaireSentLogs.length ? questionnaireSentLogs[0] : null; %>
+    <% if (lastQuestionnaireEmail) { %>
+      <p class="small mb-3">
+        Dernier courriel questionnaire :
+        <strong><%= formatSentAt(lastQuestionnaireEmail.sent_date, lastQuestionnaireEmail.sent_time) %></strong>
+      </p>
+    <% } %>
+
     <% if (typeof questionnaireEmailPreview !== 'undefined' && questionnaireEmailPreview) { %>
       <details class="mb-3">
         <summary class="small fw-semibold mb-2" style="cursor:pointer;">Aperçu du courriel</summary>
         <div class="border rounded p-3 bg-light small">
+          <p class="text-center mb-3"><img src="/img/logo-dj-carl.png" alt="DJ Carl" width="96" height="96" style="border-radius:50%;"></p>
           <p class="mb-2"><strong>Objet :</strong> <%= questionnaireEmailPreview.subject %></p>
           <pre class="mb-0 small" style="white-space:pre-wrap;font-family:inherit;"><%= questionnaireEmailPreview.text %></pre>
         </div>
