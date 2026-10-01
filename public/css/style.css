@@ -1176,6 +1176,17 @@ a.calendar-month-event-link:hover {
   gap: 0.1rem;
 }
 
+.resume-event-type-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.35rem;
+}
+
+.resume-event-thematic {
+  color: #495057;
+}
+
 .resume-event-row-field {
   display: flex;
   flex-direction: column;

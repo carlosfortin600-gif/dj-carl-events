@@ -405,11 +405,21 @@ function migrate(db) {
   if (!djNotesColumns.includes("tech_email_rdv_time")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_email_rdv_time TEXT");
   }
+  if (!djNotesColumns.includes("tech_employee_needed")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_employee_needed TEXT");
+  }
 
   const timeLogColumns = db.prepare("PRAGMA table_info(event_time_logs)").all().map((c) => c.name);
   if (timeLogColumns.length && !timeLogColumns.includes("description")) {
     db.exec("ALTER TABLE event_time_logs ADD COLUMN description TEXT");
   }
+
+  db.exec(`
+    UPDATE dj_notes
+    SET tech_employee_needed = 'yes'
+    WHERE (tech_employee_needed IS NULL OR tech_employee_needed = '')
+      AND event_id IN (SELECT event_id FROM subcontractor_contracts)
+  `);
 
   db.exec(`
     UPDATE dj_notes
