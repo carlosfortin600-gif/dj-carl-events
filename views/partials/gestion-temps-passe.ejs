@@ -6,7 +6,11 @@
 
 <section class="form-section form-section-gestion mb-4">
   <h2 class="form-section-title">Temps passé</h2>
-  <p class="text-muted small mb-3">Enregistrez le temps consacré à cet événement (appels, courriels, préparation…).</p>
+  <p class="text-muted small mb-3">
+    Enregistrez le temps consacré à cet événement (appels, courriels, préparation…).
+    Pour <strong>Tél.</strong>, <strong>E-mail</strong> ou <strong>Rencontre Teams</strong>, une ligne est aussi ajoutée dans
+    <strong>Client contacté</strong> (Gestion → Départ) avec le type d’activité et le descriptif.
+  </p>
 
   <% if (typeof timeSpentError !== 'undefined' && timeSpentError) { %>
     <div class="alert alert-danger py-2"><%= timeSpentError %></div>

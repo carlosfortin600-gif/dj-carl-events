@@ -938,6 +938,7 @@ app.get("/events/:id", (req, res) => {
     timeSpentTotalHours,
     timeSpentDefaultDatetime,
     timeSpentSaved: req.query.timeSpentSaved === "1",
+    clientContactLogged: req.query.clientContactLogged === "1",
     timeSpentDeleted: req.query.timeSpentDeleted === "1",
     timeSpentError: req.query.timeSpentError || "",
     lastPortalClientUpdate,
@@ -1534,7 +1535,9 @@ app.post("/events/:id/gestion/temps/add", (req, res) => {
     );
   }
 
-  res.redirect(gestionRedirect(eventId, { gestion: "temps", timeSpentSaved: "1" }));
+  const query = { gestion: "temps", timeSpentSaved: "1" };
+  if (result.clientContactLogged) query.clientContactLogged = "1";
+  res.redirect(gestionRedirect(eventId, query));
 });
 
 app.post("/events/:id/gestion/temps/:logId/delete", (req, res) => {

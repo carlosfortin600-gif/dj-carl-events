@@ -20,7 +20,11 @@
   <div class="alert alert-danger"><%= filesError %></div>
 <% } %>
 <% if (typeof timeSpentSaved !== 'undefined' && timeSpentSaved) { %>
-  <div class="alert alert-success">Temps passé enregistré.</div>
+  <div class="alert alert-success">
+    Temps passé enregistré.<% if (typeof clientContactLogged !== 'undefined' && clientContactLogged) { %>
+      Communication client ajoutée (onglet Départ → Client contacté).
+    <% } %>
+  </div>
 <% } %>
 <% if (typeof timeSpentDeleted !== 'undefined' && timeSpentDeleted) { %>
   <div class="alert alert-success">Entrée supprimée.</div>
