@@ -96,21 +96,29 @@
             </div>
           </div>
 
-          <div class="resume-event-row-entente-block mt-2">
-            <span class="resume-event-row-entente-heading d-block">Entente</span>
-            <% if (ev.agreements && ev.agreements.length) { %>
+          <% if (ev.agreements && ev.agreements.length) { %>
+            <div class="resume-event-row-ententes mt-2 pt-2">
               <% ev.agreements.forEach(function(st) { %>
-                <div class="resume-event-row-entente-line<%= st.signed ? ' resume-event-row-entente-line--signed' : '' %>">
-                  <span class="resume-event-row-entente-name"><%= st.label %></span>
-                  <span class="resume-event-row-entente-signed">Signé <strong><%= st.signed ? 'Oui' : 'Non' %></strong></span>
+                <div class="resume-event-row-location-item resume-event-row-entente-item<%= !ev.employeeNeeded ? ' resume-event-row-entente-item--no-need' : '' %><%= st.signed ? ' resume-event-row-entente-item--signed' : '' %>">
+                  <span class="resume-event-row-location-type">Entente</span>
+                  <span class="resume-location-pair">
+                    <span class="resume-event-row-entente-name"><%= st.label %></span>
+                    <span class="resume-location-sep" aria-hidden="true">·</span>
+                    <span>Passée <strong>Oui</strong></span>
+                    <span class="resume-location-sep" aria-hidden="true">·</span>
+                    <span class="<%= st.signed ? 'text-success' : '' %>">Signée <strong><%= st.signed ? 'Oui' : 'Non' %></strong></span>
+                  </span>
                 </div>
               <% }); %>
-            <% } else { %>
-              <div class="resume-event-row-entente-line resume-event-row-entente-line--empty">
-                <span class="text-muted">—</span>
+            </div>
+          <% } else if (ev.employeeNeeded) { %>
+            <div class="resume-event-row-ententes mt-2 pt-2">
+              <div class="resume-event-row-location-item resume-event-row-entente-item">
+                <span class="resume-event-row-location-type">Entente</span>
+                <span class="text-muted">Aucun contrat enregistré</span>
               </div>
-            <% } %>
-          </div>
+            </div>
+          <% } %>
         </div>
       </div>
 
