@@ -98,8 +98,13 @@
         hiddenInput.value = "";
       },
       load(dataUrl) {
-        if (dataUrl) drawImage(dataUrl);
-        else this.clear();
+        if (!dataUrl) {
+          this.clear();
+          return;
+        }
+        hiddenInput.value = dataUrl;
+        drawImage(dataUrl, { keepStoredValue: true });
+        hasInk = true;
       }
     };
   }
@@ -150,16 +155,28 @@
     });
   }
 
+  const deferredSignatureLoads = new WeakMap();
+
   function loadDeferredContractSignatures(form) {
     const url = form?.dataset?.contractSignaturesUrl;
     if (!url) return Promise.resolve();
 
-    return fetch(url, { credentials: "same-origin" })
+    if (deferredSignatureLoads.has(form)) {
+      return deferredSignatureLoads.get(form);
+    }
+
+    const promise = fetch(url, { credentials: "same-origin" })
       .then((response) => (response.ok ? response.json() : null))
       .then((payload) => {
         if (payload) applySignaturePayload(form, payload);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        form.dataset.contractSignaturesLoaded = "1";
+      });
+
+    deferredSignatureLoads.set(form, promise);
+    return promise;
   }
 
   document.querySelectorAll("[data-signature-pad]").forEach((wrap) => {
@@ -188,6 +205,21 @@
       (event) => {
         const form = event.target;
         if (!form || form.tagName !== "FORM") return;
+
+        const signaturesUrl = form.dataset?.contractSignaturesUrl;
+        if (signaturesUrl && form.dataset.contractSignaturesLoaded !== "1") {
+          event.preventDefault();
+          const submitter = event.submitter;
+          loadDeferredContractSignatures(form).finally(() => {
+            if (typeof form.requestSubmit === "function") {
+              form.requestSubmit(submitter || undefined);
+            } else {
+              form.submit();
+            }
+          });
+          return;
+        }
+
         prepareSignatureFieldsForSubmit(form);
       },
       true
