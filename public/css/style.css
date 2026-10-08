@@ -654,6 +654,23 @@ a.calendar-month-event-link:hover {
   box-shadow: 0 0 0 2px rgba(13, 202, 240, 0.25);
 }
 
+.calendar-day.is-today {
+  background: rgba(255, 193, 7, 0.38);
+  border-color: rgba(255, 193, 7, 0.85);
+}
+
+.calendar-day.is-today.has-events {
+  background: rgba(255, 193, 7, 0.32);
+}
+
+.calendar-day.is-today:hover {
+  background: rgba(255, 193, 7, 0.48);
+}
+
+.calendar-day.is-today.selected {
+  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.55);
+}
+
 .calendar-day-num {
   font-weight: 600;
   font-size: 0.9rem;
@@ -725,8 +742,13 @@ a.calendar-month-event-link:hover {
 }
 
 .calendar-week-col.is-today {
-  border-color: var(--dj-accent);
-  box-shadow: 0 0 0 2px rgba(13, 202, 240, 0.2);
+  background: rgba(255, 193, 7, 0.38);
+  border-color: rgba(255, 193, 7, 0.85);
+  box-shadow: none;
+}
+
+.calendar-week-col.is-today.has-events {
+  background: rgba(255, 193, 7, 0.32);
 }
 
 .calendar-week-col-head {

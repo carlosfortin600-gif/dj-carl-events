@@ -20,7 +20,8 @@
     <% const dateStr = year + '-' + String(month).padStart(2, '0') + '-' + String(day).padStart(2, '0'); %>
     <% const dayEvents = byDate[dateStr] || []; %>
     <% const isSelected = selectedDate === dateStr; %>
-    <div class="calendar-day <%= dayEvents.length ? 'has-events' : '' %> <%= isSelected ? 'selected' : '' %>">
+    <% const isToday = typeof todayIso !== 'undefined' && todayIso === dateStr; %>
+    <div class="calendar-day <%= dayEvents.length ? 'has-events' : '' %> <%= isSelected ? 'selected' : '' %> <%= isToday ? 'is-today' : '' %>">
       <a href="<%= dayUrl(dateStr) %>" class="calendar-day-head text-decoration-none">
         <span class="calendar-day-num"><%= day %></span>
       </a>

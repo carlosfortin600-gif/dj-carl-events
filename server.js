@@ -169,6 +169,7 @@ const { buildEventIcs, buildEventIcsFilename } = require("./lib/event-ics");
 const { applyPlanSoireeFromBody } = require("./lib/plan-soiree");
 const {
   notifyDjCarlClientUpdate,
+  notifyDjCarlClientConfirmation,
   getUnreadPortalNotifications,
   getUnreadPortalNotificationCount,
   getLastPortalClientUpdate,
@@ -181,7 +182,15 @@ const {
 const { summarizePortalChanges } = require("./lib/portal-change-summary");
 const { applyPortalMusicFromBody } = require("./lib/portal-music");
 const { RESEND_TEST_FROM } = require("./lib/email-send");
-const { getPortalAccessDeniedReason, portalAccessDeniedMessage } = require("./lib/client-confirmation");
+const {
+  getPortalAccessDeniedReason,
+  portalAccessDeniedMessage,
+  getEventForPortalConfirm,
+  isClientConfirmed,
+  normalizeConfirmedByName,
+  isValidConfirmedByName,
+  recordClientConfirmation
+} = require("./lib/client-confirmation");
 const {
   sendQuestionnaireInviteEmail,
   questionnaireInviteEmailErrorMessage,
@@ -1199,11 +1208,78 @@ app.post("/events/:id/questionnaire-email/send", async (req, res) => {
 });
 
 app.get("/portal/:token/confirmer", (req, res) => {
-  res.redirect(`/portal/${req.params.token}`);
+  const token = req.params.token;
+  const event = getEventByPortalToken(db, token);
+  if (!event) {
+    const reason = getPortalAccessDeniedReason(db, token);
+    return res.status(404).render("portal/error", {
+      title: "Lien invalide",
+      message: portalAccessDeniedMessage(reason)
+    });
+  }
+
+  if (isClientConfirmed(event)) {
+    return res.render("portal/confirmed", {
+      title: `Dossier confirmé — ${clientShortName(event)}`,
+      event
+    });
+  }
+
+  const eligible = getEventForPortalConfirm(db, token);
+  if (!eligible) {
+    return res.status(403).render("portal/error", {
+      title: "Confirmation indisponible",
+      message:
+        "La confirmation en ligne n'est pas encore ouverte pour ce dossier. Contactez DJ Carl si vous avez des questions."
+    });
+  }
+
+  res.render("portal/confirmer", {
+    title: `Confirmer — ${clientShortName(eligible)}`,
+    event: eligible
+  });
 });
 
-app.post("/portal/:token/confirmer", (req, res) => {
-  res.redirect(`/portal/${req.params.token}`);
+app.post("/portal/:token/confirmer", async (req, res) => {
+  const token = req.params.token;
+  const event = getEventForPortalConfirm(db, token);
+  if (!event) {
+    return res.redirect(`/portal/${token}`);
+  }
+
+  const confirmedByName = normalizeConfirmedByName(req.body.confirmed_by_name);
+  if (!isValidConfirmedByName(confirmedByName)) {
+    return res.render("portal/confirmer", {
+      title: `Confirmer — ${clientShortName(event)}`,
+      event,
+      error: "Indiquez votre nom complet pour confirmer.",
+      confirmedByName
+    });
+  }
+
+  const history = recordClientConfirmation(db, event.id, confirmedByName, event.event_type);
+  await notifyDjCarlClientConfirmation({
+    db,
+    event,
+    req,
+    confirmedByName,
+    changes: history.changes,
+    isReconfirmation: history.isReconfirmation
+  });
+
+  const updated =
+    getEventByPortalToken(db, token) ||
+    Object.assign({}, event, {
+      client_confirmed_by_name: confirmedByName,
+      client_confirmed_at: new Date().toISOString()
+    });
+
+  res.render("portal/confirmed", {
+    title: `Dossier confirmé — ${clientShortName(updated)}`,
+    event: updated,
+    confirmationIsReconfirmation: history.isReconfirmation,
+    confirmationChanges: history.changes
+  });
 });
 
 app.get("/portal/:token/avertissement", (req, res) => {

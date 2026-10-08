@@ -12,6 +12,7 @@
   const daysInMonth = cal.daysInMonth;
   const firstWeekday = cal.firstWeekday;
   const selectedDate = cal.selectedDate;
+  const todayIso = cal.todayIso;
   const weekDays = cal.weekDays;
   const dayEvents = cal.dayEvents;
   const dayGestionDetails = cal.dayGestionDetails;
@@ -64,7 +65,7 @@
         publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false
       }) %>
     <% } else if (view === 'month') { %>
-      <%- include('calendar-month-body', { calendarBasePath, view, anchorDate, year, month, byDate, daysInMonth, firstWeekday, selectedDate, canOpenEvent: calendarCanOpenEvent }) %>
+      <%- include('calendar-month-body', { calendarBasePath, view, anchorDate, year, month, byDate, daysInMonth, firstWeekday, selectedDate, todayIso, canOpenEvent: calendarCanOpenEvent }) %>
     <% } else if (view === 'week') { %>
       <%- include('calendar-week-body', {
         calendarBasePath, view, anchorDate, year, month, weekDays,
