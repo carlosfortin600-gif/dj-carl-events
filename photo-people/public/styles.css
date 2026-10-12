@@ -111,34 +111,19 @@ html, body {
 }
 
 .photo-people-viewer__empty {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 2;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  text-align: center;
-  padding: 24px;
+  padding: 0;
 }
 
-.photo-people-viewer__empty-icon {
-  font-size: 72px;
-  line-height: 1;
-  opacity: 0.85;
-}
-
-.photo-people-viewer__empty h1 {
-  margin: 0;
-  font-size: clamp(28px, 4vw, 48px);
-}
-
-.photo-people-viewer__empty p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.72);
-  font-size: clamp(16px, 2vw, 22px);
+.photo-people-viewer__empty img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .photo-people-viewer__badge {

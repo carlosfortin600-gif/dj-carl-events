@@ -20,9 +20,11 @@ const closeViewerBtn = document.getElementById("closeViewerBtn");
 const resetConnectionsBtn = document.getElementById("resetConnectionsBtn");
 const blockBtn = document.getElementById("blockBtn");
 const blockStatusEl = document.getElementById("blockStatus");
+const loopBtn = document.getElementById("loopBtn");
 
 let photos = [];
 let uploadsBlocked = false;
+let looping = false;
 
 function formatCount(count) {
   return count === 1 ? "1 photo reçue" : `${count} photos reçues`;
@@ -51,12 +53,22 @@ function setQrStatus(message, type = "") {
   qrStatusEl.className = `photo-people-url${type ? ` photo-people-status-${type}` : ""}`;
 }
 
+function renderLooping(nextLooping) {
+  looping = Boolean(nextLooping);
+  loopBtn.textContent = looping ? "Arrêter la boucle" : "Jouer les photos en boucle";
+  loopBtn.classList.toggle("primary", looping);
+  loopBtn.classList.toggle("secondary", !looping);
+}
+
 function renderPhotos(state) {
   photos = Array.isArray(state?.photos) ? state.photos : [];
   photoCountEl.textContent = formatCount(photos.length);
   thumbsEl.innerHTML = photos.slice(0, 18).map((photo) => (
     `<img src="${photo.url}" alt="">`
   )).join("");
+  if (typeof state?.looping === "boolean") {
+    renderLooping(state.looping);
+  }
 }
 
 async function loadNetworkInfo() {
@@ -178,6 +190,22 @@ openViewerBtn.addEventListener("click", () => {
 openViewerEmbedBtn.addEventListener("click", openViewerOverlay);
 closeViewerBtn.addEventListener("click", closeViewerOverlay);
 
+loopBtn.addEventListener("click", () => {
+  if (!looping && !photos.length) {
+    alert("Aucune photo à jouer pour l'instant.");
+    return;
+  }
+
+  socket.emit("photoPeopleSetLoop", !looping, (response) => {
+    if (!response?.ok) {
+      alert(response?.error || "Impossible de changer la boucle.");
+      return;
+    }
+
+    renderLooping(response.state?.looping);
+  });
+});
+
 resetConnectionsBtn.addEventListener("click", () => {
   const ok = window.confirm(
     "Réinitialiser les connexions ?\n\nTous les téléphones seront déconnectés. Le compteur repasse à 0."
@@ -233,6 +261,7 @@ clearBtn.addEventListener("click", () => {
 socket.on("connect", () => {
   socket.emit("joinPhotoPeopleHost", (state) => {
     renderPhotos(state);
+    renderLooping(state?.looping);
     renderConnectionCount(state?.connectionCount);
     renderBlocked(state?.blocked);
     if (state?.photosDir) {

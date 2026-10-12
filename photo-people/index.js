@@ -35,8 +35,17 @@ const PUBLIC_FILES = new Set([
   "host.js",
   "viewer.js",
   "upload.js",
-  "frame-noel.png"
+  "frame-noel.png",
+  "attente-noel.jpg"
 ]);
+let slideshowLooping = false;
+
+function getPhotoPeopleViewState() {
+  return {
+    ...getPublicPhotoPeopleState(),
+    looping: slideshowLooping
+  };
+}
 
 function sendPublicFile(filename) {
   return (req, res) => {
@@ -155,7 +164,7 @@ function registerPhotoPeopleRoutes(app, { io, getBaseUrl, getLocalIp, port, QRCo
   });
 
   app.get("/api/photo-people/state", (req, res) => {
-    res.json(getPublicPhotoPeopleState());
+    res.json(getPhotoPeopleViewState());
   });
 
   app.get("/api/photo-people/info", (req, res) => {
@@ -178,7 +187,7 @@ function registerPhotoPeopleRoutes(app, { io, getBaseUrl, getLocalIp, port, QRCo
 
     try {
       const resolved = setPhotosDir(photosDir);
-      const state = getPublicPhotoPeopleState();
+      const state = getPhotoPeopleViewState();
       io.to("photopeople").emit("photoPeopleState", state);
 
       res.json({
@@ -208,7 +217,7 @@ function registerPhotoPeopleRoutes(app, { io, getBaseUrl, getLocalIp, port, QRCo
       ).trim();
 
       const resolved = setPhotosDir(picked);
-      const state = getPublicPhotoPeopleState();
+      const state = getPhotoPeopleViewState();
       io.to("photopeople").emit("photoPeopleState", state);
 
       res.json({
@@ -250,7 +259,7 @@ function registerPhotoPeopleRoutes(app, { io, getBaseUrl, getLocalIp, port, QRCo
       });
 
       io.to("photopeople").emit("photoPeopleAdd", photo);
-      io.to("photopeople").emit("photoPeopleState", getPublicPhotoPeopleState());
+      io.to("photopeople").emit("photoPeopleState", getPhotoPeopleViewState());
 
       res.json({
         success: true,
@@ -270,12 +279,12 @@ function registerPhotoPeopleRoutes(app, { io, getBaseUrl, getLocalIp, port, QRCo
 
 function registerPhotoPeopleSockets(io, socket) {
   function sendPhotoPeopleState(target = socket) {
-    target.emit("photoPeopleState", getPublicPhotoPeopleState());
+    target.emit("photoPeopleState", getPhotoPeopleViewState());
   }
 
   socket.on("joinPhotoPeopleHost", (callback) => {
     socket.join("photopeople");
-    const state = getPublicPhotoPeopleState();
+    const state = getPhotoPeopleViewState();
     sendPhotoPeopleState(socket);
     socket.emit("photoPeopleConnections", getAccessState());
 
@@ -290,7 +299,7 @@ function registerPhotoPeopleSockets(io, socket) {
 
   socket.on("joinPhotoPeopleViewer", (callback) => {
     socket.join("photopeople");
-    const state = getPublicPhotoPeopleState();
+    const state = getPhotoPeopleViewState();
     sendPhotoPeopleState(socket);
 
     if (typeof callback === "function") {
@@ -350,14 +359,25 @@ function registerPhotoPeopleSockets(io, socket) {
     }
   });
 
+  socket.on("photoPeopleSetLoop", (looping, callback) => {
+    slideshowLooping = Boolean(looping);
+    const state = getPhotoPeopleViewState();
+    io.to("photopeople").emit("photoPeopleState", state);
+
+    if (typeof callback === "function") {
+      callback({ ok: true, state });
+    }
+  });
+
   socket.on("photoPeopleClear", (callback) => {
     try {
       clearAllPhotos();
+      slideshowLooping = false;
       io.to("photopeople").emit("photoPeopleClear");
-      io.to("photopeople").emit("photoPeopleState", getPublicPhotoPeopleState());
+      io.to("photopeople").emit("photoPeopleState", getPhotoPeopleViewState());
 
       if (typeof callback === "function") {
-        callback({ ok: true, state: getPublicPhotoPeopleState() });
+        callback({ ok: true, state: getPhotoPeopleViewState() });
       }
     } catch (error) {
       if (typeof callback === "function") {

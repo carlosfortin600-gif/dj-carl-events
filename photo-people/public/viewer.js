@@ -18,6 +18,7 @@ let currentIndex = 0;
 let displayTimer = null;
 let activeSlide = -1;
 let hasShownPhoto = false;
+let looping = false;
 
 if (isEmbed) {
   document.body.classList.add("photo-people-embed");
@@ -59,6 +60,13 @@ function preloadImage(url) {
     img.onerror = reject;
     img.src = url;
   });
+}
+
+function showHoldImage() {
+  clearDisplayTimer();
+  emptyStateEl.hidden = false;
+  stageEl.hidden = true;
+  resetSlides();
 }
 
 async function crossfadeToPhoto(photo) {
@@ -113,18 +121,31 @@ async function crossfadeToPhoto(photo) {
   }, FADE_MS + 80);
 }
 
-function advanceSlideshow() {
+function queueNextDisplay() {
+  clearDisplayTimer();
+  displayTimer = setTimeout(advanceSlideshow, DISPLAY_MS);
+}
+
+function startLoopFrom(index) {
   if (!photos.length) {
-    clearDisplayTimer();
-    emptyStateEl.hidden = false;
-    stageEl.hidden = true;
-    resetSlides();
+    showHoldImage();
+    return;
+  }
+
+  currentIndex = ((Number(index) || 0) + photos.length) % photos.length;
+  crossfadeToPhoto(photos[currentIndex]);
+  queueNextDisplay();
+}
+
+function advanceSlideshow() {
+  if (!photos.length || !looping) {
+    showHoldImage();
     return;
   }
 
   currentIndex = (currentIndex + 1) % photos.length;
   crossfadeToPhoto(photos[currentIndex]);
-  displayTimer = setTimeout(advanceSlideshow, DISPLAY_MS);
+  queueNextDisplay();
 }
 
 function presentPhoto(photo) {
@@ -134,21 +155,28 @@ function presentPhoto(photo) {
   if (currentIndex < 0) currentIndex = 0;
 
   crossfadeToPhoto(photo);
-  displayTimer = setTimeout(advanceSlideshow, DISPLAY_MS);
+  queueNextDisplay();
 }
 
 function applyState(state) {
   photos = Array.isArray(state?.photos) ? state.photos : [];
+  const nextLooping = Boolean(state?.looping);
+  const loopChanged = nextLooping !== looping;
+  looping = nextLooping;
 
   if (!photos.length) {
-    clearDisplayTimer();
-    emptyStateEl.hidden = false;
-    stageEl.hidden = true;
-    resetSlides();
+    showHoldImage();
     return;
   }
 
-  presentPhoto(photos[0]);
+  if (looping && (loopChanged || !hasShownPhoto)) {
+    startLoopFrom(currentIndex);
+    return;
+  }
+
+  if (!looping && loopChanged) {
+    showHoldImage();
+  }
 }
 
 socket.on("connect", () => {
@@ -163,7 +191,7 @@ socket.on("photoPeopleAdd", (photo) => {
   presentPhoto(photo);
 });
 socket.on("photoPeopleClear", () => {
-  applyState({ photos: [] });
+  applyState({ photos: [], looping });
 });
 
 if (isEmbed) {
