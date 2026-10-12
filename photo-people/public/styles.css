@@ -125,18 +125,18 @@ html, body {
   height: 100%;
   object-fit: cover;
   object-position: center;
-  transform: scale(1.08);
-  animation: photo-people-hold-drift 24s ease-in-out infinite alternate;
+  transform: scale(1.12);
+  animation: photo-people-hold-drift 16s ease-in-out infinite alternate;
   will-change: transform;
 }
 
 @keyframes photo-people-hold-drift {
   0% {
-    transform: scale(1.06) translate3d(-1.4%, -0.8%, 0);
+    transform: scale(1.1) translate3d(-3.6%, -2.2%, 0);
   }
 
   100% {
-    transform: scale(1.12) translate3d(1.6%, 1%, 0);
+    transform: scale(1.2) translate3d(3.8%, 2.4%, 0);
   }
 }
 
