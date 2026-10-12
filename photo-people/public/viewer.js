@@ -1,4 +1,4 @@
-const DISPLAY_MS = 6000;
+const DEFAULT_DISPLAY_MS = 6000;
 const FADE_MS = 1000;
 
 const socket = io();
@@ -19,6 +19,7 @@ let displayTimer = null;
 let activeSlide = -1;
 let hasShownPhoto = false;
 let looping = false;
+let displayMs = DEFAULT_DISPLAY_MS;
 
 if (isEmbed) {
   document.body.classList.add("photo-people-embed");
@@ -123,7 +124,7 @@ async function crossfadeToPhoto(photo) {
 
 function queueNextDisplay() {
   clearDisplayTimer();
-  displayTimer = setTimeout(advanceSlideshow, DISPLAY_MS);
+  displayTimer = setTimeout(advanceSlideshow, displayMs);
 }
 
 function startLoopFrom(index) {
@@ -163,6 +164,9 @@ function applyState(state) {
   const nextLooping = Boolean(state?.looping);
   const loopChanged = nextLooping !== looping;
   looping = nextLooping;
+  const nextDisplayMs = Number(state?.displayMs) || DEFAULT_DISPLAY_MS;
+  const displayChanged = nextDisplayMs !== displayMs;
+  displayMs = nextDisplayMs;
 
   if (!photos.length) {
     showHoldImage();
@@ -176,6 +180,11 @@ function applyState(state) {
 
   if (!looping && loopChanged) {
     showHoldImage();
+    return;
+  }
+
+  if (displayChanged && hasShownPhoto && !stageEl.hidden) {
+    queueNextDisplay();
   }
 }
 
@@ -191,7 +200,7 @@ socket.on("photoPeopleAdd", (photo) => {
   presentPhoto(photo);
 });
 socket.on("photoPeopleClear", () => {
-  applyState({ photos: [], looping });
+  applyState({ photos: [], looping, displayMs });
 });
 
 if (isEmbed) {

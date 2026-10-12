@@ -39,11 +39,22 @@ const PUBLIC_FILES = new Set([
   "attente-noel.jpg"
 ]);
 let slideshowLooping = false;
+let slideshowDisplayMs = 6000;
+
+function normalizeDisplayMs(raw) {
+  const seconds = Number.parseInt(raw, 10);
+  if (!Number.isFinite(seconds)) {
+    return slideshowDisplayMs;
+  }
+
+  return Math.min(60, Math.max(2, seconds)) * 1000;
+}
 
 function getPhotoPeopleViewState() {
   return {
     ...getPublicPhotoPeopleState(),
-    looping: slideshowLooping
+    looping: slideshowLooping,
+    displayMs: slideshowDisplayMs
   };
 }
 
@@ -356,6 +367,17 @@ function registerPhotoPeopleSockets(io, socket) {
   socket.on("disconnect", () => {
     if (guestSockets.delete(socket.id)) {
       emitConnectionCount(io);
+    }
+  });
+
+  socket.on("photoPeopleSetDisplayMs", (value, callback) => {
+    const seconds = value && typeof value === "object" ? value.seconds : value;
+    slideshowDisplayMs = normalizeDisplayMs(seconds);
+    const state = getPhotoPeopleViewState();
+    io.to("photopeople").emit("photoPeopleState", state);
+
+    if (typeof callback === "function") {
+      callback({ ok: true, state });
     }
   });
 

@@ -21,10 +21,12 @@ const resetConnectionsBtn = document.getElementById("resetConnectionsBtn");
 const blockBtn = document.getElementById("blockBtn");
 const blockStatusEl = document.getElementById("blockStatus");
 const loopBtn = document.getElementById("loopBtn");
+const displaySecondsInput = document.getElementById("displaySecondsInput");
 
 let photos = [];
 let uploadsBlocked = false;
 let looping = false;
+let displayMs = 6000;
 
 function formatCount(count) {
   return count === 1 ? "1 photo reçue" : `${count} photos reçues`;
@@ -60,6 +62,13 @@ function renderLooping(nextLooping) {
   loopBtn.classList.toggle("secondary", !looping);
 }
 
+function renderDisplayMs(nextDisplayMs) {
+  const ms = Number(nextDisplayMs) || 6000;
+  displayMs = ms;
+  if (document.activeElement === displaySecondsInput) return;
+  displaySecondsInput.value = String(Math.round(ms / 1000));
+}
+
 function renderPhotos(state) {
   photos = Array.isArray(state?.photos) ? state.photos : [];
   photoCountEl.textContent = formatCount(photos.length);
@@ -68,6 +77,9 @@ function renderPhotos(state) {
   )).join("");
   if (typeof state?.looping === "boolean") {
     renderLooping(state.looping);
+  }
+  if (state?.displayMs) {
+    renderDisplayMs(state.displayMs);
   }
 }
 
@@ -190,6 +202,21 @@ openViewerBtn.addEventListener("click", () => {
 openViewerEmbedBtn.addEventListener("click", openViewerOverlay);
 closeViewerBtn.addEventListener("click", closeViewerOverlay);
 
+function saveDisplaySeconds() {
+  const seconds = Number.parseInt(displaySecondsInput.value, 10);
+  socket.emit("photoPeopleSetDisplayMs", seconds, (response) => {
+    if (!response?.ok) {
+      alert(response?.error || "Impossible d'enregistrer le temps d'affichage.");
+      return;
+    }
+
+    renderDisplayMs(response.state?.displayMs);
+  });
+}
+
+displaySecondsInput.addEventListener("change", saveDisplaySeconds);
+displaySecondsInput.addEventListener("blur", saveDisplaySeconds);
+
 loopBtn.addEventListener("click", () => {
   if (!looping && !photos.length) {
     alert("Aucune photo à jouer pour l'instant.");
@@ -262,6 +289,7 @@ socket.on("connect", () => {
   socket.emit("joinPhotoPeopleHost", (state) => {
     renderPhotos(state);
     renderLooping(state?.looping);
+    renderDisplayMs(state?.displayMs);
     renderConnectionCount(state?.connectionCount);
     renderBlocked(state?.blocked);
     if (state?.photosDir) {
