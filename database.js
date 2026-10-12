@@ -393,6 +393,12 @@ function migrate(db) {
   if (!djNotesColumns.includes("tech_floor_plan_notes")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_floor_plan_notes TEXT");
   }
+  if (!djNotesColumns.includes("tech_photobooth_frame_sent")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_photobooth_frame_sent TEXT");
+  }
+  if (!djNotesColumns.includes("tech_photobooth_frame_confirmed")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_photobooth_frame_confirmed TEXT");
+  }
   if (!djNotesColumns.includes("tech_client_comment")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_client_comment TEXT");
   }

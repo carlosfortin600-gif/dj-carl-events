@@ -78,6 +78,40 @@
     </div>
   </div>
 
+  <% const photoboothFrameSent = djNotes.tech_photobooth_frame_sent || 'no'; %>
+  <% const photoboothFrameConfirmed = djNotes.tech_photobooth_frame_confirmed || 'no'; %>
+  <div class="border rounded p-3 bg-light mb-4">
+    <h3 class="h6 mb-3">Photobooth</h3>
+    <div class="row g-3">
+      <div class="col-12">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <span class="fw-semibold">Exemple de cadre photobooth envoyé</span>
+          <div class="btn-group btn-group-sm" role="group" aria-label="Exemple de cadre photobooth envoyé">
+            <input type="radio" class="btn-check" name="tech_photobooth_frame_sent" id="tech_photobooth_frame_sent_yes" value="yes"
+                   <%= photoboothFrameSent === 'yes' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="tech_photobooth_frame_sent_yes">Oui</label>
+            <input type="radio" class="btn-check" name="tech_photobooth_frame_sent" id="tech_photobooth_frame_sent_no" value="no"
+                   <%= photoboothFrameSent === 'no' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="tech_photobooth_frame_sent_no">Non</label>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <span class="fw-semibold">Confirmé par le client</span>
+          <div class="btn-group btn-group-sm" role="group" aria-label="Cadre photobooth confirmé">
+            <input type="radio" class="btn-check" name="tech_photobooth_frame_confirmed" id="tech_photobooth_frame_confirmed_yes" value="yes"
+                   <%= photoboothFrameConfirmed === 'yes' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="tech_photobooth_frame_confirmed_yes">Oui</label>
+            <input type="radio" class="btn-check" name="tech_photobooth_frame_confirmed" id="tech_photobooth_frame_confirmed_no" value="no"
+                   <%= photoboothFrameConfirmed === 'no' ? 'checked' : '' %>>
+            <label class="btn btn-outline-secondary" for="tech_photobooth_frame_confirmed_no">Non</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="border rounded p-3 bg-light mb-4">
     <h3 class="h6 mb-3">Client</h3>
     <div class="row g-3">
