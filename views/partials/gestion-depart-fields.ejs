@@ -96,6 +96,16 @@
           </div>
         </div>
       </div>
+      <div class="col-md-6">
+        <label class="form-label" for="tech_photobooth_frame_sent_datetime">Date d'envoi</label>
+        <%- include('datetime-fr-field', {
+          id: 'tech_photobooth_frame_sent_datetime',
+          name: 'tech_photobooth_frame_sent_datetime',
+          value: endDatetimeLocalValue(event.event_date, djNotes.tech_photobooth_frame_sent_date, djNotes.tech_photobooth_frame_sent_time),
+          displayValue: djNotes.tech_photobooth_frame_sent_date
+            ? formatDateTimeFr(djNotes.tech_photobooth_frame_sent_date, djNotes.tech_photobooth_frame_sent_time) : ''
+        }) %>
+      </div>
       <div class="col-12">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
           <span class="fw-semibold">Confirmé par le client</span>

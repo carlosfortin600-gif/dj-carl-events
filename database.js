@@ -399,6 +399,12 @@ function migrate(db) {
   if (!djNotesColumns.includes("tech_photobooth_frame_confirmed")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_photobooth_frame_confirmed TEXT");
   }
+  if (!djNotesColumns.includes("tech_photobooth_frame_sent_date")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_photobooth_frame_sent_date TEXT");
+  }
+  if (!djNotesColumns.includes("tech_photobooth_frame_sent_time")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_photobooth_frame_sent_time TEXT");
+  }
   if (!djNotesColumns.includes("tech_client_comment")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_client_comment TEXT");
   }
