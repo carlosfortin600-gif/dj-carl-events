@@ -1,0 +1,478 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+}
+
+.photo-people-viewer {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #050505;
+  color: #fff;
+}
+
+.photo-people-viewer__ambient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(0, 212, 255, 0.12), transparent 35%),
+    radial-gradient(circle at 80% 80%, rgba(255, 45, 149, 0.1), transparent 40%),
+    #050505;
+}
+
+.photo-people-viewer__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+
+.photo-people-viewer__slides {
+  position: absolute;
+  inset: 0;
+  background: #000;
+}
+
+.photo-people-viewer__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: #000;
+  transition: opacity 1s ease-in-out;
+  will-change: opacity;
+  z-index: 1;
+}
+
+.photo-people-viewer__slide.is-active {
+  opacity: 1;
+  z-index: 3;
+}
+
+.photo-people-viewer__slide.is-beneath {
+  opacity: 1;
+  z-index: 2;
+}
+
+.photo-people-viewer__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+
+.photo-people-xmas-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  pointer-events: none;
+  user-select: none;
+}
+
+.photo-people-viewer__meta {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 8%;
+  z-index: 6;
+  padding: 36px 20px 12px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.72));
+  opacity: 1;
+  transition: opacity 0.6s ease-in-out;
+  pointer-events: none;
+}
+
+.photo-people-viewer__meta.is-fading {
+  opacity: 0;
+}
+
+.photo-people-viewer__name {
+  margin: 0;
+  font-size: clamp(42px, 6vw, 88px);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.photo-people-viewer__caption {
+  margin: 12px 0 0;
+  font-size: clamp(28px, 4vw, 56px);
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.photo-people-viewer__empty {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  padding: 24px;
+}
+
+.photo-people-viewer__empty-icon {
+  font-size: 72px;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.photo-people-viewer__empty h1 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 48px);
+}
+
+.photo-people-viewer__empty p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(16px, 2vw, 22px);
+}
+
+.photo-people-viewer__badge {
+  display: none;
+}
+
+.photo-people-host {
+  min-height: 100dvh;
+  background: radial-gradient(circle at top, #1f2937, #050505 65%);
+  color: #fff;
+  padding: 24px;
+}
+
+.photo-people-host__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.photo-people-host__title {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 40px);
+  color: #00d4ff;
+}
+
+.photo-people-host__home {
+  color: #00d4ff;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.photo-people-host__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.photo-people-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.photo-people-card h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+}
+
+.photo-people-connections {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
+  margin: 8px 0 18px;
+}
+
+.photo-people-connections__number {
+  font-size: clamp(56px, 8vw, 84px);
+  font-weight: 900;
+  line-height: 1;
+  color: #00d4ff;
+}
+
+.photo-people-connections__label {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ccc;
+}
+
+.photo-people-block-status {
+  margin: -8px 0 12px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ff8a96;
+}
+
+.photo-people-btn.is-blocked {
+  background: #dc3545;
+  color: #fff;
+  border-color: #dc3545;
+}
+
+.photo-people-qr {
+  display: block;
+  width: min(100%, 280px);
+  min-height: 280px;
+  margin: 0 auto;
+  border-radius: 12px;
+  background: #fff;
+  object-fit: contain;
+}
+
+.photo-people-qr.is-loading {
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.08) 25%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.08) 75%);
+  background-size: 200% 100%;
+  animation: photo-people-shimmer 1.2s linear infinite;
+}
+
+@keyframes photo-people-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.photo-people-path-input {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.25);
+  color: #fff;
+  font-size: 14px;
+}
+
+.photo-people-status-ok {
+  color: #7dffb3;
+}
+
+.photo-people-status-error {
+  color: #ff8a96;
+}
+
+.photo-people-url {
+  margin-top: 12px;
+  word-break: break-all;
+  color: #ccc;
+  font-size: 14px;
+  text-align: center;
+}
+
+.photo-people-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.photo-people-btn {
+  appearance: none;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.photo-people-btn.primary {
+  background: #00d4ff;
+  color: #001018;
+}
+
+.photo-people-btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.photo-people-btn.danger {
+  background: rgba(220, 53, 69, 0.18);
+  color: #ff8a96;
+  border: 1px solid rgba(220, 53, 69, 0.35);
+}
+
+.photo-people-thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.photo-people-thumbs img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+html:has(.photo-people-upload-page) {
+  height: 100%;
+  overflow: hidden;
+}
+
+.photo-people-upload-page {
+  height: 100dvh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.photo-people-upload {
+  height: 100%;
+  background: radial-gradient(circle at top, #1f2937, #050505 65%);
+  color: #fff;
+  padding:
+    max(10px, env(safe-area-inset-top))
+    12px
+    max(10px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.photo-people-upload__card {
+  width: min(100%, 420px);
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 12px 14px 10px;
+  overflow: hidden;
+}
+
+.photo-people-upload__header {
+  flex-shrink: 0;
+}
+
+.photo-people-upload__card h1 {
+  margin: 0;
+  font-size: clamp(20px, 5.6vw, 26px);
+  color: #00d4ff;
+}
+
+.photo-people-upload__card p {
+  margin: 4px 0 10px;
+  color: #ccc;
+  line-height: 1.3;
+  font-size: 13px;
+}
+
+.photo-people-upload__card p.is-blocked,
+.photo-people-upload__card p.is-kicked {
+  color: #ff8a96;
+  font-weight: 700;
+}
+
+.photo-people-upload.is-locked .photo-people-upload__preview,
+.photo-people-upload.is-locked .photo-people-upload__fields,
+.photo-people-upload.is-locked .photo-people-actions {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.photo-people-upload__preview {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.photo-people-upload__preview:focus-visible {
+  outline: 2px solid #00d4ff;
+  outline-offset: 3px;
+}
+
+.photo-people-upload__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-people-upload__preview span {
+  color: #888;
+  font-size: 15px;
+}
+
+.photo-people-upload__fields {
+  flex-shrink: 0;
+}
+
+.photo-people-upload label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: #ddd;
+}
+
+.photo-people-upload input[type="text"] {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.25);
+  color: #fff;
+  font-size: 16px;
+}
+
+.photo-people-upload input[type="file"] {
+  display: none;
+}
+
+.photo-people-upload .photo-people-actions {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.photo-people-upload .photo-people-btn {
+  width: 100%;
+}
+
+.photo-people-upload__status {
+  flex-shrink: 0;
+  margin-top: 6px;
+  min-height: 18px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.photo-people-upload__status.ok {
+  color: #7dffb3;
+}
+
+.photo-people-upload__status.error {
+  color: #ff8a96;
+}

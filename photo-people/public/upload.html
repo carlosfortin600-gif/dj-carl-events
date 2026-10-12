@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Photo en direct — Envoyer une photo</title>
+<link rel="stylesheet" href="/photo-people/styles.css">
+</head>
+<body class="photo-people-upload-page">
+<div class="photo-people-upload">
+  <div class="photo-people-upload__card">
+    <header class="photo-people-upload__header">
+      <h1>Photo en direct</h1>
+      <p id="uploadLead">Touche le carré, puis envoie ta photo sur l'écran.</p>
+    </header>
+
+    <button id="preview" class="photo-people-upload__preview" type="button" aria-label="Ouvrir la caméra">
+      <span>Touche pour ouvrir la caméra</span>
+    </button>
+
+    <div class="photo-people-upload__fields">
+      <label for="uploaderName">Ton prénom</label>
+      <input id="uploaderName" type="text" maxlength="40" placeholder="Ex. Marie" autocomplete="given-name">
+
+      <label for="caption">Message</label>
+      <input id="caption" type="text" maxlength="120" placeholder="Ex. Belle soirée !">
+    </div>
+
+    <input id="photoInput" type="file" accept="image/*" capture="environment">
+
+    <div class="photo-people-actions">
+      <button id="sendBtn" class="photo-people-btn primary" type="button" disabled>Envoyer sur l'écran</button>
+    </div>
+
+    <div id="status" class="photo-people-upload__status"></div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/photo-people/upload.js"></script>
+</body>
+</html>

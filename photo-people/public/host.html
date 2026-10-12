@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photo en direct — Animateur</title>
+<link rel="stylesheet" href="/photo-people/styles.css">
+</head>
+<body>
+<div class="photo-people-host">
+  <header class="photo-people-host__header">
+    <h1 class="photo-people-host__title">Photo en direct</h1>
+    <a
+      class="photo-people-host__home"
+      href="/"
+      data-home-confirm
+      data-home-confirm-message="Retourner à l'accueil ?&#10;&#10;Vous quittez Photo en direct. L'écran géant n'est pas remis à zéro."
+    >Accueil</a>
+  </header>
+
+  <div class="photo-people-host__grid">
+    <section class="photo-people-card">
+      <h2>Invités — rejoindre</h2>
+      <p>Même QR que le quiz : les invités choisissent Quiz ou Photo en direct sur leur téléphone.</p>
+      <div class="photo-people-connections" aria-live="polite">
+        <span id="connectionCount" class="photo-people-connections__number">0</span>
+        <span id="connectionLabel" class="photo-people-connections__label">connexion</span>
+      </div>
+      <p id="blockStatus" class="photo-people-block-status" hidden>Envois bloqués</p>
+      <div class="photo-people-actions">
+        <button id="resetConnectionsBtn" class="photo-people-btn secondary" type="button">Reset connexions</button>
+        <button id="blockBtn" class="photo-people-btn danger" type="button">Bloquer</button>
+      </div>
+      <img id="uploadQr" class="photo-people-qr is-loading" alt="QR code envoi photo">
+      <div id="uploadUrl" class="photo-people-url"></div>
+      <div id="qrStatus" class="photo-people-url"></div>
+      <div class="photo-people-actions">
+        <button id="reloadQrBtn" class="photo-people-btn secondary" type="button">Recharger le QR</button>
+      </div>
+    </section>
+
+    <section class="photo-people-card">
+      <h2>Écran géant</h2>
+      <p>Ouvre l'écran public sur la TV ou le projecteur.</p>
+      <div class="photo-people-actions">
+        <button id="openViewerBtn" class="photo-people-btn primary" type="button">Ouvrir l'écran géant</button>
+        <button id="openViewerEmbedBtn" class="photo-people-btn secondary" type="button">Plein écran intégré</button>
+      </div>
+      <p id="photoCount" style="margin-top:16px;color:#ccc;">0 photo reçue</p>
+    </section>
+
+    <section class="photo-people-card">
+      <h2>Enregistrement</h2>
+      <p>Choisis où enregistrer les photos sur ce PC.</p>
+      <label for="photosDirInput">Dossier</label>
+      <input id="photosDirInput" class="photo-people-path-input" type="text" placeholder="/Users/.../Mes photos">
+      <div class="photo-people-actions">
+        <button id="pickFolderBtn" class="photo-people-btn secondary" type="button">Choisir un dossier…</button>
+        <button id="applyFolderBtn" class="photo-people-btn primary" type="button">Appliquer</button>
+      </div>
+      <p id="folderStatus" class="photo-people-url"></p>
+    </section>
+
+    <section class="photo-people-card">
+      <h2>Modération</h2>
+      <p>Efface toutes les photos reçues pendant l'événement.</p>
+      <div class="photo-people-actions">
+        <button id="clearBtn" class="photo-people-btn danger" type="button">Vider l'écran</button>
+      </div>
+      <div id="thumbs" class="photo-people-thumbs"></div>
+    </section>
+  </div>
+</div>
+
+<div id="viewerOverlay" class="photo-people-viewer" hidden aria-hidden="true" style="position:fixed;inset:0;z-index:9999;">
+  <iframe id="viewerFrame" title="Photo en direct" style="width:100%;height:100%;border:0;"></iframe>
+  <button id="closeViewerBtn" type="button" class="photo-people-btn secondary" style="position:fixed;top:16px;right:16px;z-index:10000;">Fermer</button>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/photo-people/host.js"></script>
+<script src="/home-confirm.js"></script>
+</body>
+</html>

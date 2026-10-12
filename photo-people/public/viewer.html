@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photo en direct — Écran géant</title>
+<link rel="stylesheet" href="/photo-people/styles.css">
+</head>
+<body>
+<div id="viewerRoot" class="photo-people-viewer">
+  <div class="photo-people-viewer__ambient"></div>
+
+  <div id="emptyState" class="photo-people-viewer__empty">
+    <div class="photo-people-viewer__empty-icon" aria-hidden="true">📸</div>
+    <h1>Photo en direct</h1>
+    <p>Les photos des invités s'afficheront ici en direct.</p>
+  </div>
+
+  <div id="stage" class="photo-people-viewer__stage" hidden>
+    <div class="photo-people-viewer__slides">
+      <article id="slideA" class="photo-people-viewer__slide">
+        <img id="imageA" alt="Photo reçue">
+      </article>
+      <article id="slideB" class="photo-people-viewer__slide">
+        <img id="imageB" alt="Photo reçue">
+      </article>
+    </div>
+    <img
+      class="photo-people-xmas-frame"
+      src="/photo-people/frame-noel.png"
+      alt=""
+      aria-hidden="true"
+    >
+    <div id="meta" class="photo-people-viewer__meta">
+      <p id="heroName" class="photo-people-viewer__name"></p>
+      <p id="heroCaption" class="photo-people-viewer__caption"></p>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/photo-people/viewer.js"></script>
+</body>
+</html>
