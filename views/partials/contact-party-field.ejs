@@ -1,0 +1,11 @@
+<% const partyFieldName = typeof contactPartyFieldName !== 'undefined' ? contactPartyFieldName : 'contact_party'; %>
+<% const partyFieldId = typeof contactPartyFieldId !== 'undefined' ? contactPartyFieldId : 'contact_party'; %>
+<% const partyValue = typeof contactPartyValue !== 'undefined' ? contactPartyValue : 'client'; %>
+<div class="btn-group btn-group-sm w-100" role="group" aria-label="Client ou salle">
+  <input type="radio" class="btn-check" name="<%= partyFieldName %>" id="<%= partyFieldId %>_client" value="client"
+         <%= partyValue === 'client' ? 'checked' : '' %>>
+  <label class="btn btn-outline-secondary" for="<%= partyFieldId %>_client">Client</label>
+  <input type="radio" class="btn-check" name="<%= partyFieldName %>" id="<%= partyFieldId %>_venue" value="venue"
+         <%= partyValue === 'venue' ? 'checked' : '' %>>
+  <label class="btn btn-outline-secondary" for="<%= partyFieldId %>_venue">Salle</label>
+</div>

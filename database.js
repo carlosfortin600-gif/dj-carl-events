@@ -366,6 +366,9 @@ function migrate(db) {
   if (!djNotesColumns.includes("tech_callback_time")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_callback_time TEXT");
   }
+  if (!djNotesColumns.includes("tech_callback_party")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_callback_party TEXT");
+  }
   if (!djNotesColumns.includes("tech_questionnaire_sent")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_questionnaire_sent TEXT");
   }
@@ -424,6 +427,19 @@ function migrate(db) {
   const timeLogColumns = db.prepare("PRAGMA table_info(event_time_logs)").all().map((c) => c.name);
   if (timeLogColumns.length && !timeLogColumns.includes("description")) {
     db.exec("ALTER TABLE event_time_logs ADD COLUMN description TEXT");
+  }
+
+  const contactLogColumns = db
+    .prepare("PRAGMA table_info(event_client_contact_logs)")
+    .all()
+    .map((c) => c.name);
+  if (contactLogColumns.length) {
+    if (!contactLogColumns.includes("contact_person")) {
+      db.exec("ALTER TABLE event_client_contact_logs ADD COLUMN contact_person TEXT");
+    }
+    if (!contactLogColumns.includes("contact_party")) {
+      db.exec("ALTER TABLE event_client_contact_logs ADD COLUMN contact_party TEXT");
+    }
   }
 
   db.exec(`

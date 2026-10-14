@@ -125,7 +125,13 @@
         <div class="resume-event-row-client-item">
           <span class="resume-event-row-client-item-label">Communication</span>
           <% const latestComm = ev.clientContactLogs && ev.clientContactLogs.length
-            ? formatContactAt(ev.clientContactLogs[0].contact_date, ev.clientContactLogs[0].contact_time, ev.clientContactLogs[0].note)
+            ? formatContactAt(
+                ev.clientContactLogs[0].contact_date,
+                ev.clientContactLogs[0].contact_time,
+                ev.clientContactLogs[0].note,
+                ev.clientContactLogs[0].contact_person,
+                ev.clientContactLogs[0].contact_party
+              )
             : (ev.clientCalled && ev.clientCallAt ? ev.clientCallAt : null); %>
           <% if (latestComm) { %>
             <strong class="resume-event-row-location-need-value d-block mt-1"><%= latestComm %></strong>

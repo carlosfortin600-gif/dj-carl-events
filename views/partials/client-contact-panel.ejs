@@ -19,10 +19,10 @@
     <ul class="client-contact-log-list list-unstyled mb-2">
       <% logs.forEach(function(log) { %>
         <li class="client-contact-log-item d-flex flex-wrap align-items-center gap-2 mb-1">
-          <span><%= formatContactAt(log.contact_date, log.contact_time, log.note) %></span>
+          <span><%= formatContactAt(log.contact_date, log.contact_time, log.note, log.contact_person, log.contact_party) %></span>
           <form method="post"
                 action="/events/<%= eventId %>/client-contact/<%= log.id %>/delete"
-                class="d-inline mb-0"
+                class="d-inline mb-0">
             <input type="hidden" name="returnTo" value="<%= returnPath %>">
             <button type="submit" class="btn btn-link btn-sm p-0 text-danger">Supprimer</button>
           </form>
@@ -41,7 +41,7 @@
         hidden>
     <input type="hidden" name="returnTo" value="<%= returnPath %>">
     <div class="row g-2 align-items-end">
-      <div class="col-md-5">
+      <div class="col-md-4">
         <label class="form-label small mb-1" for="client_contact_datetime_<%= eventId %>">Date et heure</label>
         <%- include('datetime-fr-field', {
           id: 'client_contact_datetime_' + eventId,
@@ -52,13 +52,26 @@
             : ''
         }) %>
       </div>
-      <div class="col-md-5">
-        <label class="form-label small mb-1" for="client_contact_note_<%= eventId %>">Type / notes</label>
-        <input type="text" class="form-control form-control-sm" id="client_contact_note_<%= eventId %>"
-               name="note" placeholder="Ex. : appel, texto, courriel…">
+      <div class="col-md-3">
+        <label class="form-label small mb-1" for="client_contact_person_<%= eventId %>">Personne contact</label>
+        <input type="text" class="form-control form-control-sm" id="client_contact_person_<%= eventId %>"
+               name="contact_person" placeholder="Nom">
+      </div>
+      <div class="col-md-3">
+        <span class="form-label small mb-1 d-block">Qui ?</span>
+        <%- include('contact-party-field', {
+          contactPartyFieldName: 'contact_party',
+          contactPartyFieldId: 'client_contact_party_' + eventId,
+          contactPartyValue: 'client'
+        }) %>
       </div>
       <div class="col-md-2">
         <button type="submit" class="btn btn-sm btn-primary w-100">Ajouter</button>
+      </div>
+      <div class="col-12">
+        <label class="form-label small mb-1" for="client_contact_note_<%= eventId %>">Type / notes</label>
+        <input type="text" class="form-control form-control-sm" id="client_contact_note_<%= eventId %>"
+               name="note" placeholder="Ex. : appel, texto, courriel…">
       </div>
     </div>
   </form>

@@ -125,13 +125,22 @@
   <div class="border rounded p-3 bg-light mb-4">
     <h3 class="h6 mb-3">Client</h3>
     <div class="row g-3">
-      <div class="col-md-6">
-        <label class="form-label" for="tech_callback_name">Nom — rappel</label>
+      <div class="col-md-4">
+        <label class="form-label" for="tech_callback_name">Personne contact — rappel</label>
         <input type="text" class="form-control" id="tech_callback_name" name="tech_callback_name"
                value="<%= djNotes.tech_callback_name || '' %>"
                placeholder="Personne à rappeler">
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
+        <span class="form-label d-block">Qui ?</span>
+        <% const callbackParty = djNotes.tech_callback_party || 'client'; %>
+        <%- include('contact-party-field', {
+          contactPartyFieldName: 'tech_callback_party',
+          contactPartyFieldId: 'tech_callback_party',
+          contactPartyValue: callbackParty
+        }) %>
+      </div>
+      <div class="col-md-4">
         <label class="form-label" for="tech_callback_datetime">Date — rappel</label>
         <%- include('datetime-fr-field', {
           id: 'tech_callback_datetime',

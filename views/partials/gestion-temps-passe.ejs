@@ -49,10 +49,23 @@
         <div class="col-md-2">
           <button type="submit" class="btn btn-primary w-100">Ajouter</button>
         </div>
-        <div class="col-12">
+        <div class="col-md-4">
+          <label class="form-label" for="time_spent_contact_person">Personne contact</label>
+          <input type="text" class="form-control" id="time_spent_contact_person" name="contact_person"
+                 placeholder="Nom (Tél., courriel, Teams…)">
+        </div>
+        <div class="col-md-4">
+          <span class="form-label d-block">Qui ?</span>
+          <%- include('contact-party-field', {
+            contactPartyFieldName: 'contact_party',
+            contactPartyFieldId: 'time_spent_contact_party',
+            contactPartyValue: 'client'
+          }) %>
+        </div>
+        <div class="col-md-4">
           <label class="form-label" for="time_spent_description">Descriptif</label>
           <input type="text" class="form-control" id="time_spent_description" name="description"
-                 placeholder="Ex. : appel avec la mariée, recherche chanson entrée, montage playlist…">
+                 placeholder="Ex. : sujet de l’appel, précisions…">
         </div>
       </div>
     </div>
