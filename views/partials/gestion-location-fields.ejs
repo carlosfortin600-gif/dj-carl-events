@@ -3,6 +3,8 @@
     || ((djNotes.tech_trailer_start || djNotes.tech_trailer_end) ? 'yes' : 'no');
   const roomNeeded = djNotes.tech_room_needed
     || ((djNotes.tech_room_location || djNotes.tech_room_start || djNotes.tech_room_end) ? 'yes' : 'no');
+  const trailerClientProvided = djNotes.tech_trailer_client_provided || 'no';
+  const roomClientProvided = djNotes.tech_room_client_provided || 'no';
 %>
 
 <%- include('gestion-employee-needed-panel', { event, djNotes, employeePanelProminent: false }) %>
@@ -20,6 +22,21 @@
     </div>
   </div>
   <div id="tech_trailer_fields" class="row g-3" <%= trailerNeeded === 'no' ? 'hidden' : '' %>>
+    <div class="col-12">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <span class="fw-semibold">Fourni par le client</span>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Trailer fourni par le client">
+          <input type="radio" class="btn-check" name="tech_trailer_client_provided" id="tech_trailer_client_provided_yes" value="yes"
+                 <%= trailerClientProvided === 'yes' ? 'checked' : '' %>
+                 <%= trailerNeeded === 'no' ? 'disabled' : '' %>>
+          <label class="btn btn-outline-secondary" for="tech_trailer_client_provided_yes">Oui</label>
+          <input type="radio" class="btn-check" name="tech_trailer_client_provided" id="tech_trailer_client_provided_no" value="no"
+                 <%= trailerClientProvided === 'no' ? 'checked' : '' %>
+                 <%= trailerNeeded === 'no' ? 'disabled' : '' %>>
+          <label class="btn btn-outline-secondary" for="tech_trailer_client_provided_no">Non</label>
+        </div>
+      </div>
+    </div>
     <div class="col-md-6">
       <label class="form-label" for="tech_trailer_location">Endroit où louer</label>
       <input type="text" class="form-control" id="tech_trailer_location" name="tech_trailer_location"
@@ -63,6 +80,21 @@
     </div>
   </div>
   <div id="tech_room_fields" class="row g-3" <%= roomNeeded === 'no' ? 'hidden' : '' %>>
+    <div class="col-12">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <span class="fw-semibold">Fourni par le client</span>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Hôtel fourni par le client">
+          <input type="radio" class="btn-check" name="tech_room_client_provided" id="tech_room_client_provided_yes" value="yes"
+                 <%= roomClientProvided === 'yes' ? 'checked' : '' %>
+                 <%= roomNeeded === 'no' ? 'disabled' : '' %>>
+          <label class="btn btn-outline-secondary" for="tech_room_client_provided_yes">Oui</label>
+          <input type="radio" class="btn-check" name="tech_room_client_provided" id="tech_room_client_provided_no" value="no"
+                 <%= roomClientProvided === 'no' ? 'checked' : '' %>
+                 <%= roomNeeded === 'no' ? 'disabled' : '' %>>
+          <label class="btn btn-outline-secondary" for="tech_room_client_provided_no">Non</label>
+        </div>
+      </div>
+    </div>
     <div class="col-md-6">
       <label class="form-label" for="tech_room_location">Endroit où louer</label>
       <input type="text" class="form-control" id="tech_room_location" name="tech_room_location"

@@ -381,6 +381,12 @@ function migrate(db) {
   if (!djNotesColumns.includes("tech_trailer_location")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_trailer_location TEXT");
   }
+  if (!djNotesColumns.includes("tech_trailer_client_provided")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_trailer_client_provided TEXT");
+  }
+  if (!djNotesColumns.includes("tech_room_client_provided")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_room_client_provided TEXT");
+  }
   if (!djNotesColumns.includes("tech_entry_distance")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_entry_distance TEXT");
   }

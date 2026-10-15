@@ -62,10 +62,11 @@
               <span class="resume-location-pair">
                 <span>Besoin <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong></span>
                 <% if (ev.hotelNeeded) { %>
-                  <span class="resume-location-sep" aria-hidden="true">·</span>
                   <% if (ev.hotelRented) { %>
+                    <span class="resume-location-sep" aria-hidden="true">·</span>
                     <span>Loué <strong>Oui</strong></span>
-                  <% } else { %>
+                  <% } else if (ev.hotelClientProvided) { %>
+                    <span class="resume-location-sep" aria-hidden="true">·</span>
                     <span class="resume-location-client-provided">Fournie par le client</span>
                   <% } %>
                 <% } %>
@@ -76,10 +77,11 @@
               <span class="resume-location-pair">
                 <span>Besoin <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong></span>
                 <% if (ev.trailerNeeded) { %>
-                  <span class="resume-location-sep" aria-hidden="true">·</span>
                   <% if (ev.trailerRented) { %>
+                    <span class="resume-location-sep" aria-hidden="true">·</span>
                     <span>Loué <strong>Oui</strong></span>
-                  <% } else { %>
+                  <% } else if (ev.trailerClientProvided) { %>
+                    <span class="resume-location-sep" aria-hidden="true">·</span>
                     <span class="resume-location-client-provided">Fournie par le client</span>
                   <% } %>
                 <% } %>
