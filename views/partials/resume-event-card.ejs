@@ -62,12 +62,12 @@
               <span class="resume-location-pair">
                 <span>Besoin <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong></span>
                 <% if (ev.hotelNeeded) { %>
-                  <% if (ev.hotelRented) { %>
+                  <% if (ev.hotelClientProvided) { %>
+                    <span class="resume-location-sep" aria-hidden="true">·</span>
+                    <span class="resume-location-client-provided">Fourni par le client</span>
+                  <% } else if (ev.hotelRented) { %>
                     <span class="resume-location-sep" aria-hidden="true">·</span>
                     <span>Loué <strong>Oui</strong></span>
-                  <% } else if (ev.hotelClientProvided) { %>
-                    <span class="resume-location-sep" aria-hidden="true">·</span>
-                    <span class="resume-location-client-provided">Fournie par le client</span>
                   <% } %>
                 <% } %>
               </span>
@@ -77,12 +77,12 @@
               <span class="resume-location-pair">
                 <span>Besoin <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong></span>
                 <% if (ev.trailerNeeded) { %>
-                  <% if (ev.trailerRented) { %>
+                  <% if (ev.trailerClientProvided) { %>
+                    <span class="resume-location-sep" aria-hidden="true">·</span>
+                    <span class="resume-location-client-provided">Fourni par le client</span>
+                  <% } else if (ev.trailerRented) { %>
                     <span class="resume-location-sep" aria-hidden="true">·</span>
                     <span>Loué <strong>Oui</strong></span>
-                  <% } else if (ev.trailerClientProvided) { %>
-                    <span class="resume-location-sep" aria-hidden="true">·</span>
-                    <span class="resume-location-client-provided">Fournie par le client</span>
                   <% } %>
                 <% } %>
               </span>
