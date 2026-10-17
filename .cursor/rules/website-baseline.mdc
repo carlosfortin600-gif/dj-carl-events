@@ -53,7 +53,7 @@ Le site **https://djcarl.ca** a une **configuration de référence validée**. T
 ## Démos (`#demos`)
 
 Onglets : Quiz / Bingo / Quiz la ta chanson / Grab the Mic / Roue / **Famille en or** (`data-demo`: `feud`).
-Photo `img/demo-famille-or.jpg` + texte guerre des clans / buzzers / écran géant. Carte Services photo `service-card--feud` (`data-demo="feud"`).
+Photo `img/demo-famille-or.jpg` + clic → tableau `img/demo-famille-or-board.jpg`. Texte guerre des clans / buzzers / écran géant. Carte Services photo `service-card--feud` (`data-demo="feud"`).
 
 ## Services (`#services`)
 

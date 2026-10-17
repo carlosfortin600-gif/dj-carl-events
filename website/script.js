@@ -195,6 +195,24 @@ function renderReviews() {
 
 renderReviews();
 
+const FEUD_STUDIO = "img/demo-famille-or.jpg?v=1";
+const FEUD_BOARD = "img/demo-famille-or-board.jpg?v=1";
+
+function setFeudPhoto(showBoard) {
+  const btn = $("#feudPhotoBtn");
+  const img = $("#feudPhotoImg");
+  const hint = document.querySelector(".feud-photo-hint");
+  if (!btn || !img) return;
+  btn.setAttribute("aria-pressed", showBoard ? "true" : "false");
+  btn.setAttribute("aria-label", t(showBoard ? "feud.photoHintBack" : "feud.photoHint"));
+  img.src = showBoard ? FEUD_BOARD : FEUD_STUDIO;
+  img.width = 1024;
+  img.height = showBoard ? 531 : 576;
+  img.dataset.i18nAlt = showBoard ? "feud.boardAlt" : "feud.photoAlt";
+  img.alt = t(img.dataset.i18nAlt);
+  if (hint) hint.textContent = t(showBoard ? "feud.photoHintBack" : "feud.photoHint");
+}
+
 function showDemo(name) {
   $$(".demo-tab[data-demo]").forEach((tab) => {
     const on = tab.dataset.demo === name;
@@ -206,6 +224,7 @@ function showDemo(name) {
     panel.hidden = !on;
     panel.classList.toggle("is-on", on);
   });
+  if (name !== "feud") setFeudPhoto(false);
 }
 
 function showTheme(name) {
@@ -231,6 +250,11 @@ document.addEventListener("click", (e) => {
   const themeTab = e.target.closest(".demo-tab[data-theme]");
   if (themeTab) {
     showTheme(themeTab.dataset.theme);
+    return;
+  }
+  const feudPhoto = e.target.closest("#feudPhotoBtn");
+  if (feudPhoto) {
+    setFeudPhoto(feudPhoto.getAttribute("aria-pressed") !== "true");
     return;
   }
   const tab = e.target.closest(".demo-tab[data-demo]");
@@ -651,7 +675,10 @@ $("#liveCta").onclick = (e) => {
 
 $$(".service-card[data-demo]").forEach((card) => {
   card.style.cursor = "pointer";
-  card.onclick = () => playDemo(card.dataset.demo);
+  card.onclick = () => {
+    playDemo(card.dataset.demo);
+    if (card.dataset.demo === "feud") setFeudPhoto(true);
+  };
 });
 
 $$(".service-card[data-href]").forEach((card) => {
@@ -701,6 +728,8 @@ function applyLanguage(lang) {
   localStorage.setItem(LANG_KEY, currentLang);
   document.documentElement.lang = currentLang;
   applyStaticI18n();
+  const feudBtn = $("#feudPhotoBtn");
+  if (feudBtn) setFeudPhoto(feudBtn.getAttribute("aria-pressed") === "true");
   $$(".lang-btn").forEach((btn) => {
     const on = btn.dataset.lang === currentLang;
     btn.classList.toggle("is-on", on);

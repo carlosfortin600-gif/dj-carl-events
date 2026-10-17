@@ -364,6 +364,9 @@ const I18N = {
       kicker: "La Famille en or",
       title: "La Famille en or",
       photoAlt: "Plateau style La Famille en or, buzzers et écran géant",
+      boardAlt: "Tableau La Famille en or avec réponses et scores",
+      photoHint: "Cliquez pour voir le tableau",
+      photoHintBack: "Cliquez pour revenir au plateau",
       p1: "Plongez dans l’ambiance du célèbre jeu télévisé La guerre des clans ! Deux équipes s’affrontent dans une compétition amusante où elles doivent deviner les réponses les plus populaires à des questions-surprises.",
       p2: "Avec buzzers, animation dynamique et écran géant, fous rires et esprit d’équipe sont au rendez-vous !",
       p3: "Une activité rassembleuse et divertissante, idéale pour vos soirées corporatives, partys de Noël et événements privés."
@@ -882,6 +885,9 @@ const I18N = {
       kicker: "Famille en or",
       title: "Famille en or",
       photoAlt: "Famille en or style set with buzzers and a giant screen",
+      boardAlt: "Famille en or board with answers and scores",
+      photoHint: "Click to see the board",
+      photoHintBack: "Click to return to the set",
       p1: "Step into the energy of the classic TV game Family Feud! Two teams go head to head in a fun race to guess the most popular answers to surprise questions.",
       p2: "With buzzers, high-energy hosting and a giant screen, expect laughs and real team spirit!",
       p3: "A get-everybody-involved activity, perfect for corporate nights, Christmas parties and private events."
