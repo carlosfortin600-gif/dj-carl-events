@@ -1647,10 +1647,15 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.82); }
 
 .feud-copy p:last-child { margin-bottom: 0; }
 
-.service-card--feud .service-card-photo-img {
+.service-card--feud .service-card-photo-img,
+.service-card--jeopardy .service-card-photo-img {
   object-fit: cover;
   aspect-ratio: 1 / 1;
   object-position: center 42%;
+}
+
+.service-card--jeopardy .service-card-photo-img {
+  object-position: center 32%;
 }
 
 .chanson-stage,

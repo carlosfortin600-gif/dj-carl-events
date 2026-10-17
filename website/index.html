@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=94">
+  <link rel="stylesheet" href="styles.css?v=95">
   <link rel="preload" href="audio/let-me-kiss-you.m4a?v=2" as="audio">
   <link rel="icon" href="img/logo-djcarl.png" type="image/png">
   <script>
@@ -133,8 +133,8 @@
 
     <section class="marquee" aria-hidden="true">
       <div class="marquee-track">
-        <span data-i18n="marquee">DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • </span>
-        <span data-i18n="marquee">DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • </span>
+        <span data-i18n="marquee">DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • GÉOPARDY • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • GÉOPARDY • </span>
+        <span data-i18n="marquee">DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • GÉOPARDY • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • GÉOPARDY • </span>
       </div>
     </section>
 
@@ -142,7 +142,7 @@
       <div class="section-heading reveal">
         <span class="eyebrow" data-i18n="demos.eyebrow">DÉMOS LIVE</span>
         <h2 data-i18n="demos.title">Ne lisez pas l’expérience. Jouez-la.</h2>
-        <p data-i18n="demos.lead">Quiz, bingo, Quiz la ta chanson, Grab the Mic, roue et Famille en or : les mêmes animations qu’en soirée, en version démo.</p>
+        <p data-i18n="demos.lead">Quiz, bingo, Quiz la ta chanson, Grab the Mic, roue, Famille en or et Géopardy : les mêmes animations qu’en soirée, en version démo.</p>
       </div>
       <div class="demo-tabs" role="tablist">
         <button class="demo-tab active" type="button" data-demo="quiz" role="tab" aria-selected="true" data-i18n="demos.tabs.quiz">🏆 Quiz</button>
@@ -151,6 +151,7 @@
         <button class="demo-tab" type="button" data-demo="grab" role="tab" aria-selected="false" data-i18n="demos.tabs.grab">🎙️ Grab the Mic</button>
         <button class="demo-tab" type="button" data-demo="wheel" role="tab" aria-selected="false" data-i18n="demos.tabs.wheel">🎡 Roue</button>
         <button class="demo-tab" type="button" data-demo="feud" role="tab" aria-selected="false" data-i18n="demos.tabs.feud">🥇 Famille en or</button>
+        <button class="demo-tab" type="button" data-demo="jeopardy" role="tab" aria-selected="false" data-i18n="demos.tabs.jeopardy">🌎 Géopardy</button>
       </div>
       <div class="demo-board" id="demoBoard">
         <div class="demo-panel is-on" id="panelQuiz" data-demo="quiz">
@@ -418,12 +419,28 @@
               <button type="button" class="feud-photo-btn" id="feudPhotoBtn" aria-pressed="false" data-i18n-aria="feud.photoHint">
                 <img id="feudPhotoImg" src="img/demo-famille-or.jpg?v=1" width="1024" height="576" data-i18n-alt="feud.photoAlt" alt="Plateau style La Famille en or, buzzers et écran géant">
               </button>
-              <figcaption class="feud-photo-hint" data-i18n="feud.photoHint">Cliquez pour voir le tableau</figcaption>
+              <figcaption class="feud-photo-hint" id="feudPhotoHint" data-i18n="feud.photoHint">Cliquez pour voir le tableau</figcaption>
             </figure>
             <div class="feud-copy">
               <p data-i18n="feud.p1">Plongez dans l’ambiance du célèbre jeu télévisé La guerre des clans ! Deux équipes s’affrontent dans une compétition amusante où elles doivent deviner les réponses les plus populaires à des questions-surprises.</p>
               <p data-i18n="feud.p2">Avec buzzers, animation dynamique et écran géant, fous rires et esprit d’équipe sont au rendez-vous !</p>
               <p data-i18n="feud.p3">Une activité rassembleuse et divertissante, idéale pour vos soirées corporatives, partys de Noël et événements privés.</p>
+            </div>
+          </div>
+        </div>
+        <div class="demo-panel" id="panelJeopardy" data-demo="jeopardy" hidden>
+          <p class="live-kicker" data-i18n="jeopardy.kicker">GÉOPARDY</p>
+          <h3 data-i18n="jeopardy.title">GÉOPARDY – Le défi de la culture générale !</h3>
+          <div class="feud-layout">
+            <figure class="feud-photo">
+              <button type="button" class="feud-photo-btn" id="jeopardyPhotoBtn" aria-pressed="false" data-i18n-aria="jeopardy.photoHint">
+                <img id="jeopardyPhotoImg" src="img/demo-geopardy.jpg?v=1" width="1024" height="576" data-i18n-alt="jeopardy.photoAlt" alt="Plateau Géopardy avec lutrins et globe">
+              </button>
+              <figcaption class="feud-photo-hint" id="jeopardyPhotoHint" data-i18n="jeopardy.photoHint">Cliquez pour voir le tableau</figcaption>
+            </figure>
+            <div class="feud-copy">
+              <p data-i18n="jeopardy.p1">Testez vos connaissances dans un jeu-questionnaire interactif inspiré des grands jeux télévisés ! Quatre participants s’affrontent derrière leurs lutrins dans une compétition amusante où rapidité, stratégie et culture générale sont à l’honneur.</p>
+              <p data-i18n="jeopardy.p2">Des questions variées, des buzzers et beaucoup de plaisir pour une animation dynamique qui fera participer et vibrer vos invités !</p>
             </div>
           </div>
         </div>
@@ -646,6 +663,15 @@
             </div>
           </div>
         </article>
+        <article class="service-card service-card--photo service-card--jeopardy reveal" data-glow="cyan" data-demo="jeopardy">
+          <div class="service-card-photo-media">
+            <img class="service-card-photo-img" src="img/demo-geopardy.jpg?v=1" width="1024" height="576" data-i18n-alt="services.jeopardy.photoAlt" alt="Plateau Géopardy avec lutrins et globe">
+            <div class="service-card-photo-copy">
+              <h3 data-i18n="services.jeopardy.title">GÉOPARDY</h3>
+              <p data-i18n="services.jeopardy.text">Quatre participants, lutrins et buzzers : le défi de la culture générale, comme à la télé.</p>
+            </div>
+          </div>
+        </article>
         <article class="service-card service-card-feature reveal" data-glow="cyan">
           <span class="service-icon">🎙️</span>
           <h3 data-i18n="services.audio.title">Option Enregistrement audio</h3>
@@ -794,7 +820,7 @@
     </article>
   </dialog>
 
-  <script src="i18n.js?v=389"></script>
-  <script src="script.js?v=386"></script>
+  <script src="i18n.js?v=390"></script>
+  <script src="script.js?v=387"></script>
 </body>
 </html>

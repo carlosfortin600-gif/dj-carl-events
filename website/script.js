@@ -195,22 +195,49 @@ function renderReviews() {
 
 renderReviews();
 
-const FEUD_STUDIO = "img/demo-famille-or.jpg?v=1";
-const FEUD_BOARD = "img/demo-famille-or-board.jpg?v=1";
+const GAME_PHOTOS = {
+  feud: {
+    studio: "img/demo-famille-or.jpg?v=1",
+    board: "img/demo-famille-or-board.jpg?v=1",
+    studioH: 576,
+    boardH: 531,
+    hint: "feud.photoHint",
+    hintBack: "feud.photoHintBack",
+    studioAlt: "feud.photoAlt",
+    boardAlt: "feud.boardAlt"
+  },
+  jeopardy: {
+    studio: "img/demo-geopardy.jpg?v=1",
+    board: "img/demo-geopardy-board.jpg?v=1",
+    studioH: 576,
+    boardH: 572,
+    hint: "jeopardy.photoHint",
+    hintBack: "jeopardy.photoHintBack",
+    studioAlt: "jeopardy.photoAlt",
+    boardAlt: "jeopardy.boardAlt"
+  }
+};
 
-function setFeudPhoto(showBoard) {
-  const btn = $("#feudPhotoBtn");
-  const img = $("#feudPhotoImg");
-  const hint = document.querySelector(".feud-photo-hint");
-  if (!btn || !img) return;
+function setGamePhoto(name, showBoard) {
+  const cfg = GAME_PHOTOS[name];
+  const btn = $(`#${name}PhotoBtn`);
+  const img = $(`#${name}PhotoImg`);
+  const hint = $(`#${name}PhotoHint`);
+  if (!cfg || !btn || !img) return;
   btn.setAttribute("aria-pressed", showBoard ? "true" : "false");
-  btn.setAttribute("aria-label", t(showBoard ? "feud.photoHintBack" : "feud.photoHint"));
-  img.src = showBoard ? FEUD_BOARD : FEUD_STUDIO;
+  btn.setAttribute("aria-label", t(showBoard ? cfg.hintBack : cfg.hint));
+  img.src = showBoard ? cfg.board : cfg.studio;
   img.width = 1024;
-  img.height = showBoard ? 531 : 576;
-  img.dataset.i18nAlt = showBoard ? "feud.boardAlt" : "feud.photoAlt";
+  img.height = showBoard ? cfg.boardH : cfg.studioH;
+  img.dataset.i18nAlt = showBoard ? cfg.boardAlt : cfg.studioAlt;
   img.alt = t(img.dataset.i18nAlt);
-  if (hint) hint.textContent = t(showBoard ? "feud.photoHintBack" : "feud.photoHint");
+  if (hint) hint.textContent = t(showBoard ? cfg.hintBack : cfg.hint);
+}
+
+function resetGamePhotos(except) {
+  Object.keys(GAME_PHOTOS).forEach((name) => {
+    if (name !== except) setGamePhoto(name, false);
+  });
 }
 
 function showDemo(name) {
@@ -224,7 +251,7 @@ function showDemo(name) {
     panel.hidden = !on;
     panel.classList.toggle("is-on", on);
   });
-  if (name !== "feud") setFeudPhoto(false);
+  resetGamePhotos(name);
 }
 
 function showTheme(name) {
@@ -252,9 +279,10 @@ document.addEventListener("click", (e) => {
     showTheme(themeTab.dataset.theme);
     return;
   }
-  const feudPhoto = e.target.closest("#feudPhotoBtn");
-  if (feudPhoto) {
-    setFeudPhoto(feudPhoto.getAttribute("aria-pressed") !== "true");
+  const gamePhoto = e.target.closest("#feudPhotoBtn, #jeopardyPhotoBtn");
+  if (gamePhoto) {
+    const name = gamePhoto.id.replace("PhotoBtn", "");
+    setGamePhoto(name, gamePhoto.getAttribute("aria-pressed") !== "true");
     return;
   }
   const tab = e.target.closest(".demo-tab[data-demo]");
@@ -677,7 +705,7 @@ $$(".service-card[data-demo]").forEach((card) => {
   card.style.cursor = "pointer";
   card.onclick = () => {
     playDemo(card.dataset.demo);
-    if (card.dataset.demo === "feud") setFeudPhoto(true);
+    if (GAME_PHOTOS[card.dataset.demo]) setGamePhoto(card.dataset.demo, true);
   };
 });
 
@@ -728,8 +756,10 @@ function applyLanguage(lang) {
   localStorage.setItem(LANG_KEY, currentLang);
   document.documentElement.lang = currentLang;
   applyStaticI18n();
-  const feudBtn = $("#feudPhotoBtn");
-  if (feudBtn) setFeudPhoto(feudBtn.getAttribute("aria-pressed") === "true");
+  Object.keys(GAME_PHOTOS).forEach((name) => {
+    const btn = $(`#${name}PhotoBtn`);
+    if (btn) setGamePhoto(name, btn.getAttribute("aria-pressed") === "true");
+  });
   $$(".lang-btn").forEach((btn) => {
     const on = btn.dataset.lang === currentLang;
     btn.classList.toggle("is-on", on);

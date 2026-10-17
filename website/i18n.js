@@ -82,7 +82,7 @@ const I18N = {
         "Piste de danse DJ Carl"
       ]
     },
-    marquee: "DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • ",
+    marquee: "DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • GÉOPARDY • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • GÉOPARDY • ",
     themes: {
       eyebrow: "THÉMATIQUES",
       title: "Une soirée thématique, clé en main.",
@@ -196,14 +196,15 @@ const I18N = {
     demos: {
       eyebrow: "DÉMOS LIVE",
       title: "Ne lisez pas l’expérience. Jouez-la.",
-      lead: "Quiz, bingo, Quiz la ta chanson, Grab the Mic, roue et Famille en or : les mêmes animations qu’en soirée, en version démo.",
+      lead: "Quiz, bingo, Quiz la ta chanson, Grab the Mic, roue, Famille en or et Géopardy : les mêmes animations qu’en soirée, en version démo.",
       tabs: {
         quiz: "🏆 Quiz",
         bingo: "🎱 Bingo",
         chanson: "🎤 Quiz la ta chanson",
         grab: "🎙️ Grab the Mic",
         wheel: "🎡 Roue",
-        feud: "🥇 Famille en or"
+        feud: "🥇 Famille en or",
+        jeopardy: "🌎 Géopardy"
       }
     },
     quiz: {
@@ -371,6 +372,16 @@ const I18N = {
       p2: "Avec buzzers, animation dynamique et écran géant, fous rires et esprit d’équipe sont au rendez-vous !",
       p3: "Une activité rassembleuse et divertissante, idéale pour vos soirées corporatives, partys de Noël et événements privés."
     },
+    jeopardy: {
+      kicker: "GÉOPARDY",
+      title: "GÉOPARDY – Le défi de la culture générale !",
+      photoAlt: "Plateau Géopardy avec lutrins et globe",
+      boardAlt: "Tableau Géopardy avec catégories et scores",
+      photoHint: "Cliquez pour voir le tableau",
+      photoHintBack: "Cliquez pour revenir au plateau",
+      p1: "Testez vos connaissances dans un jeu-questionnaire interactif inspiré des grands jeux télévisés ! Quatre participants s’affrontent derrière leurs lutrins dans une compétition amusante où rapidité, stratégie et culture générale sont à l’honneur.",
+      p2: "Des questions variées, des buzzers et beaucoup de plaisir pour une animation dynamique qui fera participer et vibrer vos invités !"
+    },
     services: {
       eyebrow: "SERVICES",
       title: "Tout ce qu’il faut pour créer l’ambiance.",
@@ -412,6 +423,11 @@ const I18N = {
         title: "La Famille en or",
         text: "Deux équipes, buzzers et écran géant : devinez les réponses les plus populaires, comme à La guerre des clans.",
         photoAlt: "Plateau style La Famille en or, buzzers et écran géant"
+      },
+      jeopardy: {
+        title: "GÉOPARDY",
+        text: "Quatre participants, lutrins et buzzers : le défi de la culture générale, comme à la télé.",
+        photoAlt: "Plateau Géopardy avec lutrins et globe"
       },
       audio: {
         title: "Option Enregistrement audio",
@@ -603,7 +619,7 @@ const I18N = {
         "DJ Carl dance floor"
       ]
     },
-    marquee: "MOBILE DJ • LIGHTING • KARAOKE • PHOTOBOOTH • MUSIC QUIZ • BINGO • QUIZ LA TA CHANSON • PRIZE WHEEL • FAMILY FEUD • MOBILE DJ • LIGHTING • KARAOKE • PHOTOBOOTH • MUSIC QUIZ • BINGO • QUIZ LA TA CHANSON • PRIZE WHEEL • FAMILY FEUD • ",
+    marquee: "MOBILE DJ • LIGHTING • KARAOKE • PHOTOBOOTH • MUSIC QUIZ • BINGO • QUIZ LA TA CHANSON • PRIZE WHEEL • FAMILY FEUD • GÉOPARDY • MOBILE DJ • LIGHTING • KARAOKE • PHOTOBOOTH • MUSIC QUIZ • BINGO • QUIZ LA TA CHANSON • PRIZE WHEEL • FAMILY FEUD • GÉOPARDY • ",
     themes: {
       eyebrow: "THEMES",
       title: "A themed night, ready to go.",
@@ -717,14 +733,15 @@ const I18N = {
     demos: {
       eyebrow: "LIVE DEMOS",
       title: "Don’t read the experience. Play it.",
-      lead: "Quiz, bingo, Quiz la ta chanson, Grab the Mic, the prize wheel and Famille en or: the same party games, in demo form.",
+      lead: "Quiz, bingo, Quiz la ta chanson, Grab the Mic, the prize wheel, Famille en or and Géopardy: the same party games, in demo form.",
       tabs: {
         quiz: "🏆 Quiz",
         bingo: "🎱 Bingo",
         chanson: "🎤 Quiz la ta chanson",
         grab: "🎙️ Grab the Mic",
         wheel: "🎡 Wheel",
-        feud: "🥇 Famille en or"
+        feud: "🥇 Famille en or",
+        jeopardy: "🌎 Géopardy"
       }
     },
     quiz: {
@@ -892,6 +909,16 @@ const I18N = {
       p2: "With buzzers, high-energy hosting and a giant screen, expect laughs and real team spirit!",
       p3: "A get-everybody-involved activity, perfect for corporate nights, Christmas parties and private events."
     },
+    jeopardy: {
+      kicker: "GÉOPARDY",
+      title: "GÉOPARDY — The general-knowledge challenge!",
+      photoAlt: "Géopardy set with podiums and a globe",
+      boardAlt: "Géopardy board with categories and scores",
+      photoHint: "Click to see the board",
+      photoHintBack: "Click to return to the set",
+      p1: "Test your knowledge in an interactive quiz inspired by the big TV game shows! Four players face off at their podiums in a fun contest of speed, strategy and general knowledge.",
+      p2: "Varied questions, buzzers and plenty of laughs — a high-energy animation that gets guests involved!"
+    },
     services: {
       eyebrow: "SERVICES",
       title: "Everything you need to set the mood.",
@@ -933,6 +960,11 @@ const I18N = {
         title: "Famille en or",
         text: "Two teams, buzzers and a giant screen: guess the most popular answers, Family Feud style.",
         photoAlt: "Famille en or style set with buzzers and a giant screen"
+      },
+      jeopardy: {
+        title: "GÉOPARDY",
+        text: "Four players, podiums and buzzers: the general-knowledge challenge, TV game-show style.",
+        photoAlt: "Géopardy set with podiums and a globe"
       },
       audio: {
         title: "Audio recording option",

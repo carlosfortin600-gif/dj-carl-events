@@ -25,6 +25,8 @@ FILES = [
     "img/theme-gatsby.jpg",
     "img/demo-famille-or.jpg",
     "img/demo-famille-or-board.jpg",
+    "img/demo-geopardy.jpg",
+    "img/demo-geopardy-board.jpg",
     "img/service-photobooth.jpg",
     "img/service-themes.jpg",
     "img/service-lights.jpg",
