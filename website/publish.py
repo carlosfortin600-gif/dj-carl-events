@@ -23,6 +23,7 @@ FILES = [
     "img/theme-country.jpg",
     "img/theme-oscar.jpg",
     "img/theme-gatsby.jpg",
+    "img/demo-famille-or.jpg",
     "img/service-photobooth.jpg",
     "img/service-themes.jpg",
     "img/service-lights.jpg",

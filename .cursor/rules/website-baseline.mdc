@@ -50,6 +50,11 @@ Le site **https://djcarl.ca** a une **configuration de référence validée**. T
 - Photo `img/theme-gatsby.jpg` : écran skyline Art Déco, rideaux noirs, vases or + plumes d’autruche, uplights dorés — **pas de filigrane caméra**, **pas** d’overlay type Oscar.
 - Blocs : décor (liste) → highlight plumes/or/jazz → animation → **Photobooth animé — 2 heures** (lead + note table bistro), comme Croisière/Country.
 
+## Démos (`#demos`)
+
+Onglets : Quiz / Bingo / Quiz la ta chanson / Grab the Mic / Roue / **Famille en or** (`data-demo`: `feud`).
+Photo `img/demo-famille-or.jpg` + texte guerre des clans / buzzers / écran géant. Carte Services photo `service-card--feud` (`data-demo="feud"`).
+
 ## Services (`#services`)
 
 Cartes à conserver, dont :

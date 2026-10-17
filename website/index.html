@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=91">
+  <link rel="stylesheet" href="styles.css?v=93">
   <link rel="preload" href="audio/let-me-kiss-you.m4a?v=2" as="audio">
   <link rel="icon" href="img/logo-djcarl.png" type="image/png">
   <script>
@@ -133,8 +133,8 @@
 
     <section class="marquee" aria-hidden="true">
       <div class="marquee-track">
-        <span data-i18n="marquee">DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • </span>
-        <span data-i18n="marquee">DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • </span>
+        <span data-i18n="marquee">DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • </span>
+        <span data-i18n="marquee">DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • </span>
       </div>
     </section>
 
@@ -142,7 +142,7 @@
       <div class="section-heading reveal">
         <span class="eyebrow" data-i18n="demos.eyebrow">DÉMOS LIVE</span>
         <h2 data-i18n="demos.title">Ne lisez pas l’expérience. Jouez-la.</h2>
-        <p data-i18n="demos.lead">Quiz, bingo, Quiz la ta chanson, Grab the Mic et roue : les mêmes animations qu’en soirée, en version démo.</p>
+        <p data-i18n="demos.lead">Quiz, bingo, Quiz la ta chanson, Grab the Mic, roue et Famille en or : les mêmes animations qu’en soirée, en version démo.</p>
       </div>
       <div class="demo-tabs" role="tablist">
         <button class="demo-tab active" type="button" data-demo="quiz" role="tab" aria-selected="true" data-i18n="demos.tabs.quiz">🏆 Quiz</button>
@@ -150,6 +150,7 @@
         <button class="demo-tab" type="button" data-demo="chanson" role="tab" aria-selected="false" data-i18n="demos.tabs.chanson">🎤 Quiz la ta chanson</button>
         <button class="demo-tab" type="button" data-demo="grab" role="tab" aria-selected="false" data-i18n="demos.tabs.grab">🎙️ Grab the Mic</button>
         <button class="demo-tab" type="button" data-demo="wheel" role="tab" aria-selected="false" data-i18n="demos.tabs.wheel">🎡 Roue</button>
+        <button class="demo-tab" type="button" data-demo="feud" role="tab" aria-selected="false" data-i18n="demos.tabs.feud">🥇 Famille en or</button>
       </div>
       <div class="demo-board" id="demoBoard">
         <div class="demo-panel is-on" id="panelQuiz" data-demo="quiz">
@@ -409,6 +410,20 @@
             </aside>
           </div>
         </div>
+        <div class="demo-panel" id="panelFeud" data-demo="feud" hidden>
+          <p class="live-kicker" data-i18n="feud.kicker">La Famille en or</p>
+          <h3 data-i18n="feud.title">La Famille en or</h3>
+          <div class="feud-layout">
+            <figure class="feud-photo">
+              <img src="img/demo-famille-or.jpg?v=1" width="1024" height="576" data-i18n-alt="feud.photoAlt" alt="Plateau style La Famille en or, buzzers et écran géant">
+            </figure>
+            <div class="feud-copy">
+              <p data-i18n="feud.p1">Plongez dans l’ambiance du célèbre jeu télévisé La guerre des clans ! Deux équipes s’affrontent dans une compétition amusante où elles doivent deviner les réponses les plus populaires à des questions-surprises.</p>
+              <p data-i18n="feud.p2">Avec buzzers, animation dynamique et écran géant, fous rires et esprit d’équipe sont au rendez-vous !</p>
+              <p data-i18n="feud.p3">Une activité rassembleuse et divertissante, idéale pour vos soirées corporatives, partys de Noël et événements privés.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -519,15 +534,14 @@
             <h3 data-i18n="themes.gatsby.title">🥂 Thématique Gatsby</h3>
             <p class="theme-lead" data-i18n="themes.gatsby.lead">Transformez la salle en soirée Gatsby des années 20!</p>
             <figure class="theme-photo">
-              <img src="img/theme-gatsby.jpg?v=1" width="1024" height="682" data-i18n-alt="themes.gatsby.photoAlt" alt="Décor Gatsby Art Déco : écran skyline, rideaux noirs, vases dorés et plumes d’autruche">
+              <img src="img/theme-gatsby.jpg?v=2" width="1024" height="682" data-i18n-alt="themes.gatsby.photoAlt" alt="Décor Gatsby Art Déco : écran skyline, rideaux noirs, vases dorés et plumes d’autruche">
             </figure>
             <p data-i18n="themes.gatsby.decorIntro">Installation d’un décor comprenant notamment :</p>
             <ul class="theme-list">
-              <li data-i18n="themes.gatsby.decor.0">Écran géant et toile style Art Déco, skyline</li>
+              <li data-i18n="themes.gatsby.decor.0">Écran géant</li>
               <li data-i18n="themes.gatsby.decor.1">Rideaux noirs</li>
               <li data-i18n="themes.gatsby.decor.2">Vases dorés et plumes d’autruche</li>
               <li data-i18n="themes.gatsby.decor.3">Éclairage uplight doré</li>
-              <li data-i18n="themes.gatsby.decor.4">Plancher qui reflète les lumières</li>
             </ul>
             <p class="theme-highlight" data-i18n-html="themes.gatsby.highlight">Plumes, or et jazz : <strong>la salle devient un club des années 20</strong> dès l’entrée, parfait pour les photos et pour lancer le party.</p>
             <h4 data-i18n="themes.gatsby.animTitle">🎤 Animation thématique</h4>
@@ -590,6 +604,12 @@
             </div>
           </div>
         </article>
+        <article class="service-card service-card--live-photos reveal" data-glow="cyan">
+          <span class="service-icon">📱</span>
+          <h3 data-i18n="services.livePhotos.title">PHOTOS EN DIRECT</h3>
+          <p data-i18n="services.livePhotos.lead">Pendant le cocktail et le souper, prenez des photos avec votre téléphone!</p>
+          <p data-i18n="services.livePhotos.punch">Elles s’afficheront instantanément sur l’écran géant!</p>
+        </article>
         <article class="service-card service-card--photo service-card--themes reveal" data-glow="purple" data-href="#thematiques">
           <div class="service-card-photo-media">
             <img class="service-card-photo-img" src="img/service-themes.jpg?v=1" width="1024" height="768" data-i18n-alt="services.themes.photoAlt" alt="Décor thématique croisière avec quai, toile de fond et photobooth">
@@ -613,6 +633,15 @@
           <span class="service-icon">🏆</span>
           <h3 data-i18n="services.quiz.title">Quiz musical</h3>
           <p data-i18n="services.quiz.text">Les invités répondent sur leur cellulaire. Questions 100 % personnalisées, ou adaptées au concept : années 80, disco, country, etc.</p>
+        </article>
+        <article class="service-card service-card--photo service-card--feud reveal" data-glow="gold" data-demo="feud">
+          <div class="service-card-photo-media">
+            <img class="service-card-photo-img" src="img/demo-famille-or.jpg?v=1" width="1024" height="576" data-i18n-alt="services.feud.photoAlt" alt="Plateau style La Famille en or, buzzers et écran géant">
+            <div class="service-card-photo-copy">
+              <h3 data-i18n="services.feud.title">La Famille en or</h3>
+              <p data-i18n="services.feud.text">Deux équipes, buzzers et écran géant : devinez les réponses les plus populaires, comme à La guerre des clans.</p>
+            </div>
+          </div>
         </article>
         <article class="service-card service-card-feature reveal" data-glow="cyan">
           <span class="service-icon">🎙️</span>
@@ -762,7 +791,7 @@
     </article>
   </dialog>
 
-  <script src="i18n.js?v=38"></script>
-  <script src="script.js?v=9835"></script>
+  <script src="i18n.js?v=388"></script>
+  <script src="script.js?v=385"></script>
 </body>
 </html>

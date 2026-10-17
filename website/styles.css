@@ -872,6 +872,38 @@ nav a[href="#thematiques"] {
   max-width: none;
 }
 
+/* Live guest-phone photos — text card beside Photobooth */
+.service-card--live-photos {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  border-color: rgba(34, 211, 238, 0.4);
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.32),
+    0 0 28px rgba(34, 211, 238, 0.12);
+}
+
+.service-card--live-photos h3 {
+  margin: 0;
+  font-size: clamp(26px, 2.4vw, 34px);
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+
+.service-card--live-photos p {
+  margin: 0;
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.5;
+  max-width: 36em;
+}
+
+.service-card--live-photos p + p {
+  color: #fff;
+  font-weight: 600;
+}
+
 .service-card {
   padding: 26px;
   border: 1px solid var(--line);
@@ -889,6 +921,7 @@ nav a[href="#thematiques"] {
 .service-card:nth-child(7) { animation-delay: 1s; }
 .service-card:nth-child(8) { animation-delay: 1.4s; }
 .service-card:nth-child(9) { animation-delay: 0.5s; }
+.service-card:nth-child(10) { animation-delay: 0.9s; }
 
 .service-list {
   display: grid;
@@ -1561,6 +1594,42 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.82); }
   gap: 28px;
   align-items: center;
   text-align: left;
+}
+
+.feud-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 28px;
+  align-items: center;
+  text-align: left;
+}
+
+.feud-photo {
+  margin: 0;
+}
+
+.feud-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45), 0 0 40px rgba(250, 204, 21, 0.16);
+}
+
+.feud-copy p {
+  color: var(--muted);
+  line-height: 1.65;
+  font-size: clamp(16px, 1.35vw, 19px);
+  margin: 0 0 14px;
+}
+
+.feud-copy p:last-child { margin-bottom: 0; }
+
+.service-card--feud .service-card-photo-img {
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
+  object-position: center 42%;
 }
 
 .chanson-stage,
@@ -2455,7 +2524,8 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.82); }
   .event-showcase { grid-template-columns: 1fr; }
   .quiz-layout { grid-template-columns: 1fr; }
   .chanson-layout,
-  .grab-layout { grid-template-columns: 1fr; }
+  .grab-layout,
+  .feud-layout { grid-template-columns: 1fr; }
   .bingo-layout { grid-template-columns: 1fr; }
   .quiz-panel-lead {
     font-size: 18px;

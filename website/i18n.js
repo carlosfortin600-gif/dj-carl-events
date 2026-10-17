@@ -82,7 +82,7 @@ const I18N = {
         "Piste de danse DJ Carl"
       ]
     },
-    marquee: "DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • ",
+    marquee: "DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • DJ MOBILE • ÉCLAIRAGE • KARAOKÉ • PHOTOBOOTH • QUIZ MUSICAL • BINGO • ON CONNAÎT LA CHANSON • ROUE DE TIRAGE • FAMILLE EN OR • ",
     themes: {
       eyebrow: "THÉMATIQUES",
       title: "Une soirée thématique, clé en main.",
@@ -174,11 +174,10 @@ const I18N = {
         photoAlt: "Décor Gatsby Art Déco : écran skyline, rideaux noirs, vases dorés et plumes d’autruche",
         decorIntro: "Installation d’un décor comprenant notamment :",
         decor: [
-          "Écran géant et toile style Art Déco, skyline",
+          "Écran géant",
           "Rideaux noirs",
           "Vases dorés et plumes d’autruche",
-          "Éclairage uplight doré",
-          "Plancher qui reflète les lumières"
+          "Éclairage uplight doré"
         ],
         highlight: "Plumes, or et jazz : <strong>la salle devient un club des années 20</strong> dès l’entrée, parfait pour les photos et pour lancer le party.",
         animTitle: "🎤 Animation thématique",
@@ -197,13 +196,14 @@ const I18N = {
     demos: {
       eyebrow: "DÉMOS LIVE",
       title: "Ne lisez pas l’expérience. Jouez-la.",
-      lead: "Quiz, bingo, Quiz la ta chanson, Grab the Mic et roue : les mêmes animations qu’en soirée, en version démo.",
+      lead: "Quiz, bingo, Quiz la ta chanson, Grab the Mic, roue et Famille en or : les mêmes animations qu’en soirée, en version démo.",
       tabs: {
         quiz: "🏆 Quiz",
         bingo: "🎱 Bingo",
         chanson: "🎤 Quiz la ta chanson",
         grab: "🎙️ Grab the Mic",
-        wheel: "🎡 Roue"
+        wheel: "🎡 Roue",
+        feud: "🥇 Famille en or"
       }
     },
     quiz: {
@@ -360,6 +360,14 @@ const I18N = {
         }
       }
     },
+    feud: {
+      kicker: "La Famille en or",
+      title: "La Famille en or",
+      photoAlt: "Plateau style La Famille en or, buzzers et écran géant",
+      p1: "Plongez dans l’ambiance du célèbre jeu télévisé La guerre des clans ! Deux équipes s’affrontent dans une compétition amusante où elles doivent deviner les réponses les plus populaires à des questions-surprises.",
+      p2: "Avec buzzers, animation dynamique et écran géant, fous rires et esprit d’équipe sont au rendez-vous !",
+      p3: "Une activité rassembleuse et divertissante, idéale pour vos soirées corporatives, partys de Noël et événements privés."
+    },
     services: {
       eyebrow: "SERVICES",
       title: "Tout ce qu’il faut pour créer l’ambiance.",
@@ -384,6 +392,11 @@ const I18N = {
         text: "Une activité amusante qui permet à vos invités de créer des souvenirs de la soirée.",
         photoAlt: "Groupe d’invités au photobooth lors d’une soirée"
       },
+      livePhotos: {
+        title: "PHOTOS EN DIRECT",
+        lead: "Pendant le cocktail et le souper, prenez des photos avec votre téléphone!",
+        punch: "Elles s’afficheront instantanément sur l’écran géant!"
+      },
       themes: {
         title: "Soirées thématiques",
         text: "Décor, costumes et animations adaptés à votre concept — croisière, country, Oscars et plus encore. Une formule clé en main qui plonge vos invités dans l’univers choisi, du premier regard jusqu’au party.",
@@ -392,6 +405,11 @@ const I18N = {
       quiz: { title: "Quiz musical", text: "Les invités répondent sur leur cellulaire. Questions 100 % personnalisées, ou adaptées au concept : années 80, disco, country, etc." },
       bingo: { title: "Bingo musical", text: "Plusieurs styles selon votre soirée. Activité parfaite pendant le souper." },
       wheel: { title: "Roue de tirage", text: "Prix, danses et surprises : la salle retient son souffle à chaque tour." },
+      feud: {
+        title: "La Famille en or",
+        text: "Deux équipes, buzzers et écran géant : devinez les réponses les plus populaires, comme à La guerre des clans.",
+        photoAlt: "Plateau style La Famille en or, buzzers et écran géant"
+      },
       audio: {
         title: "Option Enregistrement audio",
         lead: "Possibilité d’enregistrer en haute qualité plusieurs moments importants de la soirée afin d’en conserver un souvenir audio :",
@@ -473,15 +491,15 @@ const I18N = {
       cta: "Voir tous les avis Google",
       items: [
         ["Super soirée 😎 avec un Dj remplie de musicalité attentifs au petit détail de chaque demande spéciale Ces comment lever un party Sourien Et agréable a parler je te lève mon chapeau Carl!! Belle instant un bon souvenir de rire et de musicalité 😎🥂🤟", "Joelanglehart", 5],
-        ["Service 5 étoiles! Nous recommandons ce DJ à 100 % pour son professionnalisme hors pair. En plus d’arriver d’avance, il est d’une prévoyance rare puisqu’il amène du matériel supplémentaire pour parer à tout bris technique. Très à l’écoute, il valide chaque détail avec ses clients pour garantir une soirée parfaite. Mention spéciale pour les extras inattendus qui ont sublimé notre mariage. Un prestataire de confiance!", "Sébastien Gauthier", 5],
-        ["Carl est très professionnel, bien organisé et bien équipé. Il s’adapte parfaitement aux besoins du client, que ce soit pour un micro, de l’éclairage ou de la vidéo. Le choix musical est très varié et il est ouvert aux suggestions. Je le recommande pour vos événements!", "Suzy-Ann Leclerc", 5],
+        ["Carl est très professionnel, bien organisé et bien équipé. Il s’adapte parfaitement aux besoins du client, que ce soit pour un micro, de l’éclairage ou de la vidéo . Le choix musical est très varié et il est ouvert aux suggestions. Je le recommande pour vos événements!", "Suzy-Ann Leclerc", 5],
         ["Super DJ Nous avons passé une superbe soirée. Il est à l’écoute des goûts", "Martin Duchesne", 5],
-        ["Quelle belle soirée! Un choix de chansons parfait, on a adoré!!", "Catherine Blanchette", 5],
         ["Carl est très à l’écoute des besoins et très professionnel. Merci!", "Diane Brillant", 5],
         ["Super soirée ! Carl est super professionnel ! Je le recommande à tous !", "Steven Samson", 5],
         ["Je recommande dj Carl il est très professionnel et il sais comment faire lever le party.", "Francis Coulombe", 5],
-        ["Animation d’une fête de 50 ans, Carl a su créer une belle ambiance et s’adapter au public présent. Super professionnel et il arrive avec une tonne d’équipements pour rendre les lieux encore plus vivants. Merci", "François Carrier", 5],
-        ["super sur tout les aspects! pas d'hésitation à avoir, Carl est génial", "Laurent Bouchard", 5]
+        ["Animation d’une fête de 50 ans, Carl a su créer une belle ambiante et s’adapter au public présent. Super professionnel et il arrive avec une tonne d’équipements pour rendre les lieux encore plus vivants. Merci", "François Carrier", 5],
+        ["super sur tout les aspects! pas d'hésitation à avoir, Carl est génial", "Laurent Bouchard", 5],
+        ["Carl fût notre DJ à notre mariage en août dernier. La soirée a été un succès et Carl a su mettre en commun nos 2 styles de musique très différent. Il a été capable de jongler avec plusieurs défis dans l'immédiat et même accepté notre demande spéciale de dernière minute pour un peu de Karaoke en fin de soirée. Une fois sur la piste on le l'a plus quitté! Le photobooth et l'ambiance étaient plus que parfait, mes invités ont eu beaucoup de plaisir. Merci Carl pour cette soirée exceptionnelle!", "Marie Giguere", 5],
+        ["Wow très belle soirée que nous avons eu avec DJ Carl. Je le recommande a tous, il fait du beau travail et c'est un super bon gars qui embarque dans les projets des autres comme mon souper bénéfice. Du fun toute la soirée. Merci pour votre temps et votre talent.", "Trycia Mailhot", 5]
       ]
     },
     contact: {
@@ -582,7 +600,7 @@ const I18N = {
         "DJ Carl dance floor"
       ]
     },
-    marquee: "MOBILE DJ • LIGHTING • KARAOKE • PHOTOBOOTH • MUSIC QUIZ • BINGO • QUIZ LA TA CHANSON • PRIZE WHEEL • MOBILE DJ • LIGHTING • KARAOKE • PHOTOBOOTH • MUSIC QUIZ • BINGO • QUIZ LA TA CHANSON • PRIZE WHEEL • ",
+    marquee: "MOBILE DJ • LIGHTING • KARAOKE • PHOTOBOOTH • MUSIC QUIZ • BINGO • QUIZ LA TA CHANSON • PRIZE WHEEL • FAMILY FEUD • MOBILE DJ • LIGHTING • KARAOKE • PHOTOBOOTH • MUSIC QUIZ • BINGO • QUIZ LA TA CHANSON • PRIZE WHEEL • FAMILY FEUD • ",
     themes: {
       eyebrow: "THEMES",
       title: "A themed night, ready to go.",
@@ -674,11 +692,10 @@ const I18N = {
         photoAlt: "Gatsby Art Deco décor: skyline screen, black curtains, gold vases and ostrich feathers",
         decorIntro: "A themed setup that can include:",
         decor: [
-          "Giant screen and Art Deco skyline backdrop",
+          "Giant screen",
           "Black curtains",
           "Gold vases and ostrich feathers",
-          "Warm golden uplighting",
-          "A glossy floor that mirrors the lights"
+          "Warm golden uplighting"
         ],
         highlight: "Feathers, gold and jazz: <strong>the room becomes a 1920s club</strong> from the moment guests walk in — perfect for photos and to kick off the party.",
         animTitle: "🎤 Themed entertainment",
@@ -697,13 +714,14 @@ const I18N = {
     demos: {
       eyebrow: "LIVE DEMOS",
       title: "Don’t read the experience. Play it.",
-      lead: "Quiz, bingo, Quiz la ta chanson, Grab the Mic and the prize wheel: the same party games, in demo form.",
+      lead: "Quiz, bingo, Quiz la ta chanson, Grab the Mic, the prize wheel and Famille en or: the same party games, in demo form.",
       tabs: {
         quiz: "🏆 Quiz",
         bingo: "🎱 Bingo",
         chanson: "🎤 Quiz la ta chanson",
         grab: "🎙️ Grab the Mic",
-        wheel: "🎡 Wheel"
+        wheel: "🎡 Wheel",
+        feud: "🥇 Famille en or"
       }
     },
     quiz: {
@@ -860,6 +878,14 @@ const I18N = {
         }
       }
     },
+    feud: {
+      kicker: "Famille en or",
+      title: "Famille en or",
+      photoAlt: "Famille en or style set with buzzers and a giant screen",
+      p1: "Step into the energy of the classic TV game Family Feud! Two teams go head to head in a fun race to guess the most popular answers to surprise questions.",
+      p2: "With buzzers, high-energy hosting and a giant screen, expect laughs and real team spirit!",
+      p3: "A get-everybody-involved activity, perfect for corporate nights, Christmas parties and private events."
+    },
     services: {
       eyebrow: "SERVICES",
       title: "Everything you need to set the mood.",
@@ -884,6 +910,11 @@ const I18N = {
         text: "A fun activity so guests leave with memories of the night.",
         photoAlt: "Guests posing at the photobooth during a party"
       },
+      livePhotos: {
+        title: "LIVE PHOTOS",
+        lead: "During cocktail hour and dinner, take photos with your phone!",
+        punch: "They’ll appear instantly on the giant screen!"
+      },
       themes: {
         title: "Themed nights",
         text: "Décor, costumes and entertainment matched to your concept — cruise, country, Oscars and more. A turnkey package that immerses your guests in the world you chose, from the first look to the dance floor.",
@@ -892,6 +923,11 @@ const I18N = {
       quiz: { title: "Music quiz", text: "Guests answer on their phones. Questions 100% custom, or matched to the concept: 80s, disco, country, and more." },
       bingo: { title: "Music bingo", text: "Several styles depending on the night. Perfect during dinner." },
       wheel: { title: "Prize wheel", text: "Prizes, dances and surprises: the room holds its breath on every spin." },
+      feud: {
+        title: "Famille en or",
+        text: "Two teams, buzzers and a giant screen: guess the most popular answers, Family Feud style.",
+        photoAlt: "Famille en or style set with buzzers and a giant screen"
+      },
       audio: {
         title: "Audio recording option",
         lead: "High-quality recording of several key moments of the night, so you keep an audio memory of:",
@@ -973,15 +1009,15 @@ const I18N = {
       cta: "See all Google reviews",
       items: [
         ["Awesome night 😎 with a DJ full of musicality, attentive to every little detail of each special request. That’s how you get a party going. Smiling and great to talk to — I tip my hat to you, Carl!! Beautiful moment, great memories of laughter and music 😎🥂🤟", "Joelanglehart", 5],
-        ["5-star service! We recommend this DJ 100% for his outstanding professionalism. Not only does he arrive early, he also brings extra gear to cover any technical issue — rare foresight. Very attentive, he checks every detail with his clients to guarantee a perfect evening. Special mention for the unexpected extras that elevated our wedding. A provider you can trust!", "Sébastien Gauthier", 5],
         ["Carl is very professional, well organized and well equipped. He adapts perfectly to the client’s needs, whether it’s a mic, lighting or video. The music selection is very varied and he’s open to suggestions. I recommend him for your events!", "Suzy-Ann Leclerc", 5],
         ["Great DJ. We had a wonderful evening. He listens to your tastes.", "Martin Duchesne", 5],
-        ["What a great night! Perfect song choices — we loved it!!", "Catherine Blanchette", 5],
         ["Carl really listens to your needs and is very professional. Thank you!", "Diane Brillant", 5],
         ["Great night! Carl is super professional! I recommend him to everyone!", "Steven Samson", 5],
         ["I recommend DJ Carl — he’s very professional and knows how to get the party started.", "Francis Coulombe", 5],
         ["Entertainment for a 50th birthday — Carl created a great atmosphere and adapted to the crowd. Super professional, and he shows up with a ton of equipment to make the venue even more lively. Thank you", "François Carrier", 5],
-        ["Great in every way! No hesitation — Carl is awesome", "Laurent Bouchard", 5]
+        ["Great in every way! No hesitation — Carl is awesome", "Laurent Bouchard", 5],
+        ["Carl was our DJ at our wedding last August. The evening was a success and Carl brought together our two very different music styles. He handled several last-minute challenges and even accepted our last-minute request for a bit of karaoke at the end of the night. Once we were on the dance floor, we never left! The photobooth and the atmosphere were more than perfect — my guests had a lot of fun. Thank you Carl for this exceptional evening!", "Marie Giguere", 5],
+        ["Wow, what a great night we had with DJ Carl. I recommend him to everyone — he does great work and he’s a really good guy who jumps into other people’s projects, like my benefit dinner. Fun all night long. Thank you for your time and your talent.", "Trycia Mailhot", 5]
       ]
     },
     contact: {
