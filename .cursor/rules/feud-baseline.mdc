@@ -1,0 +1,35 @@
+---
+description: Famille en or — sondage style Family Feud, console et écran géant
+globs: public/feud-*,lib/feud-state.js
+alwaysApply: false
+---
+
+# Famille en or (baseline)
+
+Jeu de sondage style Family Feud. Module indépendant du quiz et de la roue.
+
+## URLs
+
+- Animateur : `/feud/host`
+- Écran projecteur : `/feud/viewer`
+- Hub : carte « Famille en or » sur `/`
+
+## Fichiers
+
+- Console : `public/feud-host.html`
+- Écran : `public/feud-viewer.html`, `public/feud.css`, `public/feud-board.js`, `public/feud-sounds.js`
+- État : `lib/feud-state.js`
+- Sockets : room `feud` (public) et `feud-host` dans `server.js`
+
+## Déroulement
+
+- Intro → mise en jeu (1 = famille rouge, 2 = famille bleue, droit de réplique, Mauvaise réponse dès le début, le plus haut pointage joue et s'affiche 4 s, la famille qui joue flashe 3 fois) → jeu → 3 X → vol. Les points gagnés (manche ou partie) restent 4 s.
+- Bonne réponse : ding. Mauvaise réponse : buzzer. Fin : points 3 s, puis le nom du gagnant en gros. Ovation coupée avec 0. Les sons partent une seule fois, de la console, quand la réponse apparaît au tableau. L'écran géant ne joue pas de son et ne demande pas de l'activer. « Rejouer la partie » relance à la question 1, scores à zéro.
+- Le tableau public masque le texte et les points tant que la réponse n'est pas révélée.
+- La console montre les réponses. L'écran géant va sur le projecteur.
+- 12 questions prêtes. Le nombre joué se choisit dans la console. On peut en ajouter (3 à 8 réponses, points 1–100).
+- L'écran n'affiche pas le nom DJ Carl. « Famille en or » reste à l'intro seulement. Pendant le jeu, les points sont en haut et la question est en dessous, séparée des points et des réponses. L'écran n'affiche pas « Mise en jeu ».
+
+## Évolution
+
+Améliorations ciblées. Conserver la sync host ↔ écran, les 3 erreurs et le vol.
