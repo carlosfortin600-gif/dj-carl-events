@@ -186,6 +186,8 @@ function initDatabase() {
   migrateLegacyQuestionnaireSentLogs(db);
   migrateLegacyEmailRdvSentLogs(db);
   migrateLegacyClientContactLogs(db);
+  const { migrateTechnicalFogToDjNotes } = require("./lib/migrate-technical-fog");
+  migrateTechnicalFogToDjNotes(db);
   return db;
 }
 
@@ -401,6 +403,9 @@ function migrate(db) {
   }
   if (!djNotesColumns.includes("tech_floor_plan_notes")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_floor_plan_notes TEXT");
+  }
+  if (!djNotesColumns.includes("tech_technical_fog_allowed")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_technical_fog_allowed TEXT");
   }
   if (!djNotesColumns.includes("tech_photobooth_frame_sent")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_photobooth_frame_sent TEXT");
