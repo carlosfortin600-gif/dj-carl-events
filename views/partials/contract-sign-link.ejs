@@ -30,6 +30,35 @@
       <a href="<%= contractSignLinks.primary %>" target="_blank" rel="noopener" class="btn btn-sm btn-primary">Ouvrir le lien de signature</a>
     </div>
 
+    <hr class="my-4">
+    <h3 class="h6 mb-2">Envoyer par courriel</h3>
+    <% if (typeof contractEmailSent !== 'undefined' && contractEmailSent) { %>
+      <div class="alert alert-success py-2 small mb-2">Courriel envoyé.</div>
+    <% } %>
+    <% if (typeof contractEmailError !== 'undefined' && contractEmailError) { %>
+      <div class="alert alert-danger py-2 small mb-2"><%= contractEmailError %></div>
+    <% } %>
+    <% if (typeof emailNotificationConfigured !== 'undefined' && !emailNotificationConfigured) { %>
+      <div class="alert alert-warning py-2 small mb-0">
+        Courriel non configuré.
+        <a href="/settings/notifications">Paramètres → Notifications</a>
+      </div>
+    <% } else if (typeof contractSavedInDb !== 'undefined' && !contractSavedInDb) { %>
+      <div class="alert alert-warning py-2 small mb-0">Enregistrez le contrat une première fois avant d'envoyer le courriel.</div>
+    <% } else { %>
+      <form method="post" action="/events/<%= event.id %>/gestion/contrat/<%= typeof subcontractorId !== 'undefined' ? subcontractorId : '' %>/email/send" class="row g-2 align-items-end">
+        <div class="col-md-8">
+          <label class="form-label small mb-1" for="contract_email_send">Courriel</label>
+          <input type="email" class="form-control" id="contract_email_send" name="email" required
+                 value="<%= contract.email || '' %>" placeholder="sous-traitant@exemple.com" autocomplete="email">
+        </div>
+        <div class="col-md-4">
+          <button type="submit" class="btn btn-primary w-100">Envoyer le courriel</button>
+        </div>
+      </form>
+      <p class="text-muted small mt-2 mb-0">Le message contient le lien de signature pour <%= subcontractorLabel %>.</p>
+    <% } %>
+
     <% if (contractFullySigned) { %>
       <div class="alert alert-success py-2 small mt-3 mb-0">
         <strong>Contrat signé par les deux parties.</strong> Utilisez <strong>Ouvrir pour impression</strong> pour le PDF.

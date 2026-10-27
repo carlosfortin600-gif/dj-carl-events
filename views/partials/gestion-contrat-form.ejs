@@ -37,6 +37,11 @@
              value="<%= contract.full_name || subLabel %>">
     </div>
     <div class="col-md-6">
+      <label class="form-label" for="<%= prefix %>_email">Courriel du sous-traitant</label>
+      <input type="email" class="form-control" id="<%= prefix %>_email" name="email"
+             value="<%= contract.email || '' %>" placeholder="exemple@courriel.com" autocomplete="email">
+    </div>
+    <div class="col-md-6">
       <label class="form-label" for="<%= prefix %>_contract_datetime">Date et heure de début du contrat</label>
       <%- include('datetime-fr-field', {
         id: prefix + '_contract_datetime',
@@ -78,9 +83,15 @@
 
   <% if (typeof contractSignLinks !== 'undefined' && contractSignLinks) { %>
     <%- include('contract-sign-link', {
+      event,
+      subcontractorId: subId,
       contractSignLinks,
       subcontractorLabel: subLabel,
-      contract
+      contract,
+      contractSavedInDb: typeof contractSavedInDb !== 'undefined' ? contractSavedInDb : false,
+      emailNotificationConfigured: typeof emailNotificationConfigured !== 'undefined' ? emailNotificationConfigured : false,
+      contractEmailSent: typeof contractEmailSent !== 'undefined' ? contractEmailSent : false,
+      contractEmailError: typeof contractEmailError !== 'undefined' ? contractEmailError : ''
     }) %>
   <% } %>
 

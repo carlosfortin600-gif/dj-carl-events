@@ -7,6 +7,16 @@
 <% if (typeof contractError !== 'undefined' && contractError) { %>
   <div class="alert alert-danger"><%= contractError %></div>
 <% } %>
+<% if (typeof contractEmailSent !== 'undefined' && contractEmailSent) { %>
+  <div class="alert alert-success py-2">
+    Courriel de signature envoyé<% if (typeof contractEmailForwarded !== 'undefined' && contractEmailForwarded) { %>
+      à votre adresse de notification (mode test Resend — à transférer au sous-traitant).
+    <% } else { %> au sous-traitant.<% } %>
+  </div>
+<% } %>
+<% if (typeof contractEmailError !== 'undefined' && contractEmailError) { %>
+  <div class="alert alert-danger"><%= contractEmailError %></div>
+<% } %>
 <% if (typeof contractCleared !== 'undefined' && contractCleared) { %>
   <div class="alert alert-success">Contrat effacé.</div>
 <% } %>
@@ -103,6 +113,10 @@
     contractSaved,
     contractCleared: typeof contractCleared !== 'undefined' ? contractCleared : false,
     contractError: typeof contractError !== 'undefined' ? contractError : '',
+    contractEmailSent: typeof contractEmailSent !== 'undefined' ? contractEmailSent : false,
+    contractEmailForwarded: typeof contractEmailForwarded !== 'undefined' ? contractEmailForwarded : false,
+    contractEmailError: typeof contractEmailError !== 'undefined' ? contractEmailError : '',
+    emailNotificationConfigured: typeof emailNotificationConfigured !== 'undefined' ? emailNotificationConfigured : false,
     contractSignLinks: typeof contractSignLinks !== 'undefined' ? contractSignLinks : null,
     contractSavedInDb: typeof contractSavedInDb !== 'undefined' ? contractSavedInDb : false,
     calendarShareLinks: typeof calendarShareLinks !== 'undefined' ? calendarShareLinks : null,

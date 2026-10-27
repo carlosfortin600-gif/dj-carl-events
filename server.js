@@ -198,6 +198,10 @@ const {
   getQuestionnaireInviteCopyTo
 } = require("./lib/questionnaire-invite-email");
 const {
+  sendContractSignInviteEmail,
+  contractSignInviteEmailErrorMessage
+} = require("./lib/contract-sign-invite-email");
+const {
   getNotificationSettings,
   saveNotificationSettings,
   isEmailNotificationConfigured,
@@ -643,6 +647,8 @@ app.post("/gestion/sous-traitants/add", (req, res) => {
     });
   }
 
+  ensureSubcontractorCalendarToken(db, result.id);
+
   const params = { subcontractorAdded: "1", sousTraitant: result.id };
   if (returnTo.includes("gestion=contrat")) {
     params.gestion = "contrat";
@@ -980,6 +986,9 @@ function renderEventDetailPage(req, res) {
     contractSaved: req.query.contractSaved === "1",
     contractCleared: req.query.contractCleared === "1",
     contractError: req.query.contractError || "",
+    contractEmailSent: req.query.contractEmailSent === "1",
+    contractEmailForwarded: req.query.contractEmailForwarded === "1",
+    contractEmailError: req.query.contractEmailError || "",
     subcontractorAdded: req.query.subcontractorAdded === "1",
     subcontractorError: req.query.subcontractorError || "",
     timeSpentLogs,
@@ -1707,6 +1716,52 @@ app.get("/events/:id/gestion/contrat/:subcontractor/signatures.json", (req, res)
     signature_contractant: contract.signature_contractant || "",
     signature_subcontractor: contract.signature_subcontractor || ""
   });
+});
+
+app.post("/events/:id/gestion/contrat/:subcontractor/email/send", async (req, res) => {
+  const eventId = Number(req.params.id);
+  const subcontractor = req.params.subcontractor;
+  const redirectFail = (message) =>
+    res.redirect(
+      gestionRedirect(eventId, {
+        gestion: "contrat",
+        sousTraitant: subcontractor,
+        contractEmailError: message
+      })
+    );
+
+  try {
+    const event = getEventById(db, eventId);
+    if (!event) return res.status(404).send("Not found");
+    if (!isValidSubcontractor(db, subcontractor)) return res.status(404).send("Not found");
+
+    if (!isEmailNotificationConfigured(db)) {
+      return redirectFail("Courriel non configuré — allez dans Paramètres → Notifications.");
+    }
+
+    const result = await sendContractSignInviteEmail(
+      db,
+      req,
+      event,
+      subcontractor,
+      req.body.email
+    );
+    if (!result.ok) {
+      return redirectFail(contractSignInviteEmailErrorMessage(result));
+    }
+
+    res.redirect(
+      gestionRedirect(eventId, {
+        gestion: "contrat",
+        sousTraitant: subcontractor,
+        contractEmailSent: "1",
+        ...(result.forwardedViaDj ? { contractEmailForwarded: "1" } : {})
+      })
+    );
+  } catch (err) {
+    console.error("Contract email route:", err);
+    redirectFail("Envoi impossible — réessayez ou vérifiez Paramètres → Notifications.");
+  }
 });
 
 app.post("/events/:id/gestion/contrat/:subcontractor/save", (req, res) => {

@@ -608,6 +608,9 @@ function migrate(db) {
   } = require("./lib/client-confirmation-history");
   ensureConfirmationHistoryTable(db);
   backfillConfirmationHistory(db);
+
+  const { backfillSubcontractorCalendarTokens } = require("./lib/subcontractor-calendar-access");
+  backfillSubcontractorCalendarTokens(db);
 }
 
 module.exports = {
