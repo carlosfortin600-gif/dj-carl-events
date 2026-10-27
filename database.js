@@ -562,8 +562,20 @@ function migrate(db) {
     )
   `);
 
-  const { seedSubcontractorsIfEmpty } = require("./lib/subcontractors-registry");
+  const subcontractorColumns = db
+    .prepare("PRAGMA table_info(subcontractors)")
+    .all()
+    .map((column) => column.name);
+  if (!subcontractorColumns.includes("email")) {
+    db.exec("ALTER TABLE subcontractors ADD COLUMN email TEXT");
+  }
+
+  const {
+    seedSubcontractorsIfEmpty,
+    ensureKnownSubcontractors
+  } = require("./lib/subcontractors-registry");
   seedSubcontractorsIfEmpty(db);
+  ensureKnownSubcontractors(db);
 
   const timelineReordered = db
     .prepare("SELECT value FROM app_meta WHERE key = 'timeline_reordered_by_time'")
