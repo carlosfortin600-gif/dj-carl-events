@@ -46,7 +46,7 @@
     <% } else if (typeof contractSavedInDb !== 'undefined' && !contractSavedInDb) { %>
       <div class="alert alert-warning py-2 small mb-0">Enregistrez le contrat une première fois avant d'envoyer le courriel.</div>
     <% } else { %>
-      <form method="post" action="/events/<%= event.id %>/gestion/contrat/<%= typeof subcontractorId !== 'undefined' ? subcontractorId : '' %>/email/send" class="row g-2 align-items-end">
+      <form method="post" action="/events/<%= event.id %>/gestion/contrat/<%= typeof subcontractorId !== 'undefined' ? subcontractorId : '' %>/email/send" class="row g-2 align-items-end" data-native-submit="true">
         <div class="col-md-8">
           <label class="form-label small mb-1" for="contract_email_send">Courriel</label>
           <input type="email" class="form-control" id="contract_email_send" name="email" required
