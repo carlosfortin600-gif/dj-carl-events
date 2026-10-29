@@ -1,5 +1,5 @@
 const DEFAULT_DISPLAY_MS = 6000;
-const FADE_MS = 1000;
+const FADE_MS = 1400;
 
 const socket = io();
 const emptyStateEl = document.getElementById("emptyState");
@@ -63,18 +63,26 @@ function preloadImage(url) {
   });
 }
 
+function waitForFrame() {
+  return new Promise((resolve) => {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(resolve);
+    });
+  });
+}
+
 function showHoldImage() {
   clearDisplayTimer();
-  emptyStateEl.hidden = false;
-  stageEl.hidden = true;
-  resetSlides();
+  emptyStateEl.classList.remove("is-hidden");
+  stageEl.classList.remove("is-visible");
+  window.setTimeout(resetSlides, FADE_MS);
 }
 
 async function crossfadeToPhoto(photo) {
   if (!photo) return;
 
-  emptyStateEl.hidden = true;
-  stageEl.hidden = false;
+  emptyStateEl.classList.add("is-hidden");
+  stageEl.classList.add("is-visible");
 
   const nextSlideIndex = activeSlide === 0 ? 1 : 0;
   const currentSlide = activeSlide >= 0 ? slides[activeSlide] : null;
@@ -86,17 +94,9 @@ async function crossfadeToPhoto(photo) {
     console.warn("Photo non chargée:", error);
   }
 
+  nextSlide.el.classList.remove("is-active", "is-beneath");
   nextSlide.img.src = photo.url;
-
-  if (!hasShownPhoto) {
-    resetSlides();
-    nextSlide.el.classList.add("is-active");
-    activeSlide = nextSlideIndex;
-    hasShownPhoto = true;
-    updateMeta(photo);
-    fadeMetaIn();
-    return;
-  }
+  await waitForFrame();
 
   fadeMetaOut();
   window.setTimeout(() => {
@@ -109,9 +109,9 @@ async function crossfadeToPhoto(photo) {
     currentSlide.el.classList.add("is-beneath");
   }
 
-  nextSlide.el.classList.remove("is-beneath");
   nextSlide.el.classList.add("is-active");
   activeSlide = nextSlideIndex;
+  hasShownPhoto = true;
 
   window.setTimeout(() => {
     slides.forEach((slide, index) => {
@@ -183,7 +183,7 @@ function applyState(state) {
     return;
   }
 
-  if (displayChanged && hasShownPhoto && !stageEl.hidden) {
+  if (displayChanged && hasShownPhoto && stageEl.classList.contains("is-visible")) {
     queueNextDisplay();
   }
 }

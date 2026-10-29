@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Famille en or — Écran</title>
-<link rel="stylesheet" href="/feud.css">
+<link rel="stylesheet" href="/feud.css?v=centre3">
 </head>
 <body class="feud-view">
 <div id="stage"></div>
@@ -15,21 +15,33 @@
 (function () {
   const stage = document.getElementById("stage");
   const board = FeudBoard.mount(stage);
+  const socket = io();
 
   document.addEventListener("keydown", (event) => {
     if (event.key !== "0") return;
     event.preventDefault();
     socket.emit("feudSilence");
   });
-  document.getElementById("fs").addEventListener("click", () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-    } else {
-      document.exitFullscreen();
+  const fs = document.getElementById("fs");
+  function fullscreenOn() {
+    return document.fullscreenElement || document.webkitFullscreenElement;
+  }
+  function syncFs() {
+    fs.textContent = fullscreenOn() ? "Quitter" : "Plein écran";
+  }
+  fs.addEventListener("click", () => {
+    if (!fullscreenOn()) {
+      const el = document.documentElement;
+      const req = el.requestFullscreen || el.webkitRequestFullscreen;
+      if (req) req.call(el);
+      return;
     }
+    const exit = document.exitFullscreen || document.webkitExitFullscreen;
+    if (exit) exit.call(document);
   });
+  document.addEventListener("fullscreenchange", syncFs);
+  document.addEventListener("webkitfullscreenchange", syncFs);
 
-  const socket = io();
   socket.on("feudState", (state) => board.update(state));
   socket.emit("joinFeudViewer", (state) => board.update(state));
 })();

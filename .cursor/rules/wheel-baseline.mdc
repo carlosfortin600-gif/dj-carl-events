@@ -1,0 +1,33 @@
+---
+description: Roue de tirage — host, viewer, spin, prix, import Excel, sons
+globs: public/wheel-*,lib/wheel-*,assets/*Roue*
+alwaysApply: false
+---
+
+# Roue de tirage DJ Carl (baseline conversation)
+
+Module **indépendant** du quiz Kahoot et de **Quiz la ta chanson** (sauf iframe roue dans le buzzer, fichier `quiz-la-ta-chanson/app/roue-principal.html` — traiter dans la conversation « Quiz la ta chanson » sauf demande de fusion).
+
+## URLs
+
+- Animateur : `/wheel/host` (alias `/wheel-host`)
+- Écran public : `/wheel/viewer`
+- Hub : carte « Roue de tirage » sur `/`
+
+## Fichiers
+
+- UI : `public/wheel-host.html`, `public/wheel-viewer.html`, `public/wheel.css`
+- Logique client : `public/wheel-core.js`, `public/wheel-socket.js`, `public/wheel-sounds.js`, `public/wheel-winners.js`
+- Serveur : `lib/wheel-state.js`, `lib/wheel-import.js`, routes/socket dans `server.js` (room `wheel`)
+- Import : `GET /api/wheel/template`, `POST /api/wheel/import` (Excel modèle client)
+
+## Principes
+
+- Sync host ↔ viewer via **Socket.IO** (`wheelState`, `wheelSpinStart`, `wheelWinners`, etc.).
+- Segments, file de prix et tirages gérés côté serveur (`wheel-state`).
+- Canvas + animation spin dans `wheel-core.js` ; ne pas casser le calcul d’index au pointeur (`POINTER_ANGLE = 0`).
+- UI animateur en **français** ; code en anglais.
+
+## Évolution
+
+Améliorations ciblées ; conserver import Excel et écran viewer pour le projecteur.

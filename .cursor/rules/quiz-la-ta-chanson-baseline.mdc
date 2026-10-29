@@ -1,0 +1,27 @@
+---
+description: Quiz la ta chanson — buzzers, viewer, sons, MIDI, égalité, roue
+globs: quiz-la-ta-chanson/**
+alwaysApply: false
+---
+
+# Quiz la ta chanson (baseline conversation)
+
+Module monté sous `/quiz-la-ta-chanson`. **Conversation séparée** du Quiz Kahoot (`/host`, `public/viewer.js`, etc.) — voir `@quiz-kahoot-baseline`. Ne pas mélanger dans la même tâche sauf hub `/` ou route minimale dans `server.js`.
+
+## Fichiers
+
+- Console : `quiz-la-ta-chanson/app/host.html` (MIDI, sons, scores, timer, roue iframe)
+- Écran jeu : `quiz-la-ta-chanson/app/viewer.html` (BroadcastChannel `buzzerGame`)
+- Roue : `quiz-la-ta-chanson/app/roue-principal.html`
+- Routes : `quiz-la-ta-chanson/index.js`
+- Launcher : `quiz-la-ta-chanson/public/launcher.html`
+
+## Comportements validés récemment
+
+- Buzz **bleu** : `Ding - Sound Effect.mp3`, volume fort ; buzz **rouge** : `Son Buzzer perdant.mp3`, volume bas.
+- **Égalité** : fond plein rouge / bleu alterné (1 s) + applaudissements ; pas le damier.
+- **MIDI** : console maître en `http://127.0.0.1:3000/...` (pas IP Wi‑Fi) ; bouton « Autoriser le MIDI ».
+
+## Évolution
+
+Améliorations ciblées dans ce dossier ; conserver sync host ↔ viewer via `BroadcastChannel`.

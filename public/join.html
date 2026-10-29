@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#050505">
+<title>DJ Carl — Rejoindre</title>
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: radial-gradient(circle at top, #1f2937, #050505 70%);
+  color: white;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+}
+
+.join {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 20px 36px;
+  gap: 24px;
+}
+
+.join-header {
+  text-align: center;
+}
+
+.join-logo {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 7vw, 40px);
+  font-weight: 900;
+  color: #00d4ff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.join-subtitle {
+  margin: 0;
+  color: #bbb;
+  font-size: 17px;
+  line-height: 1.4;
+}
+
+.join-grid {
+  display: grid;
+  gap: 16px;
+  width: min(420px, 100%);
+}
+
+.join-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  text-decoration: none;
+  color: white;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.join-card:active {
+  transform: scale(0.98);
+}
+
+.join-card.quiz {
+  border-top: 4px solid #28a745;
+}
+
+.join-card.photo {
+  border-top: 4px solid #a855f7;
+}
+
+.join-icon {
+  font-size: 42px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.join-copy {
+  min-width: 0;
+}
+
+.join-title {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.join-desc {
+  margin: 0;
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.join-hint {
+  margin: 0;
+  max-width: 420px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.join-url {
+  margin: 0;
+  max-width: 420px;
+  text-align: center;
+  color: #00d4ff;
+  font-size: 15px;
+  font-weight: 700;
+  word-break: break-all;
+}
+
+.join-status {
+  margin: 0;
+  color: #ff8a96;
+  font-size: 14px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<div class="join">
+  <header class="join-header">
+    <h1 class="join-logo">DJ Carl</h1>
+    <p class="join-subtitle">Choisis une activité sur ton téléphone</p>
+  </header>
+
+  <div class="join-grid">
+    <a class="join-card quiz" href="/player">
+      <span class="join-icon" aria-hidden="true">🎯</span>
+      <div class="join-copy">
+        <h2 class="join-title">Quiz</h2>
+        <p class="join-desc">Rejoins la partie et réponds aux questions en direct.</p>
+      </div>
+    </a>
+
+    <a class="join-card photo" href="/photo-people/upload">
+      <span class="join-icon" aria-hidden="true">📸</span>
+      <div class="join-copy">
+        <h2 class="join-title">Photo en direct</h2>
+        <p class="join-desc">Envoie une photo — elle s'affiche sur l'écran géant.</p>
+      </div>
+    </a>
+  </div>
+
+  <p class="join-hint">Téléphone sur le <strong>même Wi‑Fi</strong> que l’ordinateur.</p>
+  <p id="joinUrl" class="join-url"></p>
+  <p id="joinStatus" class="join-status"></p>
+</div>
+<script>
+fetch("/api/network")
+  .then((res) => res.json())
+  .then((data) => {
+    const urlEl = document.getElementById("joinUrl");
+    if (data?.joinUrl) {
+      urlEl.textContent = data.joinUrl;
+    }
+  })
+  .catch(() => {
+    document.getElementById("joinStatus").textContent =
+      "Pas de connexion au serveur. Relance le serveur sur l’ordinateur.";
+  });
+</script>
+</body>
+</html>

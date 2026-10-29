@@ -1,4 +1,9 @@
-const socket = io();
+const socket = io({
+  transports: ["polling", "websocket"],
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 500
+});
 const rootEl = document.querySelector(".photo-people-upload");
 const previewEl = document.getElementById("preview");
 const photoInputEl = document.getElementById("photoInput");
@@ -71,6 +76,16 @@ socket.on("connect", () => {
   socket.emit("joinPhotoPeopleUpload", (response) => {
     applyAccess({ isBlocked: Boolean(response?.blocked) });
   });
+});
+
+socket.on("connect_error", () => {
+  if (kicked) return;
+  setStatus("Pas de connexion. Même Wi‑Fi que l’ordinateur, puis recharge.", "error");
+});
+
+socket.on("disconnect", (reason) => {
+  if (kicked || reason === "io client disconnect") return;
+  setStatus("Connexion perdue. Recharge la page.", "error");
 });
 
 socket.on("photoPeopleAccess", (data) => {

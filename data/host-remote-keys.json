@@ -1,0 +1,14 @@
+{
+  "stopKey": {
+    "code": "KeyB",
+    "key": "b",
+    "keyCode": 66,
+    "label": "KeyB"
+  },
+  "playKey": {
+    "code": "Escape",
+    "key": "Escape",
+    "keyCode": 27,
+    "label": "Escape"
+  }
+}

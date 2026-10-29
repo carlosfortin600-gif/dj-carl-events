@@ -1,0 +1,57 @@
+---
+description: Quiz Kahoot (joueurs QR) — host, viewer, player, timer, classement
+globs: public/host.html,public/viewer.html,public/viewer.js,public/player.html,public/join.html,public/timer-sounds.js,public/quiz-audio.js,public/admin.html,public/home-confirm.js,database.js,lib/quiz-import.js,lib/music-quiz-import.js
+alwaysApply: false
+---
+
+# Quiz Kahoot DJ Carl (baseline)
+
+**Module séparé** de **Quiz la ta chanson** (`quiz-la-ta-chanson/**`). Ne pas mélanger buzzers/MIDI/roue chanson ici sauf hub ou `server.js` partagé minimal.
+
+## URLs
+
+- Console : `/host`
+- Écran public : `/viewer`
+- Joueurs : `/join` → `/player`
+- Admin / import : `/admin`
+
+## Fichiers
+
+`public/host.html`, `public/viewer.html`, `public/viewer.js`, `public/player.html`, `public/timer-sounds.js`, `server.js` (routes quiz), `database.js`, `lib/quiz-import.js`
+
+## Host (`/host`)
+
+- Dashboard : QR | Quiz + Contrôles | Timer / Question / Joueurs.
+- Carte **Contrôles** : Démarrer, Réponse, Effacer, Suivante ; pied **3 colonnes** : QR plein écran | Games viewer (iframe `viewer?embed=1`, plein écran immédiat) | Reset écran (confirmation).
+- QR plein écran : titre **« Scannez pour vous connecter »**, grand QR, compteur cyan, pastilles noms.
+- **Retour à l'accueil** avec confirmation (`home-confirm.js`).
+
+## Viewer (`/viewer`)
+
+- Bande 118 px : logo | timer | arrivées en direct ; QR + compteur empilés à droite ; pastilles jusqu'à **24** (`MAX_JOIN_TILES`).
+- Corps : question + réponses | classement live compact.
+- `embed=1` : sans bouton plein écran / footer.
+
+## Player (`/player`)
+
+- Sélection **jaune** ; bonne réponse **vert** ; pas de rouge ; **pas** de sons timer sur téléphone.
+
+## Timer & audio
+
+- Countdown **3-2-1-GO** au **Start timer** (pas au Démarrer quiz).
+- Bips 1/s sur **host et viewer** uniquement (`timer-sounds.js`).
+
+## QR serveur
+
+```js
+QR_SCAN_OPTIONS = { errorCorrectionLevel: "L", margin: 2, width: 1200, color: { dark: "#000000", light: "#FFFFFF" } }
+```
+
+## Comportements à ne pas casser
+
+- Joueurs **restent connectés** après reset viewer ; reclassement vide, arrivées conservées.
+- `resetViewer` ne déconnecte pas les joueurs.
+
+## Évolution
+
+Améliorations ciblées ; ne pas régresser ce socle sans accord explicite.

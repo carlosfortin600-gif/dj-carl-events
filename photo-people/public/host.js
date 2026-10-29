@@ -84,9 +84,11 @@ function renderPhotos(state) {
 }
 
 async function loadNetworkInfo() {
-  uploadQrEl.classList.add("is-loading");
-  uploadQrEl.removeAttribute("src");
-  setQrStatus("Chargement du QR…");
+  const previousUrl = uploadUrlEl.textContent.trim();
+  if (!uploadQrEl.getAttribute("src")) {
+    uploadQrEl.classList.add("is-loading");
+    setQrStatus("Chargement du QR…");
+  }
 
   try {
     const networkRes = await fetch("/api/network");
@@ -96,7 +98,9 @@ async function loadNetworkInfo() {
       throw new Error(data.error || "QR indisponible");
     }
 
-    uploadQrEl.src = data.joinQr;
+    if (data.joinUrl !== previousUrl || !uploadQrEl.getAttribute("src")) {
+      uploadQrEl.src = data.joinQr;
+    }
     uploadQrEl.classList.remove("is-loading");
     uploadUrlEl.textContent = data.joinUrl;
     setQrStatus("QR prêt", "ok");
@@ -194,6 +198,12 @@ function closeViewerOverlay() {
 }
 
 reloadQrBtn.addEventListener("click", loadNetworkInfo);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    loadNetworkInfo();
+  }
+});
+window.setInterval(loadNetworkInfo, 20000);
 applyFolderBtn.addEventListener("click", applyFolder);
 pickFolderBtn.addEventListener("click", pickFolder);
 openViewerBtn.addEventListener("click", () => {

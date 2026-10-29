@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Roue Price – Écran externe synchronisé</title>
+<style>
+*{box-sizing:border-box;}
+body{
+  font-family:Arial,sans-serif;
+  background:#05070b;
+  color:#fff;
+  margin:0;
+  padding:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#wheel-viewport{
+  width:900px;
+  height:700px;
+  border-radius:18px;
+  border:8px solid #ffcc00;
+  background:#000;
+  position:relative;
+  overflow:hidden;
+  perspective:2000px;
+}
+#wheel-strip{
+  position:absolute;
+  width:100%;
+  height:100%;
+  left:50%;
+  top:50%;
+  transform-style:preserve-3d;
+  transform:translate(-50%,-50%) rotateX(0deg);
+}
+.slot{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:90%;
+  height:110px;
+  margin-left:-45%;
+  margin-top:-55px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:46px;
+  font-weight:bold;
+  background:transparent;
+  border-radius:18px;
+  backface-visibility:hidden;
+  transition:opacity .12s,color .12s;
+  color:yellow;
+}
+#pointer-line{
+  position:absolute;
+  top:50%;
+  left:0;
+  right:0;
+  height:8px;
+  transform:translateY(-50%);
+  background:linear-gradient(to right,#00ff00 0 200px,transparent 200px calc(100% - 200px),#00ff00 calc(100% - 200px) 100%);
+}
+#big-winner{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:18vw;
+  font-weight:900;
+  color:#00ff00;
+  background:rgba(0,0,0,0.9);
+  text-shadow:0 0 40px black;
+  z-index:999;
+  opacity:0;
+  transition:opacity .4s ease-out;
+  pointer-events:none;
+}
+#winner-log{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  font-size:26px;
+  text-align:right;
+}
+</style>
+</head>
+<body>
+<div id="wheel-viewport">
+  <div id="wheel-strip"></div>
+  <div id="pointer-line"></div>
+</div>
+<div id="big-winner"></div>
+<div id="winner-log"></div>
+
+<script>
+let currentCount = 1;
+let winnerIndex = 0;
+
+const strip = document.getElementById('wheel-strip');
+const bigWinner = document.getElementById('big-winner');
+const winnerLog = document.getElementById('winner-log');
+
+function buildWheel(arr){
+  strip.innerHTML = '';
+  if(!arr.length) return;
+  const angle = 360 / arr.length;
+  const radius = 520;
+  arr.forEach((n,i)=>{
+    const d = document.createElement('div');
+    d.className = 'slot';
+    d.textContent = n;
+    d.style.transform = 'rotateX('+(i*angle)+'deg) translateZ('+radius+'px)';
+    strip.appendChild(d);
+  });
+}
+
+function updateVisibleSlots(currentIndex,total){
+  const slots = strip.children;
+  for(let i=0;i<slots.length;i++){
+    const diff = Math.abs(i-currentIndex);
+    const wrap = Math.min(diff,total-diff);
+    if(wrap===0){
+      slots[i].style.opacity=1;
+      slots[i].style.color='lime';
+    }else if(wrap<=3){
+      slots[i].style.opacity=1;
+      slots[i].style.color='yellow';
+    }else{
+      slots[i].style.opacity=0;
+    }
+  }
+}
+
+function applyFrame(index,count){
+  if(count<=0) return;
+  currentCount = count;
+  const step = 360 / count;
+  strip.style.transform = 'translate(-50%,-50%) rotateX('+(-index*step)+'deg)';
+  updateVisibleSlots(index,count);
+}
+
+window.addEventListener('storage',(e)=>{
+  if(e.key!=='wheel_command') return;
+  if(!e.newValue) return;
+  try{
+    const cmd = JSON.parse(e.newValue);
+    if(cmd.type === 'spin_setup'){
+      if(Array.isArray(cmd.seq) && cmd.seq.length>0){
+        buildWheel(cmd.seq);
+        currentCount = cmd.seq.length;
+        updateVisibleSlots(0,currentCount);
+      }
+    }else if(cmd.type === 'spin_frame'){
+      applyFrame(cmd.index || 0, cmd.count || currentCount);
+    }else if(cmd.type === 'reset'){
+      strip.innerHTML = '';
+      bigWinner.style.opacity = 0;
+      winnerLog.innerHTML = '';
+      winnerIndex = 0;
+    }else if(cmd.type === 'names_reset'){
+      // on garde la roue actuelle, mais on pourrait flush le log
+      winnerLog.innerHTML = '';
+      winnerIndex = 0;
+    }else if(cmd.type === 'winner'){
+      if(cmd.index){ winnerIndex = cmd.index; } else { winnerIndex++; }
+      const line = document.createElement('div');
+      line.textContent = winnerIndex + ' - ' + cmd.winner;
+      winnerLog.appendChild(line);
+      setTimeout(()=>{
+        bigWinner.textContent = cmd.winner.toUpperCase();
+        bigWinner.style.opacity = 1;
+      },500);
+    }else if(cmd.type === 'winner_end'){
+      bigWinner.style.opacity = 0;
+    }
+  }catch(err){}
+});
+
+// roue d'attente
+buildWheel(['En attente du contrôleur']);
+updateVisibleSlots(0,1);
+</script>
+</body>
+</html>

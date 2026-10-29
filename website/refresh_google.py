@@ -6,6 +6,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -19,11 +20,20 @@ I18N_JS = ROOT / "i18n.js"
 INDEX_HTML = ROOT / "index.html"
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-PROFILE = Path("/tmp/chrome-djcarl-refresh")
+PROFILE = Path("/tmp/chrome-djcarl-loggedin")
+REAL_CHROME_USER_DATA = Path.home() / "Library/Application Support/Google/Chrome"
+DEBUG_PORT = 9222
 PLACE_URL = (
     "https://www.google.com/maps/place/DJ+Carl/@53.8011982,-68.4348824,17z/"
     "data=!4m6!3m5!1s0x4721b1f503a55a07:0xa41ff7306ba6457c!8m2!3d53.8011982"
     "!4d-68.4348824!16s%2Fg%2F11yvyz299c?hl=fr"
+)
+REVIEWS_URL = (
+    "https://www.google.com/maps/place/DJ+Carl/@53.8011982,-68.4348824,17z/"
+    "data=!4m17!1m8!3m7!1s0x4721b1f503a55a07:0xa41ff7306ba6457c!2sDJ+Carl!8m2"
+    "!3d53.8011982!4d-68.4348824!10e5!16s%2Fg%2F11yvyz299c!3m7!1s0x4721b1f503a55a07"
+    ":0xa41ff7306ba6457c!8m2!3d53.8011982!4d-68.4348824!9m1!1b1!16s%2Fg%2F11yvyz299c"
+    "?hl=fr&entry=ttu"
 )
 PHOTOS_URL = (
     "https://www.google.com/maps/place/DJ+Carl/@53.8011982,-68.4348824,"
@@ -32,6 +42,36 @@ PHOTOS_URL = (
     "!3d53.8011982!4d-68.4348824!10e5!16s%2Fg%2F11yvyz299c!3m8"
     "!1s0x4721b1f503a55a07:0xa41ff7306ba6457c!8m2!3d53.8011982!4d-68.4348824"
     "!10e5!14m1!1BCgIgAQ!16s%2Fg%2F11yvyz299c?hl=fr"
+)
+SEARCH_REVIEWS_URL = (
+    "https://www.google.com/search?q=DJ+Carl&hl=fr&ludocid=11829910842659894652"
+    "#lrd=0x4721b1f503a55a07:0xa41ff7306ba6457c,1"
+)
+
+SLIM_PROFILE_FILES = (
+    "Cookies",
+    "Cookies-journal",
+    "Login Data",
+    "Login Data-journal",
+    "Login Data For Account",
+    "Login Data For Account-journal",
+    "Preferences",
+    "Secure Preferences",
+    "Network Persistent State",
+    "TransportSecurity",
+    "Trust Tokens",
+    "Trust Tokens-journal",
+    "Account Web Data",
+    "Account Web Data-journal",
+    "Web Data",
+    "Web Data-journal",
+)
+SLIM_PROFILE_DIRS = (
+    "Accounts",
+    "Local Storage",
+    "Session Storage",
+    "GCM Store",
+    "Network",
 )
 
 try:
@@ -45,6 +85,7 @@ class CDP:
     def __init__(self, ws_url: str):
         self.ws = websocket.create_connection(ws_url, timeout=30)
         self._id = 0
+        self.events: list[dict] = []
 
     def call(self, method: str, params: dict | None = None, timeout: float = 60.0):
         self._id += 1
@@ -54,6 +95,9 @@ class CDP:
         while time.time() < deadline:
             raw = self.ws.recv()
             data = json.loads(raw)
+            if "method" in data and "id" not in data:
+                self.events.append(data)
+                continue
             if data.get("id") == msg_id:
                 if "error" in data:
                     raise RuntimeError(f"{method}: {data['error']}")
@@ -67,18 +111,106 @@ class CDP:
             pass
 
 
-def start_chrome() -> subprocess.Popen:
-    if PROFILE.exists():
-        subprocess.run(["rm", "-rf", str(PROFILE)], check=False)
-    PROFILE.mkdir(parents=True, exist_ok=True)
+def _cli_flag(name: str) -> bool:
+    return name in sys.argv
+
+
+def _cli_opt(name: str) -> str | None:
+    prefix = f"{name}="
+    for arg in sys.argv[1:]:
+        if arg.startswith(prefix):
+            return arg.split("=", 1)[1]
+    return None
+
+
+def cdp_available(port: int = DEBUG_PORT) -> bool:
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/json/version", timeout=1) as r:
+            return r.status == 200
+    except Exception:
+        return False
+
+
+def _copy_path(src: Path, dest: Path) -> None:
+    if not src.exists():
+        return
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    if src.is_dir():
+        if dest.exists():
+            shutil.rmtree(dest)
+        shutil.copytree(src, dest, dirs_exist_ok=False)
+    else:
+        shutil.copy2(src, dest)
+
+
+def prepare_logged_in_profile(dest: Path, source_user_data: Path) -> None:
+    """Copy login cookies from the real Chrome profile. Never delete the source."""
+    source_default = source_user_data / "Default"
+    if not source_default.is_dir():
+        raise RuntimeError(f"Chrome profile not found: {source_default}")
+    dest.mkdir(parents=True, exist_ok=True)
+    dest_default = dest / "Default"
+    dest_default.mkdir(parents=True, exist_ok=True)
+    local_state = source_user_data / "Local State"
+    if local_state.exists():
+        shutil.copy2(local_state, dest / "Local State")
+    for name in SLIM_PROFILE_FILES:
+        _copy_path(source_default / name, dest_default / name)
+    for name in SLIM_PROFILE_DIRS:
+        _copy_path(source_default / name, dest_default / name)
+    for lock_name in ("SingletonLock", "SingletonSocket", "SingletonCookie"):
+        lock = dest / lock_name
+        if lock.exists() or lock.is_symlink():
+            lock.unlink()
+    lock = dest_default / "LOCK"
+    if lock.exists():
+        lock.unlink()
+    print(f"Using copied Chrome login from {source_default} → {dest} (source left intact)")
+
+
+def start_chrome() -> subprocess.Popen | None:
+    """Attach to an already-debuggable Chrome, or launch a sidecar with the real login."""
+    user_data_opt = _cli_opt("--user-data-dir")
+    attach = _cli_flag("--attach")
+    use_default = (
+        _cli_flag("--use-default-profile")
+        or _cli_flag("--real-chrome")
+        or user_data_opt is not None
+        or True
+    )
+
+    if attach or cdp_available():
+        if cdp_available():
+            print(f"Attaching to existing Chrome CDP on {DEBUG_PORT} (will not quit your Chrome)")
+            return None
+        if attach:
+            raise RuntimeError(
+                "Chrome is open but remote debugging is off. "
+                "Relaunch Chrome once with --remote-debugging-port=9222, or omit --attach "
+                "to use a copied login profile."
+            )
+
+    user_data = Path(user_data_opt).expanduser() if user_data_opt else PROFILE
+    if user_data.resolve() == REAL_CHROME_USER_DATA.resolve():
+        raise RuntimeError(
+            "Refusing to launch with the live Chrome user-data-dir while Chrome may be open. "
+            "Use the default copied profile instead."
+        )
+
+    if use_default and user_data_opt is None:
+        prepare_logged_in_profile(user_data, REAL_CHROME_USER_DATA)
+    else:
+        user_data.mkdir(parents=True, exist_ok=True)
+
     proc = subprocess.Popen(
         [
             CHROME,
-            "--remote-debugging-port=9222",
+            f"--remote-debugging-port={DEBUG_PORT}",
             "--remote-allow-origins=*",
-            f"--user-data-dir={PROFILE}",
-            "--disable-gpu",
+            f"--user-data-dir={user_data}",
+            "--profile-directory=Default",
             "--no-first-run",
+            "--no-default-browser-check",
             "--disable-default-apps",
             "--window-size=1400,2200",
             "--lang=fr-CA",
@@ -87,13 +219,13 @@ def start_chrome() -> subprocess.Popen:
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
-    for _ in range(30):
-        try:
-            with urllib.request.urlopen("http://127.0.0.1:9222/json/version", timeout=1) as r:
-                if r.status == 200:
-                    return proc
-        except Exception:
-            time.sleep(0.4)
+    for _ in range(40):
+        if cdp_available():
+            print(f"Sidecar Chrome CDP ready (pid {proc.pid})")
+            return proc
+        if proc.poll() is not None:
+            break
+        time.sleep(0.4)
     raise RuntimeError("Chrome CDP failed to start")
 
 
@@ -126,11 +258,88 @@ def eval_js(cdp: CDP, expression: str):
     return result.get("result", {}).get("value")
 
 
-def scrape_reviews(cdp: CDP) -> tuple[str, list[list]]:
-    cdp.call("Page.navigate", {"url": PLACE_URL})
-    wait_ready(cdp, 10)
+def _walk_reviews_from_json(obj, found: list[list], seen: set[str]) -> None:
+    """Heuristically pull [text, author, stars] triples from Maps RPC JSON."""
+    if isinstance(obj, list):
+        author = None
+        text = None
+        stars = None
+        strings = [x for x in obj if isinstance(x, str)]
+        nums = [x for x in obj if isinstance(x, (int, float)) and not isinstance(x, bool)]
+        if len(strings) >= 2:
+            maybe_author = next((s for s in strings if 2 <= len(s) <= 80 and "\n" not in s), None)
+            maybe_text = next((s for s in strings if len(s) >= 12 and s is not maybe_author), None)
+            maybe_stars = next((int(n) for n in nums if 1 <= n <= 5 and float(n) == int(n)), None)
+            if maybe_author and maybe_text and maybe_stars:
+                author, text, stars = maybe_author, maybe_text, maybe_stars
+        if author and text and stars and author not in seen:
+            cleaned = re.sub(r"\s+", " ", text).strip()
+            if len(cleaned) >= 8 and not cleaned.startswith("http"):
+                seen.add(author)
+                found.append([cleaned, author, stars])
+        for item in obj:
+            _walk_reviews_from_json(item, found, seen)
+    elif isinstance(obj, dict):
+        for value in obj.values():
+            _walk_reviews_from_json(value, found, seen)
 
-    # Accept consent if present
+
+def _reviews_from_network(cdp: CDP) -> list[list]:
+    found: list[list] = []
+    seen: set[str] = set()
+    interesting = ("listugcposts", "listentitiesreviews", "/review", "review/list")
+    request_ids: list[str] = []
+    for ev in cdp.events:
+        if ev.get("method") != "Network.responseReceived":
+            continue
+        params = ev.get("params") or {}
+        url = ((params.get("response") or {}).get("url") or "")
+        if any(token in url.lower() for token in interesting):
+            rid = params.get("requestId")
+            if rid:
+                request_ids.append(rid)
+    for rid in request_ids:
+        try:
+            body = cdp.call("Network.getResponseBody", {"requestId": rid}, timeout=15)
+        except Exception:
+            continue
+        raw = body.get("body") or ""
+        if body.get("base64Encoded"):
+            continue
+        raw = re.sub(r"^\)\]\}'\s*", "", raw)
+        try:
+            parsed = json.loads(raw)
+        except Exception:
+            continue
+        _walk_reviews_from_json(parsed, found, seen)
+    if found:
+        print(f"network reviews={len(found)}")
+    return found
+
+
+def _page_diagnostics(cdp: CDP) -> dict:
+    return eval_js(
+        cdp,
+        """
+(() => {
+  const labelOf = (el) => ((el.getAttribute('aria-label') || '') + ' ' + (el.textContent || '')).replace(/\\s+/g, ' ').trim();
+  const tabs = [...document.querySelectorAll('[role="tab"], button, a')]
+    .map(labelOf)
+    .filter(t => t && t.length < 80)
+    .slice(0, 50);
+  return {
+    url: location.href,
+    title: document.title,
+    cards: document.querySelectorAll('.jftiEf, [data-review-id], .wiI7pd').length,
+    body: (document.body.innerText || '').replace(/\\s+/g, ' ').trim().slice(0, 900),
+    tabs,
+  };
+})()
+""",
+    ) or {}
+
+
+def _scrape_reviews_on_current_page(cdp: CDP) -> tuple[str, list[list]]:
     eval_js(
         cdp,
         """
@@ -144,21 +353,23 @@ def scrape_reviews(cdp: CDP) -> tuple[str, list[list]]:
     )
     time.sleep(2)
 
-    # Click Avis tab
-    eval_js(
+    tab = eval_js(
         cdp,
         """
 (() => {
-  const tab = document.querySelector('button[aria-label*="Avis"], button[role="tab"][aria-label*="Avis"]')
-    || [...document.querySelectorAll('button[role="tab"]')].find(b => /Avis/i.test(b.textContent || ''));
-  if (tab) { tab.click(); return tab.getAttribute('aria-label') || tab.textContent; }
+  const labelOf = (el) => ((el.getAttribute('aria-label') || '') + ' ' + (el.textContent || '')).trim();
+  const nodes = [...document.querySelectorAll('button, a, [role="tab"], [role="button"], span, div')];
+  const tab = document.querySelector('button[aria-label*="Avis"], button[role="tab"][aria-label*="Avis"], button[aria-label*="Reviews"]')
+    || nodes.find(b => /^(Avis|Reviews)$/i.test((b.textContent || '').trim()))
+    || nodes.find(b => /avis|reviews|étoiles|stars/i.test(labelOf(b)) && /[0-9]/.test(labelOf(b)));
+  if (tab) { tab.click(); return labelOf(tab).slice(0, 80); }
   return null;
 })()
 """,
     )
-    time.sleep(3)
+    print(f"avis tab click: {tab}")
+    time.sleep(4)
 
-    # Scroll reviews pane to load more cards
     for _ in range(14):
         eval_js(
             cdp,
@@ -174,7 +385,6 @@ def scrape_reviews(cdp: CDP) -> tuple[str, list[list]]:
     reviewRoot.scrollBy?.(0, 1800);
     reviewRoot.scrollTop = (reviewRoot.scrollTop || 0) + 1800;
   }
-  // Expand truncated reviews
   document.querySelectorAll('button.w8nwRe, button[aria-label*="Plus"], button[aria-label*="more"]').forEach(b => {
     try { b.click(); } catch (e) {}
   });
@@ -189,19 +399,21 @@ def scrape_reviews(cdp: CDP) -> tuple[str, list[list]]:
         """
 (() => {
   const ratingEl = document.querySelector('div.F7nice span[aria-hidden="true"]')
-    || document.querySelector('[aria-label*="étoiles"]');
+    || document.querySelector('[aria-label*="étoiles"]')
+    || document.querySelector('[aria-label*="stars"]');
   let rating = '4,9';
   if (ratingEl) {
     const t = (ratingEl.getAttribute('aria-label') || ratingEl.textContent || '').replace('.', ',');
     const m = t.match(/([0-9],[0-9])/);
     if (m) rating = m[1];
   }
-  const cards = [...document.querySelectorAll('.jftiEf[aria-label], div[data-review-id]')];
+  const cards = [...document.querySelectorAll('.jftiEf[aria-label], div[data-review-id], .jftiEf')];
   const seen = new Set();
   const reviews = [];
   for (const card of cards) {
     const author = card.getAttribute('aria-label')
       || card.querySelector('.d4r55')?.textContent?.trim()
+      || card.querySelector('.TSUbDb')?.textContent?.trim()
       || '';
     if (!author || seen.has(author)) continue;
     const starsLabel = card.querySelector('[role="img"][aria-label*="étoile"], [role="img"][aria-label*="star"]')
@@ -210,6 +422,8 @@ def scrape_reviews(cdp: CDP) -> tuple[str, list[list]]:
     const stars = starMatch ? Number(starMatch[1]) : 5;
     let text = card.querySelector('.wiI7pd')?.textContent?.trim()
       || card.querySelector('.MyEned')?.textContent?.trim()
+      || card.querySelector('[data-review-id] .fontBodyMedium')?.textContent?.trim()
+      || card.querySelector('.review-full-text')?.textContent?.trim()
       || '';
     text = text.replace(/\\s+/g, ' ').trim();
     if (!text || text.length < 8) continue;
@@ -219,9 +433,47 @@ def scrape_reviews(cdp: CDP) -> tuple[str, list[list]]:
   return { rating, reviews };
 })()
 """,
-    )
-    rating = (data or {}).get("rating") or "4,9"
-    reviews = (data or {}).get("reviews") or []
+    ) or {}
+    return (data.get("rating") or "4,9"), (data.get("reviews") or [])
+
+
+def scrape_reviews(cdp: CDP) -> tuple[str, list[list]]:
+    try:
+        cdp.call("Network.enable")
+    except Exception as exc:
+        print(f"Network.enable skipped: {exc}")
+    cdp.call("Page.navigate", {"url": REVIEWS_URL})
+    wait_ready(cdp, 12)
+    rating, reviews = _scrape_reviews_on_current_page(cdp)
+    if len(reviews) < 3:
+        net = _reviews_from_network(cdp)
+        if len(net) > len(reviews):
+            reviews = net
+    if len(reviews) < 3:
+        print("Maps view thin — trying Google Search reviews dialog")
+        diag = _page_diagnostics(cdp)
+        print(f"maps diag url={diag.get('url')}")
+        print(f"maps diag title={diag.get('title')}")
+        print(f"maps diag cards={diag.get('cards')}")
+        print(f"maps diag tabs={diag.get('tabs')}")
+        print(f"maps diag body={diag.get('body')}")
+        cdp.events.clear()
+        cdp.call("Page.navigate", {"url": SEARCH_REVIEWS_URL})
+        wait_ready(cdp, 12)
+        rating2, reviews2 = _scrape_reviews_on_current_page(cdp)
+        if reviews2:
+            rating, reviews = rating2, reviews2
+        if len(reviews) < 3:
+            net = _reviews_from_network(cdp)
+            if len(net) > len(reviews):
+                reviews = net
+        if len(reviews) < 3:
+            diag = _page_diagnostics(cdp)
+            print(f"search diag url={diag.get('url')}")
+            print(f"search diag title={diag.get('title')}")
+            print(f"search diag cards={diag.get('cards')}")
+            print(f"search diag tabs={diag.get('tabs')}")
+            print(f"search diag body={diag.get('body')}")
     return rating, reviews
 
 
@@ -464,6 +716,24 @@ def _js_escape(s: str) -> str:
     )
 
 
+def _clean_author(name: str) -> str:
+    name = re.sub(r"\s+", " ", str(name)).strip()
+    parts = name.split()
+    if len(parts) >= 2 and len(parts) % 2 == 0:
+        half = len(parts) // 2
+        if parts[:half] == parts[half:]:
+            name = " ".join(parts[:half])
+    return name
+
+
+def _author_key(name: str) -> str:
+    import unicodedata
+
+    s = unicodedata.normalize("NFKD", _clean_author(name))
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return re.sub(r"\s+", " ", s).strip().casefold()
+
+
 def _format_review_items(reviews: list[list]) -> str:
     lines = ["      items: ["]
     for text, author, stars in reviews:
@@ -474,23 +744,26 @@ def _format_review_items(reviews: list[list]) -> str:
     return "\n".join(lines)
 
 
-def _existing_en_by_author() -> dict[str, str]:
+def _existing_en_by_author() -> tuple[dict[str, str], dict[str, str]]:
     """Keep previous English translations when the same author reappears."""
     src = I18N_JS.read_text()
     # Second reviews.items block is English
     matches = list(re.finditer(r"items:\s*\[([\s\S]*?)\]\s*\n\s*\}", src))
     if len(matches) < 2:
-        return {}
+        return {}, {}
     block = matches[-1].group(1)
     out: dict[str, str] = {}
+    authors: dict[str, str] = {}
     for text, author, _stars in re.findall(
         r'\["((?:\\.|[^"\\])*)",\s*"((?:\\.|[^"\\])*)",\s*(\d+)\]',
         block,
     ):
         author_plain = author.replace('\\"', '"').replace("\\\\", "\\")
         text_plain = text.replace('\\"', '"').replace("\\\\", "\\")
-        out[author_plain] = text_plain
-    return out
+        key = _author_key(author_plain)
+        out[key] = text_plain
+        authors[key] = _clean_author(author_plain)
+    return out, authors
 
 
 def update_reviews_in_script(reviews: list[list], rating: str) -> None:
@@ -499,13 +772,15 @@ def update_reviews_in_script(reviews: list[list], rating: str) -> None:
 
     # Keep newest-first order as returned by Maps (already roughly newest).
     reviews = reviews[:10]
-    en_by_author = _existing_en_by_author()
-    fr_items = reviews
+    en_by_author, known_authors = _existing_en_by_author()
+    fr_items = []
     en_items = []
-    for text, author, stars in fr_items:
-        en_text = en_by_author.get(author, text)
+    for text, author, stars in reviews:
+        author = known_authors.get(_author_key(author), _clean_author(author))
+        fr_items.append([text, author, stars])
+        en_text = en_by_author.get(_author_key(author), text)
         en_items.append([en_text, author, stars])
-        if author not in en_by_author:
+        if _author_key(author) not in en_by_author:
             print(f"EN review missing for {author} — left French as placeholder")
 
     src = I18N_JS.read_text()
@@ -522,7 +797,7 @@ def update_reviews_in_script(reviews: list[list], rating: str) -> None:
         return replacement
 
     new_src, n = re.subn(
-        r"      items:\s*\[[\s\S]*?\]",
+        r"      items:\s*\[[\s\S]*?\n      \]",
         repl_items,
         src,
         count=2,
@@ -638,7 +913,8 @@ def update_photo_markup(count: int) -> None:
 
 
 def main() -> None:
-    photos_only = "--photos-only" in sys.argv
+    photos_only = _cli_flag("--photos-only")
+    reviews_only = _cli_flag("--reviews-only")
     chrome = start_chrome()
     rating, reviews, hashes = "4,9", [], []
     try:
@@ -651,58 +927,61 @@ def main() -> None:
                 for r in reviews[:10]:
                     print(f" - {r[1]} ({r[2]}★): {r[0][:70]}…")
 
-            print("Scraping photos…")
-            hashes = scrape_photo_hashes(cdp)
-            print(f"photo hashes={len(hashes)}")
-            Path("/tmp/fresh-hashes.txt").write_text("\n".join(hashes) + ("\n" if hashes else ""))
+            if not reviews_only:
+                print("Scraping photos…")
+                hashes = scrape_photo_hashes(cdp)
+                print(f"photo hashes={len(hashes)}")
+                Path("/tmp/fresh-hashes.txt").write_text("\n".join(hashes) + ("\n" if hashes else ""))
         finally:
             cdp.close()
 
-        if len(hashes) < 8:
-            fallback = Path("/tmp/old-hashes.txt")
-            if fallback.exists():
-                extra = [ln.strip() for ln in fallback.read_text().splitlines() if ln.strip()]
-                print(f"merging {len(extra)} fallback hashes")
-                for h in extra:
-                    if h not in hashes:
-                        hashes.append(h)
+        if not reviews_only:
+            if len(hashes) < 8:
+                fallback = Path("/tmp/old-hashes.txt")
+                if fallback.exists():
+                    extra = [ln.strip() for ln in fallback.read_text().splitlines() if ln.strip()]
+                    print(f"merging {len(extra)} fallback hashes")
+                    for h in extra:
+                        if h not in hashes:
+                            hashes.append(h)
 
-        # Avoid wiping a good gallery if the scrape only found a handful of hashes
-        existing_count = len(list(IMG_DIR.glob("*.jpg")))
-        if len(hashes) < max(8, existing_count // 2) and existing_count >= 8:
-            print(
-                f"Keeping existing {existing_count} photos "
-                f"(scrape only returned {len(hashes)} hashes; Google limited view)."
-            )
-            count = existing_count
-        else:
-            count = download_photos(hashes, limit=40)
-            print(f"downloaded photos={count}")
-            if count == 0:
-                count = restore_photos_from_live()
-                print(f"restored from live site={count}")
-            if count > 0:
-                update_photo_markup(count)
-                # bump styles/script cache lightly so browsers reload gallery
-                html = INDEX_HTML.read_text()
-                html = re.sub(
-                    r'(styles\.css\?v=)\d+',
-                    lambda m: m.group(1) + str(int(time.time()) % 10000),
-                    html,
-                    count=1,
+            # Avoid wiping a good gallery if the scrape only found a handful of hashes
+            existing_count = len(list(IMG_DIR.glob("*.jpg")))
+            if len(hashes) < max(8, existing_count // 2) and existing_count >= 8:
+                print(
+                    f"Keeping existing {existing_count} photos "
+                    f"(scrape only returned {len(hashes)} hashes; Google limited view)."
                 )
-                INDEX_HTML.write_text(html)
+                count = existing_count
+            else:
+                count = download_photos(hashes, limit=40)
+                print(f"downloaded photos={count}")
+                if count == 0:
+                    count = restore_photos_from_live()
+                    print(f"restored from live site={count}")
+                if count > 0:
+                    update_photo_markup(count)
+                    # bump styles/script cache lightly so browsers reload gallery
+                    html = INDEX_HTML.read_text()
+                    html = re.sub(
+                        r'(styles\.css\?v=)\d+',
+                        lambda m: m.group(1) + str(int(time.time()) % 10000),
+                        html,
+                        count=1,
+                    )
+                    INDEX_HTML.write_text(html)
         if reviews:
             update_reviews_in_script(reviews, rating)
-        elif not photos_only and Path("/tmp/old-hashes.txt").exists():
+            print("Updated i18n.js + index.html")
+        elif not photos_only:
             print("No reviews scraped (Google limited view). Left existing reviews unchanged.")
-        print("Updated index.html + script.js")
     finally:
-        chrome.terminate()
-        try:
-            chrome.wait(timeout=5)
-        except Exception:
-            chrome.kill()
+        if chrome is not None:
+            chrome.terminate()
+            try:
+                chrome.wait(timeout=5)
+            except Exception:
+                chrome.kill()
 
 
 if __name__ == "__main__":

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR manette iPad</title>
+<style>
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: #05070d;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+main {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 28px 16px;
+  text-align: center;
+}
+h1 { margin: 0; font-size: clamp(32px, 5vw, 64px); }
+p { margin: 0; color: #cbd5e1; font-size: 18px; }
+img {
+  width: min(72vw, 520px);
+  height: auto;
+  background: white;
+  border-radius: 24px;
+  padding: 16px;
+}
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  max-width: 640px;
+  text-align: left;
+}
+li {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+code { color: #ffe56a; }
+a { color: #93c5fd; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Manette iPad</h1>
+  <p>Famille en or et Jeopardy</p>
+  <img id="qr" alt="Code QR de la manette">
+  <p id="url"></p>
+  <ol>
+    <li>1. L’iPad est sur le même Wi-Fi que cet ordinateur.</li>
+    <li>2. Ouvre l’appareil photo et scanne le code.</li>
+    <li>3. Pour l’installer : touche Partage, puis <strong>Sur l’écran d’accueil</strong>.</li>
+  </ol>
+  <p><a href="/">Retour à l’accueil</a></p>
+</main>
+<script>
+fetch("/api/ipad")
+  .then((res) => res.json())
+  .then((data) => {
+    document.getElementById("qr").src = data.qr;
+    document.getElementById("url").innerHTML = `<code>${data.url}</code>`;
+  })
+  .catch(() => {
+    document.getElementById("url").textContent = "QR indisponible. Vérifie que le serveur tourne.";
+  });
+</script>
+</body>
+</html>

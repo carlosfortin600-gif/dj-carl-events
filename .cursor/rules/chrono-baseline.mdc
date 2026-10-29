@@ -1,0 +1,42 @@
+---
+description: Chrono DJ Carl — bouton iPad, chrono à l'écran, classement
+alwaysApply: false
+---
+
+# Chrono DJ Carl (baseline)
+
+Jeu à part : viser un temps (ex. 3,32 s) et l'arrêter au buzz. Module indépendant des quiz, de la roue, de Famille en or et de Jeopardy.
+
+## URLs
+
+- iPad : `/chrono/host` (alias `/chrono`)
+- Écran public : `/chrono/viewer`
+- Hub : carte « Chrono » sur `/`
+
+## Fichiers
+
+- UI : `public/chrono-host.html`, `public/chrono-viewer.html`, `public/chrono.css`
+- Client : `public/chrono-host.js`, `public/chrono-viewer.js`, `public/chrono-shared.js`
+- Serveur : `lib/chrono-state.js`, routes et sockets dans `server.js` (room `chrono`)
+
+## Déroulement
+
+- Onglet **Chrono** sur la manette iPad (`/ipad`), à côté de Chanson, Famille en or et Jeopardy.
+- La cible (juste le temps, ex. **3,32 s**) est en haut du même cadre que le chrono qui défile, à l'écran et sur le bouton iPad.
+- Ce cadre est **vert** au zéro, **rouge** pendant que le chrono tourne, **jaune** quand il s'arrête. Écran et iPad pareils. Il redevient vert à la remise à zéro.
+- Bouton géant : **DÉPART** → **BUZZ** → **REMETTRE À ZÉRO**.
+- Un tap sur **Concurrent** efface le nom d’avant et ouvre le clavier. Entrée ferme le clavier, garde ce nom et remet le chrono à **DÉPART** (vert, zéro). Le classement reste.
+- Le temps officiel est calé sur l'horloge du serveur. L'écran et l'iPad affichent le même chrono.
+- Au buzz, on enregistre le temps. L'écart s'affiche en gros au bas du carré jaune, sur l'iPad et sur l'écran. Sur l'écran, « Trop tôt » / « Trop tard » est au-dessus de cet écart, séparé du temps. **Remettre à zéro** relance le chrono et **garde** le classement.
+- Classement dans le coin de l'écran, du plus près au plus loin de la cible. L'écart (+ / − / PILE) explique le rang.
+- **Effacer** vide le classement. **Retirer** enlève un seul essai.
+
+## Principes
+
+- UI en **français** ; code en anglais.
+- Sync Socket.IO : `joinChrono`, `chronoState`, `chronoStart`, `chronoStop`, `chronoReset`.
+- Ne pas mélanger ce module avec le timer du quiz Kahoot.
+
+## Évolution
+
+On peut ajouter par-dessus. On ne retire pas le bouton iPad, l'écran public, ni le classement conservé après la remise à zéro sans accord explicite.

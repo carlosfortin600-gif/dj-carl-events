@@ -1,0 +1,28 @@
+DJ Carl — installation sur PC Windows
+=====================================
+
+Contenu : quiz, roue, bingo, visualizer, Photo en direct.
+
+1. Installe Node.js LTS : https://nodejs.org
+   Coche « Automatically install the necessary tools » si demandé.
+
+2. Copie ce dossier sur le PC, par exemple :
+   C:\DJ-Carl
+   ou le Bureau.
+
+3. Double-clique sur demarrer.bat
+   La première fois, Windows installe les dépendances (1 à 2 minutes).
+
+4. Ouvre Chrome avec l’adresse affichée, par exemple :
+   http://192.168.x.x:3000/
+
+Pages utiles
+- Accueil : http://IP:3000/
+- Quiz animateur : /host
+- Roue : /wheel/host
+- Photo en direct : /photo-people/host
+
+Les photos s’enregistrent dans le dossier photo-people\photos
+(elles voyagent avec le projet).
+
+Si Windows demande d’autoriser Node.js dans le pare-feu : accepte.

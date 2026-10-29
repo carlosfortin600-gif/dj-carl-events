@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Jeopardy — Écran</title>
+<link rel="stylesheet" href="/jeopardy.css">
+</head>
+<body class="jep-view">
+<div id="stage"></div>
+<button type="button" id="fs" class="viewer-fs">Plein écran</button>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/feud-sounds.js"></script>
+<script src="/jeopardy-board.js"></script>
+<script>
+(function () {
+  const stage = document.getElementById("stage");
+  const socket = io();
+  let game = null;
+  let seen = 0;
+  let banner = "";
+  let bannerGood = false;
+  let flashTeam = null;
+  let timer = 0;
+
+  function requestFull(el) {
+    const req = el.requestFullscreen || el.webkitRequestFullScreen || el.webkitRequestFullscreen;
+    if (!req) return;
+    try {
+      const pending = req.call(el);
+      if (pending && pending.catch) pending.catch(() => {});
+    } catch (error) { /* Safari iPad refuse parfois l’élément */ }
+  }
+
+  document.getElementById("fs").addEventListener("click", () => {
+    const active = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!active) {
+      requestFull(document.documentElement);
+      return;
+    }
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.webkitCancelFullScreen;
+    if (!exit) return;
+    try {
+      const pending = exit.call(document);
+      if (pending && pending.catch) pending.catch(() => {});
+    } catch (error) { /* déjà sorti */ }
+  });
+
+  function selectTeam(index) {
+    if (!game) return;
+    const openFloor = game.phase === "clue" && game.respondent == null && game.clue && !game.clue.resolved;
+    socket.emit(openFloor ? "jeopardyBuzz" : "jeopardySetControl", { index });
+  }
+
+  function paint() {
+    JeopardyBoard.render(stage, game, {
+      flashTeam,
+      banner,
+      bannerGood,
+      onSelect: selectTeam
+    });
+  }
+
+  let themeAudio = null;
+  let themeWas = false;
+  let themeLevel = 1;
+
+  function syncTheme(on) {
+    const next = !!on && themeLevel > 0;
+    if (!themeAudio) {
+      themeAudio = new Audio("/jeopardy-theme.mp3");
+      themeAudio.loop = true;
+    }
+    try { themeAudio.volume = themeLevel; } catch (error) { /* pas encore prêt */ }
+    if (!next) {
+      themeWas = false;
+      themeAudio.pause();
+      try { themeAudio.currentTime = 0; } catch (error) { /* pas encore prêt */ }
+      return;
+    }
+    if (themeWas && !themeAudio.paused) return;
+    try { themeAudio.currentTime = 0; } catch (error) { /* pas encore prêt */ }
+    const pending = themeAudio.play();
+    themeWas = true;
+    if (pending && pending.then) {
+      pending.then(() => { themeWas = true; }).catch(() => { themeWas = false; });
+    }
+  }
+
+  let themePrimed = false;
+  document.addEventListener("pointerdown", () => {
+    if (window.FeudSounds) FeudSounds.unlock();
+    if (!themeAudio) {
+      themeAudio = new Audio("/jeopardy-theme.mp3");
+      themeAudio.loop = true;
+    }
+    const want = game && game.themeOn && themeLevel > 0;
+    if (themePrimed && !(want && themeAudio.paused)) return;
+    themePrimed = true;
+    const pending = themeAudio.play();
+    const settle = () => {
+      if (want) {
+        themeWas = true;
+        return;
+      }
+      themeAudio.pause();
+      try { themeAudio.currentTime = 0; } catch (error) { /* pas encore prêt */ }
+      themeWas = false;
+    };
+    if (pending && pending.then) pending.then(settle).catch(() => { themeWas = false; });
+    else settle();
+  });
+
+  function playShow(event) {
+    if (!event || themeLevel <= 0 || !window.FeudSounds) return;
+    if (event.type === "buzz" || event.type === "wrong") FeudSounds.play("strike");
+    else if (event.type === "correct" || event.type === "reveal") FeudSounds.play("reveal");
+    else if (event.type === "daily") FeudSounds.play("award");
+    else if (event.type === "winner") FeudSounds.play("done");
+  }
+
+  function show(state) {
+    game = state;
+    syncTheme(state && state.themeOn);
+    const event = state && state.event;
+    if (event && event.n !== seen) {
+      seen = event.n;
+      flashTeam = event.team != null ? event.team : null;
+      if (event.type === "wrong") {
+        const team = state.teams[event.team];
+        banner = (team ? team.name : "Équipe") + " · mauvaise réponse";
+        bannerGood = false;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          banner = "";
+          paint();
+        }, 2400);
+      } else if (event.type === "correct") {
+        banner = "";
+      }
+      playShow(event);
+    }
+    paint();
+  }
+
+  socket.on("showVolume", (payload) => {
+    const level = Number(payload && payload.level);
+    if (!Number.isFinite(level)) return;
+    themeLevel = Math.min(1, Math.max(0, level));
+    if (window.FeudSounds && FeudSounds.setVolume) FeudSounds.setVolume(themeLevel);
+    if (themeAudio) {
+      try { themeAudio.volume = themeLevel; } catch (error) { /* pas encore prêt */ }
+    }
+    if (themeLevel <= 0) {
+      themeWas = false;
+      if (window.FeudSounds) FeudSounds.stop();
+      if (themeAudio) {
+        themeAudio.pause();
+        try { themeAudio.currentTime = 0; } catch (error) { /* pas encore prêt */ }
+      }
+      return;
+    }
+    if (game && game.themeOn) syncTheme(true);
+  });
+  socket.on("jeopardyState", show);
+  socket.emit("joinJeopardyViewer", show);
+})();
+</script>
+</body>
+</html>

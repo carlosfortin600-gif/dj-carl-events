@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code — DJ Carl Quiz</title>
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+}
+
+.qr-page {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px 16px;
+  overflow: hidden;
+}
+
+.qr-pattern {
+  position: absolute;
+  inset: -40px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.07;
+  background-repeat: repeat;
+  background-size: 64px 64px;
+  filter: grayscale(1);
+}
+
+.qr-close {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.qr-close:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.qr-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.qr-title {
+  margin: 0 0 clamp(32px, 6vh, 64px);
+  padding: 0 16px;
+  max-width: 96%;
+  font-size: clamp(40px, 7.5vw, 96px);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+  text-align: center;
+  flex-shrink: 0;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
+}
+
+.qr-image {
+  flex: 1;
+  width: min(94vmin, 94vw);
+  height: min(94vmin, 68vh);
+  max-width: none;
+  max-height: none;
+  object-fit: contain;
+  border-radius: 8px;
+  background: white;
+  padding: 18px;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+.qr-url {
+  margin: 14px 0 0;
+  padding: 0 12px;
+  font-size: clamp(16px, 2.2vw, 24px);
+  font-weight: 700;
+  color: #9fdcff;
+  word-break: break-all;
+}
+
+.qr-footer {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 1100px;
+  text-align: center;
+  margin-top: clamp(16px, 3vh, 28px);
+}
+
+.qr-count-line {
+  margin: 0 0 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-size: 18px;
+  color: #ccc;
+  font-weight: 700;
+}
+
+.qr-count-number {
+  font-size: clamp(48px, 9vw, 96px);
+  font-weight: 900;
+  color: #00d4ff;
+  line-height: 1;
+}
+
+.qr-players {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-height: 72px;
+  overflow-y: auto;
+  padding: 0 8px;
+}
+
+.qr-player {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+  font-weight: 700;
+  color: #eee;
+}
+</style>
+</head>
+<body>
+<div class="qr-page">
+  <div id="qrPattern" class="qr-pattern" aria-hidden="true"></div>
+  <button type="button" class="qr-close" id="closeBtn">Fermer</button>
+
+  <div class="qr-content">
+    <h1 class="qr-title">Scannez pour vous connecter</h1>
+    <img id="qrImage" class="qr-image" alt="QR Code joueur">
+    <p id="joinUrlText" class="qr-url"></p>
+    <div class="qr-footer">
+      <div class="qr-count-line">
+        <span>Joueurs connectés</span>
+        <span id="playerCount" class="qr-count-number">0</span>
+      </div>
+      <div id="players" class="qr-players"></div>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+const qrImageEl = document.getElementById("qrImage");
+const qrPatternEl = document.getElementById("qrPattern");
+const playerCountEl = document.getElementById("playerCount");
+const playersEl = document.getElementById("players");
+const closeBtn = document.getElementById("closeBtn");
+
+function escapeHtml(text) {
+  return String(text ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function renderPlayers(players) {
+  const list = Array.isArray(players) ? players : [];
+  playerCountEl.textContent = String(list.length);
+  playersEl.innerHTML = list.map((player) => (
+    `<span class="qr-player">${escapeHtml(player.name || "Joueur")}</span>`
+  )).join("");
+}
+
+async function loadQr() {
+  try {
+    const res = await fetch("/api/network");
+    const data = await res.json();
+
+    if (!res.ok || !data.joinQr) {
+      throw new Error(data.error || "QR indisponible");
+    }
+
+    qrImageEl.src = data.joinQr;
+    qrPatternEl.style.backgroundImage = `url(${data.joinQr})`;
+
+    const joinUrlText = document.getElementById("joinUrlText");
+    if (joinUrlText) {
+      joinUrlText.textContent = data.joinUrl
+        ? `${data.joinUrl} · même Wi‑Fi que l’ordinateur`
+        : "";
+    }
+  } catch (error) {
+    qrImageEl.alt = error.message || "QR indisponible";
+  }
+}
+
+function requestWindowFullscreen() {
+  const target = document.documentElement;
+  if (target.requestFullscreen) {
+    target.requestFullscreen().catch(() => {});
+    return;
+  }
+
+  if (target.webkitRequestFullscreen) {
+    target.webkitRequestFullscreen();
+  }
+}
+
+closeBtn.addEventListener("click", () => window.close());
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    window.close();
+  }
+});
+
+socket.on("playersUpdate", renderPlayers);
+socket.on("leaderboardUpdate", renderPlayers);
+
+loadQr();
+requestWindowFullscreen();
+</script>
+</body>
+</html>

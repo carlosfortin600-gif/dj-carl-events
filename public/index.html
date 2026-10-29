@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DJ Carl — Accueil</title>
+<style>
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: radial-gradient(circle at top, #1f2937, #050505 65%);
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.hub {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  gap: 28px;
+}
+
+.hub-header {
+  text-align: center;
+}
+
+.hub-logo {
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 900;
+  color: #00d4ff;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+
+.hub-subtitle {
+  margin: 0;
+  color: #bbb;
+  font-size: 18px;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  width: min(1100px, 100%);
+}
+
+.app-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 220px;
+  padding: 28px 22px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.35);
+  text-decoration: none;
+  color: white;
+  touch-action: none;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.app-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 212, 255, 0.45);
+  box-shadow: 0 18px 40px rgba(0, 212, 255, 0.15);
+}
+
+.app-grid.is-free {
+  position: fixed;
+  inset: 0;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.app-grid.is-free .app-card {
+  position: absolute;
+  width: min(260px, 78vw);
+  min-height: 180px;
+  margin: 0;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+}
+
+.app-grid.is-free .app-card.is-dragging {
+  cursor: grabbing;
+  z-index: 2;
+  transform: none;
+}
+
+.app-icon {
+  font-size: 52px;
+  line-height: 1;
+}
+
+.app-title {
+  font-size: 24px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.app-desc {
+  font-size: 14px;
+  color: #ccc;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.app-card.quiz { border-top: 4px solid #28a745; }
+.app-card.wheel { border-top: 4px solid #ff9800; }
+.app-card.bingo { border-top: 4px solid #ff2d95; }
+.app-card.feud { border-top: 4px solid #f5c518; }
+.app-card.jeopardy { border-top: 4px solid #1437a8; }
+.app-card.chrono { border-top: 4px solid #ef4444; }
+.app-card.viz { border-top: 4px solid #00d4ff; }
+.app-card.photo-people { border-top: 4px solid #a855f7; }
+.app-card.chanson { border-top: 4px solid #f59e0b; }
+.app-card.ipad { border-top: 4px solid #e2e8f0; }
+
+.hub-footer {
+  color: #888;
+  font-size: 13px;
+  text-align: center;
+}
+
+.hub-footer a {
+  color: #00d4ff;
+  text-decoration: none;
+}
+
+.hub-footer a:hover {
+  text-decoration: underline;
+}
+</style>
+</head>
+<body>
+
+<div class="hub">
+  <header class="hub-header">
+    <h1 class="hub-logo">DJ Carl</h1>
+    <p class="hub-subtitle">Choisis une application</p>
+  </header>
+
+  <div class="app-grid">
+    <a class="app-card quiz" href="/host" data-app="quiz">
+      <span class="app-icon" aria-hidden="true">🎯</span>
+      <span class="app-title">Quiz Kahoot</span>
+      <span class="app-desc">Questions à choix, joueurs au téléphone (QR), classement en direct.</span>
+    </a>
+
+    <a class="app-card chanson" href="/quiz-la-ta-chanson/host" data-app="chanson">
+      <span class="app-icon" aria-hidden="true">🎤</span>
+      <span class="app-title">Quiz la ta chanson</span>
+      <span class="app-desc">Buzzers rouge et bleu, chrono et roue — console + écran jeu.</span>
+    </a>
+
+    <a class="app-card wheel" href="/wheel/host" data-app="wheel">
+      <span class="app-icon" aria-hidden="true">🎡</span>
+      <span class="app-title">Roue de tirage</span>
+      <span class="app-desc">Animateur + écran public. Personnalise les segments et tourne la roue.</span>
+    </a>
+
+    <a class="app-card feud" href="/feud/host" data-app="feud">
+      <span class="app-icon" aria-hidden="true">🏆</span>
+      <span class="app-title">Famille en or</span>
+      <span class="app-desc">Sondage style Family Feud. Tableau à l'écran, 3 erreurs, puis vol.</span>
+    </a>
+
+    <a class="app-card ipad" href="/ipad/qr" data-app="ipad">
+      <span class="app-icon" aria-hidden="true">📱</span>
+      <span class="app-title">Manette iPad</span>
+      <span class="app-desc">QR pour contrôler Famille en or et Jeopardy depuis l’iPad.</span>
+    </a>
+
+    <a class="app-card chrono" href="/chrono/host" data-app="chrono">
+      <span class="app-icon" aria-hidden="true">⏱️</span>
+      <span class="app-title">Chrono</span>
+      <span class="app-desc">Bouton géant sur l'iPad. Arrête le chrono le plus près de la cible. Classement dans le coin de l'écran.</span>
+    </a>
+
+    <a class="app-card jeopardy" href="/jeopardy/host" data-app="jeopardy">
+      <span class="app-icon" aria-hidden="true">🟦</span>
+      <span class="app-title">Jeopardy</span>
+      <span class="app-desc">Tableau de catégories et de points. Console animateur + écran géant.</span>
+    </a>
+
+    <a class="app-card bingo" href="/bingo" data-app="bingo">
+      <span class="app-icon" aria-hidden="true">🎱</span>
+      <span class="app-title">Bingo</span>
+      <span class="app-desc">Vérificateur de cartes pour le bingo musical.</span>
+    </a>
+
+    <a class="app-card viz" href="/visualizer" data-app="viz">
+      <span class="app-icon" aria-hidden="true">💡</span>
+      <span class="app-title">Visualizer</span>
+      <span class="app-desc">Salle virtuelle + écran spectacle branchés sur SoundSwitch (Art-Net).</span>
+    </a>
+
+    <a class="app-card photo-people" href="/photo-people/host" data-app="photo">
+      <span class="app-icon" aria-hidden="true">📸</span>
+      <span class="app-title">Photo en direct</span>
+      <span class="app-desc">Les invités envoient des photos depuis leur téléphone. Elles s'affichent sur l'écran géant.</span>
+    </a>
+  </div>
+
+  <p class="hub-footer">
+    <a href="/admin">Administration des quiz</a>
+  </p>
+</div>
+
+<script>
+(function () {
+  const grid = document.querySelector(".app-grid");
+  const cards = Array.from(grid.querySelectorAll(".app-card"));
+  const storageKey = "djcarl-hub-layout";
+  let drag = null;
+
+  function place(card, left, top) {
+    const maxX = Math.max(0, grid.clientWidth - card.offsetWidth);
+    const maxY = Math.max(0, grid.clientHeight - card.offsetHeight);
+    card.style.left = Math.min(Math.max(0, left), maxX) + "px";
+    card.style.top = Math.min(Math.max(0, top), maxY) + "px";
+  }
+
+  function freeze() {
+    if (grid.classList.contains("is-free")) return;
+    const boxes = cards.map((card) => {
+      const rect = card.getBoundingClientRect();
+      return { card, left: rect.left, top: rect.top, width: rect.width };
+    });
+    grid.classList.add("is-free");
+    boxes.forEach((box) => {
+      box.card.style.width = box.width + "px";
+      place(box.card, box.left, box.top);
+    });
+  }
+
+  function save() {
+    const width = grid.clientWidth || 1;
+    const height = grid.clientHeight || 1;
+    const layout = cards.map((card) => ({
+      id: card.dataset.app,
+      x: (parseFloat(card.style.left) || 0) / width,
+      y: (parseFloat(card.style.top) || 0) / height
+    }));
+    localStorage.setItem(storageKey, JSON.stringify(layout));
+  }
+
+  function restore() {
+    let layout = [];
+    try {
+      layout = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    } catch (error) {
+      layout = [];
+    }
+    if (!Array.isArray(layout) || !layout.length) return;
+    grid.classList.add("is-free");
+    const width = grid.clientWidth;
+    const height = grid.clientHeight;
+    layout.forEach((item) => {
+      const card = cards.find((node) => node.dataset.app === item.id);
+      if (!card) return;
+      place(card, item.x * width, item.y * height);
+    });
+    let extras = 0;
+    cards.forEach((card) => {
+      if (card.style.left) return;
+      const cardWidth = card.offsetWidth || 260;
+      const cardHeight = card.offsetHeight || 180;
+      place(card, 16 + (extras % 3) * (cardWidth + 16), Math.max(16, height - cardHeight - 16));
+      extras += 1;
+    });
+  }
+
+  cards.forEach((card) => {
+    card.draggable = false;
+    card.addEventListener("dragstart", (event) => event.preventDefault());
+    card.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0) return;
+      const rect = card.getBoundingClientRect();
+      drag = {
+        card,
+        pointer: event.pointerId,
+        dx: event.clientX - rect.left,
+        dy: event.clientY - rect.top,
+        x: event.clientX,
+        y: event.clientY,
+        moved: false
+      };
+      try { card.setPointerCapture(event.pointerId); } catch (error) { /* le glisser suit quand même la souris */ }
+    });
+  });
+
+  window.addEventListener("pointermove", (event) => {
+    if (!drag || drag.pointer !== event.pointerId) return;
+    if (!drag.moved && Math.hypot(event.clientX - drag.x, event.clientY - drag.y) < 8) return;
+    if (!drag.moved) {
+      freeze();
+      drag.moved = true;
+      drag.card.classList.add("is-dragging");
+    }
+    const parent = grid.getBoundingClientRect();
+    place(drag.card, event.clientX - drag.dx - parent.left, event.clientY - drag.dy - parent.top);
+  });
+
+  window.addEventListener("pointerup", (event) => {
+    if (!drag || drag.pointer !== event.pointerId) return;
+    const card = drag.card;
+    const moved = drag.moved;
+    card.classList.remove("is-dragging");
+    drag = null;
+    if (!moved) return;
+    save();
+    card.addEventListener("click", (click) => {
+      click.preventDefault();
+      click.stopPropagation();
+    }, { capture: true, once: true });
+  });
+
+  restore();
+})();
+</script>
+</body>
+</html>

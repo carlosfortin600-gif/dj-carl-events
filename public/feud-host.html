@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Famille en or — Animateur</title>
-<link rel="stylesheet" href="/feud.css">
+<link rel="stylesheet" href="/feud.css?v=centre3">
 <style>
 * { box-sizing: border-box; }
 
@@ -91,6 +91,34 @@ button:disabled {
   color: #ffe56a;
   font-size: 13px;
   line-height: 1.4;
+}
+
+.arm-sound {
+  border: 0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  background: #f5c518;
+  color: #1a1200;
+  animation: arm-pulse 1s ease-in-out infinite;
+}
+
+.arm-sound.is-on {
+  background: #14532d;
+  color: #bbf7d0;
+  font-size: 16px;
+  padding: 10px 14px;
+  animation: none;
+}
+
+.arm-sound.is-needed {
+  animation-duration: 0.4s;
+}
+
+@keyframes arm-pulse {
+  50% { filter: brightness(1.2); }
 }
 
 .teams-edit {
@@ -251,6 +279,20 @@ button:disabled {
   background: transparent;
   color: #ffe56a;
   border: 2px solid rgba(255, 214, 60, 0.55);
+}
+
+#primary.is-ready,
+#next-pack.is-ready {
+  animation: host-next-flash 0.7s ease-in-out infinite;
+}
+
+@keyframes host-next-flash {
+  0%, 100% { filter: brightness(1); box-shadow: 0 0 0 0 white; }
+  50% { filter: brightness(1.35); box-shadow: 0 0 0 4px white; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #primary.is-ready { animation: none; outline: 3px solid white; }
 }
 
 #steal-miss {
@@ -447,6 +489,7 @@ summary {
     </header>
 
     <p class="warn">Ouvre l'écran géant sur le projecteur. Cette console montre les réponses.</p>
+    <button type="button" id="arm-sound" class="arm-sound">Activer le son</button>
 
     <div class="teams-edit" id="teams">
       <div class="team-card team-card-a">
@@ -471,15 +514,15 @@ summary {
     <p id="msg" class="msg" hidden></p>
 
     <div id="faceoff" class="faceoff" hidden>
-      <div class="face-card face-b" id="card-b">
-        <button type="button" id="turn-b" class="turn">1 — Famille rouge</button>
-        <span id="face-b-label">En attente</span>
-        <button type="button" id="miss-b" class="miss">Pas au tableau</button>
-      </div>
       <div class="face-card face-a" id="card-a">
-        <button type="button" id="turn-a" class="turn">2 — Famille bleue</button>
+        <button type="button" id="turn-a" class="turn">1 — Famille bleue</button>
         <span id="face-a-label">En attente</span>
         <button type="button" id="miss-a" class="miss">Pas au tableau</button>
+      </div>
+      <div class="face-card face-b" id="card-b">
+        <button type="button" id="turn-b" class="turn">2 — Famille rouge</button>
+        <span id="face-b-label">En attente</span>
+        <button type="button" id="miss-b" class="miss">Pas au tableau</button>
       </div>
     </div>
     <div id="tie" class="faceoff" hidden>
@@ -504,6 +547,7 @@ summary {
       <button type="button" id="swap">Changer de famille</button>
       <button type="button" id="replay">Rejouer la question</button>
       <button type="button" id="replay-game">Rejouer la partie</button>
+      <button type="button" id="next-pack" hidden>Autre partie</button>
     </div>
 
     <label class="q-limit">Nombre de questions
@@ -546,7 +590,7 @@ summary {
       <button type="button" id="reset-game">Revenir à l'intro</button>
     </div>
 
-    <p class="hint">Mise en jeu : 1 rouge, 2 bleue. Ensuite 1 à 8 révéler · X erreur · N suivante · 0 coupe les applaudissements</p>
+    <p class="hint">Mise en jeu : 1 = famille 1, buzzer · 2 = famille 2, ding ding. Ensuite 1 à 8 révéler · X erreur · N suivante · 0 coupe les applaudissements</p>
   </div>
 
   <aside class="preview-col">
@@ -560,7 +604,7 @@ summary {
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/home-confirm.js"></script>
-<script src="/feud-sounds.js"></script>
+<script src="/feud-sounds.js?v=arm1"></script>
 <script src="/feud-board.js"></script>
 <script>
 (function () {
@@ -568,22 +612,20 @@ summary {
   const preview = FeudBoard.mount(document.getElementById("preview"), {
     preview: true,
     onEvent(event) {
-      if (event.type === "silence") {
+      if (event.type === "silence" || event.type === "question" || event.type === "reset") {
         FeudSounds.stop();
-        mine = false;
-        return;
+        if (event.type !== "question") {
+          mine = false;
+          return;
+        }
       }
-      if (!document.getElementById("sound-here").checked) return;
-      const kind = soundKind(event.type);
+      if (!remoteSound || !document.getElementById("sound-here").checked) return;
+      const kind = soundKind(event.type, event);
       const fromHere = mine;
       if (fromHere) mine = false;
-      if (!fromHere || !kind) return;
-      clearTimeout(soundTimer);
-      if (kind === "ding") {
-        soundTimer = setTimeout(() => FeudSounds.play(event.type), 200);
-        return;
-      }
-      FeudSounds.play(event.type);
+      if (!kind) return;
+      if (fromHere && (kind === "ding" || kind === "buzz" || kind === "dingding")) return;
+      playKind(kind);
     }
   });
 
@@ -597,15 +639,40 @@ summary {
   let busy = false;
   let pickSig = "";
   let mine = false;
-  let soundTimer = 0;
+  let remoteSound = true;
 
-  function soundKind(type) {
+  function soundNow(type) {
+    if (!remoteSound || !document.getElementById("sound-here").checked) return;
+    FeudSounds.play(type);
+  }
+
+  function faceoffBuzzBlocked(team) {
+    const face = game && game.faceoff;
+    if (!game || game.phase !== "faceoff" || !face) return true;
+    if (face.a != null || face.b != null) return true;
+    return Boolean(face.turn && face.turn !== team);
+  }
+
+  function soundKind(type, event) {
+    if (type === "control" && event && event.team) return event.team === "a" ? "buzz" : "dingding";
     if (type === "reveal" || type === "faceoff-win" || type === "steal-win") return "ding";
     if (type === "strike" || type === "steal-start" || type === "steal-miss") return "buzz";
     if (type === "award") return "award";
     if (type === "done") return "applause";
     if (type === "silence") return "silence";
     return "";
+  }
+
+  function playKind(kind) {
+    if (kind !== "silence" && !FeudSounds.isUnlocked()) {
+      document.getElementById("arm-sound").classList.add("is-needed");
+    }
+    if (kind === "ding") FeudSounds.play("reveal");
+    else if (kind === "buzz") FeudSounds.play("strike");
+    else if (kind === "dingding") FeudSounds.play("dingding");
+    else if (kind === "award") FeudSounds.play("award");
+    else if (kind === "applause") FeudSounds.play("done");
+    else if (kind === "silence") FeudSounds.stop();
   }
 
   function onPress(element, run) {
@@ -647,7 +714,6 @@ summary {
       clearTimeout(timer);
       busy = false;
       if (!res?.ok) {
-        clearTimeout(soundTimer);
         mine = false;
         flash(res?.error || "Action refusée");
         return;
@@ -663,7 +729,9 @@ summary {
     const blue = state.teams.a.name;
     const red = state.teams.b.name;
     if (state.phase === "title") {
-      return `Partie de ${state.questionCount} question${state.questionCount > 1 ? "s" : ""}. Présente les deux familles, puis lance la partie.`;
+      const pack = state.pack;
+      const label = pack ? `Partie ${(pack.index || 0) + 1}/${pack.count} · ${pack.name}. ` : "";
+      return `${label}Partie de ${state.questionCount} question${state.questionCount > 1 ? "s" : ""}. Présente les deux familles, puis lance la partie.`;
     }
     if (state.phase === "faceoff") {
       const blueScore = faceoffScore(state, "a");
@@ -673,7 +741,7 @@ summary {
       }
       const turn = state.faceoff?.turn;
       if (!turn) {
-        return "Mise en jeu : 1 = famille rouge, 2 = famille bleue. L'autre famille a ensuite le droit de réplique.";
+        return `Mise en jeu : 1 = ${blue}, 2 = ${red}. L'autre famille a ensuite le droit de réplique.`;
       }
       const other = turn === "a" ? "b" : "a";
       if (faceoffScore(state, turn) == null && faceoffScore(state, other) != null) {
@@ -694,8 +762,9 @@ summary {
       const name = state.teams[state.roundWinner].name;
       return `Manche à ${name} : +${state.roundPoints}.`;
     }
-    if (!state.leader) return `${blue} et ${red} sont à égalité.`;
-    return `Partie terminée. ${state.teams[state.leader].name} gagne.`;
+    const next = state.pack && state.pack.nextName ? ` Une autre partie avec d'autres questions : ${state.pack.nextName} ?` : "";
+    if (!state.leader) return `${blue} et ${red} sont à égalité.${next}`;
+    return `Partie terminée. ${state.teams[state.leader].name} gagne.${next}`;
   }
 
   function faceoffScore(state, teamId) {
@@ -740,6 +809,7 @@ summary {
 
       function pickAnswer(team) {
         if (busy) return;
+        soundNow("reveal");
         if (team) act("feudFaceoffPick", { team, index });
         else act("feudReveal", { index });
       }
@@ -850,8 +920,10 @@ summary {
     document.getElementById("faceoff").hidden = game.phase !== "faceoff";
     document.getElementById("card-a").classList.toggle("is-on", game.faceoff?.turn === "a");
     document.getElementById("card-b").classList.toggle("is-on", game.faceoff?.turn === "b");
-    document.getElementById("turn-a").textContent = `2 — ${game.teams.a.name}`;
-    document.getElementById("turn-b").textContent = `1 — ${game.teams.b.name}`;
+    document.getElementById("turn-a").textContent = `1 — ${game.teams.a.name}`;
+    document.getElementById("turn-b").textContent = `2 — ${game.teams.b.name}`;
+    document.getElementById("turn-a").disabled = faceoffBuzzBlocked("a");
+    document.getElementById("turn-b").disabled = faceoffBuzzBlocked("b");
     document.getElementById("miss-a").disabled = game.faceoff?.turn !== "a";
     document.getElementById("miss-b").disabled = game.faceoff?.turn !== "b";
     document.getElementById("face-a-label").textContent = faceoffText(game, "a");
@@ -865,9 +937,10 @@ summary {
 
     const total = (game.question?.answers || []).reduce((sum, answer) => sum + answer.points, 0);
     document.getElementById("qtext").textContent = game.question?.text || "Prêt pour le sondage";
+    const packLabel = game.pack && game.pack.name ? `${game.pack.name} · ` : "";
     document.getElementById("qmeta").textContent = game.question
-      ? `${game.questionIndex + 1} / ${game.questionCount}`
-      : `${game.questionCount} questions`;
+      ? `${packLabel}${game.questionIndex + 1} / ${game.questionCount}`
+      : `${packLabel}${game.questionCount} questions`;
     document.getElementById("pot").textContent = game.question
       ? `Manche : ${game.roundPoints} / ${total}`
       : "";
@@ -893,10 +966,15 @@ summary {
     document.getElementById("swap").hidden = game.phase !== "play";
     document.getElementById("replay").hidden = game.phase === "title" || game.phase === "done";
     document.getElementById("replay-game").hidden = game.phase === "title";
+    const nextPack = document.getElementById("next-pack");
+    nextPack.hidden = game.phase !== "done" && game.phase !== "title";
+    nextPack.textContent = game.phase === "done" ? "Autre partie" : "Changer de partie";
+    nextPack.classList.toggle("is-ready", game.phase === "done");
 
     const primary = document.getElementById("primary");
     const waiting = game.phase === "faceoff" || game.phase === "play" || game.phase === "steal";
     primary.classList.toggle("is-waiting", waiting);
+    primary.classList.toggle("is-ready", game.phase === "result");
     if (game.phase === "title") primary.textContent = "Lancer la partie";
     else if (game.phase === "done") primary.textContent = "Rejouer la partie";
     else if (game.questionIndex >= game.questionCount - 1) primary.textContent = "Voir le gagnant";
@@ -917,12 +995,22 @@ summary {
 
   nameA.addEventListener("change", () => act("feudSetTeamName", { team: "a", name: nameA.value }));
   nameB.addEventListener("change", () => act("feudSetTeamName", { team: "b", name: nameB.value }));
-  document.getElementById("turn-b").addEventListener("click", () => act("feudFaceoffTurn", { team: "b" }));
-  document.getElementById("turn-a").addEventListener("click", () => act("feudFaceoffTurn", { team: "a" }));
+  onPress(document.getElementById("turn-a"), () => {
+    if (faceoffBuzzBlocked("a")) return;
+    if (!busy) soundNow("strike");
+    act("feudFaceoffTurn", { team: "a" });
+  });
+  onPress(document.getElementById("turn-b"), () => {
+    if (faceoffBuzzBlocked("b")) return;
+    if (!busy) soundNow("dingding");
+    act("feudFaceoffTurn", { team: "b" });
+  });
   onPress(document.getElementById("miss-a"), () => {
+    if (!busy) soundNow("strike");
     act("feudFaceoffMiss", { team: "a" });
   });
   onPress(document.getElementById("miss-b"), () => {
+    if (!busy) soundNow("strike");
     act("feudFaceoffMiss", { team: "b" });
   });
   document.getElementById("ctrl-a").addEventListener("click", () => act("feudGiveControl", { team: "a" }));
@@ -930,15 +1018,18 @@ summary {
   onPress(document.getElementById("strike"), () => {
     if (game?.phase === "faceoff") {
       if (!game.faceoff?.turn) {
-        flash("Appuie sur 1 pour la famille rouge, ou 2 pour la famille bleue.");
+        flash(`Appuie sur 1 pour ${game.teams.a.name}, ou 2 pour ${game.teams.b.name}.`);
         return;
       }
+      if (!busy) soundNow("strike");
       act("feudFaceoffMiss", { team: game.faceoff.turn });
       return;
     }
+    if (!busy) soundNow("strike");
     act("feudStrike");
   });
   onPress(document.getElementById("steal-miss"), () => {
+    if (!busy) soundNow("steal-miss");
     act("feudStealMiss");
   });
   document.getElementById("undo-x").addEventListener("click", () => act("feudUndoStrike"));
@@ -975,23 +1066,52 @@ summary {
   });
 
   const soundBox = document.getElementById("sound-here");
+  const armSound = document.getElementById("arm-sound");
+  function syncArm(ok) {
+    const on = soundBox.checked;
+    armSound.hidden = !on;
+    armSound.classList.toggle("is-on", !!ok);
+    if (ok) armSound.classList.remove("is-needed");
+    armSound.textContent = ok ? "Son activé" : "Activer le son";
+  }
   soundBox.checked = sessionStorage.getItem("feud-sound") !== "0";
+  syncArm(false);
   soundBox.addEventListener("change", () => {
     sessionStorage.setItem("feud-sound", soundBox.checked ? "1" : "0");
-    if (soundBox.checked) FeudSounds.unlock();
+    syncArm(soundBox.checked && FeudSounds.isUnlocked());
+    if (soundBox.checked) FeudSounds.unlock().then((ok) => syncArm(ok));
+  });
+  armSound.addEventListener("pointerdown", () => {
+    FeudSounds.unlock().then((ok) => {
+      syncArm(ok);
+      if (ok) FeudSounds.play("reveal");
+    });
   });
   document.addEventListener("pointerdown", () => {
-    if (soundBox.checked) FeudSounds.unlock();
-  }, true);
+    if (!soundBox.checked || FeudSounds.isUnlocked()) return;
+    FeudSounds.unlock().then((ok) => syncArm(ok));
+  });
   document.addEventListener("keydown", () => {
-    if (soundBox.checked) FeudSounds.unlock();
-  }, true);
+    if (!soundBox.checked || FeudSounds.isUnlocked()) return;
+    FeudSounds.unlock().then((ok) => syncArm(ok));
+  });
 
   function stopShow() {
     FeudSounds.stop();
     socket.emit("feudSilence");
   }
 
+  document.getElementById("next-pack").addEventListener("click", () => {
+    if (!game || !game.pack) return;
+    const next = game.pack.nextName;
+    const last = game.pack.index + 1 >= game.pack.count;
+    const note = last
+      ? `Les 5 parties sont faites. Recommencer avec d'autres questions : « ${next} » ?`
+      : `Faire une autre partie avec d'autres questions ?\n\n${next}`;
+    if (!window.confirm(note)) return;
+    stopShow();
+    act("feudStartNextPack");
+  });
   document.getElementById("replay-game").addEventListener("click", () => {
     if (window.confirm("Rejouer la partie ? Les scores repartent à zéro.")) {
       stopShow();
@@ -1044,13 +1164,17 @@ summary {
     const tag = document.activeElement?.tagName;
     if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
     if (game?.phase === "faceoff" && (event.key === "1" || event.key === "2")) {
+      const team = event.key === "1" ? "a" : "b";
+      if (faceoffBuzzBlocked(team)) return;
       event.preventDefault();
-      act("feudFaceoffTurn", { team: event.key === "1" ? "b" : "a" });
+      if (!busy) soundNow(team === "a" ? "strike" : "dingding");
+      act("feudFaceoffTurn", { team });
       return;
     }
     if (/^[1-8]$/.test(event.key)) {
       if (game?.phase === "faceoff") return;
       event.preventDefault();
+      if (!busy) soundNow("reveal");
       act("feudReveal", { index: Number(event.key) - 1 });
       return;
     }
@@ -1071,6 +1195,14 @@ summary {
     }
   });
 
+  socket.on("showSound", (payload) => {
+    remoteSound = !payload || payload.on !== false;
+    if (!remoteSound && window.FeudSounds) FeudSounds.stop();
+  });
+  socket.on("showVolume", (payload) => {
+    const level = Number(payload && payload.level);
+    if (window.FeudSounds && FeudSounds.setVolume && Number.isFinite(level)) FeudSounds.setVolume(level);
+  });
   socket.on("feudHostState", (state) => {
     game = state;
     render();

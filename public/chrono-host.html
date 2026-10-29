@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Chrono">
+<meta name="theme-color" content="#070b14">
+<title>Chrono — iPad</title>
+<link rel="stylesheet" href="/chrono.css?v=8">
+</head>
+<body class="chrono-host is-waiting">
+<div class="chrono-app">
+  <header class="chrono-top">
+    <div class="chrono-top-row">
+      <h1>Chrono</h1>
+      <span class="chrono-link-status" id="link">Connexion…</span>
+      <nav class="chrono-nav">
+        <a href="/chrono/viewer" target="_blank" rel="noopener">Écran</a>
+        <a href="/" data-home-confirm data-home-confirm-message="Retourner à l'accueil ?&#10;&#10;Vous quittez le chrono. L'écran public n'est pas remis à zéro.">Accueil</a>
+      </nav>
+    </div>
+    <div class="chrono-setup">
+      <div class="chrono-field">
+        <span>Cible</span>
+        <span class="chrono-target-row">
+          <button type="button" data-nudge="-1000" aria-label="Retirer 1 seconde">−1 s</button>
+          <button type="button" data-nudge="-100" aria-label="Retirer 10 centièmes">−0,10</button>
+          <button type="button" data-nudge="-10" aria-label="Retirer 1 centième">−0,01</button>
+          <input id="target" inputmode="decimal" autocomplete="off" enterkeyhint="done" value="3,32" aria-label="Temps cible en secondes">
+          <button type="button" data-nudge="10" aria-label="Ajouter 1 centième">+0,01</button>
+          <button type="button" data-nudge="100" aria-label="Ajouter 10 centièmes">+0,10</button>
+          <button type="button" data-nudge="1000" aria-label="Ajouter 1 seconde">+1 s</button>
+        </span>
+      </div>
+      <label class="chrono-field chrono-field-name">
+        <span>Concurrent</span>
+        <input id="name" type="text" inputmode="text" maxlength="40" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" enterkeyhint="done" placeholder="Concurrent 1" aria-label="Nom du concurrent">
+      </label>
+    </div>
+    <p class="chrono-error" id="error" hidden></p>
+  </header>
+
+  <div class="chrono-body">
+    <button type="button" class="chrono-go" id="go" disabled>
+      <span class="chrono-go-target" id="goTarget">3,32</span>
+      <span class="chrono-go-time" id="goTime">0,00</span>
+      <span class="chrono-go-word" id="goWord">CONNEXION</span>
+      <span class="chrono-go-delta" id="goDelta"></span>
+    </button>
+    <aside class="chrono-side">
+      <div class="chrono-side-head">
+        <h2>Classement</h2>
+        <button type="button" class="chrono-text-btn" id="clear">Effacer</button>
+      </div>
+      <ol id="ranks"></ol>
+    </aside>
+  </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/chrono-shared.js?v=2"></script>
+<script src="/chrono-host.js?v=6"></script>
+<script src="/home-confirm.js"></script>
+</body>
+</html>

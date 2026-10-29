@@ -1,0 +1,55 @@
+---
+description: Visualiseur SoundSwitch validé (Carl full kit) — ne pas régresser sans demande explicite
+alwaysApply: true
+---
+
+# DJ Carl — visualiseur SoundSwitch (baseline)
+
+Config **validée** le 6 sept. 2026. Toute modification doit **préserver** ce socle. Ne pas revenir aux vieux patches, au venue démo 9 fixtures, ni aux cartes canal-par-canal du `.bin`.
+
+## Fichiers
+
+`public/visualizer.html`, `visualizer.css`, `visualizer.js`  
+`lib/artnet-receiver.js`, `lib/soundswitch-patch.js`, `lib/soundswitch-venue-import.js`  
+`data/soundswitch-patch.json`  
+Routes : `/visualizer`, `/api/visualizer/patch`, `/api/visualizer/import-soundswitch`, `/api/visualizer/dmx`
+
+## Patch — Carl full kit
+
+Projet SoundSwitch : `Carl full kit 9 aout 2026.ssproj`.  
+**Une adresse de départ + canaux consécutifs.** Pas de `dmx[]` / table Un-named.
+
+**Tout part en Art-Net univers 0** (même Par led / Electro affichés « Universe Two » dans SoundSwitch).
+
+| Fixture | Type | Départ | Canaux |
+|---|---|---|---|
+| PartyBar Mobile 250 | `partybar32` | 1 | 32 |
+| COLORpalette 1 / 10 | `palette27` | 40 / 70 | 27 |
+| Terbly PB4D | `rgbw` | 99 | 4 |
+| LED WASH 1–4 | `wash10` | 150 / 160 / 170 / 180 | 10 |
+| LB150 1–2 | `mh-beam12` | 200 / 212 | 12 |
+| Wash Effect 1–2 | `rgbw` | 260 / 264 | 4 |
+| Par led 4 1–2 | `wash10` | 300 / 310 | 10 |
+| Electro 86 | `rgbw` | 365 | 4 |
+
+Pas de FS-6. Pas de 2e Electro sans adresse.
+
+## Profils couleurs (validés sur DMX live)
+
+- `palette27` : 9 × RGB (déjà juste).
+- `partybar32` : Dim, Strobe, puis têtes RGBW / derby (manuel ColorKey 32 ch).
+- `wash10` : **Dim, R, G, B**, W, A, UV, Strobe, Mode, Speed — **pas** Dim, Strobe, R…
+- `mh-beam12` : Pan, PanFine, Tilt, TiltFine, Speed, Dim, Strobe, Color, Gobo, GoboShake, Prism, Function — adresses **200 / 212**
+- `rgbw` : R, G, B, W (Terbly, Wash Effect, Electro).
+
+Importer SoundSwitch = cette grille fixe, pas le parseur `.bin`.
+
+## UI
+
+- Modes **Salle** / **Spectacle** : ne **jamais** réinitialiser le patch.
+- Liste Patch : glisser une carte pour réordonner ; l’ordre s’enregistre.
+- Raccourcis clavier ignorés dans les champs.
+
+## Évolution
+
+On peut **ajouter** par-dessus. On ne **supprime ni ne réduit** ce patch / ces profils sans accord explicite.

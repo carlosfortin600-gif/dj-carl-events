@@ -40,25 +40,74 @@
 
 .feud-top {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(140px, 0.7fr) minmax(0, 1fr);
   gap: 12px;
   align-items: center;
 }
 
-.feud-stage[data-phase="title"] .feud-top {
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+.feud-center {
+  min-width: 0;
+  text-align: center;
 }
 
+.feud-now {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 14px;
+  font-family: "Arial Black", Arial, sans-serif;
+  font-size: clamp(20px, 4.2dvh, 46px);
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: white;
+}
+
+.feud-now[hidden] { display: none; }
+
+.feud-now[data-side="a"] {
+  background: linear-gradient(180deg, #60a5fa, #1d4ed8);
+  box-shadow: 0 5px 0 #1e3a8a, 0 0 22px rgba(96, 165, 250, 0.75);
+}
+
+.feud-now[data-side="b"] {
+  background: linear-gradient(180deg, #f87171, #b91c1c);
+  box-shadow: 0 5px 0 #7f1d1d, 0 0 22px rgba(248, 113, 113, 0.75);
+}
+
+.feud-stage[data-phase="title"] .feud-now,
 .feud-stage:not([data-phase="title"]) .feud-brand {
   display: none;
 }
 
 .team {
+  position: relative;
+  overflow: hidden;
   width: min(100%, 300px);
   border-radius: 16px;
   padding: 8px 12px 10px;
   text-align: center;
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35), 0 8px 0 rgba(0, 0, 0, 0.28);
+}
+
+.team-strobe {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.team-strobe.is-on {
+  animation: feud-strobe 2s ease-out;
+}
+
+@keyframes feud-strobe {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  20% { opacity: 0.3; }
+  35% { opacity: 0.9; }
+  55% { opacity: 0.25; }
+  75% { opacity: 0.8; }
+  100% { opacity: 0; }
 }
 
 .team-a {
@@ -77,6 +126,14 @@
   outline-offset: 2px;
 }
 
+.feud-stage[data-phase="play"] .team.is-control {
+  outline: 6px solid #fff;
+  outline-offset: 3px;
+  box-shadow: 0 0 28px #ffe56a, inset 0 0 20px rgba(255, 255, 255, 0.28);
+  filter: brightness(1.22);
+  z-index: 2;
+}
+
 .team.is-flash {
   animation: feud-team-flash 1.8s ease;
 }
@@ -92,6 +149,14 @@
 
 .team-tag:empty {
   visibility: hidden;
+}
+
+.team.is-steal .team-tag {
+  font-size: clamp(28px, 6dvh, 64px);
+  line-height: 0.95;
+  letter-spacing: 4px;
+  color: white;
+  text-shadow: 0 3px 0 #5f1212;
 }
 
 .team-name {
@@ -152,6 +217,25 @@
   text-transform: uppercase;
 }
 
+.feud-multiplier {
+  margin: 0;
+  text-align: center;
+  font-family: "Arial Black", Arial, sans-serif;
+  font-size: clamp(28px, 6dvh, 72px);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #dbe7ff;
+  line-height: 1;
+}
+
+.feud-stage.is-preview .feud-multiplier {
+  font-size: clamp(16px, 7cqh, 36px);
+}
+
+.feud-multiplier[data-factor="2"] { color: #86efac; }
+.feud-multiplier[data-factor="3"] { color: #ffe56a; }
+.feud-multiplier:empty { display: none; }
+
 .feud-status {
   margin: 0;
   text-align: center;
@@ -170,9 +254,12 @@
 .feud-stage[data-phase="steal"] .feud-status {
   color: white;
   background: linear-gradient(180deg, #ef4444, #991b1b);
-  border-radius: 10px;
-  padding: 6px 10px;
+  border-radius: 12px;
+  padding: 4px 12px;
   box-shadow: 0 4px 0 #5f1212;
+  font-size: clamp(36px, 8dvh, 84px);
+  letter-spacing: 8px;
+  line-height: 1;
 }
 
 .feud-board {
@@ -192,12 +279,10 @@
 .slot-inner {
   position: relative;
   height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-.slot.is-open .slot-inner {
-  transform: rotateX(180deg);
+.slot.is-open .face-back {
+  visibility: hidden;
 }
 
 .face {
@@ -208,7 +293,6 @@
   gap: 8px;
   padding: 0 10px;
   border-radius: 12px;
-  backface-visibility: hidden;
   overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.28);
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.4), inset 0 -7px 0 rgba(0, 0, 0, 0.22);
@@ -219,8 +303,12 @@
 }
 
 .face-front {
-  transform: rotateX(180deg);
+  visibility: hidden;
   background: linear-gradient(180deg, #93c5fd 0%, #3b82f6 42%, #1d4ed8 100%);
+}
+
+.slot.is-open .face-front {
+  visibility: visible;
 }
 
 .face-back::after,
@@ -439,15 +527,17 @@
 }
 
 .slot.just-revealed {
-  animation: feud-pop 0.45s ease;
+  animation: feud-flip 0.45s ease;
 }
 
 .feud-stage[data-phase="title"] .feud-board,
 .feud-stage[data-phase="title"] .feud-question,
+.feud-stage[data-phase="title"] .feud-multiplier,
 .feud-stage[data-phase="title"] .feud-status,
 .feud-stage[data-phase="title"] .feud-foot,
 .feud-stage[data-phase="done"] .feud-board,
 .feud-stage[data-phase="done"] .feud-question,
+.feud-stage[data-phase="done"] .feud-multiplier,
 .feud-stage[data-phase="done"] .feud-status,
 .feud-stage[data-phase="done"] .feud-foot {
   display: none;
@@ -502,25 +592,23 @@ body.feud-view #stage {
   height: 100%;
 }
 
-.viewer-fs {
-  position: fixed;
-  left: 50%;
-  bottom: 10px;
-  transform: translateX(-50%);
-  z-index: 21;
-  opacity: 0;
-  border: 0;
-  border-radius: 10px;
-  padding: 8px 12px;
-  font-weight: 800;
-  background: rgba(0, 0, 0, 0.55);
-  color: white;
-  cursor: pointer;
+body.feud-view .feud-stage {
+  padding-top: 56px;
 }
 
-.viewer-fs:hover,
-.viewer-fs:focus-visible {
-  opacity: 1;
+.viewer-fs {
+  position: fixed;
+  top: 10px;
+  right: 12px;
+  z-index: 30;
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 15px;
+  font-weight: 800;
+  background: #f5c518;
+  color: #1a1200;
+  cursor: pointer;
 }
 
 .sound-gate {
@@ -583,10 +671,10 @@ body.feud-view #stage {
   80% { transform: translateX(4px); }
 }
 
-@keyframes feud-pop {
-  0% { transform: scale(1); }
-  40% { transform: scale(1.035); }
-  100% { transform: scale(1); }
+@keyframes feud-flip {
+  0% { transform: scaleY(1); }
+  42% { transform: scaleY(0.04); }
+  100% { transform: scaleY(1); }
 }
 
 @keyframes feud-team-flash {

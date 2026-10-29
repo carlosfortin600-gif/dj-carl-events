@@ -1,0 +1,997 @@
+{
+  "version": 1,
+  "name": "DJ Carl — Banque Quiz musical",
+  "audioPath": "music-quiz",
+  "categories": [
+    {
+      "label": "Francophone",
+      "questions": [
+        {
+          "category": "Francophone",
+          "title": "Pour que tu m'aimes encore",
+          "artist": "Céline Dion",
+          "audioFile": "pour_que_tu_m_aimes_encore.mp3",
+          "start": 45,
+          "duration": 10,
+          "choices": [
+            "Pour que tu m'aimes encore — Céline Dion",
+            "Je t'aime mélancolie — Mylène Farmer",
+            "Dès que le vent soufflera — Renaud",
+            "La Grenade — Clara Luciani"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Francophone",
+          "title": "Dernière danse",
+          "artist": "Indochine",
+          "audioFile": "derniere_danse.mp3",
+          "start": 55,
+          "duration": 10,
+          "choices": [
+            "L'Aventurier — Indochine",
+            "Dernière danse — Indochine",
+            "Trois nuits par semaine — Indochine",
+            "Le baiser — Indochine"
+          ],
+          "correct": 1
+        },
+        {
+          "category": "Francophone",
+          "title": "Je l'aime à mourir",
+          "artist": "Francis Cabrel",
+          "audioFile": "je_l_aime_a_mourir.mp3",
+          "start": 30,
+          "duration": 10,
+          "choices": [
+            "Je l'aime à mourir — Francis Cabrel",
+            "Petite Marie — Francis Cabrel",
+            "Encore et encore — Francis Cabrel",
+            "La corrida — Francis Cabrel"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Francophone",
+          "title": "Sans contrefaçon",
+          "artist": "Mylène Farmer",
+          "audioFile": "sans_contrefacon.mp3",
+          "start": 40,
+          "duration": 10,
+          "choices": [
+            "Désenchantée — Mylène Farmer",
+            "Sans contrefaçon — Mylène Farmer",
+            "Libertine — Mylène Farmer",
+            "California — Mylène Farmer"
+          ],
+          "correct": 1
+        },
+        {
+          "category": "Francophone",
+          "title": "Elle a les yeux revolver",
+          "artist": "Marc Lavoine",
+          "audioFile": "elle_a_les_yeux_revolver.mp3",
+          "start": 35,
+          "duration": 10,
+          "choices": [
+            "Elle a les yeux revolver — Marc Lavoine",
+            "C'est la vie — Khaled",
+            "Pour une big party — Les Musiciens",
+            "Belle — Garou & Patrick Fiori"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Francophone",
+          "title": "La tribu de Dana",
+          "artist": "Manau",
+          "audioFile": "la_tribu_de_dana.mp3",
+          "start": 50,
+          "duration": 10,
+          "choices": [
+            "La tribu de Dana — Manau",
+            "Le chat — Pierre Perret",
+            "Les sunlights des tropiques — Kassav'",
+            "Le temps est bon — Bon Entendeur"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Francophone",
+          "title": "Comme j'ai toujours envie d'aimer",
+          "artist": "Daniel Lavoie",
+          "audioFile": "comme_j_ai_toujours_envie_d_aimer.mp3",
+          "start": 42,
+          "duration": 10,
+          "choices": [
+            "Comme j'ai toujours envie d'aimer — Daniel Lavoie",
+            "Ils s'aiment — Daniel Lavoie",
+            "Quand on arrive en ville — Daniel Lavoie",
+            "J'ai quitté mon pays — Daniel Lavoie"
+          ],
+          "correct": 0
+        }
+      ]
+    },
+    {
+      "label": "Années 80",
+      "questions": [
+        {
+          "category": "Années 80",
+          "title": "Billie Jean",
+          "artist": "Michael Jackson",
+          "audioFile": "billie_jean.mp3",
+          "start": 60,
+          "duration": 10,
+          "choices": [
+            "Beat It — Michael Jackson",
+            "Billie Jean — Michael Jackson",
+            "Thriller — Michael Jackson",
+            "Smooth Criminal — Michael Jackson"
+          ],
+          "correct": 1
+        },
+        {
+          "category": "Années 80",
+          "title": "Sweet Dreams (Are Made of This)",
+          "artist": "Eurythmics",
+          "audioFile": "sweet_dreams.mp3",
+          "start": 45,
+          "duration": 10,
+          "choices": [
+            "Sweet Dreams (Are Made of This) — Eurythmics",
+            "Tainted Love — Soft Cell",
+            "Blue Monday — New Order",
+            "Don't You (Forget About Me) — Simple Minds"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 80",
+          "title": "Take On Me",
+          "artist": "a-ha",
+          "audioFile": "take_on_me.mp3",
+          "start": 55,
+          "duration": 10,
+          "choices": [
+            "Take On Me — a-ha",
+            "The Final Countdown — Europe",
+            "Everybody Wants to Rule the World — Tears for Fears",
+            "Don't Stop Believin' — Journey"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 80",
+          "title": "Livin' on a Prayer",
+          "artist": "Bon Jovi",
+          "audioFile": "livin_on_a_prayer.mp3",
+          "start": 65,
+          "duration": 10,
+          "choices": [
+            "Livin' on a Prayer — Bon Jovi",
+            "You Give Love a Bad Name — Bon Jovi",
+            "It's My Life — Bon Jovi",
+            "Pour Some Sugar on Me — Def Leppard"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 80",
+          "title": "Girls Just Want to Have Fun",
+          "artist": "Cyndi Lauper",
+          "audioFile": "girls_just_want_to_have_fun.mp3",
+          "start": 38,
+          "duration": 10,
+          "choices": [
+            "Girls Just Want to Have Fun — Cyndi Lauper",
+            "Material Girl — Madonna",
+            "Like a Virgin — Madonna",
+            "I Wanna Dance with Somebody — Whitney Houston"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 80",
+          "title": "Wake Me Up Before You Go-Go",
+          "artist": "Wham!",
+          "audioFile": "wake_me_up_before_you_go_go.mp3",
+          "start": 30,
+          "duration": 10,
+          "choices": [
+            "Wake Me Up Before You Go-Go — Wham!",
+            "Careless Whisper — George Michael",
+            "Last Christmas — Wham!",
+            "Footloose — Kenny Loggins"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 80",
+          "title": "Eye of the Tiger",
+          "artist": "Survivor",
+          "audioFile": "eye_of_the_tiger.mp3",
+          "start": 48,
+          "duration": 10,
+          "choices": [
+            "Eye of the Tiger — Survivor",
+            "The Final Countdown — Europe",
+            "We Built This City — Starship",
+            "Hungry Like the Wolf — Duran Duran"
+          ],
+          "correct": 0
+        }
+      ]
+    },
+    {
+      "label": "Années 90",
+      "questions": [
+        {
+          "category": "Années 90",
+          "title": "...Baby One More Time",
+          "artist": "Britney Spears",
+          "audioFile": "baby_one_more_time.mp3",
+          "start": 50,
+          "duration": 10,
+          "choices": [
+            "...Baby One More Time — Britney Spears",
+            "Oops!... I Did It Again — Britney Spears",
+            "Genie in a Bottle — Christina Aguilera",
+            "Wannabe — Spice Girls"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 90",
+          "title": "Wannabe",
+          "artist": "Spice Girls",
+          "audioFile": "wannabe.mp3",
+          "start": 35,
+          "duration": 10,
+          "choices": [
+            "Wannabe — Spice Girls",
+            "Say You'll Be There — Spice Girls",
+            "Spice Up Your Life — Spice Girls",
+            "Backstreet's Back — Backstreet Boys"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 90",
+          "title": "Smells Like Teen Spirit",
+          "artist": "Nirvana",
+          "audioFile": "smells_like_teen_spirit.mp3",
+          "start": 70,
+          "duration": 10,
+          "choices": [
+            "Smells Like Teen Spirit — Nirvana",
+            "Come As You Are — Nirvana",
+            "Black — Pearl Jam",
+            "Loser — Beck"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 90",
+          "title": "No Scrubs",
+          "artist": "TLC",
+          "audioFile": "no_scrubs.mp3",
+          "start": 45,
+          "duration": 10,
+          "choices": [
+            "No Scrubs — TLC",
+            "Waterfalls — TLC",
+            "Creep — TLC",
+            "Say My Name — Destiny's Child"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 90",
+          "title": "Macarena",
+          "artist": "Los Del Rio",
+          "audioFile": "macarena.mp3",
+          "start": 40,
+          "duration": 10,
+          "choices": [
+            "Macarena — Los Del Rio",
+            "La Bamba — Los Lobos",
+            "Livin' la Vida Loca — Ricky Martin",
+            "Mambo No. 5 — Lou Bega"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 90",
+          "title": "I Will Always Love You",
+          "artist": "Whitney Houston",
+          "audioFile": "i_will_always_love_you.mp3",
+          "start": 120,
+          "duration": 10,
+          "choices": [
+            "I Will Always Love You — Whitney Houston",
+            "I Have Nothing — Whitney Houston",
+            "My Heart Will Go On — Céline Dion",
+            "Un-Break My Heart — Toni Braxton"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 90",
+          "title": "Black or White",
+          "artist": "Michael Jackson",
+          "audioFile": "black_or_white.mp3",
+          "start": 55,
+          "duration": 10,
+          "choices": [
+            "Black or White — Michael Jackson",
+            "Remember the Time — Michael Jackson",
+            "Scream — Michael Jackson & Janet Jackson",
+            "Vogue — Madonna"
+          ],
+          "correct": 0
+        }
+      ]
+    },
+    {
+      "label": "Années 2000",
+      "questions": [
+        {
+          "category": "Années 2000",
+          "title": "Crazy in Love",
+          "artist": "Beyoncé",
+          "audioFile": "crazy_in_love.mp3",
+          "start": 50,
+          "duration": 10,
+          "choices": [
+            "Crazy in Love — Beyoncé",
+            "Single Ladies (Put a Ring on It) — Beyoncé",
+            "Halo — Beyoncé",
+            "Irreplaceable — Beyoncé"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 2000",
+          "title": "Hey Ya!",
+          "artist": "OutKast",
+          "audioFile": "hey_ya.mp3",
+          "start": 35,
+          "duration": 10,
+          "choices": [
+            "Hey Ya! — OutKast",
+            "Ms. Jackson — OutKast",
+            "In Da Club — 50 Cent",
+            "Gold Digger — Kanye West"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 2000",
+          "title": "Mr. Brightside",
+          "artist": "The Killers",
+          "audioFile": "mr_brightside.mp3",
+          "start": 60,
+          "duration": 10,
+          "choices": [
+            "Mr. Brightside — The Killers",
+            "Somebody Told Me — The Killers",
+            "Sex on Fire — Kings of Leon",
+            "Use Somebody — Kings of Leon"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 2000",
+          "title": "Toxic",
+          "artist": "Britney Spears",
+          "audioFile": "toxic.mp3",
+          "start": 45,
+          "duration": 10,
+          "choices": [
+            "Toxic — Britney Spears",
+            "Womanizer — Britney Spears",
+            "Circus — Britney Spears",
+            "Poker Face — Lady Gaga"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 2000",
+          "title": "Hips Don't Lie",
+          "artist": "Shakira",
+          "audioFile": "hips_dont_lie.mp3",
+          "start": 55,
+          "duration": 10,
+          "choices": [
+            "Hips Don't Lie — Shakira",
+            "Whenever, Wherever — Shakira",
+            "She Wolf — Shakira",
+            "Gasolina — Daddy Yankee"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 2000",
+          "title": "Seven Nation Army",
+          "artist": "The White Stripes",
+          "audioFile": "seven_nation_army.mp3",
+          "start": 20,
+          "duration": 10,
+          "choices": [
+            "Seven Nation Army — The White Stripes",
+            "Fell in Love with a Girl — The White Stripes",
+            "Are You Gonna Be My Girl — Jet",
+            "Reptilia — The Strokes"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Années 2000",
+          "title": "Viva la Vida",
+          "artist": "Coldplay",
+          "audioFile": "viva_la_vida.mp3",
+          "start": 40,
+          "duration": 10,
+          "choices": [
+            "Viva la Vida — Coldplay",
+            "Clocks — Coldplay",
+            "Yellow — Coldplay",
+            "Fix You — Coldplay"
+          ],
+          "correct": 0
+        }
+      ]
+    },
+    {
+      "label": "Québec",
+      "questions": [
+        {
+          "category": "Québec",
+          "title": "Le Démon de minuit",
+          "artist": "Les Cowboys Fringants",
+          "audioFile": "le_demon_de_minuit.mp3",
+          "start": 50,
+          "duration": 10,
+          "choices": [
+            "Le Démon de minuit — Les Cowboys Fringants",
+            "Les étoiles filantes — Les Cowboys Fringants",
+            "Sur mon épaule — Éric Lapointe",
+            "Mon chum Rémi — Offenbach"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Québec",
+          "title": "Juste pour voir le monde",
+          "artist": "Les Trois Accords",
+          "audioFile": "juste_pour_voir_le_monde.mp3",
+          "start": 35,
+          "duration": 10,
+          "choices": [
+            "Juste pour voir le monde — Les Trois Accords",
+            "Saskatchewan — Les Trois Accords",
+            "Ordinaire — Jean Leloup",
+            "Le déni de l'évidence — Les Colocs"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Québec",
+          "title": "Ordinaire",
+          "artist": "Jean Leloup",
+          "audioFile": "ordinaire.mp3",
+          "start": 42,
+          "duration": 10,
+          "choices": [
+            "Ordinaire — Jean Leloup",
+            "I Lost My Baby — Jean Leloup",
+            "Ton visage — Daniel Bélanger",
+            "Mon royaume — Pierre Lapointe"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Québec",
+          "title": "Le déni de l'évidence",
+          "artist": "Les Colocs",
+          "audioFile": "le_deni_de_l_evidence.mp3",
+          "start": 48,
+          "duration": 10,
+          "choices": [
+            "Le déni de l'évidence — Les Colocs",
+            "La vache en ragout — Les Colocs",
+            "La tribu de Dana — Manau",
+            "Les malheurs du jour — Les Trois Accords"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Québec",
+          "title": "Sur mon épaule",
+          "artist": "Éric Lapointe",
+          "audioFile": "sur_mon_epaule.mp3",
+          "start": 40,
+          "duration": 10,
+          "choices": [
+            "Sur mon épaule — Éric Lapointe",
+            "N'importe quoi — Éric Lapointe",
+            "Mon chum Rémi — Offenbach",
+            "Le déni de l'évidence — Les Colocs"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Québec",
+          "title": "Mon royaume",
+          "artist": "Pierre Lapointe",
+          "audioFile": "mon_royaume.mp3",
+          "start": 38,
+          "duration": 10,
+          "choices": [
+            "Mon royaume — Pierre Lapointe",
+            "L'amour est sans pitié — Pierre Lapointe",
+            "Ton visage — Daniel Bélanger",
+            "Ordinaire — Jean Leloup"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Québec",
+          "title": "Ton visage",
+          "artist": "Daniel Bélanger",
+          "audioFile": "ton_visage.mp3",
+          "start": 45,
+          "duration": 10,
+          "choices": [
+            "Ton visage — Daniel Bélanger",
+            "Sortez-moi de moi — Daniel Bélanger",
+            "Mon royaume — Pierre Lapointe",
+            "Juste pour voir le monde — Les Trois Accords"
+          ],
+          "correct": 0
+        }
+      ]
+    },
+    {
+      "label": "Country",
+      "questions": [
+        {
+          "category": "Country",
+          "title": "Friends in Low Places",
+          "artist": "Garth Brooks",
+          "audioFile": "friends_in_low_places.mp3",
+          "start": 55,
+          "duration": 10,
+          "choices": [
+            "Friends in Low Places — Garth Brooks",
+            "The Dance — Garth Brooks",
+            "Amarillo By Morning — George Strait",
+            "Ring of Fire — Johnny Cash"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Country",
+          "title": "Before He Cheats",
+          "artist": "Carrie Underwood",
+          "audioFile": "before_he_cheats.mp3",
+          "start": 50,
+          "duration": 10,
+          "choices": [
+            "Before He Cheats — Carrie Underwood",
+            "Jesus, Take the Wheel — Carrie Underwood",
+            "Jolene — Dolly Parton",
+            "Man! I Feel Like a Woman! — Shania Twain"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Country",
+          "title": "Wagon Wheel",
+          "artist": "Old Crow Medicine Show",
+          "audioFile": "wagon_wheel.mp3",
+          "start": 40,
+          "duration": 10,
+          "choices": [
+            "Wagon Wheel — Old Crow Medicine Show",
+            "Chicken Fried — Zac Brown Band",
+            "Cruise — Florida Georgia Line",
+            "Take Me Home, Country Roads — John Denver"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Country",
+          "title": "Ring of Fire",
+          "artist": "Johnny Cash",
+          "audioFile": "ring_of_fire.mp3",
+          "start": 25,
+          "duration": 10,
+          "choices": [
+            "Ring of Fire — Johnny Cash",
+            "Folsom Prison Blues — Johnny Cash",
+            "I Walk the Line — Johnny Cash",
+            "Jolene — Dolly Parton"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Country",
+          "title": "Jolene",
+          "artist": "Dolly Parton",
+          "audioFile": "jolene.mp3",
+          "start": 30,
+          "duration": 10,
+          "choices": [
+            "Jolene — Dolly Parton",
+            "9 to 5 — Dolly Parton",
+            "Coat of Many Colors — Dolly Parton",
+            "Before He Cheats — Carrie Underwood"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Country",
+          "title": "Chicken Fried",
+          "artist": "Zac Brown Band",
+          "audioFile": "chicken_fried.mp3",
+          "start": 35,
+          "duration": 10,
+          "choices": [
+            "Chicken Fried — Zac Brown Band",
+            "Toes — Zac Brown Band",
+            "Wagon Wheel — Old Crow Medicine Show",
+            "Friends in Low Places — Garth Brooks"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Country",
+          "title": "Amarillo By Morning",
+          "artist": "George Strait",
+          "audioFile": "amarillo_by_morning.mp3",
+          "start": 45,
+          "duration": 10,
+          "choices": [
+            "Amarillo By Morning — George Strait",
+            "Check Yes or No — George Strait",
+            "Friends in Low Places — Garth Brooks",
+            "Ring of Fire — Johnny Cash"
+          ],
+          "correct": 0
+        }
+      ]
+    },
+    {
+      "label": "Bandes sonores de films",
+      "questions": [
+        {
+          "category": "Bandes sonores de films",
+          "title": "My Heart Will Go On",
+          "artist": "Céline Dion",
+          "audioFile": "my_heart_will_go_on.mp3",
+          "start": 90,
+          "duration": 10,
+          "choices": [
+            "My Heart Will Go On — Céline Dion",
+            "I Will Always Love You — Whitney Houston",
+            "Shallow — Lady Gaga & Bradley Cooper",
+            "The Power of Love — Huey Lewis and the News"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Bandes sonores de films",
+          "title": "Footloose",
+          "artist": "Kenny Loggins",
+          "audioFile": "footloose.mp3",
+          "start": 50,
+          "duration": 10,
+          "choices": [
+            "Footloose — Kenny Loggins",
+            "Flashdance... What a Feeling — Irene Cara",
+            "Danger Zone — Kenny Loggins",
+            "Ghostbusters — Ray Parker Jr."
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Bandes sonores de films",
+          "title": "Ghostbusters",
+          "artist": "Ray Parker Jr.",
+          "audioFile": "ghostbusters.mp3",
+          "start": 40,
+          "duration": 10,
+          "choices": [
+            "Ghostbusters — Ray Parker Jr.",
+            "The Addams Family Theme — Vic Mizzy",
+            "Men in Black — Will Smith",
+            "Mission: Impossible Theme — Lalo Schifrin"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Bandes sonores de films",
+          "title": "The Power of Love",
+          "artist": "Huey Lewis and the News",
+          "audioFile": "the_power_of_love.mp3",
+          "start": 55,
+          "duration": 10,
+          "choices": [
+            "The Power of Love — Huey Lewis and the News",
+            "Back in Time — Huey Lewis and the News",
+            "Footloose — Kenny Loggins",
+            "Don't You (Forget About Me) — Simple Minds"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Bandes sonores de films",
+          "title": "Circle of Life",
+          "artist": "Elton John",
+          "audioFile": "circle_of_life.mp3",
+          "start": 60,
+          "duration": 10,
+          "choices": [
+            "Circle of Life — Elton John",
+            "Can You Feel the Love Tonight — Elton John",
+            "A Whole New World — Peabo Bryson & Regina Belle",
+            "Colors of the Wind — Vanessa Williams"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Bandes sonores de films",
+          "title": "Shallow",
+          "artist": "Lady Gaga & Bradley Cooper",
+          "audioFile": "shallow.mp3",
+          "start": 75,
+          "duration": 10,
+          "choices": [
+            "Shallow — Lady Gaga & Bradley Cooper",
+            "My Heart Will Go On — Céline Dion",
+            "I Will Always Love You — Whitney Houston",
+            "Flashdance... What a Feeling — Irene Cara"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Bandes sonores de films",
+          "title": "Flashdance... What a Feeling",
+          "artist": "Irene Cara",
+          "audioFile": "flashdance_what_a_feeling.mp3",
+          "start": 65,
+          "duration": 10,
+          "choices": [
+            "Flashdance... What a Feeling — Irene Cara",
+            "Fame — Irene Cara",
+            "Footloose — Kenny Loggins",
+            "Maniac — Michael Sembello"
+          ],
+          "correct": 0
+        }
+      ]
+    },
+    {
+      "label": "Noël",
+      "questions": [
+        {
+          "category": "Noël",
+          "title": "All I Want for Christmas Is You",
+          "artist": "Mariah Carey",
+          "audioFile": "all_i_want_for_christmas_is_you.mp3",
+          "start": 45,
+          "duration": 10,
+          "choices": [
+            "All I Want for Christmas Is You — Mariah Carey",
+            "Last Christmas — Wham!",
+            "Santa Tell Me — Ariana Grande",
+            "Underneath the Tree — Kelly Clarkson"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Noël",
+          "title": "Last Christmas",
+          "artist": "Wham!",
+          "audioFile": "last_christmas.mp3",
+          "start": 40,
+          "duration": 10,
+          "choices": [
+            "Last Christmas — Wham!",
+            "All I Want for Christmas Is You — Mariah Carey",
+            "Do They Know It's Christmas? — Band Aid",
+            "Happy Xmas (War Is Over) — John Lennon"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Noël",
+          "title": "Feliz Navidad",
+          "artist": "José Feliciano",
+          "audioFile": "feliz_navidad.mp3",
+          "start": 20,
+          "duration": 10,
+          "choices": [
+            "Feliz Navidad — José Feliciano",
+            "Rockin' Around the Christmas Tree — Brenda Lee",
+            "Jingle Bell Rock — Bobby Helms",
+            "Petit Papa Noël — Tino Rossi"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Noël",
+          "title": "Rockin' Around the Christmas Tree",
+          "artist": "Brenda Lee",
+          "audioFile": "rockin_around_the_christmas_tree.mp3",
+          "start": 15,
+          "duration": 10,
+          "choices": [
+            "Rockin' Around the Christmas Tree — Brenda Lee",
+            "Jingle Bell Rock — Bobby Helms",
+            "Santa Claus Is Coming to Town — Bruce Springsteen",
+            "All I Want for Christmas Is You — Mariah Carey"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Noël",
+          "title": "Jingle Bell Rock",
+          "artist": "Bobby Helms",
+          "audioFile": "jingle_bell_rock.mp3",
+          "start": 18,
+          "duration": 10,
+          "choices": [
+            "Jingle Bell Rock — Bobby Helms",
+            "Rockin' Around the Christmas Tree — Brenda Lee",
+            "Last Christmas — Wham!",
+            "Feliz Navidad — José Feliciano"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Noël",
+          "title": "Petit Papa Noël",
+          "artist": "Tino Rossi",
+          "audioFile": "petit_papa_noel.mp3",
+          "start": 25,
+          "duration": 10,
+          "choices": [
+            "Petit Papa Noël — Tino Rossi",
+            "Mon Beau Sapin — Traditionnel",
+            "Vive le vent — Traditionnel",
+            "Feliz Navidad — José Feliciano"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Noël",
+          "title": "Happy Xmas (War Is Over)",
+          "artist": "John Lennon",
+          "audioFile": "happy_xmas_war_is_over.mp3",
+          "start": 50,
+          "duration": 10,
+          "choices": [
+            "Happy Xmas (War Is Over) — John Lennon",
+            "Last Christmas — Wham!",
+            "Do They Know It's Christmas? — Band Aid",
+            "All I Want for Christmas Is You — Mariah Carey"
+          ],
+          "correct": 0
+        }
+      ]
+    },
+    {
+      "label": "Party Mix",
+      "questions": [
+        {
+          "category": "Party Mix",
+          "title": "Uptown Funk",
+          "artist": "Mark Ronson ft. Bruno Mars",
+          "audioFile": "uptown_funk.mp3",
+          "start": 60,
+          "duration": 10,
+          "choices": [
+            "Uptown Funk — Mark Ronson ft. Bruno Mars",
+            "24K Magic — Bruno Mars",
+            "Can't Stop the Feeling! — Justin Timberlake",
+            "Get Lucky — Daft Punk ft. Pharrell Williams"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Party Mix",
+          "title": "Don't Stop Me Now",
+          "artist": "Queen",
+          "audioFile": "dont_stop_me_now.mp3",
+          "start": 45,
+          "duration": 10,
+          "choices": [
+            "Don't Stop Me Now — Queen",
+            "We Will Rock You — Queen",
+            "Dancing Queen — ABBA",
+            "I Gotta Feeling — Black Eyed Peas"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Party Mix",
+          "title": "September",
+          "artist": "Earth, Wind & Fire",
+          "audioFile": "september.mp3",
+          "start": 35,
+          "duration": 10,
+          "choices": [
+            "September — Earth, Wind & Fire",
+            "Boogie Wonderland — Earth, Wind & Fire",
+            "Celebration — Kool & the Gang",
+            "YMCA — Village People"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Party Mix",
+          "title": "I Gotta Feeling",
+          "artist": "Black Eyed Peas",
+          "audioFile": "i_gotta_feeling.mp3",
+          "start": 50,
+          "duration": 10,
+          "choices": [
+            "I Gotta Feeling — Black Eyed Peas",
+            "Pump It — Black Eyed Peas",
+            "Uptown Funk — Mark Ronson ft. Bruno Mars",
+            "Don't Stop Me Now — Queen"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Party Mix",
+          "title": "YMCA",
+          "artist": "Village People",
+          "audioFile": "ymca.mp3",
+          "start": 40,
+          "duration": 10,
+          "choices": [
+            "YMCA — Village People",
+            "Macho Man — Village People",
+            "Celebration — Kool & the Gang",
+            "Dancing Queen — ABBA"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Party Mix",
+          "title": "Celebration",
+          "artist": "Kool & the Gang",
+          "audioFile": "celebration.mp3",
+          "start": 30,
+          "duration": 10,
+          "choices": [
+            "Celebration — Kool & the Gang",
+            "Get Down on It — Kool & the Gang",
+            "September — Earth, Wind & Fire",
+            "I Gotta Feeling — Black Eyed Peas"
+          ],
+          "correct": 0
+        },
+        {
+          "category": "Party Mix",
+          "title": "Dancing Queen",
+          "artist": "ABBA",
+          "audioFile": "dancing_queen.mp3",
+          "start": 55,
+          "duration": 10,
+          "choices": [
+            "Dancing Queen — ABBA",
+            "Mamma Mia — ABBA",
+            "Gimme! Gimme! Gimme! — ABBA",
+            "Don't Stop Me Now — Queen"
+          ],
+          "correct": 0
+        }
+      ]
+    }
+  ]
+}

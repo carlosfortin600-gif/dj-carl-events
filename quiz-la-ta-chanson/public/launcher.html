@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz la ta chanson — DJ Carl</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px;
+  background: radial-gradient(circle at top, #1f2937, #050505 70%);
+  color: #fff;
+  font-family: "Segoe UI", Arial, sans-serif;
+  text-align: center;
+}
+h1 { margin: 0; font-size: clamp(28px, 5vw, 40px); color: #f59e0b; }
+p { margin: 0; max-width: 520px; color: #ccc; line-height: 1.45; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 8px; }
+a.btn {
+  display: inline-block;
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  color: #fff;
+}
+a.host { background: linear-gradient(180deg, #f59e0b, #d97706); color: #1a1000; }
+a.viewer { background: linear-gradient(180deg, #3b82f6, #1d4ed8); }
+a.home { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2); }
+</style>
+</head>
+<body>
+  <h1>🎤 Quiz la ta chanson</h1>
+  <p>Ouvre la <strong>console animateur</strong> sur ton Mac et l’<strong>écran jeu</strong> sur le projecteur (même ordinateur, deux fenêtres). Pour les lumières MIDI, la console doit être en <strong>http://127.0.0.1:3000</strong> (pas l’adresse Wi‑Fi).</p>
+  <div class="actions">
+    <a class="btn host" href="/quiz-la-ta-chanson/host">Console animateur</a>
+    <a class="btn viewer" href="/quiz-la-ta-chanson/viewer" target="_blank" rel="noopener">Viewer</a>
+    <a class="btn home" href="/" data-home-confirm data-home-confirm-message="Retourner à l'accueil ?">Accueil DJ Carl</a>
+  </div>
+  <script src="/home-confirm.js"></script>
+  <script>
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space" || e.code === "Enter") {
+        e.preventDefault();
+        location.href = "/quiz-la-ta-chanson/host";
+      }
+    });
+  </script>
+</body>
+</html>

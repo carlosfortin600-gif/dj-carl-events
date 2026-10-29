@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Buzzer — Viewer (v9.3 + TimerD)</title>
+  <style>
+    html,body{margin:0;height:100%;background:#000;color:#fff;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial}
+    .grid{display:grid;grid-template-columns:1fr 1fr;height:100%;transition:filter .4s ease}
+    .grid.blurred{filter:blur(18px)}
+    .side{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .left{background:linear-gradient(180deg,#ff0000,#b00000)}
+    .right{background:linear-gradient(180deg,#0055ff,#0022aa)}
+    .scoreCenter{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-weight:1000;
+      font-size:clamp(160px,40vw,460px);line-height:.9;text-align:center}
+    .strobe{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+    @keyframes strobe{0%{opacity:0}10%{opacity:1}20%{opacity:.3}35%{opacity:.9}55%{opacity:.25}75%{opacity:.8}100%{opacity:0}}
+    .strobeOn{animation:strobe 2s ease-out}
+    .selected{outline:8px solid rgba(255,255,255,.85);outline-offset:-8px;filter:brightness(1.1) saturate(1.1)}
+    .final{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;
+      z-index:5;opacity:0;transition:opacity .5s ease;pointer-events:none}
+    .final.visible{opacity:1;pointer-events:auto}
+    .final.red{background:#c00000}
+    .final.blue{background:#0850ff}
+    .finalText{font-size:clamp(48px,10vw,180px);font-weight:1000;text-transform:uppercase;text-align:center;margin-bottom:2vh}
+    .finalScore{font-size:clamp(80px,14vw,240px);font-weight:1000;text-align:center}
+    .tieBg{position:fixed;inset:0;z-index:3;display:none;transition:background .35s ease}
+    .tieBg.visible{display:block}
+    .tieBg.red{background:#c00000}
+    .tieBg.blue{background:#0850ff}
+    .bubble{position:absolute;left:50%;bottom:12vh;font-weight:900;padding:6px 10px;border-radius:999px;
+      background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.35);will-change:transform,opacity}
+    .bubble.plus{color:#80ff80}.bubble.minus{color:#ff8080}
+    @keyframes floatUp{from{opacity:0;transform:translate(-50%,0) scale(.9)}20%{opacity:1}
+      to{opacity:0;transform:translate(-50%,-120px) scale(1.05)}}
+    .bubbleAnim{animation:floatUp .9s ease-out forwards}
+    .fsBtn{position:fixed;top:10px;right:10px;z-index:6;padding:8px 12px;border-radius:10px;
+      border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.4);color:#fff;cursor:pointer}
+    .viewerTag{position:fixed;top:10px;left:10px;z-index:6;padding:6px 10px;border-radius:10px;
+      border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.35);font-weight:700}
+
+    .timerOverlay{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      z-index:7;
+      background:rgba(0,0,0,.72);
+    }
+    .timerVisible{display:flex}
+    .timerText{
+      font-weight:1000;
+      letter-spacing:.04em;
+      text-align:center;
+      font-size:clamp(120px,22vw,320px);
+      text-shadow:0 0 40px rgba(255,255,255,.7);
+    }
+    .timerHelp{
+      margin-top:2vh;
+      font-size:clamp(16px,2.5vw,28px);
+      opacity:.85;
+    }
+
+    .wheelOverlay{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:8;
+      background:rgba(0,0,0,.9);
+    }
+    .wheelOverlay.visible{
+      display:flex;
+    }
+    .wheelFrame{
+      width:min(960px,90vw);
+      height:min(540px,80vh);
+      border-radius:24px;
+      border:4px solid rgba(255,255,255,.5);
+      box-shadow:0 0 40px rgba(0,0,0,.9);
+      background:#000;
+    }
+  </style>
+</head>
+<body>
+  <button class="fsBtn" id="fsBtn">⛶ Plein écran</button>
+  <div class="viewerTag">🎥 Écran Jeu</div>
+
+  <div class="grid" id="gameGrid">
+    <div class="side left" id="leftSide">
+      <div class="strobe" id="strobeLeft"></div>
+      <div class="scoreCenter" id="lScore">0</div>
+    </div>
+    <div class="side right" id="rightSide">
+      <div class="strobe" id="strobeRight"></div>
+      <div class="scoreCenter" id="rScore">0</div>
+    </div>
+  </div>
+
+  <div class="tieBg" id="tieBg"></div>
+  <div class="final" id="finalOverlay">
+    <div class="finalText" id="finalTitle">GAGNANT</div>
+    <div class="finalScore" id="finalScore">0 - 0</div>
+  </div>
+
+  <div class="timerOverlay" id="timerOverlay">
+    <div class="timerText" id="timerText">00:00.0</div>
+    <div class="timerHelp">Timer contrôlé depuis l'écran maître</div>
+  </div>
+
+  <div class="wheelOverlay" id="wheelOverlay">
+    <iframe
+      class="wheelFrame"
+      src="/quiz-la-ta-chanson/roue-principal.html"
+      title="Roue — écran jeu"
+      loading="lazy"
+    ></iframe>
+  </div>
+
+<script>
+(function(){
+  const chan=new BroadcastChannel('buzzerGame');
+  const left=document.getElementById('leftSide');
+  const right=document.getElementById('rightSide');
+  const strobeL=document.getElementById('strobeLeft');
+  const strobeR=document.getElementById('strobeRight');
+  const lScoreEl=document.getElementById('lScore');
+  const rScoreEl=document.getElementById('rScore');
+  const finalOverlay=document.getElementById('finalOverlay');
+  const finalTitle=document.getElementById('finalTitle');
+  const finalScore=document.getElementById('finalScore');
+  const tieBg=document.getElementById('tieBg');
+  const gameGrid=document.getElementById('gameGrid');
+  const timerOverlay=document.getElementById('timerOverlay');
+  const timerText=document.getElementById('timerText');
+  const wheelOverlay=document.getElementById('wheelOverlay');
+
+  function flash(el){
+    el.classList.remove('strobeOn');
+    void el.offsetWidth;
+    el.classList.add('strobeOn');
+  }
+  function clearSel(){
+    left.classList.remove('selected');
+    right.classList.remove('selected');
+  }
+  function spawnBubbles(host, delta){
+    const magnitude = Math.max(1, Math.min(3, Math.abs(delta)));
+    for(let i=0;i<3*magnitude;i++){
+      const b=document.createElement('div');
+      b.className='bubble bubbleAnim ' + (delta>0?'plus':'minus');
+      const jitterX=(Math.random()*80-40);
+      const delay=Math.random()*120;
+      b.style.transform='translate(calc(-50% + ' + jitterX + 'px), 0)';
+      b.style.animationDelay = delay+'ms';
+      b.textContent=(delta>0?'+':'−')+Math.abs(delta);
+      host.appendChild(b);
+      setTimeout(()=>b.remove(), 1200);
+    }
+  }
+
+  function fmt(ms){
+    const t=Math.max(0, ms|0);
+    const m=Math.floor(t/60000);
+    const s=Math.floor((t%60000)/1000);
+    const d=Math.floor((t%1000)/100);
+    return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')+'.'+d;
+  }
+
+  let animRunning=false;
+  let animBaseMs=0;
+  let animBaseTime=0;
+  let animRaf=null;
+
+  function stopAnim(){
+    animRunning=false;
+    if(animRaf){ cancelAnimationFrame(animRaf); animRaf=null; }
+  }
+
+  function animLoop(){
+    if(!animRunning){ return; }
+    const now = performance.now();
+    const elapsed = animBaseMs + (now - animBaseTime);
+    timerText.textContent = fmt(elapsed);
+    animRaf = requestAnimationFrame(animLoop);
+  }
+
+  function startAnimFrom(ms){
+    animBaseMs = ms;
+    animBaseTime = performance.now();
+    if(!animRunning){
+      animRunning=true;
+      animLoop();
+    }
+  }
+
+  chan.onmessage=(ev)=>{
+    const d=ev.data||{};
+    if('lScore' in d) lScoreEl.textContent=d.lScore;
+    if('rScore' in d) rScoreEl.textContent=d.rScore;
+
+    if(d.type==='bubble'){
+      spawnBubbles(d.side==='left'?left:right, d.delta);
+    }
+
+    if(d.type==='select'){
+      clearSel();
+      if(d.selected==='red'){
+        left.classList.add('selected');
+        flash(strobeL);
+      }else if(d.selected==='blue'){
+        right.classList.add('selected');
+        flash(strobeR);
+      }
+    }
+
+    if(d.type==='tieAlt'){
+      tieBg.classList.toggle('red', !!d.red);
+      tieBg.classList.toggle('blue', !d.red);
+    }
+
+    if(d.type==='tie' || d.type==='final'){
+      finalOverlay.classList.remove('red','blue','visible');
+      tieBg.classList.remove('visible','red','blue');
+      if(d.type==='tie' || d.overlay==='tie'){
+        finalTitle.textContent='ÉGALITÉ';
+        finalScore.textContent=d.lScore+' - '+d.rScore;
+        tieBg.classList.add('visible');
+        finalOverlay.classList.add('visible');
+      }else if(d.overlay==='red'){
+        finalOverlay.classList.add('red');
+        finalTitle.textContent='GAGNANT';
+        finalScore.textContent=d.lScore+' - '+d.rScore;
+        finalOverlay.classList.add('visible');
+      }else if(d.overlay==='blue'){
+        finalOverlay.classList.add('blue');
+        finalTitle.textContent='GAGNANT';
+        finalScore.textContent=d.rScore+' - '+d.lScore;
+        finalOverlay.classList.add('visible');
+      }
+    }
+
+    if(d.type==='reset'){
+      finalOverlay.classList.remove('visible','red','blue');
+      tieBg.classList.remove('visible','red','blue');
+      clearSel();
+      stopAnim();
+      timerText.textContent='00:00.0';
+    }
+
+    if(d.type==='timerMode'){
+      if(d.enabled){
+        timerOverlay.classList.add('timerVisible');
+        gameGrid.classList.add('blurred');
+      }else{
+        timerOverlay.classList.remove('timerVisible');
+        gameGrid.classList.remove('blurred');
+        stopAnim();
+      }
+    }
+
+    if(d.type==='wheelMode' && wheelOverlay){
+      wheelOverlay.classList.toggle('visible', Boolean(d.enabled));
+    }
+
+    if(d.type==='timerTick'){
+      if(typeof d.elapsed === 'number'){
+        if(d.running){
+          startAnimFrom(d.elapsed);
+        }else{
+          stopAnim();
+          timerText.textContent = fmt(d.elapsed);
+        }
+      }else if(typeof d.text === 'string'){
+        timerText.textContent = d.text;
+      }
+    }
+
+    if(d.type==='timerReset'){
+      stopAnim();
+      timerText.textContent = d.text || '00:00.0';
+    }
+  };
+
+  document.getElementById('fsBtn').addEventListener('click', async()=>{
+    try{
+      if(!document.fullscreenElement){
+        await document.documentElement.requestFullscreen();
+      }else{
+        await document.exitFullscreen();
+      }
+    }catch(e){
+      alert('Plein écran non autorisé.');
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>DJ Carl Quiz — Administration</title>
+<script>
+if (new URLSearchParams(location.search).get("embed") === "1") {
+  document.documentElement.classList.add("embed");
+}
+</script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body{background:#111;color:white;}
+.header{background:#000;padding:25px;text-align:center;position:relative;}
+.header-home-link{
+  position:absolute;
+  top:20px;
+  right:20px;
+  display:inline-flex;
+  align-items:center;
+  padding:9px 14px;
+  border-radius:10px;
+  border:1px solid rgba(0,212,255,0.35);
+  background:rgba(255,255,255,0.06);
+  color:#00d4ff;
+  font-size:14px;
+  font-weight:700;
+  text-decoration:none;
+}
+.header-home-link:hover{
+  background:rgba(0,212,255,0.12);
+  color:#00d4ff;
+}
+.logo{color:#00d4ff;font-size:42px;font-weight:bold;}
+.card{background:#1f1f1f;color:white;border:1px solid #333;}
+input, textarea, select{margin-bottom:10px;}
+.small-note{color:#bbb;font-size:14px;}
+.group-card{cursor:pointer;transition:transform .15s ease,border-color .15s ease;}
+.group-card:hover{transform:translateY(-2px);border-color:#00d4ff;}
+.group-meta{color:#aaa;font-size:14px;}
+.quiz-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.import-box{border:1px dashed #555;border-radius:12px;padding:16px;background:#181818;}
+.import-link{color:#00d4ff;font-weight:700;text-decoration:none;}
+.import-link:hover{text-decoration:underline;}
+.q-audio-chosen{margin-top:-4px;}
+html.embed .header{display:none;}
+html.embed .container{margin-top:12px !important;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a
+    href="/"
+    class="header-home-link"
+    data-home-confirm
+    data-home-confirm-message="Retourner à l'accueil ?&#10;&#10;Vous quittez l'administration des quiz."
+  >Retour à l'accueil</a>
+  <div class="logo">DJ CARL QUIZ</div>
+  <div>Administration</div>
+</div>
+
+<div class="container mt-4">
+  <button class="btn btn-primary me-2" onclick="showNewGroupForm()">Nouveau dossier</button>
+  <button class="btn btn-secondary" onclick="loadGroups()">Mes dossiers</button>
+
+  <div id="content" class="mt-4"></div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+let questionCount = 0;
+let currentQuiz = null;
+let openedQuizId = null;
+let editingQuizId = null;
+let currentGroupId = null;
+let currentGroupName = "";
+let groupPlayQueue = [];
+let groupPlayActive = false;
+let groupSocket = null;
+let audioFiles = [];
+
+function notifyLibraryChanged() {
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: "quiz-library-changed" }, window.location.origin);
+  }
+}
+
+function showNewGroupForm() {
+  document.getElementById("content").innerHTML = `
+    <div class="card p-3">
+      <h3>Nouveau dossier</h3>
+      <p class="small-note">Exemple : Mariage de George, Soirée entreprise, Anniversaire…</p>
+      <input id="groupName" class="form-control" placeholder="Nom du dossier">
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-success" onclick="createGroup()">Créer le dossier</button>
+        <button class="btn btn-outline-light" onclick="loadGroups()">Annuler</button>
+      </div>
+    </div>
+  `;
+}
+
+async function createGroup() {
+  const name = document.getElementById("groupName").value.trim();
+
+  if (!name) {
+    alert("Entre un nom de dossier.");
+    return;
+  }
+
+  const res = await fetch("/api/groups", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.error || "Erreur lors de la création.");
+    return;
+  }
+
+  notifyLibraryChanged();
+  openGroup(data.id, name);
+}
+
+async function loadGroups() {
+  currentGroupId = null;
+  currentGroupName = "";
+
+  const res = await fetch("/api/groups");
+  const groups = await res.json();
+
+  let html = `
+    <div class="card p-3">
+      <h3>Mes dossiers</h3>
+      <p class="small-note">Chaque dossier contient plusieurs quiz à enchaîner lors d'un événement.</p>
+  `;
+
+  if (!groups || groups.length === 0) {
+    html += `<p>Aucun dossier pour le moment. Crée-en un pour commencer.</p>`;
+  } else {
+    groups.forEach((group) => {
+      const count = Number(group.quiz_count) || 0;
+      const label = count === 1 ? "1 quiz" : `${count} quiz`;
+      html += `
+        <div class="card p-3 mb-3 group-card" onclick="openGroup(${group.id}, '${escapeAttr(group.name)}')">
+          <strong>${escapeHtml(group.name)}</strong>
+          <div class="group-meta">${label}</div>
+        </div>
+      `;
+    });
+  }
+
+  html += `</div>`;
+  document.getElementById("content").innerHTML = html;
+}
+
+async function openGroup(id, name) {
+  currentGroupId = id;
+  currentGroupName = name || "";
+
+  const res = await fetch(`/api/groups/${id}`);
+  const group = await res.json();
+
+  if (!res.ok) {
+    alert(group.error || "Dossier introuvable.");
+    loadGroups();
+    return;
+  }
+
+  currentGroupName = group.name;
+
+  let html = `
+    <div class="card p-3">
+      <h3>${escapeHtml(group.name)}</h3>
+      <p class="small-note">Crée plusieurs quiz dans ce dossier, puis lance-les un après l'autre.</p>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <button class="btn btn-success" onclick="showNewQuiz()">Nouveau quiz</button>
+        <button class="btn btn-info" onclick="showImportQuiz()">Importer Excel</button>
+        <button class="btn btn-primary" onclick="startGroupSequence()">Lancer la série</button>
+        <button class="btn btn-outline-light" onclick="loadGroups()">Retour aux dossiers</button>
+        <button class="btn btn-danger" onclick="deleteGroup(${id})">Supprimer le dossier</button>
+      </div>
+  `;
+
+  if (!group.quizzes || group.quizzes.length === 0) {
+    html += `<p>Aucun quiz dans ce dossier.</p>`;
+  } else {
+    html += `<div class="quiz-row">`;
+    group.quizzes.forEach((quiz, index) => {
+      html += `
+        <button class="btn btn-outline-info" onclick="openQuiz(${quiz.id})">
+          ${index + 1}. ${escapeHtml(quiz.title)}
+        </button>
+      `;
+    });
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  document.getElementById("content").innerHTML = html;
+}
+
+function showNewQuiz() {
+  if (!currentGroupId) {
+    alert("Ouvre d'abord un dossier.");
+    return;
+  }
+
+  document.getElementById("content").innerHTML = `
+    <div class="card p-3">
+      <h3>Nouveau quiz</h3>
+      <p class="small-note">Dossier : <strong>${escapeHtml(currentGroupName)}</strong></p>
+      <input id="quizTitle" class="form-control" placeholder="Nom du quiz">
+      <input id="nbQuestions" class="form-control" type="number" min="1" placeholder="Nombre de questions">
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-success" onclick="showQuestionsForm()">Continuer</button>
+        <button class="btn btn-outline-light" onclick="openGroup(${currentGroupId}, '${escapeAttr(currentGroupName)}')">Annuler</button>
+      </div>
+    </div>
+  `;
+}
+
+function showImportQuiz() {
+  if (!currentGroupId) {
+    alert("Ouvre d'abord un dossier.");
+    return;
+  }
+
+  const templateUrl = `/api/groups/${currentGroupId}/quiz-template`;
+
+  document.getElementById("content").innerHTML = `
+    <div class="card p-3">
+      <h3>Importer un quiz depuis Excel</h3>
+      <p class="small-note">Dossier : <strong>${escapeHtml(currentGroupName)}</strong></p>
+      <div class="import-box mb-3">
+        <p class="mb-2"><strong>Étape 1</strong> — Télécharge le modèle et envoie-le aux personnes qui préparent les questions.</p>
+        <a class="import-link" href="${templateUrl}" download>Télécharger le modèle Excel</a>
+        <p class="small-note mt-3 mb-0">
+          Modèle <strong>Client Deluxe</strong> : feuilles <strong>Accueil</strong>, <strong>Instructions</strong> et <strong>Questions</strong>.
+          Le nom de l'événement (feuille Accueil) devient le titre du quiz si tu ne le saisis pas à l'import.
+        </p>
+      </div>
+      <div class="import-box">
+        <p class="mb-3"><strong>Étape 2</strong> — Importe ici le fichier complété.</p>
+        <input id="importTitle" class="form-control" placeholder="Titre du quiz (optionnel si déjà dans Excel)">
+        <input id="importFile" class="form-control" type="file" accept=".xlsx,.xls,.csv">
+        <div class="d-flex flex-wrap gap-2 mt-2">
+          <button class="btn btn-success" onclick="importQuizFromExcel()">Importer le quiz</button>
+          <button class="btn btn-outline-light" onclick="openGroup(${currentGroupId}, '${escapeAttr(currentGroupName)}')">Annuler</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function importQuizFromExcel() {
+  const fileInput = document.getElementById("importFile");
+  const titleInput = document.getElementById("importTitle");
+  const file = fileInput?.files?.[0];
+
+  if (!file) {
+    alert("Choisis un fichier Excel.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  if (titleInput?.value.trim()) {
+    formData.append("title", titleInput.value.trim());
+  }
+
+  const res = await fetch(`/api/groups/${currentGroupId}/import-quiz`, {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.error || "Erreur lors de l'import.");
+    return;
+  }
+
+  alert(`Quiz importé : ${data.title} (${data.questionCount} question(s))`);
+  notifyLibraryChanged();
+  openGroup(currentGroupId, currentGroupName);
+}
+
+const TIMER_CHOICES = [10, 15, 20, 25, 30, 45, 60, 90, 120];
+
+function blankQuestion() {
+  return {
+    question: "",
+    answers: ["", "", "", ""],
+    correctAnswer: "",
+    timer: 30,
+    audio: ""
+  };
+}
+
+function padAnswers(question) {
+  const source = Array.isArray(question?.answers) ? question.answers : [];
+  const answers = source.slice(0, 4).map((answer) => String(answer ?? ""));
+  while (answers.length < 4) answers.push("");
+  return answers;
+}
+
+function timerOptions(selected) {
+  const value = Number(selected);
+  const seconds = Number.isFinite(value) && value > 0 ? value : 30;
+  const choices = TIMER_CHOICES.includes(seconds)
+    ? TIMER_CHOICES
+    : [...TIMER_CHOICES, seconds].sort((a, b) => a - b);
+
+  return choices
+    .map((choice) => {
+      const selectedAttr = choice === seconds ? " selected" : "";
+      return `<option value="${choice}"${selectedAttr}>${choice} secondes</option>`;
+    })
+    .join("");
+}
+
+function questionExtras(question) {
+  const extras = { ...(question || {}) };
+  delete extras.question;
+  delete extras.answers;
+  delete extras.correctAnswer;
+  delete extras.correctAnswers;
+  delete extras.timer;
+  delete extras.temps;
+  delete extras.audio;
+  delete extras.duration;
+  delete extras.timeLimit;
+  return extras;
+}
+
+function questionCorrectList(question) {
+  const stored = Array.isArray(question?.correctAnswers) ? question.correctAnswers : [];
+  const list = stored.length ? stored : [question?.correctAnswer];
+  return list
+    .map((value) => String(value))
+    .filter((value) => ["0", "1", "2", "3"].includes(value))
+    .slice(0, 2);
+}
+
+function correctSelectOptions(selected, emptyLabel) {
+  const values = [
+    ["", emptyLabel],
+    ["0", "A"],
+    ["1", "B"],
+    ["2", "C"],
+    ["3", "D"]
+  ];
+
+  return values
+    .map(([value, label]) => {
+      const isSelected = String(selected ?? "") === value;
+      return `<option value="${value}"${isSelected ? " selected" : ""}>${label}</option>`;
+    })
+    .join("");
+}
+
+function formatCorrectLabels(question) {
+  const labels = ["A", "B", "C", "D"];
+  const indexes = questionCorrectList(question).map((value) => Number(value));
+  return indexes.map((index) => labels[index]).join(" et ");
+}
+
+function questionCardHtml(question, index) {
+  const answers = padAnswers(question);
+  const correctList = questionCorrectList(question);
+
+  return `
+    <div class="card p-3 mb-3 question-card" data-extra="${escapeAttr(JSON.stringify(questionExtras(question)))}">
+      <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+        <h5 class="mb-0 question-card-title">Question ${index + 1}</h5>
+        <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeQuestionCard(this)">Retirer</button>
+      </div>
+      <textarea class="form-control q-text" placeholder="Question (ex. Quelle est cette chanson ?)">${escapeHtml(question?.question || "")}</textarea>
+      <label>Fichier audio sur l'ordinateur</label>
+      <input class="form-control q-audio-file" type="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac" onchange="uploadQuestionAudio(this)">
+      <p class="small-note q-audio-chosen">${escapeHtml(question?.audio || "Aucun fichier choisi")}</p>
+      <label>Ou un fichier déjà ajouté</label>
+      <select class="form-control q-audio" onchange="showChosenAudio(this)">
+        ${audioOptions(question?.audio || "")}
+      </select>
+      <input class="form-control q-a" placeholder="Réponse A" value="${escapeAttr(answers[0])}">
+      <input class="form-control q-b" placeholder="Réponse B" value="${escapeAttr(answers[1])}">
+      <input class="form-control q-c" placeholder="Réponse C" value="${escapeAttr(answers[2])}">
+      <input class="form-control q-d" placeholder="Réponse D" value="${escapeAttr(answers[3])}">
+      <label>Bonnes réponses</label>
+      <select class="form-control q-correct">
+        ${correctSelectOptions(correctList[0] ?? "", "Bonne réponse")}
+      </select>
+      <select class="form-control q-correct-2">
+        ${correctSelectOptions(correctList[1] ?? "", "2e bonne réponse (optionnel)")}
+      </select>
+      <div class="small-note">Tu peux en choisir deux, par exemple B et C.</div>
+      <label>Durée du timer</label>
+      <select class="form-control q-timer">
+        ${timerOptions(question?.timer || question?.duration || question?.timeLimit || 30)}
+      </select>
+      <div class="small-note">Cette durée sera utilisée automatiquement quand la question apparaîtra.</div>
+    </div>
+  `;
+}
+
+function renderQuizEditor({ title, questions, mode }) {
+  const heading = mode === "edit" ? "Modifier le quiz" : escapeHtml(title || "Nouveau quiz");
+  const saveLabel = mode === "edit" ? "Enregistrer les modifications" : "Sauvegarder le quiz";
+  const source = Array.isArray(questions) && questions.length ? questions : [blankQuestion()];
+
+  document.getElementById("content").innerHTML = `
+    <div class="card p-3">
+      <h3>${heading}</h3>
+      <p class="small-note">Dossier : ${escapeHtml(currentGroupName)}</p>
+      <p class="small-note">Pour chaque question, clique sur <strong>Choisir un fichier</strong> et prends l'extrait sur ton ordinateur.</p>
+      <label for="finalQuizTitle">Nom du quiz</label>
+      <input id="finalQuizTitle" class="form-control" value="${escapeAttr(title || "")}">
+      <div id="questionCards">
+        ${source.map((question, index) => questionCardHtml(question, index)).join("")}
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <button type="button" class="btn btn-outline-info" onclick="addQuestionCard()">Ajouter une question</button>
+        <button type="button" class="btn btn-success" onclick="saveQuiz()">${saveLabel}</button>
+        <button type="button" class="btn btn-outline-light" onclick="cancelQuizEditor()">Annuler</button>
+      </div>
+    </div>
+  `;
+}
+
+function audioOptions(selected) {
+  const current = String(selected || "").trim();
+  const files = [...audioFiles];
+
+  if (current && !files.includes(current)) {
+    files.unshift(current);
+  }
+
+  const options = [`<option value="">Aucun</option>`];
+
+  files.forEach((file) => {
+    const selectedAttr = file === current ? " selected" : "";
+    options.push(`<option value="${escapeAttr(file)}"${selectedAttr}>${escapeHtml(file)}</option>`);
+  });
+
+  return options.join("");
+}
+
+async function loadAudioFiles() {
+  try {
+    const res = await fetch("/api/audio-files");
+    const data = await res.json();
+    audioFiles = Array.isArray(data.files) ? data.files : [];
+  } catch (error) {
+    audioFiles = [];
+  }
+}
+
+function showChosenAudio(select) {
+  const note = select.closest(".question-card")?.querySelector(".q-audio-chosen");
+  if (!note) return;
+  note.textContent = select.value || "Aucun fichier choisi";
+}
+
+function refreshAudioSelects(preferredSelect, preferredValue) {
+  document.querySelectorAll(".q-audio").forEach((select) => {
+    const value = select === preferredSelect ? preferredValue : select.value;
+    select.innerHTML = audioOptions(value);
+    showChosenAudio(select);
+  });
+}
+
+async function uploadQuestionAudio(input) {
+  const file = input.files?.[0];
+  const select = input.closest(".question-card")?.querySelector(".q-audio");
+
+  if (!file || !select) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch("/api/audio-files", {
+    method: "POST",
+    body: formData
+  });
+  const data = await res.json();
+  input.value = "";
+
+  if (!res.ok) {
+    alert(data.error || "Impossible d'ajouter ce fichier audio.");
+    return;
+  }
+
+  if (!audioFiles.includes(data.file)) {
+    audioFiles.push(data.file);
+    audioFiles.sort((a, b) => a.localeCompare(b, "fr"));
+  }
+
+  refreshAudioSelects(select, data.file);
+}
+
+async function showQuestionsForm() {
+  const title = document.getElementById("quizTitle").value.trim();
+  questionCount = parseInt(document.getElementById("nbQuestions").value, 10);
+
+  if (!title || !questionCount || questionCount < 1) {
+    alert("Entre un nom de quiz et un nombre de questions.");
+    return;
+  }
+
+  editingQuizId = null;
+  await loadAudioFiles();
+  renderQuizEditor({
+    title,
+    questions: Array.from({ length: questionCount }, () => blankQuestion()),
+    mode: "create"
+  });
+}
+
+async function editQuiz() {
+  if (!currentQuiz || !openedQuizId) return;
+
+  editingQuizId = openedQuizId;
+  await loadAudioFiles();
+  renderQuizEditor({
+    title: currentQuiz.title || "",
+    questions: currentQuiz.questions || [],
+    mode: "edit"
+  });
+}
+
+function renumberQuestionCards() {
+  document.querySelectorAll("#questionCards .question-card").forEach((card, index) => {
+    const title = card.querySelector(".question-card-title");
+    if (title) title.textContent = `Question ${index + 1}`;
+  });
+}
+
+function addQuestionCard() {
+  const container = document.getElementById("questionCards");
+  if (!container) return;
+
+  const index = container.querySelectorAll(".question-card").length;
+  container.insertAdjacentHTML("beforeend", questionCardHtml(blankQuestion(), index));
+}
+
+function removeQuestionCard(button) {
+  const container = document.getElementById("questionCards");
+  const cards = container?.querySelectorAll(".question-card") || [];
+
+  if (cards.length <= 1) {
+    alert("Un quiz doit garder au moins une question.");
+    return;
+  }
+
+  button.closest(".question-card")?.remove();
+  renumberQuestionCards();
+}
+
+function cancelQuizEditor() {
+  if (editingQuizId) {
+    const id = editingQuizId;
+    editingQuizId = null;
+    openQuiz(id);
+    return;
+  }
+
+  editingQuizId = null;
+  openGroup(currentGroupId, currentGroupName);
+}
+
+function readQuestionCard(card, index) {
+  const question = card.querySelector(".q-text").value.trim();
+  const audio = card.querySelector(".q-audio").value.trim();
+  const answerA = card.querySelector(".q-a").value.trim();
+  const answerB = card.querySelector(".q-b").value.trim();
+  const answerC = card.querySelector(".q-c").value.trim();
+  const answerD = card.querySelector(".q-d").value.trim();
+  const correctAnswer = card.querySelector(".q-correct").value;
+  const secondCorrect = card.querySelector(".q-correct-2").value;
+  const timer = Number(card.querySelector(".q-timer").value) || 30;
+
+  if (!question || !answerA || !answerB || !answerC || !answerD || correctAnswer === "") {
+    return { error: `Complète la question ${index + 1}.` };
+  }
+
+  if (secondCorrect !== "" && secondCorrect === correctAnswer) {
+    return { error: `Question ${index + 1} : les deux bonnes réponses doivent être différentes.` };
+  }
+
+  let extras = {};
+  try {
+    extras = JSON.parse(card.dataset.extra || "{}");
+  } catch (error) {
+    extras = {};
+  }
+
+  return {
+    question: {
+      ...extras,
+      question,
+      answers: [answerA, answerB, answerC, answerD],
+      correctAnswer: Number(correctAnswer),
+      correctAnswers: secondCorrect === ""
+        ? [Number(correctAnswer)]
+        : [Number(correctAnswer), Number(secondCorrect)],
+      timer,
+      temps: timer,
+      ...(audio ? { audio } : {})
+    }
+  };
+}
+
+async function saveQuiz() {
+  const title = document.getElementById("finalQuizTitle").value.trim();
+  const cards = [...document.querySelectorAll("#questionCards .question-card")];
+
+  if (!title) {
+    alert("Entre un nom de quiz.");
+    return;
+  }
+
+  if (!cards.length) {
+    alert("Ajoute au moins une question.");
+    return;
+  }
+
+  const questions = [];
+
+  for (let index = 0; index < cards.length; index += 1) {
+    const result = readQuestionCard(cards[index], index);
+    if (result.error) {
+      alert(result.error);
+      return;
+    }
+    questions.push(result.question);
+  }
+
+  const isEdit = Boolean(editingQuizId);
+  const res = await fetch(isEdit ? `/api/quizzes/${editingQuizId}` : "/api/quizzes", {
+    method: isEdit ? "PUT" : "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      title,
+      questions,
+      ...(isEdit ? {} : { groupId: currentGroupId })
+    })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.error || "Erreur lors de la sauvegarde.");
+    return;
+  }
+
+  editingQuizId = null;
+
+  if (isEdit && data.appliedLive) {
+    alert("Quiz enregistré. La console animateur a été mise à jour.");
+  } else if (isEdit) {
+    alert("Quiz enregistré.");
+  } else {
+    alert("Quiz sauvegardé !");
+  }
+
+  notifyLibraryChanged();
+  openGroup(currentGroupId, currentGroupName);
+}
+
+async function openQuiz(id) {
+  const res = await fetch(`/api/quizzes/${id}`);
+  const quiz = await res.json();
+
+  if (!res.ok) {
+    alert(quiz.error || "Quiz introuvable.");
+    return;
+  }
+
+  currentQuiz = quiz.data || quiz;
+  if (!currentQuiz.title) currentQuiz.title = quiz.title;
+  openedQuizId = quiz.id;
+  editingQuizId = null;
+
+  let html = `
+    <div class="card p-3">
+      <h3>${escapeHtml(currentQuiz.title)}</h3>
+      <p class="small-note">Dossier : ${escapeHtml(currentGroupName || "—")}</p>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <button class="btn btn-warning" onclick="editQuiz()">Modifier</button>
+        <button class="btn btn-success" onclick="startQuiz(${id})">Load</button>
+        <button class="btn btn-outline-light" onclick="openGroup(${currentGroupId}, '${escapeAttr(currentGroupName)}')">Retour au dossier</button>
+        <button class="btn btn-danger" onclick="deleteQuiz(${id})">Supprimer ce quiz</button>
+      </div>
+  `;
+
+  currentQuiz.questions.forEach((q, index) => {
+    const timer = q.timer || q.duration || q.timeLimit || 30;
+
+    html += `
+      <div class="card p-3 mb-2">
+        <strong>Question ${index + 1}</strong>
+        <p>${escapeHtml(q.question)}</p>
+        <p>A: ${escapeHtml(q.answers[0])}</p>
+        <p>B: ${escapeHtml(q.answers[1])}</p>
+        <p>C: ${escapeHtml(q.answers[2])}</p>
+        <p>D: ${escapeHtml(q.answers[3])}</p>
+        <p>Bonne réponse: ${escapeHtml(formatCorrectLabels(q) || "—")}</p>
+        ${q.audio ? `<p>Audio: ${escapeHtml(q.audio)}</p>` : ""}
+        <p>Timer: ${escapeHtml(timer)} secondes</p>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+  document.getElementById("content").innerHTML = html;
+}
+
+async function deleteQuiz(id) {
+  const title = currentQuiz?.title || "ce quiz";
+  const confirmed = confirm(
+    `Supprimer définitivement le quiz « ${title} » ?\n\nCette action est irréversible.`
+  );
+
+  if (!confirmed) return;
+
+  const res = await fetch(`/api/quizzes/${id}`, {
+    method: "DELETE"
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.error || "Erreur lors de la suppression.");
+    return;
+  }
+
+  currentQuiz = null;
+  notifyLibraryChanged();
+  alert("Quiz supprimé.");
+
+  if (currentGroupId) {
+    openGroup(currentGroupId, currentGroupName);
+  } else {
+    loadGroups();
+  }
+}
+
+async function deleteGroup(id) {
+  const confirmed = confirm(
+    `Supprimer le dossier « ${currentGroupName} » ?\n\nTous les quiz qu'il contient seront supprimés.`
+  );
+
+  if (!confirmed) return;
+
+  const res = await fetch(`/api/groups/${id}`, {
+    method: "DELETE"
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    alert(data.error || "Erreur lors de la suppression.");
+    return;
+  }
+
+  currentGroupId = null;
+  currentGroupName = "";
+  notifyLibraryChanged();
+  alert("Dossier supprimé.");
+  loadGroups();
+}
+
+function ensureGroupSocket() {
+  if (groupSocket) return groupSocket;
+
+  groupSocket = io();
+
+  groupSocket.on("quizEnded", () => {
+    if (!groupPlayActive) return;
+
+    if (groupPlayQueue.length === 0) {
+      groupPlayActive = false;
+      alert("Série chargée. Appuyez sur Load pour chaque quiz depuis la console.");
+      return;
+    }
+
+    const nextId = groupPlayQueue.shift();
+    setTimeout(() => {
+      groupSocket.emit("loadQuiz", nextId);
+    }, 2500);
+  });
+
+  return groupSocket;
+}
+
+async function startGroupSequence() {
+  if (!currentGroupId) return;
+
+  const res = await fetch(`/api/groups/${currentGroupId}`);
+  const group = await res.json();
+
+  if (!res.ok || !group.quizzes || group.quizzes.length === 0) {
+    alert("Ajoute au moins un quiz dans ce dossier.");
+    return;
+  }
+
+  const quizIds = group.quizzes.map((quiz) => quiz.id);
+  const socket = ensureGroupSocket();
+
+  groupPlayQueue = quizIds.slice(1);
+  groupPlayActive = true;
+
+  socket.emit("loadQuiz", quizIds[0]);
+  alert(`Série chargée : ${group.quizzes.length} quiz. Appuyez sur Load pour chaque quiz.`);
+}
+
+function startQuiz(id) {
+  const socket = ensureGroupSocket();
+  groupPlayActive = false;
+  groupPlayQueue = [];
+  socket.emit("loadQuiz", id);
+  alert("Quiz chargé. Appuyez sur Load.");
+}
+
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function escapeAttr(text) {
+  return escapeHtml(text).replaceAll("`", "&#096;");
+}
+
+loadGroups();
+</script>
+<script src="/home-confirm.js"></script>
+
+</body>
+</html>

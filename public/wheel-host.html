@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roue — Animateur</title>
+<link rel="stylesheet" href="/wheel.css">
+<style>
+body { font-family: Arial, Helvetica, sans-serif; }
+
+.host-app {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(300px, 400px) 1fr;
+  gap: 22px;
+  padding: 18px min(300px, 32vw) 18px 18px;
+  max-width: none;
+  margin: 0;
+}
+
+@media (max-width: 920px) {
+  .host-app { grid-template-columns: 1fr; }
+}
+
+.host-header {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.host-header h1 {
+  margin: 0;
+  font-size: clamp(22px, 4vw, 34px);
+  color: #ffd700;
+  letter-spacing: 1px;
+}
+
+.host-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.host-nav a, .host-nav button {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  background: rgba(0, 0, 0, 0.25);
+  color: #00d4ff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.host-nav a:hover, .host-nav button:hover {
+  background: rgba(0, 212, 255, 0.12);
+}
+
+.wheel-viewer-fullscreen-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 700;
+  display: none;
+  background: #000;
+}
+
+.wheel-viewer-fullscreen-overlay.visible {
+  display: block;
+}
+
+.wheel-viewer-fullscreen-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #000;
+}
+
+.wheel-viewer-fullscreen-close {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 710;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.wheel-viewer-fullscreen-close:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.panel {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.segments-panel {
+  max-height: calc(100dvh - 120px);
+  overflow: hidden;
+}
+
+.segments-panel-header {
+  flex-shrink: 0;
+}
+
+.segments-list-wrap {
+  flex: 1 1 auto;
+  min-height: 110px;
+  max-height: min(38vh, 300px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 215, 0, 0.55) rgba(255, 255, 255, 0.08);
+}
+
+.segments-list-wrap::-webkit-scrollbar {
+  width: 8px;
+}
+
+.segments-list-wrap::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 215, 0, 0.45);
+}
+
+.segments-scroll-hint {
+  flex-shrink: 0;
+  margin: 0;
+  font-size: 12px;
+  color: #888;
+  min-height: 16px;
+}
+
+.segments-scroll-hint.is-visible {
+  color: #fbbf24;
+}
+
+.segments-footer {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #eee;
+}
+
+.panel p {
+  margin: 0;
+  font-size: 13px;
+  color: #aaa;
+  line-height: 1.45;
+}
+
+#segmentsInput {
+  display: block;
+  width: 100%;
+  min-height: 110px;
+  height: auto;
+  resize: none;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: white;
+  font-size: 15px;
+  line-height: 1.5;
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+#segmentsInput:focus {
+  outline: none;
+}
+
+.segments-list-wrap:focus-within {
+  outline: 2px solid rgba(255, 215, 0, 0.5);
+  border-color: transparent;
+}
+
+.preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.restore-player-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.restore-player-row select {
+  flex: 1 1 140px;
+  min-width: 0;
+  padding: 9px 11px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.restore-player-row select:disabled {
+  opacity: 0.55;
+}
+
+.restore-player-row button {
+  flex: 1 1 140px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(59, 130, 246, 0.9);
+  color: white;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.restore-player-row button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+#restoreAllPlayersBtn {
+  flex: 1 1 100%;
+}
+
+.actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.actions-row button {
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#applyBtn {
+  background: linear-gradient(180deg, #4ade80, #16a34a);
+  color: #052e16;
+}
+
+#clearBtn {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ddd;
+}
+
+#importExcelBtn {
+  background: rgba(168, 85, 247, 0.9);
+  color: white;
+}
+
+#importExcelInput {
+  display: none;
+}
+
+.template-link {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #00d4ff;
+  text-decoration: none;
+}
+
+.template-link:hover {
+  text-decoration: underline;
+}
+
+.segment-count {
+  font-size: 13px;
+  color: #fbbf24;
+}
+
+.status-msg {
+  min-height: 18px;
+  font-size: 13px;
+  color: #fbbf24;
+}
+
+.preview-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.preview-stage {
+  width: min(100%, 520px);
+  padding-top: 4px;
+  overflow: visible;
+}
+
+.preview-controls {
+  width: min(100%, 460px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.wheel-music-btn {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 215, 0, 0.45);
+  background: transparent;
+  color: #ffd700;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.wheel-music-btn.is-off {
+  background: rgba(180, 40, 40, 0.28);
+  border-color: rgba(255, 140, 140, 0.75);
+  color: #ffc1c1;
+}
+
+.hint {
+  margin: 0;
+  font-size: 13px;
+  color: #aaa;
+  text-align: center;
+  font-weight: 400;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.wheel-winners-panel-host {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.wheel-winners-panel-host > h3,
+.wheel-winners-panel-host .wheel-winners-series-form {
+  flex-shrink: 0;
+}
+
+.wheel-winners-panel-host .wheel-winners-body {
+  flex: 1 1 auto;
+  min-height: 60px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.wheel-winners-panel-host .wheel-winners-actions {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 215, 0, 0.2);
+}
+</style>
+</head>
+<body>
+
+<div class="host-app">
+  <header class="host-header">
+    <h1>🎡 Roue — Animateur</h1>
+    <nav class="host-nav">
+      <a
+        href="/"
+        data-home-confirm
+        data-home-confirm-message="Retourner à l'accueil ?&#10;&#10;Vous quittez la console de la roue. L'écran public n'est pas remis à zéro."
+      >Accueil</a>
+      <a href="/wheel/viewer" target="_blank" rel="noopener">Écran public</a>
+      <button type="button" id="openViewerBtn">Ouvrir plein écran</button>
+    </nav>
+  </header>
+
+  <section class="panel segments-panel">
+    <div class="segments-panel-header">
+      <h2>Contenu des segments</h2>
+      <p>Un nom par ligne pour la roue, ou importe le modèle Numbers/Excel : feuilles <strong>nom</strong> et <strong>prix</strong> (colonnes <strong>Prix en jeu</strong> et <strong>Quantité</strong>).</p>
+    </div>
+
+    <div id="segmentsListWrap" class="segments-list-wrap">
+      <textarea id="segmentsInput" placeholder="Exemple :&#10;Marie&#10;Jean&#10;Sophie&#10;Lucas"></textarea>
+    </div>
+
+    <p id="segmentsScrollHint" class="segments-scroll-hint" aria-hidden="true"></p>
+
+    <div class="wheel-prize-list" id="wheelPrizeBanner">
+      <h3>Prix en jeu</h3>
+      <table class="wheel-prize-table">
+        <thead>
+          <tr>
+            <th>Prix en jeu</th>
+            <th>Quantité</th>
+            <th>Restant</th>
+          </tr>
+        </thead>
+        <tbody id="wheelPrizeTableBody">
+          <tr class="is-empty"><td colspan="3">Importe le document pour charger les prix</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="segments-footer">
+      <div class="actions-row">
+        <button id="importExcelBtn" type="button">Importer fichier</button>
+        <input id="importExcelInput" type="file" accept=".xlsx,.xls,.numbers,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.apple.numbers">
+        <button id="applyBtn" type="button">Mettre à jour la roue</button>
+        <button id="clearBtn" type="button">Effacer</button>
+      </div>
+
+      <div class="restore-player-row">
+        <select id="removedPlayerSelect" aria-label="Joueurs retirés" disabled>
+          <option value="">— Joueurs retirés —</option>
+        </select>
+        <button id="restorePlayerBtn" type="button" disabled>Remettre le joueur</button>
+        <button id="restoreAllPlayersBtn" type="button" disabled>Remettre tous les joueurs</button>
+      </div>
+
+      <a class="template-link" href="/api/wheel/template">Télécharger le modèle Numbers</a>
+
+      <p id="segmentCount" class="segment-count">0 segment</p>
+      <p id="statusMsg" class="status-msg" role="status"></p>
+    </div>
+  </section>
+
+  <section class="preview-col">
+    <div class="preview-stage">
+      <div class="wheel-vertical-scene">
+        <div class="wheel-big-six">
+          <canvas id="wheelCanvas" class="wheel-canvas wheel-canvas-big-six" width="820" height="660" aria-label="Aperçu roue"></canvas>
+          <div class="wheel-lights" id="wheelLights" aria-hidden="true" hidden></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="preview-controls">
+      <button id="spinBtn" class="wheel-spin-btn" type="button">Tourner</button>
+      <button id="musicToggleBtn" class="wheel-music-btn" type="button" aria-pressed="false">Musique off</button>
+      <div class="wheel-result-box">
+        <p class="wheel-result-label">Résultat</p>
+        <p id="resultValue" class="wheel-result-value">—</p>
+      </div>
+    </div>
+
+    <p class="hint">Espace = tourner · L'écran public suit en direct.</p>
+  </section>
+</div>
+
+<aside class="wheel-winners-panel wheel-winners-panel-host">
+  <h3>Gagnants</h3>
+  <div class="wheel-winners-series-form">
+    <input id="seriesNameInput" type="text" placeholder="Série 1" maxlength="48" aria-label="Nom de la série">
+    <button id="closeSeriesBtn" class="wheel-winners-close-series" type="button">Clôturer la série</button>
+  </div>
+  <div id="winnersList" class="wheel-winners-body" aria-live="polite"></div>
+  <div class="wheel-winners-actions">
+    <button id="exportWinnersBtn" class="wheel-winners-export" type="button">Exporter .txt</button>
+    <button id="clearWinnersBtn" class="wheel-winners-clear" type="button">Vider série</button>
+  </div>
+</aside>
+
+<div id="wheelViewerFullscreenOverlay" class="wheel-viewer-fullscreen-overlay" aria-hidden="true">
+  <button type="button" class="wheel-viewer-fullscreen-close" id="closeWheelViewerFullscreenBtn">Fermer</button>
+  <iframe
+    id="wheelViewerFullscreenFrame"
+    class="wheel-viewer-fullscreen-frame"
+    title="Écran public roue"
+    allow="autoplay; fullscreen"
+  ></iframe>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/wheel-sounds.js"></script>
+<script src="/wheel-core.js"></script>
+<script src="/wheel-winners.js"></script>
+<script src="/wheel-socket.js"></script>
+<script>
+WheelSounds.setOutputRole("host");
+
+const segmentsInput = document.getElementById("segmentsInput");
+const segmentsListWrap = document.getElementById("segmentsListWrap");
+const segmentsScrollHint = document.getElementById("segmentsScrollHint");
+const segmentCountEl = document.getElementById("segmentCount");
+const statusMsg = document.getElementById("statusMsg");
+const resultValue = document.getElementById("resultValue");
+const spinBtn = document.getElementById("spinBtn");
+const musicToggleBtn = document.getElementById("musicToggleBtn");
+const applyBtn = document.getElementById("applyBtn");
+const clearBtn = document.getElementById("clearBtn");
+const importExcelBtn = document.getElementById("importExcelBtn");
+const importExcelInput = document.getElementById("importExcelInput");
+const openViewerBtn = document.getElementById("openViewerBtn");
+const wheelViewerFullscreenOverlay = document.getElementById("wheelViewerFullscreenOverlay");
+const wheelViewerFullscreenFrame = document.getElementById("wheelViewerFullscreenFrame");
+const closeWheelViewerFullscreenBtn = document.getElementById("closeWheelViewerFullscreenBtn");
+const winnersListEl = document.getElementById("winnersList");
+const exportWinnersBtn = document.getElementById("exportWinnersBtn");
+const clearWinnersBtn = document.getElementById("clearWinnersBtn");
+const seriesNameInput = document.getElementById("seriesNameInput");
+const closeSeriesBtn = document.getElementById("closeSeriesBtn");
+const removedPlayerSelect = document.getElementById("removedPlayerSelect");
+const restorePlayerBtn = document.getElementById("restorePlayerBtn");
+const restoreAllPlayersBtn = document.getElementById("restoreAllPlayersBtn");
+const wheelPrizeBanner = document.getElementById("wheelPrizeBanner");
+const wheelPrizeTableBody = document.getElementById("wheelPrizeTableBody");
+
+let currentWinnersBoard = {
+  current: [],
+  groups: [],
+  nextSeriesName: "Série 1"
+};
+let currentSegmentEntries = [];
+
+const wheel = WheelCore.createWheelController({
+  canvas: document.getElementById("wheelCanvas"),
+  lightsEl: document.getElementById("wheelLights")
+});
+
+function setStatus(message, isError) {
+  statusMsg.textContent = message || "";
+  statusMsg.style.color = isError ? "#f87171" : "#fbbf24";
+}
+
+function parseLines(text) {
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function buildEntriesFromTextarea() {
+  const labels = parseLines(segmentsInput.value);
+
+  return labels.map((label, index) => ({
+    label,
+    prize: currentSegmentEntries[index]?.prize || null
+  }));
+}
+
+function labelsToText(labels) {
+  return labels.join("\n");
+}
+
+function updateSegmentCount() {
+  const count = parseLines(segmentsInput.value).length;
+  segmentCountEl.textContent = count === 1 ? "1 segment" : `${count} segments`;
+  syncSegmentsTextareaHeight();
+  updateSegmentsScrollHint();
+}
+
+function syncSegmentsTextareaHeight() {
+  segmentsInput.style.height = "auto";
+  const minHeight = segmentsListWrap.clientHeight;
+  const contentHeight = Math.max(minHeight, segmentsInput.scrollHeight);
+  segmentsInput.style.height = `${contentHeight}px`;
+}
+
+function updateSegmentsScrollHint() {
+  const hasOverflow = segmentsListWrap.scrollHeight > segmentsListWrap.clientHeight + 2;
+  segmentsScrollHint.textContent = hasOverflow
+    ? "↓ Fais défiler pour voir tous les noms"
+    : "";
+  segmentsScrollHint.classList.toggle("is-visible", hasOverflow);
+  segmentsScrollHint.setAttribute("aria-hidden", hasOverflow ? "false" : "true");
+}
+
+function showResult(label, animate) {
+  resultValue.textContent = label;
+  resultValue.classList.toggle("is-winner", Boolean(animate));
+}
+
+function escapePrizeHtml(text) {
+  return String(text ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function updatePrizeBanner(info) {
+  const queue = Array.isArray(info?.prizeQueue) ? info.prizeQueue : [];
+
+  if (!info || !info.hasPrizeQueue || !queue.length) {
+    wheelPrizeTableBody.innerHTML = '<tr class="is-empty"><td colspan="3">Importe le document pour charger les prix</td></tr>';
+    wheelPrizeBanner.classList.remove("is-done");
+    return;
+  }
+
+  const currentIndex = Number(info.prizeIndex);
+  wheelPrizeTableBody.innerHTML = queue.map((item, index) => {
+    const remaining = Number(item.remaining) || 0;
+    const total = Number(item.total) || 0;
+    const isCurrent = !info.allPrizesDone && index === currentIndex && remaining > 0;
+    const rowClass = remaining <= 0 ? "is-done" : (isCurrent ? "is-current" : "");
+
+    return `<tr class="${rowClass}">
+      <td>${escapePrizeHtml(item.prize)}</td>
+      <td>${total}</td>
+      <td>${remaining}</td>
+    </tr>`;
+  }).join("");
+
+  wheelPrizeBanner.classList.toggle("is-done", Boolean(info.allPrizesDone));
+}
+
+function updateRemovedPlayersUI(removedPlayers) {
+  const players = Array.isArray(removedPlayers) ? removedPlayers : [];
+  const previousValue = removedPlayerSelect.value;
+
+  removedPlayerSelect.innerHTML = "";
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = players.length
+    ? "— Choisir un joueur —"
+    : "— Aucun joueur retiré —";
+  removedPlayerSelect.appendChild(placeholder);
+
+  players.forEach((label) => {
+    const option = document.createElement("option");
+    option.value = label;
+    option.textContent = label;
+    removedPlayerSelect.appendChild(option);
+  });
+
+  if (previousValue && players.includes(previousValue)) {
+    removedPlayerSelect.value = previousValue;
+  }
+
+  const hasPlayers = players.length > 0;
+  removedPlayerSelect.disabled = !hasPlayers;
+  restorePlayerBtn.disabled = !hasPlayers;
+  restoreAllPlayersBtn.disabled = !hasPlayers;
+}
+
+function updateWinnersList(board) {
+  currentWinnersBoard = WheelWinners.normalizeBoard(board);
+  WheelWinners.renderWinnersList(winnersListEl, currentWinnersBoard);
+
+  if (document.activeElement !== seriesNameInput) {
+    seriesNameInput.value = currentWinnersBoard.nextSeriesName || "Série 1";
+  }
+
+  closeSeriesBtn.disabled = currentWinnersBoard.current.length === 0;
+}
+
+const wheelSocket = WheelSocket.createWheelSocket({
+  joinEvent: "joinWheelHost",
+  wheel,
+  syncTextarea: true,
+  emptyResultLabel: "—",
+  onResult: showResult,
+  onWinnersUpdate: updateWinnersList,
+  onPrizeDrawUpdate: updatePrizeBanner,
+  onSegmentsApplied(segments) {
+    currentSegmentEntries = Array.isArray(segments)
+      ? segments.map((segment) => ({
+          label: segment.label,
+          prize: segment.prize || null
+        }))
+      : [];
+    segmentsInput.value = labelsToText(currentSegmentEntries.map((entry) => entry.label));
+    updateSegmentCount();
+  },
+  onRemovedPlayersUpdate: updateRemovedPlayersUI,
+  onStatus: setStatus,
+  onSpinStateChange(isSpinning) {
+    spinBtn.disabled = isSpinning;
+    restorePlayerBtn.disabled = isSpinning || removedPlayerSelect.disabled;
+    restoreAllPlayersBtn.disabled = isSpinning || removedPlayerSelect.disabled;
+  },
+  onSegmentTick() {
+    WheelSounds.playTick();
+  },
+  onMusicChange(enabled) {
+    WheelSounds.setMusicEnabled(enabled);
+    syncMusicButton();
+  }
+});
+
+function syncMusicButton() {
+  const musicOn = WheelSounds.isMusicEnabled();
+  musicToggleBtn.textContent = musicOn ? "Musique off" : "Musique on";
+  musicToggleBtn.classList.toggle("is-off", !musicOn);
+  musicToggleBtn.setAttribute("aria-pressed", musicOn ? "false" : "true");
+}
+
+syncMusicButton();
+
+musicToggleBtn.addEventListener("click", () => {
+  const musicOn = !WheelSounds.isMusicEnabled();
+  WheelSounds.setMusicEnabled(musicOn, true);
+  wheelSocket.setMusicEnabled(musicOn);
+  syncMusicButton();
+});
+
+async function applySegments() {
+  const entries = buildEntriesFromTextarea();
+
+  if (entries.length < 2) {
+    setStatus("Ajoute au moins 2 lignes avec du texte.", true);
+    return;
+  }
+
+  if (entries.length > 24) {
+    setStatus("Maximum 24 segments.", true);
+    return;
+  }
+
+  await wheelSocket.applySegments(entries);
+}
+
+segmentsInput.addEventListener("input", updateSegmentCount);
+window.addEventListener("resize", () => {
+  syncSegmentsTextareaHeight();
+  updateSegmentsScrollHint();
+});
+
+applyBtn.addEventListener("click", applySegments);
+
+clearBtn.addEventListener("click", () => {
+  segmentsInput.value = "";
+  currentSegmentEntries = [];
+  updateSegmentCount();
+  setStatus("");
+});
+
+importExcelBtn.addEventListener("click", () => {
+  importExcelInput.click();
+});
+
+importExcelInput.addEventListener("change", async () => {
+  const file = importExcelInput.files?.[0];
+  importExcelInput.value = "";
+
+  if (!file) return;
+
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/wheel/import", {
+      method: "POST",
+      body: formData
+    });
+    const data = await response.json();
+
+    if (!response.ok || !data.ok) {
+      setStatus(data.error || "Impossible d'importer ce fichier.", true);
+      return;
+    }
+
+    currentSegmentEntries = data.entries;
+    segmentsInput.value = labelsToText(data.entries.map((entry) => entry.label));
+    updateSegmentCount();
+    await wheelSocket.applySegments(data.entries);
+    if (Array.isArray(data.prizeQueue) && data.prizeQueue.length) {
+      await wheelSocket.setPrizeQueue(data.prizeQueue);
+    }
+    setStatus(`${data.entries.length} noms et ${data.prizeQueue.length} prix importés.`);
+  } catch {
+    setStatus("Impossible d'importer ce fichier.", true);
+  }
+});
+
+restoreAllPlayersBtn.addEventListener("click", async () => {
+  const labels = [...removedPlayerSelect.options]
+    .map((option) => option.value)
+    .filter(Boolean);
+
+  if (!labels.length) {
+    setStatus("Aucun joueur à remettre.", true);
+    return;
+  }
+
+  for (const label of labels) {
+    const ok = await wheelSocket.restorePlayer(label);
+    if (!ok) return;
+  }
+
+  setStatus("Tous les joueurs sont remis sur la roue.");
+});
+
+restorePlayerBtn.addEventListener("click", async () => {
+  const label = removedPlayerSelect.value;
+  if (!label) {
+    setStatus("Choisis un joueur à remettre sur la roue.", true);
+    return;
+  }
+
+  const ok = await wheelSocket.restorePlayer(label);
+  if (ok) {
+    setStatus(`${label} remis sur la roue.`);
+  }
+});
+
+function spinFromHost() {
+  WheelSounds.unlock();
+  wheelSocket.spin();
+}
+
+spinBtn.addEventListener("click", spinFromHost);
+
+async function requestHostFullscreen(target) {
+  if (!target) return;
+
+  if (document.fullscreenElement || document.webkitFullscreenElement) return;
+
+  try {
+    if (target.requestFullscreen) {
+      await target.requestFullscreen();
+    } else if (target.webkitRequestFullscreen) {
+      target.webkitRequestFullscreen();
+    }
+  } catch (error) {
+    console.warn("Plein écran non disponible:", error);
+  }
+}
+
+async function exitHostFullscreen() {
+  try {
+    if (document.fullscreenElement && document.exitFullscreen) {
+      await document.exitFullscreen();
+    } else if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  } catch (error) {
+    console.warn("Sortie plein écran:", error);
+  }
+}
+
+function openWheelViewerOverlay() {
+  if (!wheelViewerFullscreenOverlay || !wheelViewerFullscreenFrame) return;
+
+  wheelViewerFullscreenFrame.src = "/wheel/viewer?embed=1";
+  wheelViewerFullscreenOverlay.classList.add("visible");
+  wheelViewerFullscreenOverlay.setAttribute("aria-hidden", "false");
+  requestHostFullscreen(wheelViewerFullscreenOverlay);
+}
+
+function closeWheelViewerOverlay() {
+  if (!wheelViewerFullscreenOverlay || !wheelViewerFullscreenFrame) return;
+
+  wheelViewerFullscreenOverlay.classList.remove("visible");
+  wheelViewerFullscreenOverlay.setAttribute("aria-hidden", "true");
+  wheelViewerFullscreenFrame.src = "";
+  exitHostFullscreen();
+}
+
+openViewerBtn.addEventListener("click", () => {
+  const url = new URL("/wheel/viewer", window.location.origin);
+  url.searchParams.set("fullscreen", "1");
+
+  const features = [
+    `width=${window.screen.availWidth}`,
+    `height=${window.screen.availHeight}`,
+    "left=0",
+    "top=0",
+    "menubar=no",
+    "toolbar=no",
+    "location=no",
+    "status=no",
+    "scrollbars=no"
+  ].join(",");
+
+  const viewerWindow = window.open(url.toString(), "wheelViewerFullscreen", features);
+
+  if (!viewerWindow) {
+    openWheelViewerOverlay();
+    return;
+  }
+
+  viewerWindow.focus();
+});
+
+closeWheelViewerFullscreenBtn.addEventListener("click", closeWheelViewerOverlay);
+
+document.addEventListener("fullscreenchange", () => {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    if (wheelViewerFullscreenOverlay?.classList.contains("visible")) {
+      closeWheelViewerOverlay();
+    }
+  }
+});
+
+function isWheelTypingTarget(target) {
+  if (!target) return false;
+
+  const tag = target.tagName;
+  return (
+    tag === "INPUT" ||
+    tag === "TEXTAREA" ||
+    tag === "SELECT" ||
+    target.isContentEditable
+  );
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && wheelViewerFullscreenOverlay?.classList.contains("visible")) {
+    closeWheelViewerOverlay();
+    return;
+  }
+
+  if (isWheelTypingTarget(event.target)) return;
+
+  if (event.code === "Space" && !wheel.isSpinning()) {
+    event.preventDefault();
+    spinFromHost();
+  }
+});
+
+exportWinnersBtn.addEventListener("click", () => {
+  const board = WheelWinners.normalizeBoard(currentWinnersBoard);
+  if (!board.current.length && !board.groups.length) {
+    setStatus("Aucun gagnant à exporter.", true);
+    return;
+  }
+  WheelWinners.exportWinnersTxt(board);
+  setStatus("Liste exportée.");
+});
+
+clearWinnersBtn.addEventListener("click", async () => {
+  if (!currentWinnersBoard.current.length) {
+    setStatus("La série en cours est déjà vide.", true);
+    return;
+  }
+
+  const confirmed = window.confirm(
+    "Vider la série en cours ?\n\nLes gagnants de cette série seront effacés. Les séries déjà clôturées seront conservées."
+  );
+  if (!confirmed) return;
+
+  await wheelSocket.clearWinners();
+  setStatus("Série en cours vidée.");
+});
+
+closeSeriesBtn.addEventListener("click", async () => {
+  if (!currentWinnersBoard.current.length) {
+    setStatus("Aucun gagnant à archiver dans cette série.", true);
+    return;
+  }
+
+  const seriesName = seriesNameInput.value.trim() || currentWinnersBoard.nextSeriesName;
+  const ok = await wheelSocket.closeWinnerSeries(seriesName);
+
+  if (ok) {
+    setStatus(`Série « ${seriesName} » enregistrée.`);
+    seriesNameInput.value = "";
+  }
+});
+
+updateSegmentCount();
+</script>
+<script src="/home-confirm.js"></script>
+
+</body>
+</html>

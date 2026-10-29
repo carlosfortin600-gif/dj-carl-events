@@ -1,0 +1,27 @@
+---
+description: Index — une conversation Cursor par animation (Quiz, Roue, Bingo, etc.)
+alwaysApply: false
+---
+
+# Animations DJ Carl — une conversation par module
+
+Ouvre **une nouvelle conversation** (New Chat) par animation. Dans le premier message, indique le module et `@` cette règle + la baseline du module.
+
+| Conversation (titre suggéré) | Dossier / fichiers principaux | Règles à inclure (@) |
+|---|---|---|
+| **Quiz Kahoot** | `public/host.html`, `viewer.html`, `player.html`, `viewer.js`, `admin.html` | `quiz-kahoot-baseline`, `baseline-system` |
+| **Quiz la ta chanson** | `quiz-la-ta-chanson/**` | `quiz-la-ta-chanson-baseline`, `baseline-system` |
+| **Roue de tirage** | `public/wheel-*.html`, `wheel-*.js`, `wheel.css`, `lib/wheel-*` | `wheel-baseline`, `baseline-system` |
+| **Bingo** | `public/bingo.html` | `baseline-system` |
+| **Famille en or** | `public/feud-host.html`, `feud-viewer.html`, `feud-board.js`, `lib/feud-state.js` | `feud-baseline`, `baseline-system` |
+| **Jeopardy** | `public/jeopardy-host.html`, `jeopardy-viewer.html`, `jeopardy-board.js`, `lib/jeopardy-state.js` | `jeopardy-baseline`, `baseline-system` |
+| **Chrono** | `public/chrono-host.html`, `chrono-viewer.html`, `chrono-host.js`, `lib/chrono-state.js` | `chrono-baseline`, `baseline-system` |
+| **Visualizer / lumières** | `public/visualizer.*`, `lib/artnet-receiver.js`, `lib/soundswitch-*`, `data/soundswitch-patch.json` | `visualizer-baseline` |
+| **Photo en direct** | `photo-people/**` | `baseline-system` |
+| **Site marketing** | `website/**` | `website-baseline`, `publish-site` |
+
+## Nouvelle conversation
+
+1. **Cmd+L** (ou New Chat).
+2. Titre clair (ex. « Roue — animations viewer »).
+3. Premier message : objectif + fichiers touchés + `@animation-conversations-index` + baseline du module.

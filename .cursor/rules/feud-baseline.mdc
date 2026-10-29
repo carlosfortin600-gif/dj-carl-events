@@ -23,12 +23,13 @@ Jeu de sondage style Family Feud. Module indépendant du quiz et de la roue.
 
 ## Déroulement
 
-- Intro → mise en jeu (1 = famille rouge, 2 = famille bleue, droit de réplique, Mauvaise réponse dès le début, le plus haut pointage joue et s'affiche 4 s, la famille qui joue flashe 3 fois) → jeu → 3 X → vol. Les points gagnés (manche ou partie) restent 4 s.
-- Bonne réponse : ding. Mauvaise réponse : buzzer. Fin : points 3 s, puis le nom du gagnant en gros. Ovation coupée avec 0. Les sons partent une seule fois, de la console, quand la réponse apparaît au tableau. L'écran géant ne joue pas de son et ne demande pas de l'activer. « Rejouer la partie » relance à la question 1, scores à zéro.
+- Intro → mise en jeu (1 = première famille, à gauche, buzzer ; 2 = deuxième famille, à droite, ding ding). À chaque nouvelle question, le premier buzzer bloque l'autre jusqu'à la réponse. Le même bouton peut rejouer le son. Droit de réplique, Mauvaise réponse dès le début, le plus haut pointage joue et s'affiche 4 s, la famille qui joue flashe 3 fois. Ensuite : jeu → 3 X → vol. Les points gagnés (manche ou partie) restent 4 s.
+- Bonne réponse : ding. Mauvaise réponse : buzzer. Fin : points 3 s, puis le nom du gagnant en gros. Ovation coupée avec 0, et aussi dès qu'une nouvelle partie commence. Les sons sortent de la console sur l'ordinateur, pas de la tablette. La console a un bouton « Activer le son » : un clic, puis les boutons de l'iPad jouent sur l'ordinateur. L'écran géant flashe le côté choisi et ne demande pas d'activer le son. Si le volume est à zéro sur l'iPad, l'ordinateur se tait aussi. « Rejouer la partie » relance à la question 1, scores à zéro.
 - Le tableau public masque le texte et les points tant que la réponse n'est pas révélée.
 - La console montre les réponses. L'écran géant va sur le projecteur.
-- 12 questions prêtes. Le nombre joué se choisit dans la console. On peut en ajouter (3 à 8 réponses, points 1–100).
-- L'écran n'affiche pas le nom DJ Carl. « Famille en or » reste à l'intro seulement. Pendant le jeu, les points sont en haut et la question est en dessous, séparée des points et des réponses. L'écran n'affiche pas « Mise en jeu ».
+- 5 parties de 12 questions : Le party, En voyage, À la maison, Le mariage, L'hiver. À la fin, on demande de faire une autre partie avec d'autres questions. Le nombre joué se choisit dans la console. On peut en ajouter (3 à 8 réponses, points 1–100). Questions 1 à 3 : points simples. 4 à 9 : points doubles. 10 à 12 : points triples. L'écran géant l'affiche, et les points du tableau suivent.
+- L'écran n'affiche pas le nom DJ Carl. « Famille en or » reste à l'intro seulement. Pendant le jeu, les points sont en haut, la famille qui joue est entre les deux pointages, et la question est en dessous. L'écran a un bouton Plein écran visible. L'écran n'affiche pas « Mise en jeu ».
+- Manette iPad : au 3e X, VOL est écrit en gros sur la famille qui vole et dans la barre du haut. La famille qui joue après la mise en jeu reste en surbrillance. « Question suivante » flashe quand la manche est finie. « Recommencer la partie » est à côté de « Rejouer la question » et remet les scores à zéro.
 
 ## Évolution
 

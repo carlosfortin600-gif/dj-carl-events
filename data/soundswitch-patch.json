@@ -1,0 +1,335 @@
+{
+  "name": "Carl full kit",
+  "fixtures": [
+    {
+      "id": "ss-partybar",
+      "name": "PartyBar Mobile 250",
+      "type": "partybar32",
+      "kind": "bar",
+      "mount": "hang",
+      "universe": 0,
+      "address": 1,
+      "count": 0,
+      "rot": 0,
+      "x": 0.5,
+      "y": 0.08,
+      "spots": [
+        {
+          "x": 0.5,
+          "y": 0.08,
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "ss-palette-1",
+      "name": "COLORpalette 1",
+      "type": "palette27",
+      "kind": "bar",
+      "mount": "hang",
+      "universe": 0,
+      "address": 40,
+      "count": 0,
+      "rot": 0,
+      "x": 0.18,
+      "y": 0.42,
+      "spots": [
+        {
+          "x": 0.18,
+          "y": 0.42,
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "ss-palette-10",
+      "name": "COLORpalette 10",
+      "type": "palette27",
+      "kind": "bar",
+      "mount": "hang",
+      "universe": 0,
+      "address": 70,
+      "count": 0,
+      "rot": 0,
+      "x": 0.82,
+      "y": 0.42,
+      "spots": [
+        {
+          "x": 0.82,
+          "y": 0.42,
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "ss-terbly",
+      "name": "Terbly PB4D",
+      "type": "rgbw",
+      "kind": "par",
+      "mount": "uplight",
+      "universe": 0,
+      "address": 99,
+      "count": 0,
+      "rot": 0,
+      "x": 0.5,
+      "y": 0.22,
+      "spots": [
+        {
+          "x": 0.5,
+          "y": 0.22,
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "ss-wash-1",
+      "name": "LED WASH - 1",
+      "type": "wash10",
+      "kind": "par",
+      "mount": "uplight",
+      "universe": 0,
+      "address": 150,
+      "count": 6,
+      "rot": 269.6,
+      "x": 0.023381560423164027,
+      "y": 0.2402420943169794,
+      "spots": [
+        {
+          "x": 0.023381560423164027,
+          "y": 0.2402420943169794,
+          "rot": 269.6
+        },
+        {
+          "x": 0.017786219051917296,
+          "y": 0.5817218157504374,
+          "rot": 283.6
+        },
+        {
+          "x": 0.009728197116694592,
+          "y": 0.8126253284745142,
+          "rot": 309.9
+        },
+        {
+          "x": 0.9666883680555556,
+          "y": 0.391735324407827,
+          "rot": 140.7
+        },
+        {
+          "x": 0.971617683531746,
+          "y": 0.5941248193641618,
+          "rot": 131.4
+        },
+        {
+          "x": 0.9744915674603175,
+          "y": 0.7750135476878612,
+          "rot": 89.8
+        }
+      ]
+    },
+    {
+      "id": "ss-wash-2",
+      "name": "LED WASH - 2",
+      "type": "wash10",
+      "kind": "par",
+      "mount": "uplight",
+      "universe": 0,
+      "address": 160,
+      "count": 2,
+      "rot": 0,
+      "x": 0.33850611800412644,
+      "y": 0.35904659013471873,
+      "spots": [
+        {
+          "x": 0.33850611800412644,
+          "y": 0.35904659013471873,
+          "rot": 0
+        },
+        {
+          "x": 0.6885061180041264,
+          "y": 0.35904659013471873,
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "ss-wash-3",
+      "name": "LED WASH - 3",
+      "type": "wash10",
+      "kind": "par",
+      "mount": "uplight",
+      "universe": 0,
+      "address": 170,
+      "count": 0,
+      "rot": 0,
+      "x": 0.62,
+      "y": 0.16,
+      "spots": [
+        {
+          "x": 0.62,
+          "y": 0.16,
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "ss-lb150-1",
+      "name": "LB150 - 1",
+      "type": "mh-beam12",
+      "kind": "mh",
+      "mount": "hang",
+      "universe": 0,
+      "address": 200,
+      "count": 1,
+      "rot": 0,
+      "x": 0.25393182662410785,
+      "y": 0.2675689143562856,
+      "spots": [
+        {
+          "x": 0.25393182662410785,
+          "y": 0.2675689143562856,
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "ss-wash-4",
+      "name": "LED WASH - 4",
+      "type": "wash10",
+      "kind": "par",
+      "mount": "uplight",
+      "universe": 0,
+      "address": 180,
+      "count": 0,
+      "rot": 0,
+      "x": 0.86,
+      "y": 0.16,
+      "spots": [
+        {
+          "x": 0.86,
+          "y": 0.16,
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "ss-lb150-2",
+      "name": "LB150 - 2",
+      "type": "mh-beam12",
+      "kind": "mh",
+      "mount": "hang",
+      "universe": 0,
+      "address": 212,
+      "count": 1,
+      "rot": 0,
+      "x": 0.7687323688880054,
+      "y": 0.2851263617733327,
+      "spots": [
+        {
+          "x": 0.7687323688880054,
+          "y": 0.2851263617733327,
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "ss-washfx-1",
+      "name": "Wash Effect - 1",
+      "type": "rgbw",
+      "kind": "bar",
+      "mount": "hang",
+      "universe": 0,
+      "address": 260,
+      "count": 1,
+      "rot": 226,
+      "x": 0.38,
+      "y": 0.2,
+      "spots": [
+        {
+          "x": 0.38,
+          "y": 0.2,
+          "rot": 226
+        }
+      ]
+    },
+    {
+      "id": "ss-washfx-2",
+      "name": "Wash Effect - 2",
+      "type": "rgbw",
+      "kind": "bar",
+      "mount": "hang",
+      "universe": 0,
+      "address": 264,
+      "count": 0,
+      "rot": 0,
+      "x": 0.62,
+      "y": 0.2,
+      "spots": [
+        {
+          "x": 0.62,
+          "y": 0.2,
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "ss-parled-1",
+      "name": "Par led 4 - 1",
+      "type": "wash10",
+      "kind": "par",
+      "mount": "hang",
+      "universe": 0,
+      "address": 300,
+      "count": 1,
+      "rot": 0,
+      "x": 0.33850611800412644,
+      "y": 0.30268295377108234,
+      "spots": [
+        {
+          "x": 0.33850611800412644,
+          "y": 0.30268295377108234,
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "ss-parled-2",
+      "name": "Par led 4 - 2",
+      "type": "wash10",
+      "kind": "par",
+      "mount": "hang",
+      "universe": 0,
+      "address": 310,
+      "count": 1,
+      "rot": 0,
+      "x": 0.6885061180041264,
+      "y": 0.30268295377108234,
+      "spots": [
+        {
+          "x": 0.6885061180041264,
+          "y": 0.30268295377108234,
+          "rot": 0
+        }
+      ]
+    },
+    {
+      "id": "ss-electro-1",
+      "name": "Electro 86",
+      "type": "rgbw",
+      "kind": "par",
+      "mount": "hang",
+      "universe": 0,
+      "address": 365,
+      "count": 0,
+      "rot": 350.3,
+      "x": 0.5,
+      "y": 0.02,
+      "spots": [
+        {
+          "x": 0.5,
+          "y": 0.02,
+          "rot": 350.3
+        }
+      ]
+    }
+  ]
+}

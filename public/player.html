@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#050505">
+<title>DJ Carl Quiz — Joueur</title>
+<style>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  height: 100%;
+  overflow: hidden;
+  background: #050505;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  touch-action: manipulation;
+}
+
+.player-app {
+  width: 100%;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  min-height: 100dvh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle at top, #1f2937, #050505 70%);
+}
+
+.player-boot-error {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 77, 77, 0.2);
+  border: 1px solid rgba(255, 77, 77, 0.55);
+  color: #ffb4b4;
+  font-size: 15px;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.player-connect-hint {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #888;
+}
+
+.screen {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding:
+    max(12px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+}
+
+#join {
+  justify-content: center;
+  align-items: stretch;
+  text-align: center;
+  gap: 20px;
+}
+
+.logo {
+  font-size: clamp(28px, 8vw, 40px);
+  font-weight: 900;
+  color: #00d4ff;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.join-title {
+  font-size: clamp(18px, 5vw, 22px);
+  color: #ccc;
+  margin: 0 0 24px;
+}
+
+#name {
+  width: 100%;
+  font-size: clamp(20px, 5.5vw, 26px);
+  padding: 18px 16px;
+  border: 0;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  text-align: center;
+}
+
+#name::placeholder {
+  color: #888;
+}
+
+.btn-join {
+  width: 100%;
+  padding: 20px;
+  font-size: clamp(20px, 5.5vw, 24px);
+  font-weight: 700;
+  border: 0;
+  border-radius: 14px;
+  background: #28a745;
+  color: white;
+  cursor: pointer;
+}
+
+#game {
+  display: none;
+  text-align: center;
+  background: transparent;
+}
+
+.top-bar {
+  flex-shrink: 0;
+  font-size: clamp(16px, 4vw, 20px);
+  font-weight: 800;
+  color: #00d4ff;
+  padding: 4px 0 8px;
+}
+
+.timer-box {
+  flex-shrink: 0;
+  width: 100%;
+  margin: 0 auto 8px;
+}
+
+.timer-circle {
+  width: clamp(100px, 22vw, 130px);
+  height: clamp(100px, 22vw, 130px);
+  border-radius: 50%;
+  background: conic-gradient(#00d4ff 100%, #444 0%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+}
+
+.timer-inner {
+  width: 76%;
+  height: 76%;
+  border-radius: 50%;
+  background: #050505;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(32px, 8vw, 44px);
+  font-weight: 900;
+}
+
+.progress-bg {
+  width: 100%;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 100%;
+  background: #00d4ff;
+  transition: width 0.3s linear;
+}
+
+.timer-status {
+  font-size: clamp(15px, 4vw, 18px);
+  color: #ccc;
+  margin-top: 8px;
+  min-height: 1.4em;
+}
+
+.question {
+  flex-shrink: 0;
+  font-size: clamp(18px, 5vw, 24px);
+  line-height: 1.35;
+  margin: 10px 0 12px;
+  padding: 0 4px;
+  font-weight: 700;
+}
+
+.answers {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  width: 100%;
+}
+
+.answer {
+  flex: 1;
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 16px;
+  margin: 0;
+  font-size: clamp(17px, 4.5vw, 22px);
+  font-weight: 700;
+  line-height: 1.25;
+  border: 0;
+  border-radius: 14px;
+  background: #007bff;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.answer:disabled {
+  background: #555;
+  color: #aaa;
+}
+
+#status {
+  flex-shrink: 0;
+  font-size: clamp(16px, 4.5vw, 20px);
+  margin: 10px 0 0;
+  min-height: 1.4em;
+  font-weight: 700;
+}
+
+.good { color: #00ff99; }
+.locked { color: #ff4d4d; }
+
+@keyframes timer-pulse {
+  0%, 100% { box-shadow: 0 0 18px rgba(255, 77, 77, 0.45); transform: scale(1); }
+  50% { box-shadow: 0 0 40px rgba(255, 77, 77, 1); transform: scale(1.06); }
+}
+
+.timer-circle.timer-urgent { animation: timer-pulse 0.75s ease-in-out infinite; }
+.timer-circle.timer-urgent .timer-inner { color: #ff4d4d; }
+.progress-bar.timer-urgent { background: #ff4d4d; }
+.timer-status.timer-urgent { color: #ff4d4d; font-weight: bold; }
+
+.answer.answer-selected {
+  background: #ffc107 !important;
+  color: #111 !important;
+}
+
+.answer.answer-correct {
+  background: #00ff99 !important;
+  color: #111 !important;
+}
+
+.answer.answer-dim {
+  opacity: 0.35;
+}
+
+.countdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  min-height: -webkit-fill-available;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.88);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  pointer-events: none;
+}
+
+.countdown-overlay.hidden {
+  display: none;
+}
+
+.countdown-number {
+  font-size: clamp(130px, 30vw, 240px);
+  font-weight: 900;
+  color: #00d4ff;
+  text-shadow: 0 0 80px rgba(0, 212, 255, 0.85);
+  animation: countdown-pop 0.45s ease;
+  opacity: 1;
+  line-height: 1;
+}
+
+.countdown-number.go {
+  color: #00ff99;
+  font-size: clamp(110px, 26vw, 200px);
+}
+
+@keyframes countdown-pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  70% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.podium-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  background: rgba(0, 0, 0, 0.92);
+  overflow-y: auto;
+}
+
+.podium-overlay.visible {
+  display: flex;
+}
+
+.podium-overlay-title {
+  font-size: clamp(28px, 7vw, 40px);
+  font-weight: 900;
+  color: #00d4ff;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.podium-overlay-subtitle {
+  font-size: 16px;
+  color: #ddd;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.podium-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.podium-player {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.podium-medal {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.podium-name {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.podium-score {
+  font-size: 13px;
+  color: #ffc107;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.podium-block {
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 900;
+  color: rgba(0, 0, 0, 0.35);
+  background: linear-gradient(180deg, rgba(0, 212, 255, 0.55), rgba(0, 212, 255, 0.2));
+  border: 2px solid rgba(0, 212, 255, 0.4);
+  border-bottom: 0;
+}
+
+.podium-slot.rank-1 .podium-block {
+  height: 110px;
+  background: linear-gradient(180deg, rgba(255, 193, 7, 0.7), rgba(255, 193, 7, 0.25));
+  border-color: rgba(255, 193, 7, 0.6);
+}
+
+.podium-slot.rank-2 .podium-block {
+  height: 84px;
+  background: linear-gradient(180deg, rgba(192, 192, 192, 0.65), rgba(192, 192, 192, 0.2));
+  border-color: rgba(192, 192, 192, 0.55);
+}
+
+.podium-slot.rank-3 .podium-block {
+  height: 64px;
+  background: linear-gradient(180deg, rgba(205, 127, 50, 0.65), rgba(205, 127, 50, 0.2));
+  border-color: rgba(205, 127, 50, 0.55);
+}
+
+.podium-empty {
+  font-size: 18px;
+  color: #ccc;
+  text-align: center;
+}
+
+.question-result-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 460;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding:
+    max(18px, env(safe-area-inset-top))
+    max(18px, env(safe-area-inset-right))
+    18px
+    max(18px, env(safe-area-inset-left));
+  text-align: center;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 0%, rgba(0, 255, 153, 0.18), transparent 55%),
+    linear-gradient(160deg, rgba(5, 0, 16, 0.97) 0%, rgba(10, 0, 32, 0.98) 100%);
+  border-bottom: 2px solid rgba(0, 255, 153, 0.25);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+.question-result-overlay.visible {
+  display: flex;
+  animation: question-result-in 0.45s ease;
+}
+
+@keyframes question-result-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.question-result-kicker {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffc107;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.question-result-answer {
+  max-width: 100%;
+  font-size: clamp(28px, 8vw, 44px);
+  font-weight: 900;
+  line-height: 1.12;
+  color: #00ff99;
+  text-shadow: 0 0 24px rgba(0, 255, 153, 0.35);
+}
+
+.question-result-winner-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: min(100%, 360px);
+  margin-top: 8px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  border: 2px solid rgba(0, 212, 255, 0.35);
+  background: rgba(0, 212, 255, 0.08);
+}
+
+.question-result-winner-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #00d4ff;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.question-result-winner-name {
+  font-size: clamp(28px, 8vw, 40px);
+  font-weight: 900;
+  color: #fff;
+  word-break: break-word;
+}
+
+.question-result-winner-points {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffc107;
+}
+
+.question-result-no-winner {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ccc;
+  line-height: 1.35;
+}
+
+.player-leaderboard-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 430;
+  display: none;
+  flex-direction: column;
+  padding:
+    max(16px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+  background: radial-gradient(circle at top, #1f2937, #050505 72%);
+}
+
+.player-leaderboard-overlay.visible {
+  display: flex;
+}
+
+.player-leaderboard-overlay.with-answer-banner {
+  padding-top: calc(max(16px, env(safe-area-inset-top)) + 150px);
+}
+
+.player-leaderboard-title {
+  flex-shrink: 0;
+  margin: 0 0 4px;
+  font-size: clamp(24px, 6vw, 34px);
+  font-weight: 900;
+  color: #00d4ff;
+  text-align: center;
+}
+
+.player-leaderboard-subtitle {
+  flex-shrink: 0;
+  margin: 0 0 14px;
+  font-size: clamp(14px, 4vw, 17px);
+  color: #bbb;
+  text-align: center;
+}
+
+.player-leaderboard-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.player-leaderboard-row {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.player-leaderboard-row.rank-1 {
+  background: rgba(255, 193, 7, 0.16);
+  border-color: rgba(255, 193, 7, 0.45);
+}
+
+.player-leaderboard-row.rank-2 {
+  background: rgba(192, 192, 192, 0.14);
+  border-color: rgba(192, 192, 192, 0.35);
+}
+
+.player-leaderboard-row.rank-3 {
+  background: rgba(205, 127, 50, 0.14);
+  border-color: rgba(205, 127, 50, 0.35);
+}
+
+.player-leaderboard-rank {
+  font-size: clamp(18px, 5vw, 22px);
+  font-weight: 900;
+  color: #00d4ff;
+}
+
+.player-leaderboard-name {
+  font-size: clamp(16px, 4.5vw, 20px);
+  font-weight: 800;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.player-leaderboard-score {
+  font-size: clamp(16px, 4.5vw, 20px);
+  font-weight: 900;
+  color: #ffc107;
+  white-space: nowrap;
+}
+
+.player-leaderboard-empty {
+  margin: auto;
+  font-size: 18px;
+  color: #bbb;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<div class="player-app">
+  <div id="join" class="screen">
+    <div>
+      <div class="logo">DJ CARL QUIZ</div>
+      <p class="join-title">Entre dans la partie</p>
+      <input id="name" placeholder="Ton nom" autocomplete="nickname" enterkeyhint="go">
+      <button class="btn-join" onclick="joinGame()">Jouer</button>
+    </div>
+  </div>
+
+  <div id="game" class="screen">
+    <div class="top-bar">DJ Carl Quiz</div>
+
+    <div class="timer-box">
+      <div class="timer-circle" id="timerCircle">
+        <div class="timer-inner" id="timerText">30</div>
+      </div>
+      <div class="progress-bg">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div class="timer-status" id="timerStatus">Chrono en attente</div>
+    </div>
+
+    <h2 id="question" class="question">En attente de la question...</h2>
+
+    <div class="answers">
+      <button class="answer" onclick="answer(0, 'A')" id="a"></button>
+      <button class="answer" onclick="answer(1, 'B')" id="b"></button>
+      <button class="answer" onclick="answer(2, 'C')" id="c"></button>
+      <button class="answer" onclick="answer(3, 'D')" id="d"></button>
+    </div>
+
+    <div id="status"></div>
+  </div>
+</div>
+
+<div id="countdownOverlay" class="countdown-overlay hidden" aria-live="assertive">
+  <div id="countdownNumber" class="countdown-number">3</div>
+</div>
+
+<div id="questionResultOverlay" class="question-result-overlay" aria-hidden="true">
+  <div class="question-result-kicker">Bonne réponse</div>
+  <div id="questionResultAnswer" class="question-result-answer"></div>
+</div>
+
+<div id="playerLeaderboardOverlay" class="player-leaderboard-overlay" aria-hidden="true">
+  <h2 class="player-leaderboard-title">Classement en direct</h2>
+  <p class="player-leaderboard-subtitle">Prochaine question bientôt</p>
+  <div id="playerLeaderboardList" class="player-leaderboard-list"></div>
+</div>
+
+<div id="podiumOverlay" class="podium-overlay" aria-hidden="true">
+  <div class="podium-overlay-title">Podium final</div>
+  <div class="podium-overlay-subtitle">Top 3 du quiz</div>
+  <div id="podiumContent"></div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io({
+  transports: ["polling", "websocket"],
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 500
+});
+const PLAYER_NAME_KEY = "djCarlPlayerName";
+
+const buttons = ["a", "b", "c", "d"];
+let hasAnswered = false;
+let timerLocked = false;
+let selectedAnswerIndex = null;
+let countdownActive = false;
+let answersOpen = false;
+let questionResultTimer = null;
+let latestPlayers = [];
+let playerLeaderboardReady = false;
+const PLAYER_ANSWER_DISPLAY_MS = 5000;
+
+function showGameScreen() {
+  document.getElementById("join").style.display = "none";
+  document.getElementById("game").style.display = "flex";
+}
+
+function getStoredPlayerName() {
+  const fromInput = document.getElementById("name")?.value?.trim();
+  if (fromInput) return fromInput;
+  return sessionStorage.getItem(PLAYER_NAME_KEY)?.trim() || "";
+}
+
+function rejoinIfStored() {
+  const name = getStoredPlayerName();
+  if (!name) return;
+  document.getElementById("name").value = name;
+  socket.emit("joinGame", name);
+}
+
+function joinGame() {
+  const name = document.getElementById("name").value.trim() || "Joueur";
+  sessionStorage.setItem(PLAYER_NAME_KEY, name);
+  socket.emit("joinGame", name);
+}
+
+document.getElementById("name").addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    joinGame();
+  }
+});
+
+function hidePlayerPodium() {
+  const overlay = document.getElementById("podiumOverlay");
+  const content = document.getElementById("podiumContent");
+  if (!overlay) return;
+
+  overlay.classList.remove("visible");
+  overlay.setAttribute("aria-hidden", "true");
+  if (content) content.innerHTML = "";
+}
+
+function clearQuestionResultTimer() {
+  if (questionResultTimer) {
+    clearTimeout(questionResultTimer);
+    questionResultTimer = null;
+  }
+}
+
+function hideQuestionResult() {
+  const overlay = document.getElementById("questionResultOverlay");
+  const answerEl = document.getElementById("questionResultAnswer");
+  const leaderboardOverlay = document.getElementById("playerLeaderboardOverlay");
+  if (!overlay) return;
+
+  overlay.classList.remove("visible");
+  overlay.setAttribute("aria-hidden", "true");
+  if (answerEl) answerEl.textContent = "";
+  if (leaderboardOverlay) leaderboardOverlay.classList.remove("with-answer-banner");
+  clearRevealHighlight();
+}
+
+function renderPlayerLeaderboard(players) {
+  const listEl = document.getElementById("playerLeaderboardList");
+  if (!listEl) return;
+
+  const sortedPlayers = [...(players || [])].sort((a, b) => {
+    return (b.score || 0) - (a.score || 0);
+  });
+
+  listEl.innerHTML = "";
+
+  if (sortedPlayers.length === 0) {
+    listEl.innerHTML = `<div class="player-leaderboard-empty">Aucun joueur connecté</div>`;
+    return;
+  }
+
+  sortedPlayers.forEach((player, index) => {
+    const rank = index + 1;
+    const row = document.createElement("div");
+    row.className = `player-leaderboard-row${rank <= 3 ? ` rank-${rank}` : ""}`;
+    row.innerHTML = `
+      <div class="player-leaderboard-rank">#${rank}</div>
+      <div class="player-leaderboard-name">${escapeHtml(player.name || "Joueur")}</div>
+      <div class="player-leaderboard-score">${player.score || 0} pt</div>
+    `;
+    listEl.appendChild(row);
+  });
+}
+
+function showPlayerLeaderboard(players) {
+  if (!playerLeaderboardReady) return;
+
+  const overlay = document.getElementById("playerLeaderboardOverlay");
+  if (!overlay) return;
+
+  if (Array.isArray(players)) {
+    latestPlayers = players;
+  }
+
+  renderPlayerLeaderboard(latestPlayers);
+  overlay.classList.add("visible");
+  overlay.setAttribute("aria-hidden", "false");
+}
+
+function hidePlayerLeaderboard() {
+  const overlay = document.getElementById("playerLeaderboardOverlay");
+  if (!overlay) return;
+
+  overlay.classList.remove("visible");
+  overlay.setAttribute("aria-hidden", "true");
+}
+
+function showQuestionResult(data) {
+  const overlay = document.getElementById("questionResultOverlay");
+  const answerEl = document.getElementById("questionResultAnswer");
+  if (!overlay || !answerEl) return;
+
+  clearQuestionResultTimer();
+  playerLeaderboardReady = true;
+  showPlayerLeaderboard();
+
+  const leaderboardOverlay = document.getElementById("playerLeaderboardOverlay");
+  if (leaderboardOverlay) leaderboardOverlay.classList.add("with-answer-banner");
+
+  const label = String(data.correctLabel || "").trim();
+  const text = String(data.correctText || "").trim();
+  answerEl.textContent = label ? `${label}. ${text}` : text;
+  highlightRevealAnswer(correctIndexesFromReveal(data));
+
+  overlay.classList.add("visible");
+  overlay.setAttribute("aria-hidden", "false");
+
+  questionResultTimer = setTimeout(() => {
+    hideQuestionResult();
+    questionResultTimer = null;
+  }, PLAYER_ANSWER_DISPLAY_MS);
+}
+
+function resetPlayerTimerDisplay() {
+  const timerCircle = document.getElementById("timerCircle");
+  const progressBar = document.getElementById("progressBar");
+  const timerStatus = document.getElementById("timerStatus");
+  const timerText = document.getElementById("timerText");
+
+  if (timerText) timerText.innerText = "30";
+  if (progressBar) {
+    progressBar.style.width = "100%";
+    progressBar.classList.remove("timer-urgent");
+  }
+  if (timerCircle) {
+    timerCircle.style.background = "conic-gradient(#00d4ff 100%, #444 0%)";
+    timerCircle.classList.remove("timer-urgent");
+  }
+  if (timerStatus) {
+    timerStatus.className = "timer-status";
+    timerStatus.innerText = "Prêt";
+  }
+}
+
+function hidePlayerCountdown() {
+  const overlay = document.getElementById("countdownOverlay");
+  const num = document.getElementById("countdownNumber");
+  if (!overlay || !num) return;
+
+  countdownActive = false;
+  overlay.classList.add("hidden");
+  num.classList.remove("go");
+}
+
+function resetPlayerDisplay() {
+  answersOpen = false;
+  countdownActive = false;
+  playerLeaderboardReady = false;
+  latestPlayers = [];
+  clearQuestionResultTimer();
+  hideQuestionResult();
+  hidePlayerLeaderboard();
+  hidePlayerPodium();
+  hidePlayerCountdown();
+  clearAnswers();
+  resetPlayerTimerDisplay();
+
+  document.getElementById("question").innerText = "En attente du démarrage du quiz...";
+
+  const statusEl = document.getElementById("status");
+  statusEl.className = "";
+  statusEl.innerText = "L'animateur n'a pas encore lancé la partie.";
+}
+
+function wirePlayerSocket() {
+  socket.on("connect", () => {
+    if (sessionStorage.getItem(PLAYER_NAME_KEY)) {
+      rejoinIfStored();
+    }
+  });
+
+  socket.on("disconnect", () => {
+    const statusEl = document.getElementById("status");
+    if (!statusEl) return;
+    statusEl.className = "locked";
+    statusEl.innerText = "Connexion perdue — reconnexion en cours…";
+  });
+
+  socket.on("connect_error", () => {
+    const statusEl = document.getElementById("status");
+    if (!statusEl) return;
+    statusEl.className = "locked";
+    statusEl.innerText = "Impossible de joindre le serveur. Vérifie le Wi‑Fi (même réseau que l’animateur).";
+  });
+
+  socket.on("joinedGame", () => {
+    showGameScreen();
+  });
+
+  socket.on("quizWaiting", () => {
+    resetPlayerDisplay();
+  });
+
+  socket.on("viewerReset", () => {
+    resetPlayerDisplay();
+  });
+
+  socket.on("quizRoundWaiting", (data) => {
+  clearQuestionResultTimer();
+  hideQuestionResult();
+  showPlayerLeaderboard();
+  answersOpen = false;
+  const number = data?.questionNumber;
+  const total = data?.totalQuestions;
+  const label = number && total
+    ? `Question ${number} / ${total}`
+    : "Prochaine question...";
+
+  document.getElementById("question").innerText = label;
+  document.getElementById("status").innerText = "En attente du départ du timer...";
+    clearAnswers();
+  });
+
+  socket.on("countdown", handleCountdown);
+
+  socket.on("showQuestion", (data) => {
+  clearQuestionResultTimer();
+  hideQuestionResult();
+  hidePlayerLeaderboard();
+  hasAnswered = false;
+  timerLocked = false;
+  selectedAnswerIndex = null;
+  answersOpen = false;
+  clearAnswerHighlight();
+
+  document.getElementById("question").innerText = data.question || "Question";
+
+  document.getElementById("a").innerText = "A. " + (data.answers?.[0] || "");
+  document.getElementById("b").innerText = "B. " + (data.answers?.[1] || "");
+  document.getElementById("c").innerText = "C. " + (data.answers?.[2] || "");
+  document.getElementById("d").innerText = "D. " + (data.answers?.[3] || "");
+
+  disableAnswerButtons();
+
+  document.getElementById("status").className = "";
+    document.getElementById("status").innerText = "En attente du départ du timer...";
+  });
+
+  socket.on("timerUpdate", (data) => {
+  renderTimer(data);
+
+  const running = Boolean(data.running);
+  const locked = Boolean(data.locked) || Number(data.remaining) <= 0;
+
+  if (running && !locked && !countdownActive && !hasAnswered) {
+    answersOpen = true;
+    buttons.forEach((id) => {
+      document.getElementById(id).disabled = false;
+    });
+    document.getElementById("status").className = "";
+    document.getElementById("status").innerText = "À vous de jouer !";
+  }
+
+  if (locked || Number(data.remaining) <= 0) {
+    answersOpen = false;
+    timerLocked = true;
+    disableAnswerButtons();
+
+    if (!hasAnswered) {
+      document.getElementById("status").className = "locked";
+      document.getElementById("status").innerText = "Temps terminé";
+    }
+  }
+  });
+
+  socket.on("timerFinished", () => {
+  timerLocked = true;
+  disableAnswerButtons();
+
+  if (!hasAnswered) {
+    document.getElementById("status").className = "locked";
+    document.getElementById("status").innerText = "Temps terminé";
+  }
+  });
+
+  socket.on("answerResult", (data) => {
+    const statusEl = document.getElementById("status");
+    statusEl.innerText = data.message || "Réponse envoyée";
+    statusEl.className = data.correct ? "good" : "";
+  });
+
+  socket.on("answerRevealed", (data) => {
+    showQuestionResult(data);
+  });
+
+  socket.on("answerHidden", () => {
+    clearQuestionResultTimer();
+    hideQuestionResult();
+    showPlayerLeaderboard();
+  });
+
+  socket.on("leaderboardUpdate", handlePlayerLeaderboardUpdate);
+  socket.on("playersUpdate", handlePlayerLeaderboardUpdate);
+
+  socket.on("quizEnded", (players) => {
+    clearQuestionResultTimer();
+    hideQuestionResult();
+    hidePlayerLeaderboard();
+    answersOpen = false;
+    disableAnswerButtons();
+    document.getElementById("question").innerText = "Quiz terminé !";
+    document.getElementById("status").innerText = "Merci d'avoir joué !";
+    renderPlayerPodium(players || []);
+  });
+
+  socket.on("quizFinished", (players) => {
+    renderPlayerPodium(players || []);
+  });
+}
+
+function answer(index, letter) {
+  if (!answersOpen || timerLocked || countdownActive) return;
+
+  hasAnswered = true;
+  selectedAnswerIndex = index;
+
+  socket.emit("submitAnswer", index);
+
+  disableAnswerButtons();
+  highlightSelectedAnswer(index);
+
+  document.getElementById("status").className = "";
+  document.getElementById("status").innerText = "Réponse envoyée : " + letter;
+}
+
+function handlePlayerLeaderboardUpdate(players) {
+  latestPlayers = players || [];
+
+  if (!playerLeaderboardReady) return;
+
+  const leaderboardOverlay = document.getElementById("playerLeaderboardOverlay");
+  const answerOverlay = document.getElementById("questionResultOverlay");
+  const shouldRender =
+    leaderboardOverlay?.classList.contains("visible") ||
+    answerOverlay?.classList.contains("visible");
+
+  if (shouldRender) {
+    renderPlayerLeaderboard(latestPlayers);
+  }
+}
+
+function renderPlayerPodium(players) {
+  const overlay = document.getElementById("podiumOverlay");
+  const content = document.getElementById("podiumContent");
+  if (!overlay || !content) return;
+
+  const sortedPlayers = [...players].sort((a, b) => {
+    return (b.score || 0) - (a.score || 0);
+  });
+
+  content.innerHTML = "";
+
+  if (sortedPlayers.length === 0) {
+    content.innerHTML = `<div class="podium-empty">Aucun joueur n'a participé</div>`;
+    overlay.classList.add("visible");
+    overlay.setAttribute("aria-hidden", "false");
+    return;
+  }
+
+  const podium = document.createElement("div");
+  podium.className = "podium";
+
+  const slots = [
+    { player: sortedPlayers[1], rank: 2, medal: "🥈" },
+    { player: sortedPlayers[0], rank: 1, medal: "🥇" },
+    { player: sortedPlayers[2], rank: 3, medal: "🥉" }
+  ];
+
+  slots.forEach((slot) => {
+    if (!slot.player) return;
+
+    const name = slot.player.name || "Joueur";
+    const score = slot.player.score || 0;
+    const el = document.createElement("div");
+    el.className = `podium-slot rank-${slot.rank}`;
+    el.innerHTML = `
+      <div class="podium-player">
+        <div class="podium-medal">${slot.medal}</div>
+        <div class="podium-name">${escapeHtml(name)}</div>
+        <div class="podium-score">${score} pt</div>
+      </div>
+      <div class="podium-block">${slot.rank}</div>
+    `;
+    podium.appendChild(el);
+  });
+
+  content.appendChild(podium);
+  overlay.classList.add("visible");
+  overlay.setAttribute("aria-hidden", "false");
+}
+
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function renderTimer(data) {
+  const duration = Number(data?.duration) || 30;
+  const remaining = Math.max(0, Number(data?.remaining) || 0);
+  const running = Boolean(data?.running);
+  const locked = Boolean(data?.locked);
+  const isUrgent = running && remaining > 0 && remaining <= 5 && !locked;
+  const color = isUrgent ? "#ff4d4d" : "#00d4ff";
+
+  const percent = duration > 0 ? (remaining / duration) * 100 : 0;
+  const timerCircle = document.getElementById("timerCircle");
+  const progressBar = document.getElementById("progressBar");
+  const timerStatus = document.getElementById("timerStatus");
+
+  document.getElementById("timerText").innerText = remaining;
+  progressBar.style.width = percent + "%";
+  timerCircle.style.background =
+    `conic-gradient(${color} ${percent}%, #444 ${percent}%)`;
+
+  timerCircle.classList.toggle("timer-urgent", isUrgent);
+  progressBar.classList.toggle("timer-urgent", isUrgent);
+  timerStatus.classList.toggle("timer-urgent", isUrgent);
+
+  timerStatus.className = "timer-status";
+
+  if (locked || remaining <= 0) {
+    timerStatus.innerText = "Temps terminé";
+    timerStatus.className = "timer-status locked";
+  } else if (isUrgent) {
+    timerStatus.innerText = "Dépêchez-vous !";
+    timerStatus.className = "timer-status timer-urgent";
+  } else if (running) {
+    timerStatus.innerText = "À vous de jouer !";
+  } else if (remaining < duration) {
+    timerStatus.innerText = "Chrono en pause";
+  } else {
+    timerStatus.innerText = "Prêt";
+  }
+}
+
+function highlightSelectedAnswer(index) {
+  buttons.forEach((id, i) => {
+    const btn = document.getElementById(id);
+    btn.classList.remove("answer-selected", "answer-correct", "answer-dim");
+    if (i === index) {
+      btn.classList.add("answer-selected");
+    }
+  });
+}
+
+function correctIndexesFromReveal(data) {
+  const list = Array.isArray(data?.correctIndexes) ? data.correctIndexes.map(Number) : [];
+  const clean = list.filter((index) => Number.isInteger(index) && index >= 0 && index <= 3);
+  if (clean.length) return clean;
+  const one = Number(data?.correctIndex);
+  return Number.isInteger(one) ? [one] : [];
+}
+
+function highlightRevealAnswer(correctIndexes) {
+  const accepted = Array.isArray(correctIndexes) ? correctIndexes : [Number(correctIndexes)];
+  buttons.forEach((id, i) => {
+    const btn = document.getElementById(id);
+    btn.classList.remove("answer-selected", "answer-correct", "answer-dim");
+
+    if (accepted.includes(i)) {
+      btn.classList.add("answer-correct");
+    } else if (selectedAnswerIndex === i) {
+      btn.classList.add("answer-selected");
+    } else {
+      btn.classList.add("answer-dim");
+    }
+  });
+}
+
+function clearRevealHighlight() {
+  buttons.forEach((id) => {
+    document.getElementById(id).classList.remove("answer-correct", "answer-dim");
+  });
+}
+
+function clearAnswerHighlight() {
+  buttons.forEach((id) => {
+    document.getElementById(id).classList.remove(
+      "answer-selected",
+      "answer-correct",
+      "answer-dim"
+    );
+  });
+}
+
+function disableAnswerButtons() {
+  buttons.forEach(id => {
+    document.getElementById(id).disabled = true;
+  });
+}
+
+function clearAnswers() {
+  answersOpen = false;
+  document.getElementById("a").innerText = "";
+  document.getElementById("b").innerText = "";
+  document.getElementById("c").innerText = "";
+  document.getElementById("d").innerText = "";
+
+  hasAnswered = false;
+  timerLocked = false;
+  selectedAnswerIndex = null;
+
+  clearAnswerHighlight();
+  disableAnswerButtons();
+}
+
+function handleCountdown(data) {
+  const overlay = document.getElementById("countdownOverlay");
+  const num = document.getElementById("countdownNumber");
+  if (!overlay || !num) return;
+
+  const value = Number(data?.value);
+
+  if (value === -1) {
+    countdownActive = false;
+    overlay.classList.add("hidden");
+    num.classList.remove("go");
+    return;
+  }
+
+  hidePlayerLeaderboard();
+  answersOpen = false;
+  countdownActive = true;
+  disableAnswerButtons();
+  overlay.classList.remove("hidden");
+
+  if (value === 0) {
+    num.textContent = "GO!";
+    num.classList.add("go");
+  } else {
+    num.textContent = String(value);
+    num.classList.remove("go");
+  }
+
+  num.style.animation = "none";
+  void num.offsetHeight;
+  num.style.animation = "";
+}
+
+(function initPlayerNameFromStorage() {
+  const saved = sessionStorage.getItem(PLAYER_NAME_KEY);
+  if (saved) {
+    document.getElementById("name").value = saved;
+  }
+})();
+
+wirePlayerSocket();
+</script>
+
+</body>
+</html>

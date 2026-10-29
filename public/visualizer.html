@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DJ Carl — Visualiseur SoundSwitch</title>
+  <link rel="stylesheet" href="/visualizer.css?v=gobo-free" />
+</head>
+<body>
+  <canvas id="stage"></canvas>
+  <div class="tip" id="lightTip" hidden></div>
+  <p class="view-hint" id="view3dHint" hidden>Glisser un objet pour le déplacer · vide = virer · clic droit = pan · R recentrer</p>
+
+  <div class="hud" id="hud">
+    <div class="hud-left">
+      <a
+        class="brand"
+        href="/"
+        data-home-confirm
+        data-home-confirm-message="Retourner à l'accueil ?&#10;&#10;Vous quittez le visualiseur lumière."
+      >DJ Carl</a>
+      <span class="hud-title">SoundSwitch</span>
+      <span class="status" id="status">Connexion…</span>
+    </div>
+    <div class="hud-right">
+      <div class="mode-switch" role="group" aria-label="Mode d'affichage">
+        <button type="button" id="modeRoom" class="mode-btn">Salle</button>
+        <button type="button" id="modeShow" class="mode-btn is-active">Spectacle</button>
+        <button type="button" id="mode3d" class="mode-btn">3D</button>
+      </div>
+      <button type="button" id="connectSsBtn" class="hud-btn hud-btn--accent">Connecter SS</button>
+      <button type="button" id="demoBtn" class="hud-btn">Démo</button>
+      <button type="button" id="patchBtn" class="hud-btn">Patch</button>
+      <button type="button" id="fsBtn" class="hud-btn hud-btn--accent">Plein écran</button>
+    </div>
+  </div>
+
+  <aside class="patch" id="patchPanel" hidden>
+    <div class="patch-head">
+      <div>
+        <h2>Patch DMX</h2>
+        <p id="patchCountHint">Doit correspondre à ton venue SoundSwitch.</p>
+      </div>
+      <button type="button" id="patchClose" class="hud-btn">Fermer</button>
+    </div>
+
+    <ol class="help">
+      <li>Dans SoundSwitch : engrenage → Matériel → activer <strong>Art-Net</strong>.</li>
+      <li>Même ordinateur : active aussi <strong>Art-Net vers localhost</strong>.</li>
+      <li>Sinon, envoie Art-Net vers l’IP de ce Mac (<strong id="localIp">…</strong>), port <strong>6454</strong>.</li>
+      <li>Si rien n’arrive : <strong>Connecter SS</strong> — pas besoin de redémarrer SoundSwitch.</li>
+      <li>Univers + adresses ici = ceux de tes fixtures dans SoundSwitch.</li>
+    </ol>
+
+    <label class="field">
+      <span>Nom du venue</span>
+      <input id="patchName" type="text" maxlength="60" />
+    </label>
+
+    <p class="patch-hint">Glisse une lumière pour la placer, le point pour la tourner. En 3D : glisse le vide pour tourner la salle. Glisse une carte pour l’ordre.</p>
+    <div class="patch-list" id="fixtureList"></div>
+
+    <div class="patch-actions">
+      <button type="button" id="addFixture" class="hud-btn">Ajouter un projecteur</button>
+      <button type="button" id="importSoundSwitch" class="hud-btn">Importer SoundSwitch</button>
+      <button type="button" id="resetPatch" class="hud-btn">Patch de base</button>
+      <button type="button" id="savePatch" class="hud-btn hud-btn--accent">Enregistrer</button>
+    </div>
+    <p class="patch-msg" id="patchMsg"></p>
+  </aside>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/visualizer.js?v=backdrop-upright"></script>
+  <script src="/home-confirm.js"></script>
+</body>
+</html>

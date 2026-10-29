@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chrono — Écran</title>
+<link rel="stylesheet" href="/chrono.css?v=8">
+</head>
+<body class="chrono-viewer is-idle">
+  <main class="chrono-stage">
+    <div class="chrono-face">
+      <p class="chrono-face-target" id="target">3,32</p>
+      <div class="chrono-face-body">
+        <p class="chrono-name" id="player"></p>
+        <p class="chrono-clock"><span id="clock">0,00</span><span class="chrono-unit">s</span></p>
+        <p class="chrono-delta" id="delta"></p>
+        <p class="chrono-judge" id="judge">Prêt</p>
+      </div>
+    </div>
+  </main>
+  <aside class="chrono-board" aria-label="Classement">
+    <h2>Classement</h2>
+    <ol id="ranks"></ol>
+  </aside>
+  <button type="button" class="chrono-fs" id="fullscreen">Plein écran</button>
+  <img class="chrono-logo" src="/logo-dj-carl.png" alt="" onerror="this.remove()">
+<script src="/socket.io/socket.io.js"></script>
+<script src="/chrono-shared.js?v=2"></script>
+<script src="/chrono-viewer.js?v=2"></script>
+</body>
+</html>

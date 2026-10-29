@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Manette">
+<meta name="theme-color" content="#070b14">
+<link rel="manifest" href="/ipad-manifest.webmanifest">
+<link rel="apple-touch-icon" href="/logo-dj-carl.png">
+<title>Manette</title>
+<style>
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #070b14;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+  body {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding:
+    max(10px, env(safe-area-inset-top))
+    max(12px, env(safe-area-inset-right))
+    max(12px, env(safe-area-inset-bottom))
+    max(12px, env(safe-area-inset-left));
+}
+button { font: inherit; touch-action: manipulation; }
+input { font: inherit; touch-action: auto; }
+button {
+  border: 0;
+  border-radius: 16px;
+  color: white;
+  background: #1e293b;
+  min-height: 52px;
+  padding: 10px 14px;
+}
+button:active { filter: brightness(1.25); }
+button:disabled { opacity: 0.45; }
+header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.tabs { display: flex; gap: 8px; flex: 1; }
+.tabs button { flex: 1; font-weight: 800; }
+.tabs button.is-on { background: #f5c518; color: #111; }
+#msg {
+  min-height: 1.2em;
+  margin: 0 0 8px;
+  color: #fca5a5;
+  font-weight: 700;
+}
+.scores { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.score {
+  border-radius: 16px;
+  padding: 10px 12px;
+  background: #123;
+}
+.score b { display: block; font-size: 28px; }
+.score.a { outline: 3px solid #3b82f6; }
+.score.b { outline: 3px solid #ef4444; }
+.score.is-on { outline-width: 5px; }
+.score.is-playing {
+  outline-color: white;
+  box-shadow: 0 0 18px #ffe56a;
+  animation: ipad-play-flash 0.9s ease-in-out infinite;
+}
+.score .vol-tag {
+  display: block;
+  margin-top: 4px;
+  color: #ffe56a;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+@keyframes ipad-play-flash {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.7); }
+}
+.feud-fit .status.is-vol {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 0.28em;
+  text-align: center;
+  color: white;
+  background: #b91c1c;
+  border-radius: 12px;
+  padding: 2px 8px;
+}
+.feud-fit .dock button.is-ready {
+  animation: ipad-next-flash 0.7s ease-in-out infinite;
+}
+@keyframes ipad-next-flash {
+  0%, 100% { filter: brightness(1); box-shadow: 0 0 0 0 white; }
+  50% { filter: brightness(1.4); box-shadow: 0 0 0 4px white; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .score.is-playing,
+  .feud-fit .dock button.is-ready { animation: none; }
+  .feud-fit .dock button.is-ready { outline: 3px solid white; }
+}
+.question {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #111827;
+  color: #ffe56a;
+  font-size: 20px;
+  font-weight: 800;
+}
+.status { margin: 8px 0; font-weight: 800; }
+.qcount { margin: 0 0 8px; font-size: 22px; font-weight: 800; color: #f5d76e; }
+.list { display: grid; gap: 8px; }
+.answer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  font-weight: 800;
+  background: #172033;
+}
+.answer small { color: #f5c518; font-size: 18px; }
+.answer.is-open { background: #14532d; }
+.limit { margin-top: 12px; }
+.limit > span { display: block; margin-bottom: 8px; font-weight: 800; }
+.limit-value {
+  flex: 1;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: #f5c518;
+  color: #111;
+  font-size: 28px;
+  font-weight: 900;
+}
+.row, .dock { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.row button, .dock button { flex: 1; }
+.dock { position: sticky; bottom: 0; background: #070b14; padding: 8px 0; }
+.bad { background: #b91c1c; font-weight: 900; }
+.good { background: #15803d; font-weight: 900; }
+.bad.is-on, .good.is-on { outline: 4px solid white; }
+.gold { background: #f5c518; color: #111; font-weight: 900; }
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+.cat {
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1437a8;
+  border-radius: 10px;
+  padding: 4px;
+}
+.cell { font-weight: 900; font-size: 18px; background: #1d4ed8; }
+.cell.is-used { background: #0f172a; color: #475569; }
+.clue { font-size: 22px; font-weight: 800; line-height: 1.25; }
+.answer-line { color: #86efac; font-size: 20px; font-weight: 800; }
+.teams { display: grid; gap: 4px; }
+.team { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.rank {
+  font-size: 28px;
+  font-weight: 900;
+  color: #f5c518;
+  min-width: 36px;
+}
+button.rank {
+  min-height: 36px;
+  padding: 0 4px;
+  background: transparent;
+  color: #f5c518;
+}
+.who {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: 10px;
+  min-width: 0;
+  background: transparent;
+  color: white;
+  text-align: left;
+  padding: 2px 6px;
+}
+input.who-name {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+  background: transparent;
+  color: white;
+  border: 0;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 0;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  padding: 4px 0;
+}
+.who strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.who b { font-size: 22px; margin-left: 8px; }
+body.is-jep .team button { min-height: 36px; padding: 4px 10px; }
+.team.is-on { outline: 3px solid #f5c518; border-radius: 16px; }
+#volume-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 35;
+  padding: 10px max(12px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  background: #0b1220;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.45);
+}
+label.vol {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #e2e8f0;
+}
+label.vol input {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  accent-color: #f5c518;
+  height: 44px;
+}
+body:not(.is-chrono) #app {
+  padding-bottom: 76px;
+}
+#full, #restart, #keyboard-btn { min-height: 44px; padding: 8px 12px; font-size: 14px; font-weight: 800; }
+#keyboard-bar {
+  display: none;
+  gap: 8px;
+  align-items: center;
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: #111827;
+}
+#keyboard-bar.is-open { display: flex; }
+#keyboard-bar input {
+  flex: 1;
+  min-height: 44px;
+  border: 0;
+  border-radius: 12px;
+  padding: 8px 12px;
+  background: #1e293b;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+}
+#keyboard-bar button { min-height: 44px; flex-shrink: 0; }
+body.is-chrono {
+  height: 100dvh;
+  overflow: hidden;
+}
+body.is-chrono #volume-bar,
+body.is-chrono #keyboard-btn { display: none; }
+body.is-chrono #app {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+.chrono-frame {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  height: 100%;
+  border: 0;
+  border-radius: 18px;
+  background: #070b14;
+}
+body.is-jep {
+  height: 100dvh;
+}
+body.is-jep #app {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+body.has-mise #app { padding-bottom: 556px; overflow: auto; }
+body.is-feud {
+  height: 100dvh;
+  overflow: hidden;
+}
+body.is-feud header { margin-bottom: 6px; gap: 6px; }
+body.is-feud header button,
+body.is-feud .tabs button {
+  min-height: 36px;
+  padding: 4px 8px;
+  font-size: 13px;
+}
+body.is-feud #msg:empty { display: none; }
+body.is-feud #app {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: 52px;
+}
+body.is-feud #volume-bar {
+  padding-top: 4px;
+  padding-bottom: max(4px, env(safe-area-inset-bottom));
+}
+body.is-feud label.vol { font-size: 13px; gap: 8px; }
+body.is-feud label.vol input { height: 28px; }
+.feud-fit {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.feud-fit .status {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.2;
+}
+.feud-fit .score { padding: 6px 10px; }
+.feud-fit .score b { font-size: 22px; line-height: 1; }
+.feud-fit .score .vol-tag { margin-top: 2px; font-size: 16px; }
+.feud-fit .scores,
+.feud-fit .question,
+.feud-fit .status,
+.feud-fit .limit,
+.feud-fit .dock,
+.feud-fit .row { flex: 0 0 auto; }
+.feud-fit .question {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: clamp(24px, 3.6vh, 34px);
+  line-height: 1.2;
+  max-height: 2.8em;
+  overflow: hidden;
+}
+.feud-fit .list {
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: 4px;
+  grid-auto-rows: minmax(0, 1fr);
+}
+.feud-fit .answer {
+  min-height: 0;
+  height: 100%;
+  align-items: center;
+  padding: 4px 10px;
+  font-size: 15px;
+}
+.feud-fit .answer small { font-size: 15px; }
+.feud-fit .row { margin-top: 0; }
+.feud-fit .limit {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.feud-fit .limit > span {
+  margin: 0;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.feud-fit .limit .row { flex: 1; }
+.feud-fit .limit button,
+.feud-fit .limit-value { min-height: 36px; }
+.feud-fit .limit-value { font-size: 20px; }
+.feud-fit .dock {
+  margin: 0;
+  flex-wrap: nowrap;
+}
+.feud-fit .dock button,
+.feud-fit .row button {
+  min-height: 40px;
+  padding: 4px 8px;
+  font-size: clamp(11px, 1.5vw, 15px);
+  white-space: nowrap;
+}
+body.is-jep .board {
+  flex: 1;
+  min-height: 280px;
+  grid-template-rows: auto repeat(5, minmax(42px, 1fr));
+}
+body.is-jep .cell { height: 100%; }
+#mise-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 76px;
+  z-index: 40;
+  display: grid;
+  gap: 8px;
+  max-height: 100dvh;
+  overflow: auto;
+  padding: 12px max(12px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+  background: #0b1220;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.45);
+}
+#mise-bar[hidden] { display: none; }
+.mise-readout {
+  min-height: 64px;
+  margin: 0;
+  border-radius: 16px;
+  background: white;
+  color: #111;
+  font-size: 36px;
+  font-weight: 900;
+  text-align: center;
+  line-height: 64px;
+}
+.mise-who { display: flex; gap: 8px; }
+.mise-who button { flex: 1; min-height: 48px; font-size: 14px; }
+.pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.pad button { font-size: 26px; font-weight: 900; min-height: 46px; }
+#mise-bar .mise-ok { min-height: 56px; font-size: 22px; }
+.mise-error { margin: 0; min-height: 0; color: #fca5a5; font-weight: 800; }
+.mise-error:empty { display: none; }
+#usb-hint {
+  font-size: 12px;
+  font-weight: 800;
+  color: #86efac;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(34, 197, 94, 0.15);
+  white-space: nowrap;
+}
+#usb-capture {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  z-index: 0;
+  caret-color: transparent;
+}
+#usb-hint[hidden] { display: none; }
+.chanson-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+.chanson-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.chanson-col-score {
+  border-radius: 16px;
+  padding: 10px 12px;
+  text-align: center;
+  font-weight: 800;
+}
+.chanson-col-score b {
+  display: block;
+  font-size: 36px;
+  margin-top: 4px;
+}
+.chanson-col-red .chanson-col-score {
+  background: rgba(185, 28, 28, 0.25);
+  outline: 3px solid #ef4444;
+}
+.chanson-col-blue .chanson-col-score {
+  background: rgba(29, 78, 216, 0.25);
+  outline: 3px solid #3b82f6;
+}
+.chanson-col-score.is-on { outline-width: 5px; }
+.chanson-buzzer-red,
+.chanson-buzzer-blue {
+  min-height: 104px;
+  border: 0;
+  border-radius: 16px;
+  color: white;
+  font-size: 18px;
+  font-weight: 900;
+  touch-action: manipulation;
+}
+.chanson-buzzer-red {
+  background: linear-gradient(180deg, #ef4444, #991b1b);
+}
+.chanson-buzzer-blue {
+  background: linear-gradient(180deg, #3b82f6, #1e3a8a);
+}
+.chanson-buzzer-red.is-on,
+.chanson-buzzer-blue.is-on {
+  outline: 4px solid white;
+  filter: brightness(1.12);
+}
+.chanson-pt-red,
+.chanson-pt-blue {
+  min-height: 52px;
+  border: 0;
+  border-radius: 14px;
+  font-size: 28px;
+  font-weight: 900;
+  color: white;
+  touch-action: manipulation;
+}
+.chanson-pt-red {
+  background: rgba(239, 68, 68, 0.38);
+}
+.chanson-pt-blue {
+  background: rgba(59, 130, 246, 0.38);
+}
+.chanson-timer {
+  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: #111827;
+  font-size: 28px;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+.chanson-timer[hidden] { display: none; }
+.chanson-section { margin: 10px 0 4px; font-size: 13px; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
+.chanson-tools button { min-height: 48px; font-size: 15px; font-weight: 800; }
+#usb-hint.is-flash { animation: usbFlash 0.35s ease; }
+@keyframes usbFlash {
+  from { background: rgba(34, 197, 94, 0.55); transform: scale(1.05); }
+  to { background: rgba(34, 197, 94, 0.15); transform: scale(1); }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="tabs">
+    <button type="button" id="tab-chanson">Chanson</button>
+    <button type="button" id="tab-feud">Famille en or</button>
+    <button type="button" id="tab-jep">Jeopardy</button>
+    <button type="button" id="tab-chrono">Chrono</button>
+  </div>
+  <button type="button" id="restart" hidden>Recommencer</button>
+  <button type="button" id="full">Plein écran</button>
+  <button type="button" id="keyboard-btn" title="Afficher le clavier">Clavier</button>
+  <span id="usb-hint" hidden aria-live="polite">USB</span>
+</header>
+<p id="msg"></p>
+<input id="usb-capture" type="text" readonly tabindex="-1" aria-hidden="true" autocomplete="off">
+<div id="keyboard-bar" hidden>
+  <input id="keyboard-focus" type="text" inputmode="numeric" enterkeyhint="done" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Saisie clavier">
+  <button type="button" id="keyboard-close">Fermer</button>
+</div>
+<main id="app"></main>
+<div id="mise-bar" hidden></div>
+<div id="volume-bar" aria-label="Volume du spectacle">
+  <label class="vol">Volume <input id="vol" type="range" min="0" max="100" step="5" value="100" aria-label="Volume"></label>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/feud-sounds.js?v=arm1"></script>
+<script>
+const app = document.getElementById("app");
+const msg = document.getElementById("msg");
+const vol = document.getElementById("vol");
+const socket = io();
+let mode = sessionStorage.getItem("ipad-mode") || "feud";
+let feud = null;
+let jep = null;
+let chanson = null;
+let busy = false;
+let lastTouch = 0;
+let misePhase = "";
+let miseValues = [];
+let miseIndex = 0;
+let showLevel = 1;
+
+function storedVolume() {
+  const raw = localStorage.getItem("ipad-volume");
+  if (raw == null) return localStorage.getItem("ipad-sound") === "0" ? 0 : 1;
+  const n = Number(raw);
+  return Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 1;
+}
+
+function pushVolume(level) {
+  socket.emit("setShowVolume", { level });
+  socket.emit("setShowSound", { on: level > 0 });
+}
+
+function applyVolume(level, persist) {
+  showLevel = level;
+  vol.value = String(Math.round(level * 100));
+  if (window.FeudSounds && FeudSounds.setVolume) FeudSounds.setVolume(level);
+  if (level <= 0) silenceHere();
+  if (persist) localStorage.setItem("ipad-volume", String(level));
+  pushVolume(level);
+}
+
+vol.addEventListener("input", () => {
+  applyVolume(Number(vol.value) / 100, true);
+});
+
+applyVolume(storedVolume(), false);
+
+function silenceHere() {
+  if (window.FeudSounds) FeudSounds.stop();
+}
+
+function setMsg(text) {
+  msg.textContent = text || "";
+  const local = document.getElementById("mise-error");
+  if (local) local.textContent = text || "";
+}
+
+function send(name, payload) {
+  if (busy) return;
+  busy = true;
+  socket.emit(name, payload || {}, (res) => {
+    busy = false;
+    if (!res || !res.ok) setMsg((res && res.error) || "Action refusée.");
+    else setMsg("");
+  });
+  setTimeout(() => { busy = false; }, 2500);
+}
+
+/** Commande vers l’ordinateur principal — jamais de son sur la tablette. */
+function sendRemote(name, payload) {
+  if (busy) return;
+  busy = true;
+  socket.emit(name, payload || {}, (res) => {
+    busy = false;
+    if (!res || !res.ok) setMsg((res && res.error) || "Action refusée.");
+    else setMsg("");
+  });
+  setTimeout(() => { busy = false; }, 2500);
+}
+
+function isFullscreen() {
+  return !!(document.fullscreenElement || document.webkitFullscreenElement);
+}
+
+function requestFull(el) {
+  const req = el.requestFullscreen || el.webkitRequestFullScreen || el.webkitRequestFullscreen;
+  if (!req) return;
+  try {
+    const pending = req.call(el);
+    if (pending && pending.catch) pending.catch(() => {});
+  } catch (error) { /* iPad refuse l’argument ou l’élément */ }
+}
+
+function enterFullscreen() {
+  if (isFullscreen()) {
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.webkitCancelFullScreen;
+    if (!exit) return;
+    try {
+      const pending = exit.call(document);
+      if (pending && pending.catch) pending.catch(() => {});
+    } catch (error) { /* déjà sorti */ }
+    return;
+  }
+  requestFull(document.documentElement);
+}
+
+function syncFullscreenButton() {
+  document.getElementById("full").hidden = isFullscreen();
+}
+
+function h(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text != null) node.textContent = text;
+  return node;
+}
+
+function press(node, run) {
+  node.addEventListener("pointerdown", (event) => {
+    if (event.button !== 0 || node.disabled) return;
+    const now = Date.now();
+    if (event.pointerType === "mouse" && now - lastTouch < 700) return;
+    if (event.pointerType === "touch") lastTouch = now;
+    if (window.FeudSounds) FeudSounds.unlock();
+    run();
+    event.preventDefault();
+  });
+}
+
+const usbCapture = document.getElementById("usb-capture");
+
+function isTypingTarget() {
+  const el = document.activeElement;
+  if (!el) return false;
+  if (el === usbCapture) return false;
+  const tag = el.tagName;
+  return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+}
+
+function focusUsbCapture() {
+  if (mode === "chrono") return;
+  const bar = document.getElementById("keyboard-bar");
+  if (bar && bar.classList.contains("is-open")) return;
+  const el = document.activeElement;
+  if (el && el !== usbCapture) {
+    const tag = el.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+  }
+  try {
+    usbCapture.focus({ preventScroll: true });
+  } catch (error) { /* Safari */ }
+}
+
+function miseBarOpen() {
+  const g = jep;
+  return mode === "jeopardy" && g && (g.phase === "wager" || g.phase === "finale-wager");
+}
+
+function typeMiseDigit(key) {
+  if (!miseBarOpen()) return;
+  let cur = miseValues[miseIndex] || "";
+  if (key === "C") cur = "";
+  else if (key === "←") cur = cur.slice(0, -1);
+  else if (/^[0-9]$/.test(key) && cur.length < 6) cur += key;
+  miseValues[miseIndex] = cur;
+  const readout = document.querySelector("#mise-bar .mise-readout");
+  if (readout) readout.textContent = cur || "0";
+}
+
+let usbHintTimer = null;
+function flashUsbKey(label) {
+  const el = document.getElementById("usb-hint");
+  if (!el) return;
+  el.hidden = false;
+  el.textContent = `USB · ${label}`;
+  el.classList.remove("is-flash");
+  void el.offsetWidth;
+  el.classList.add("is-flash");
+  clearTimeout(usbHintTimer);
+  usbHintTimer = setTimeout(() => { el.hidden = true; }, 1400);
+}
+
+/** Nouvelle question : le premier buzzer bloque l'autre jusqu'à la réponse. */
+function feudBuzzLocked(team) {
+  const face = feud && feud.faceoff;
+  if (!face || !face.turn || face.turn === team) return false;
+  return feud.phase === "faceoff" && face.a == null && face.b == null;
+}
+
+function actFeudFaceoffTeam(team) {
+  const g = feud;
+  if (!g || mode !== "feud") return false;
+  if (g.phase !== "faceoff" || g.faceoff?.a != null || g.faceoff?.b != null) return false;
+  if (feudBuzzLocked(team)) return false;
+  send("feudFaceoffTurn", { team });
+  return true;
+}
+
+function actChansonRemote(action, extra) {
+  if (mode !== "chanson") return false;
+  sendRemote("chansonRemote", { action, ...(extra || {}) });
+  return true;
+}
+
+function actChansonBuzz(side) {
+  return actChansonRemote("buzz", { side });
+}
+
+/** Buzz Jeopardy — même logique que le bouton équipe (nom + score). */
+function actJeopardyTeamPress(index) {
+  const g = jep;
+  if (!g || mode !== "jeopardy") return false;
+  if (!g.teams[index]) return false;
+  const roundOver = g.phase === "board" && g.boardDone;
+  const ranking = !!g.rankingOn && !roundOver && g.phase !== "title" && g.phase !== "winner";
+  if (roundOver || ranking) return false;
+  const openFloor = g.phase === "clue" && g.respondent == null && g.clue && !g.clue.resolved;
+  if (openFloor) send("jeopardyBuzz", { index });
+  else send("jeopardySetControl", { index });
+  return true;
+}
+
+function physicalBuzzKeyFromEvent(event) {
+  if (event.key === "1" || event.code === "Digit1" || event.code === "Numpad1") return "1";
+  if (event.key === "2" || event.code === "Digit2" || event.code === "Numpad2") return "2";
+  return "";
+}
+
+function handlePhysicalBuzzKey(label) {
+  if (miseBarOpen()) {
+    typeMiseDigit(label);
+    flashUsbKey(label);
+    return;
+  }
+  if (mode === "chrono") return;
+  if (mode === "chanson") {
+    if (label === "1") actChansonBuzz("red");
+    else actChansonBuzz("blue");
+  } else if (mode === "feud") {
+    if (label === "1") actFeudFaceoffTeam("a");
+    else actFeudFaceoffTeam("b");
+  } else if (label === "1") actJeopardyTeamPress(0);
+  else actJeopardyTeamPress(1);
+  flashUsbKey(label);
+}
+
+function onPhysicalBuzzKeydown(event) {
+  if (event.metaKey || event.ctrlKey || event.altKey) return;
+  if (event.repeat) return;
+  if (event.target !== usbCapture && event.target !== keyboardFocus && isTypingTarget()) return;
+  const label = physicalBuzzKeyFromEvent(event);
+  if (!label) return;
+  event.preventDefault();
+  if (mode !== "chanson" && window.FeudSounds) FeudSounds.unlock();
+  handlePhysicalBuzzKey(label);
+  event.stopPropagation();
+}
+
+document.getElementById("tab-chanson").addEventListener("click", () => select("chanson"));
+document.getElementById("tab-feud").addEventListener("click", () => select("feud"));
+document.getElementById("tab-jep").addEventListener("click", () => select("jeopardy"));
+document.getElementById("tab-chrono").addEventListener("click", () => select("chrono"));
+
+function select(next) {
+  mode = next;
+  sessionStorage.setItem("ipad-mode", next);
+  document.getElementById("tab-chanson").classList.toggle("is-on", next === "chanson");
+  document.getElementById("tab-feud").classList.toggle("is-on", next === "feud");
+  document.getElementById("tab-jep").classList.toggle("is-on", next === "jeopardy");
+  document.getElementById("tab-chrono").classList.toggle("is-on", next === "chrono");
+  document.body.classList.toggle("is-chrono", next === "chrono");
+  if (next === "chanson") socket.emit("joinChansonRemote");
+  render();
+  if (next === "chrono" && document.activeElement === usbCapture) usbCapture.blur();
+  else focusUsbCapture();
+}
+
+socket.emit("joinFeudHost", (state) => { feud = state; render(); });
+socket.emit("joinJeopardyHost", (state) => { jep = state; render(); });
+socket.emit("joinChansonRemote");
+socket.on("feudHostState", (state) => {
+  feud = state;
+  if (mode !== "chrono") render();
+});
+socket.on("jeopardyHostState", (state) => {
+  jep = state;
+  if (mode !== "chrono") render();
+});
+socket.on("chansonState", (state) => {
+  chanson = state;
+  if (mode === "chanson") applyChansonPanel();
+});
+socket.on("disconnect", () => setMsg("Connexion coupée. Reste sur le même Wi-Fi."));
+
+function buildChansonPanel() {
+  const root = h("div", "");
+  root.dataset.chansonRoot = "1";
+  root.append(h("p", "status", "Comme la console animateur — commandes et son sur l’ordinateur."));
+
+  const columns = h("div", "chanson-columns");
+
+  const colRed = h("div", "chanson-col chanson-col-red");
+  const scoreL = h("div", "chanson-col-score");
+  scoreL.id = "chanson-score-l";
+  scoreL.append(h("span", "", "Rouge · 1"), h("b", "", "0"));
+  const buzzRed = h("button", "chanson-buzzer-red", "Buzzer rouge");
+  buzzRed.type = "button";
+  press(buzzRed, () => actChansonBuzz("red"));
+  const lMinus = h("button", "chanson-pt-red", "−");
+  lMinus.type = "button";
+  const lPlus = h("button", "chanson-pt-red", "+");
+  lPlus.type = "button";
+  press(lMinus, () => actChansonRemote("score", { side: "left", delta: -1 }));
+  press(lPlus, () => actChansonRemote("score", { side: "left", delta: 1 }));
+  colRed.append(scoreL, buzzRed, lMinus, lPlus);
+
+  const colBlue = h("div", "chanson-col chanson-col-blue");
+  const scoreR = h("div", "chanson-col-score");
+  scoreR.id = "chanson-score-r";
+  scoreR.append(h("span", "", "Bleu · 2"), h("b", "", "0"));
+  const buzzBlue = h("button", "chanson-buzzer-blue", "Buzzer bleu");
+  buzzBlue.type = "button";
+  press(buzzBlue, () => actChansonBuzz("blue"));
+  const rMinus = h("button", "chanson-pt-blue", "−");
+  rMinus.type = "button";
+  const rPlus = h("button", "chanson-pt-blue", "+");
+  rPlus.type = "button";
+  press(rMinus, () => actChansonRemote("score", { side: "right", delta: -1 }));
+  press(rPlus, () => actChansonRemote("score", { side: "right", delta: 1 }));
+  colBlue.append(scoreR, buzzBlue, rMinus, rPlus);
+
+  columns.append(colRed, colBlue);
+  root.append(columns);
+
+  root.append(h("p", "chanson-section", "Timer"));
+  const timerReadout = h("p", "chanson-timer", "00:00.0");
+  timerReadout.id = "chanson-timer";
+  timerReadout.hidden = true;
+  root.append(timerReadout);
+  const timerRow = h("div", "row chanson-tools");
+  const btnTimer = h("button", "", "⏱ Timer");
+  btnTimer.id = "chanson-btn-timer";
+  press(btnTimer, () => actChansonRemote("timerToggle"));
+  const btnChrono = h("button", "gold", "Start / Stop");
+  btnChrono.id = "chanson-btn-chrono";
+  press(btnChrono, () => actChansonRemote("timerStartStop"));
+  const btnTimerReset = h("button", "", "Reset chrono");
+  press(btnTimerReset, () => actChansonRemote("timerReset"));
+  timerRow.append(btnTimer, btnChrono, btnTimerReset);
+  root.append(timerRow);
+
+  root.append(h("p", "chanson-section", "Jeu"));
+  const gameRow = h("div", "row chanson-tools");
+  const btnWheel = h("button", "", "🎡 Roue");
+  btnWheel.id = "chanson-btn-wheel";
+  press(btnWheel, () => actChansonRemote("wheelToggle"));
+  const btnAmb = h("button", "gold", "Ambiance");
+  press(btnAmb, () => actChansonRemote("ambiance"));
+  const btnFinale = h("button", "", "Finale");
+  press(btnFinale, () => actChansonRemote("finale"));
+  const btnReset = h("button", "bad", "Reset (0)");
+  press(btnReset, () => {
+    if (window.confirm("Remettre scores et jeu à zéro sur l’ordinateur ?")) actChansonRemote("reset");
+  });
+  gameRow.append(btnWheel, btnAmb);
+  root.append(gameRow);
+  const gameRow2 = h("div", "row chanson-tools");
+  gameRow2.append(btnFinale, btnReset);
+  root.append(gameRow2);
+
+  return root;
+}
+
+function applyChansonPanel() {
+  const g = chanson;
+  const scoreL = document.getElementById("chanson-score-l");
+  const scoreR = document.getElementById("chanson-score-r");
+  if (!scoreL || !scoreR) return;
+  if (!g) {
+    scoreL.querySelector("b").textContent = "0";
+    scoreR.querySelector("b").textContent = "0";
+    return;
+  }
+  scoreL.querySelector("b").textContent = String(g.lScore ?? 0);
+  scoreR.querySelector("b").textContent = String(g.rScore ?? 0);
+  scoreL.classList.toggle("is-on", g.selected === "red");
+  scoreR.classList.toggle("is-on", g.selected === "blue");
+  const buzzRedBtn = document.querySelector(".chanson-buzzer-red");
+  const buzzBlueBtn = document.querySelector(".chanson-buzzer-blue");
+  if (buzzRedBtn) buzzRedBtn.classList.toggle("is-on", g.selected === "red");
+  if (buzzBlueBtn) buzzBlueBtn.classList.toggle("is-on", g.selected === "blue");
+  const timerEl = document.getElementById("chanson-timer");
+  if (timerEl) {
+    timerEl.hidden = !g.timerEnabled;
+    timerEl.textContent = g.timerText || "00:00.0";
+  }
+  const btnTimer = document.getElementById("chanson-btn-timer");
+  if (btnTimer) btnTimer.classList.toggle("gold", !!g.timerEnabled);
+  const btnWheel = document.getElementById("chanson-btn-wheel");
+  if (btnWheel) btnWheel.classList.toggle("gold", !!g.wheelEnabled);
+  const btnChrono = document.getElementById("chanson-btn-chrono");
+  if (btnChrono) {
+    btnChrono.classList.toggle("is-on", !!g.timerRunning);
+    btnChrono.disabled = !g.timerEnabled;
+  }
+}
+
+function renderChanson() {
+  if (!app.querySelector("[data-chanson-root]")) {
+    app.replaceChildren(buildChansonPanel());
+  }
+  applyChansonPanel();
+}
+
+function renderChrono() {
+  if (app.querySelector(".chrono-frame")) return;
+  const frame = document.createElement("iframe");
+  frame.className = "chrono-frame";
+  frame.src = "/chrono/host?embed=1";
+  frame.title = "Chrono";
+  app.replaceChildren(frame);
+}
+
+function render() {
+  document.body.classList.toggle("is-jep", mode === "jeopardy");
+  document.body.classList.toggle("is-feud", mode === "feud");
+  document.body.classList.toggle("is-chrono", mode === "chrono");
+  if (mode !== "chrono") app.replaceChildren();
+  if (mode === "chanson") renderChanson();
+  else if (mode === "feud") renderFeud();
+  else if (mode === "chrono") renderChrono();
+  else renderJeopardy();
+  renderMise();
+  const restart = document.getElementById("restart");
+  restart.hidden = mode !== "jeopardy" || !jep || jep.phase === "title";
+}
+
+function renderFeud() {
+  if (!feud) {
+    app.append(h("p", "status", "Connexion à Famille en or…"));
+    return;
+  }
+  const g = feud;
+  const fit = h("div", "feud-fit");
+  const status = h("p", `status${g.phase === "steal" ? " is-vol" : ""}`, feudStatus(g));
+  fit.append(status);
+  const playing = feudPlayingTeam(g);
+  const thief = feudStealTeam(g);
+  const scores = h("div", "scores");
+  ["a", "b"].forEach((id) => {
+    const card = h("div", `score ${id}${playing === id ? " is-on is-playing" : ""}`);
+    card.append(h("span", "", g.teams[id].name));
+    card.append(h("b", "", String(g.teams[id].score)));
+    if (thief === id) card.append(h("span", "vol-tag", "VOL"));
+    scores.append(card);
+  });
+  fit.append(scores);
+  if (g.question) {
+    const pot = g.phase === "play" || g.phase === "steal" || g.phase === "result" ? ` · ${g.roundPoints} pts` : "";
+    fit.append(h("div", "question", `${g.questionIndex + 1}/${g.questionCount} ${g.question.text}${pot}`));
+  }
+  if (g.phase === "faceoff" && g.faceoff?.a == null && g.faceoff?.b == null) {
+    const turn = g.faceoff?.turn;
+    const pick = h("div", "row");
+    const one = h("button", `good${turn === "a" ? " is-on" : ""}`, `1 — ${g.teams.a.name}`);
+    const two = h("button", `bad${turn === "b" ? " is-on" : ""}`, `2 — ${g.teams.b.name}`);
+    one.disabled = feudBuzzLocked("a");
+    two.disabled = feudBuzzLocked("b");
+    press(one, () => actFeudFaceoffTeam("a"));
+    press(two, () => actFeudFaceoffTeam("b"));
+    pick.append(one, two);
+    fit.append(pick);
+  }
+  if (g.question && g.phase !== "title" && g.phase !== "done") {
+    const list = h("div", "list");
+    g.question.answers.forEach((answer, index) => {
+      const row = h("button", `answer${answer.revealed ? " is-open" : ""}`);
+      row.append(h("span", "", `${index + 1}. ${answer.text}`));
+      row.append(h("small", "", String(answer.points)));
+      if (!answer.revealed && (g.phase === "play" || g.phase === "steal" || (g.phase === "faceoff" && g.faceoff?.turn))) {
+        press(row, () => {
+          if (g.phase === "faceoff") send("feudFaceoffPick", { team: g.faceoff.turn, index }, "reveal");
+          else send("feudReveal", { index }, "reveal");
+        });
+      } else row.disabled = true;
+      list.append(row);
+    });
+    fit.append(list);
+  }
+  fit.append(questionLimitControl(g));
+  const dock = h("div", "dock");
+  if (g.phase === "title") {
+    const start = h("button", "gold", "Lancer la partie");
+    press(start, () => send("feudStart"));
+    const change = h("button", "", "Changer de partie");
+    press(change, () => {
+      const pack = g.pack || {};
+      const next = pack.nextName || "la suivante";
+      if (!window.confirm(`Changer pour la partie « ${next} » ?`)) return;
+      send("feudStartNextPack");
+    });
+    dock.append(start, change);
+  } else if (g.phase === "done") {
+    const quiet = h("button", "", "Couper l'ovation");
+    press(quiet, () => {
+      if (window.FeudSounds) FeudSounds.stop();
+      send("feudSilence");
+    });
+    dock.append(quiet, nextPackButton(g), restartMatchButton());
+  } else {
+    if ((g.phase === "faceoff" && g.faceoff?.turn) || g.phase === "play") {
+      const miss = h("button", "bad", "Mauvaise réponse");
+      press(miss, () => {
+        if (g.phase === "faceoff") send("feudFaceoffMiss", { team: g.faceoff.turn }, "strike");
+        else send("feudStrike", {}, "strike");
+      });
+      dock.append(miss);
+    }
+    if (g.phase === "play" && g.roundPoints > 0) {
+      const bank = h("button", "good", "Donner les points");
+      press(bank, () => send("feudBank", {}, "award"));
+      dock.append(bank);
+    }
+    if (g.phase === "steal") {
+      const missed = h("button", "bad", "Raté");
+      press(missed, () => send("feudStealMiss", {}, "steal-miss"));
+      dock.append(missed);
+    }
+    if (g.strikes > 0 && g.phase === "play") {
+      const undo = h("button", "", "Retirer un X");
+      press(undo, () => send("feudUndoStrike"));
+      dock.append(undo);
+    }
+    const nextLabel = g.questionIndex >= g.questionCount - 1 ? "Voir le gagnant" : "Question suivante";
+    const next = h("button", `gold${g.phase === "result" ? " is-ready" : ""}`, nextLabel);
+    press(next, () => send("feudNext", {}, g.questionIndex >= g.questionCount - 1 ? "done" : ""));
+    dock.append(next);
+    const replay = h("button", "", "Rejouer la question");
+    press(replay, () => send("feudReplayRound"));
+    dock.append(replay, restartMatchButton());
+  }
+  fit.append(dock);
+  app.append(fit);
+}
+
+function questionLimitControl(g) {
+  const total = (g.questions || []).length || g.questionCount;
+  const wrap = h("div", "limit");
+  wrap.append(h("span", "", "Nombre de questions"));
+  const row = h("div", "row");
+  const minus = h("button", "", "−");
+  const plus = h("button", "", "+");
+  minus.disabled = g.questionCount <= 1;
+  plus.disabled = g.questionCount >= total;
+  press(minus, () => send("feudSetQuestionLimit", { count: g.questionCount - 1 }));
+  press(plus, () => send("feudSetQuestionLimit", { count: g.questionCount + 1 }));
+  row.append(minus, h("div", "limit-value", String(g.questionCount)), plus);
+  wrap.append(row);
+  return wrap;
+}
+
+function feudPlayingTeam(g) {
+  if (g.phase === "play") return g.control;
+  if (g.phase === "faceoff") return g.faceoff && g.faceoff.turn;
+  if (g.phase === "steal") return feudStealTeam(g);
+  return null;
+}
+
+function feudStealTeam(g) {
+  if (g.phase !== "steal" || !g.control) return null;
+  return g.control === "a" ? "b" : "a";
+}
+
+function nextPackButton(g) {
+  const again = h("button", "gold is-ready", "Autre partie");
+  press(again, () => {
+    const pack = g.pack || {};
+    const next = pack.nextName || "la suivante";
+    const last = (pack.index || 0) + 1 >= (pack.count || 5);
+    const note = last
+      ? `Les 5 parties sont faites. Recommencer avec d'autres questions : « ${next} » ?`
+      : `Faire une autre partie avec d'autres questions ?\n\n${next}`;
+    if (!window.confirm(note)) return;
+    if (window.FeudSounds) FeudSounds.stop();
+    socket.emit("feudSilence", {}, () => {
+      socket.emit("feudStartNextPack", {}, (res) => {
+        if (!res || !res.ok) setMsg((res && res.error) || "Action refusée.");
+      });
+    });
+  });
+  return again;
+}
+
+function restartMatchButton() {
+  const again = h("button", "gold", "Recommencer la partie");
+  press(again, () => {
+    if (!window.confirm("Recommencer la partie ? Les scores repartent à zéro.")) return;
+    if (window.FeudSounds) FeudSounds.stop();
+    socket.emit("feudSilence", {}, () => {
+      socket.emit("feudStart", {}, (res) => {
+        if (!res || !res.ok) setMsg((res && res.error) || "Action refusée.");
+      });
+    });
+  });
+  return again;
+}
+
+function feudStatus(g) {
+  if (g.phase === "title") {
+    const pack = g.pack;
+    const label = pack ? `Partie ${(pack.index || 0) + 1}/${pack.count} · ${pack.name}. ` : "";
+    return `${label}Partie de ${g.questionCount} questions.`;
+  }
+  if (g.phase === "faceoff") {
+    const turn = g.faceoff && g.faceoff.turn;
+    if (!turn) return "Choisis qui répond en premier.";
+    const other = turn === "a" ? "b" : "a";
+    const reply = g.faceoff[turn] == null && g.faceoff[other] != null;
+    return reply ? `Droit de réplique : ${g.teams[turn].name}` : `${g.teams[turn].name} répond`;
+  }
+  if (g.phase === "play" && g.control) return `${g.teams[g.control].name} joue · ${g.strikes} X`;
+  if (g.phase === "steal") return "VOL";
+  if (g.phase === "result" && g.roundWinner) return `${g.teams[g.roundWinner].name} remporte la manche.`;
+  if (g.phase === "done") {
+    const next = g.pack && g.pack.nextName ? ` Une autre partie : ${g.pack.nextName} ?` : "";
+    if (!g.leader) return `Égalité.${next}`;
+    return `${g.teams[g.leader].name} gagne la partie.${next}`;
+  }
+  return "";
+}
+
+function renderJeopardy() {
+  if (!jep) {
+    app.append(h("p", "status", "Connexion à Jeopardy…"));
+    return;
+  }
+  const g = jep;
+  app.append(h("p", "status", jepStatus(g)));
+  const tally = questionTally(g);
+  const roundOver = g.phase === "board" && g.boardDone;
+  const ranking = !!g.rankingOn && !roundOver && g.phase !== "title" && g.phase !== "winner";
+  const showRank = roundOver || ranking;
+  if (tally && !roundOver && (g.phase === "board" || g.phase === "clue" || g.phase === "wager")) {
+    app.append(h("p", "qcount", `${tally.left} questions`));
+  }
+  if (showRank) app.append(h("p", "qcount", "Classement"));
+  const teams = h("div", "teams");
+  const order = g.teams.map((team, index) => ({ team, index }));
+  if (showRank) order.sort((a, b) => b.team.score - a.team.score || a.index - b.index);
+  order.forEach(({ team, index }, place) => {
+    const card = h("div", `team${team.control || team.answering ? " is-on" : ""}`);
+    const actions = h("div", "row");
+    const plus = h("button", "good", "+");
+    const minus = h("button", "", "−");
+    press(plus, () => send("jeopardyAddScore", { index, delta: 100 }));
+    press(minus, () => send("jeopardyAddScore", { index, delta: -100 }));
+    actions.append(plus, minus);
+    if (roundOver) {
+      const line = h("div", "who");
+      const rank = h("button", "rank", String(place + 1));
+      rank.type = "button";
+      press(rank, () => send("jeopardySetControl", { index }));
+      const name = document.createElement("input");
+      name.className = "who-name";
+      name.value = team.name;
+      name.maxLength = 28;
+      name.enterKeyHint = "done";
+      name.addEventListener("change", () => send("jeopardySetTeamName", { index, name: name.value }));
+      name.addEventListener("keydown", (event) => {
+        event.stopPropagation();
+        if (event.key === "Enter") name.blur();
+      });
+      line.append(rank, name, h("b", "", String(team.score)));
+      card.append(line, actions);
+    } else {
+      const info = h("button", "who");
+      info.type = "button";
+      if (ranking) info.append(h("span", "rank", String(place + 1)));
+      info.append(h("strong", "", team.name));
+      info.append(h("b", "", String(team.score)));
+      press(info, () => actJeopardyTeamPress(index));
+      card.append(info, actions);
+    }
+    teams.append(card);
+  });
+  app.append(teams);
+
+  if (roundOver) {
+    const counts = h("div", "row");
+    [2, 3, 4].forEach((count) => {
+      const button = h("button", count === g.teamCount ? "gold" : "", `${count} concurrents`);
+      press(button, () => send("jeopardySetTeamCount", { count }));
+      counts.append(button);
+    });
+    const zero = h("button", "", "Points à zéro");
+    press(zero, () => {
+      if (window.confirm("Remettre les points à zéro ?")) send("jeopardyClearScores");
+    });
+    app.append(counts, zero);
+  }
+
+  if (g.phase === "title") {
+    const row = h("div", "row");
+    [2, 3, 4].forEach((count) => {
+      const button = h("button", count === g.teamCount ? "gold" : "", `${count} concurrents`);
+      press(button, () => send("jeopardySetTeamCount", { count }));
+      row.append(button);
+    });
+    const start = h("button", "gold", "Lancer la partie");
+    press(start, () => send("jeopardyStart"));
+    app.append(row, start);
+    return;
+  }
+
+  if (g.phase === "board" && g.categories && !g.boardDone) {
+    const board = h("div", "board");
+    g.categories.forEach((category) => board.append(h("div", "cat", category.name)));
+    const rows = g.categories[0] ? g.categories[0].cells.length : 0;
+    for (let row = 0; row < rows; row += 1) {
+      g.categories.forEach((category, col) => {
+        const cell = category.cells[row];
+        const button = h("button", `cell${cell.used ? " is-used" : ""}`, cell.used ? "" : String(cell.value));
+        if (!cell.used) press(button, () => send("jeopardyPick", { col, row }));
+        else button.disabled = true;
+        board.append(button);
+      });
+    }
+    app.append(board);
+  }
+
+  if (g.clue && (g.phase === "clue" || g.phase === "wager")) {
+    app.append(h("div", "question", `${g.clue.category} · ${g.clue.daily ? "Daily Double" : g.clue.value}`));
+    app.append(h("p", "clue", g.clue.text || ""));
+    if (g.clue.answer) app.append(h("p", "answer-line", g.clue.answer));
+  }
+
+  const dock = h("div", "dock");
+  if (g.phase === "clue") {
+    const right = h("button", "good", "Bonne réponse");
+    const wrong = h("button", "bad", "Mauvaise réponse");
+    const show = h("button", "", "Montrer la réponse");
+    const back = h("button", "", "Tableau");
+    right.disabled = g.respondent == null || g.phase !== "clue";
+    wrong.disabled = right.disabled;
+    press(right, () => send("jeopardyCorrect", { index: g.respondent }, "reveal"));
+    press(wrong, () => send("jeopardyWrong", { index: g.respondent }, "strike"));
+    press(show, () => send("jeopardyReveal"));
+    press(back, () => send("jeopardyCloseClue"));
+    dock.append(right, wrong, show, back);
+  }
+  if (g.phase !== "title") {
+    const theme = h("button", "gold", g.themeOn ? "Couper le thème" : "Thème");
+    press(theme, () => {
+      send("jeopardyToggleTheme", { on: !g.themeOn });
+    });
+    dock.append(theme);
+  }
+  if (!g.boardDone && (g.phase === "board" || g.phase === "clue" || g.phase === "wager")) {
+    const rank = h("button", "gold", g.rankingOn ? "Fermer" : "Classement");
+    press(rank, () => send("jeopardyShowRanking", { on: !g.rankingOn }));
+    dock.append(rank);
+  }
+  if (g.phase === "board" && !g.boardDone) {
+    const end = h("button", "gold", "Fin de manche");
+    press(end, () => {
+      if (window.confirm("Terminer la manche et afficher le classement ?")) send("jeopardyEndRound");
+    });
+    dock.append(end);
+  }
+  if (g.phase === "board" && g.boardDone) {
+    const next = h("button", "gold", g.roundIndex >= 1 ? "Finale" : "Manche suivante");
+    press(next, () => send("jeopardyNextRound"));
+    dock.append(next);
+  }
+  if (g.phase === "finale-wager") {
+    const show = h("button", "", "Montrer la question finale");
+    press(show, () => send("jeopardyShowFinaleClue"));
+    dock.append(show);
+  }
+  if (g.phase === "finale-reveal" || g.phase === "finale-clue") {
+    const reveal = h("button", "", "Montrer la réponse");
+    press(reveal, () => send("jeopardyReveal"));
+    dock.append(reveal);
+    g.teams.forEach((team, index) => {
+      const yes = h("button", "good", `${team.name} bonne`);
+      const no = h("button", "bad", `${team.name} mauvaise`);
+      press(yes, () => send("jeopardyFinaleJudge", { index, correct: true }, "reveal"));
+      press(no, () => send("jeopardyFinaleJudge", { index, correct: false }, "strike"));
+      dock.append(yes, no);
+    });
+  }
+  if (g.phase === "finale-reveal") {
+    const win = h("button", "gold", "Voir le gagnant");
+    press(win, () => send("jeopardyShowWinner", {}, "done"));
+    dock.append(win);
+  }
+  if (g.phase === "winner") {
+    const names = (g.winners || []).map((team) => team.name).join(" et ");
+    app.append(h("div", "question", names || "Gagnant"));
+    const again = h("button", "gold", "Rejouer");
+    press(again, () => send("jeopardyReset"));
+    dock.append(again);
+  }
+  if (dock.childElementCount) app.append(dock);
+}
+
+function renderMise() {
+  const bar = document.getElementById("mise-bar");
+  const g = mode === "jeopardy" ? jep : null;
+  const show = g && (g.phase === "wager" || g.phase === "finale-wager");
+  document.body.classList.toggle("has-mise", !!show);
+  if (!show) {
+    misePhase = "";
+    bar.replaceChildren();
+    bar.hidden = true;
+    return;
+  }
+  if (misePhase !== g.phase) {
+    misePhase = g.phase;
+    miseValues = g.teams.map(() => "");
+    miseIndex = g.phase === "wager" ? 0 : Math.max(0, g.teams.findIndex((team) => team.control));
+    if (miseIndex < 0) miseIndex = 0;
+  }
+  bar.hidden = false;
+  bar.replaceChildren();
+  const readout = h("p", "mise-readout", "0");
+  const paint = () => {
+    readout.textContent = miseValues[miseIndex] || "0";
+  };
+  const typeDigit = (key) => {
+    let cur = miseValues[miseIndex] || "";
+    if (key === "C") cur = "";
+    else if (key === "←") cur = cur.slice(0, -1);
+    else if (cur.length < 6) cur += key;
+    miseValues[miseIndex] = cur;
+    paint();
+  };
+  if (g.phase === "finale-wager") {
+    const who = h("div", "mise-who");
+    g.teams.forEach((team, index) => {
+      const pick = h("button", index === miseIndex ? "gold" : "", team.name);
+      pick.type = "button";
+      press(pick, () => {
+        miseIndex = index;
+        renderMise();
+      });
+      who.append(pick);
+    });
+    bar.append(who);
+  }
+  bar.append(readout);
+  const error = h("p", "mise-error", "");
+  error.id = "mise-error";
+  bar.append(error);
+  const ok = h("button", "gold mise-ok", g.phase === "wager" ? "Confirmer la mise" : "Verrouiller les mises");
+  ok.type = "button";
+  const confirmMise = () => {
+    if (confirmMise.lock) return;
+    confirmMise.lock = true;
+    setTimeout(() => { confirmMise.lock = false; }, 700);
+    busy = false;
+    if (g.phase === "wager") {
+      send("jeopardySetWager", { amount: Number(miseValues[miseIndex] || 0) });
+      return;
+    }
+    send("jeopardyLockFinaleWagers", { wagers: g.teams.map((_, index) => miseValues[index] || "0") });
+  };
+  press(ok, confirmMise);
+  ok.addEventListener("click", confirmMise);
+  bar.append(ok);
+  const pad = h("div", "pad");
+  ["1", "2", "3", "4", "5", "6", "7", "8", "9", "C", "0", "←"].forEach((key) => {
+    const keyButton = h("button", "", key);
+    keyButton.type = "button";
+    press(keyButton, () => typeDigit(key));
+    pad.append(keyButton);
+  });
+  bar.append(pad);
+  paint();
+}
+
+function questionTally(g) {
+  let total = 0;
+  let left = 0;
+  (g.categories || []).forEach((category) => {
+    (category.cells || []).forEach((cell) => {
+      total += 1;
+      if (!cell.used) left += 1;
+    });
+  });
+  return total ? { total, left } : null;
+}
+
+function jepStatus(g) {
+  if (g.phase === "title") return "Choisis les concurrents, puis lance.";
+  if (g.phase === "board") return g.roundName || "Tableau";
+  if (g.phase === "clue") return "Question en cours";
+  if (g.phase === "wager") return "Daily Double — entre la mise.";
+  if (g.phase === "finale-wager") return "Mises de la finale.";
+  if (g.phase === "finale-clue") return "Question finale.";
+  if (g.phase === "finale-reveal") return "Correction de la finale.";
+  if (g.phase === "winner") return "Partie terminée.";
+  return "";
+}
+
+const keyboardBar = document.getElementById("keyboard-bar");
+const keyboardFocus = document.getElementById("keyboard-focus");
+
+function openKeyboardBar() {
+  keyboardBar.hidden = false;
+  keyboardBar.classList.add("is-open");
+  keyboardFocus.value = "";
+  if (window.FeudSounds) FeudSounds.unlock();
+  requestAnimationFrame(() => {
+    keyboardFocus.focus();
+    try { keyboardFocus.select(); } catch (error) { /* iOS */ }
+  });
+}
+
+function closeKeyboardBar() {
+  keyboardFocus.blur();
+  keyboardBar.classList.remove("is-open");
+  keyboardBar.hidden = true;
+  focusUsbCapture();
+}
+
+document.getElementById("keyboard-btn").addEventListener("click", () => {
+  if (keyboardBar.classList.contains("is-open")) closeKeyboardBar();
+  else openKeyboardBar();
+});
+document.getElementById("keyboard-close").addEventListener("click", () => closeKeyboardBar());
+keyboardFocus.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    closeKeyboardBar();
+    return;
+  }
+  onPhysicalBuzzKeydown(event);
+});
+usbCapture.addEventListener("keydown", onPhysicalBuzzKeydown);
+usbCapture.addEventListener("blur", () => {
+  if (mode === "chrono") return;
+  setTimeout(focusUsbCapture, 0);
+});
+document.body.addEventListener("pointerdown", () => {
+  if (mode === "chrono") return;
+  focusUsbCapture();
+}, { passive: true });
+
+document.getElementById("full").addEventListener("click", () => enterFullscreen());
+document.getElementById("restart").addEventListener("click", () => {
+  if (window.confirm("Recommencer la partie ?")) send("jeopardyReset");
+});
+document.addEventListener("fullscreenchange", syncFullscreenButton);
+document.addEventListener("webkitfullscreenchange", syncFullscreenButton);
+
+syncFullscreenButton();
+select(mode);
+focusUsbCapture();
+</script>
+</body>
+</html>

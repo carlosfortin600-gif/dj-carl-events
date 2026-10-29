@@ -4,21 +4,27 @@
       <div class="feud-stage${preview ? " is-preview" : ""}" data-phase="title">
         <header class="feud-top">
           <div class="team team-a" data-team="a">
+            <div class="team-strobe"></div>
             <div class="team-tag" data-tag="a"></div>
             <div class="team-name" data-team-name="a"></div>
             <div class="team-score" data-team-score="a">0</div>
           </div>
-          <div class="feud-brand">
-            <div class="feud-logo">FAMILLE EN OR</div>
-            <p class="feud-tagline">Le grand sondage</p>
+          <div class="feud-center">
+            <div class="feud-brand">
+              <div class="feud-logo">FAMILLE EN OR</div>
+              <p class="feud-tagline">Le grand sondage</p>
+            </div>
+            <p class="feud-now" data-now hidden></p>
           </div>
           <div class="team team-b" data-team="b">
+            <div class="team-strobe"></div>
             <div class="team-tag" data-tag="b"></div>
             <div class="team-name" data-team-name="b"></div>
             <div class="team-score" data-team-score="b">0</div>
           </div>
         </header>
         <p class="feud-question"></p>
+        <p class="feud-multiplier" data-factor="1"></p>
         <p class="feud-status"></p>
         <div class="feud-board">${slotMarkup}</div>
         <div class="feud-final">
@@ -76,12 +82,18 @@
         : state.teams[turn].name;
     }
     if (state.phase === "play" && state.control) return `${state.teams[state.control].name} joue`;
-    if (state.phase === "steal" && state.control) {
-      return `Vol — ${state.teams[otherId(state.control)].name}`;
-    }
+    if (state.phase === "steal" && state.control) return "VOL";
     if (state.phase === "result" && state.roundWinner) {
       return `${state.teams[state.roundWinner].name} +${state.roundPoints}`;
     }
+    return "";
+  }
+
+  function playingNow(state) {
+    if (state.phase === "play" && state.control) return state.control;
+    if (state.phase === "faceoff" && state.faceoff?.turn) return state.faceoff.turn;
+    if (state.phase === "steal" && state.control) return otherId(state.control);
+    if (state.phase === "result" && state.roundWinner) return state.roundWinner;
     return "";
   }
 
@@ -113,8 +125,23 @@
       stage.querySelector(`[data-tag="${teamId}"]`).textContent = tagFor(state, teamId);
     });
 
+    const nowId = playingNow(state);
+    const now = stage.querySelector("[data-now]");
+    if (now) {
+      now.hidden = !nowId;
+      now.dataset.side = nowId || "";
+      now.textContent = nowId ? state.teams[nowId].name : "";
+    }
+
     const question = stage.querySelector(".feud-question");
     question.textContent = state.question?.text || "";
+    const factor = state.pointFactor || 1;
+    const pointsName = factor === 3 ? "Points triples" : factor === 2 ? "Points doubles" : "Points simples";
+    const multiplier = stage.querySelector(".feud-multiplier");
+    if (multiplier) {
+      multiplier.dataset.factor = String(factor);
+      multiplier.textContent = state.phase === "title" || state.phase === "done" ? "" : pointsName;
+    }
     stage.querySelector(".feud-status").textContent = statusText(state);
 
     const answers = state.question?.answers || [];
@@ -134,9 +161,10 @@
     if (pot) pot.textContent = String(state.roundPoints || 0);
     const count = stage.querySelector("[data-qcount]");
     if (count) {
+      const packName = state.pack && state.pack.name ? `${state.pack.name} · ` : "";
       count.textContent = state.phase === "title" || state.phase === "done"
         ? ""
-        : `Question ${state.questionIndex + 1} / ${state.questionCount}`;
+        : `${packName}Question ${state.questionIndex + 1} / ${state.questionCount}`;
     }
 
     if (state.phase === "done") {
@@ -197,7 +225,14 @@
 
   function flashTeam(stage, teamId) {
     const card = stage.querySelector(`.team-${teamId}`);
-    if (!card || stage.dataset.phase !== "play") return;
+    const phase = stage.dataset.phase;
+    if (!card || (phase !== "play" && phase !== "faceoff")) return;
+    const strobe = card.querySelector(".team-strobe");
+    if (strobe) {
+      strobe.classList.remove("is-on");
+      void strobe.offsetWidth;
+      strobe.classList.add("is-on");
+    }
     card.classList.remove("is-flash");
     void card.offsetWidth;
     card.classList.add("is-flash");

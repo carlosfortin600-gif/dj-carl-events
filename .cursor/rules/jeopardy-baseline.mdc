@@ -1,0 +1,35 @@
+---
+description: Jeopardy — tableau de catégories, console et écran géant
+globs: public/jeopardy-*,lib/jeopardy-state.js
+alwaysApply: false
+---
+
+# Jeopardy (baseline)
+
+Tableau de catégories et de points, style Jeopardy. Module indépendant du quiz, de la roue et de Famille en or.
+
+## URLs
+
+- Animateur : `/jeopardy/host`
+- Écran projecteur : `/jeopardy/viewer`
+- Hub : carte « Jeopardy » sur `/`
+
+## Fichiers
+
+- Console : `public/jeopardy-host.html`, `public/jeopardy-host.js`
+- Écran : `public/jeopardy-viewer.html`, `public/jeopardy.css`, `public/jeopardy-board.js`
+- État : `lib/jeopardy-state.js`
+- Sockets : rooms `jeopardy` (public) et `jeopardy-host` dans `server.js`
+- Sons : la console réutilise les sons de Famille en or. L'écran géant ne joue pas de son.
+
+## Déroulement
+
+- 4 concurrents par défaut (2, 3 ou 4 au choix avant de commencer). La salle ne répond pas. Manche 1 (100 à 500), manche 2 (200 à 1000), puis finale.
+- Le concurrent qui a la main choisit la case et répond en premier. Bonne réponse : il gagne les points, la réponse reste 3 secondes, puis le tableau revient et il garde la main. Mauvaise réponse : il perd les points, puis l'animateur envoie le concurrent qui a buzzé. Dans chaque catégorie, la difficulté monte avec la valeur. Le bouton QR montre la manette iPad sur l'écran.
+- Double quotidien : une case en manche 1, deux en manche 2. Seule l'équipe qui a la main joue, après avoir misé. La pastille dorée est visible seulement sur la console.
+- La réponse reste masquée à l'écran tant que l'animateur ne l'a pas validée ou révélée.
+- Finale : mises secrètes, indice, réponse, puis bonne ou mauvaise pour chaque concurrent. Le gagnant s'affiche ensuite.
+
+## Évolution
+
+Améliorations ciblées. Conserver la sync host ↔ écran, les deux manches, les doubles et la finale.

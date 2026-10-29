@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DJ Carl Quiz - Animateur</title>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #1f2937, #050505 65%);
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.host-dashboard {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px 12px;
+  gap: 10px;
+}
+
+.header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+.header-brand {
+  min-width: 0;
+}
+
+.header-home-link {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  background: rgba(0, 0, 0, 0.25);
+  color: #00d4ff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.header-home-link:hover {
+  background: rgba(0, 212, 255, 0.12);
+}
+
+.logo {
+  font-size: 26px;
+  font-weight: 900;
+  color: #00d4ff;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #aaa;
+}
+
+.dashboard-grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.75fr);
+  gap: 10px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.card h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  color: #00d4ff;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.card-head h2 {
+  margin: 0;
+}
+
+.quiz-admin-panel {
+  display: none;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #111;
+}
+
+.quiz-admin-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #000;
+  color: white;
+  font-weight: 800;
+}
+
+.quiz-admin-panel iframe {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  border: 0;
+  background: #111;
+}
+
+.host-dashboard.admin-open .dashboard-grid {
+  display: none;
+}
+
+.host-dashboard.admin-open .quiz-admin-panel {
+  display: flex;
+}
+
+.card-players {
+  grid-column: 1 / -1;
+}
+
+.card-quiz .quiz-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.quiz-group-block {
+  width: 100%;
+}
+
+.quiz-group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.quiz-group-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #ffc107;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.quiz-group-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.btn-series {
+  padding: 4px 8px;
+  font-size: 11px;
+  background: #6f42c1;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+#message {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+#message:empty { display: none; }
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.controls-main {
+  flex: 1;
+  align-content: flex-start;
+}
+
+.controls-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.controls-scores {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.controls-scores button {
+  width: 100%;
+  padding: 12px 8px;
+  font-size: 14px;
+}
+
+.controls-scores button.active {
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.55);
+  outline: 2px solid #ffc107;
+  filter: brightness(1.08);
+}
+
+.player-actions button {
+  min-width: 42px;
+  padding: 6px 8px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.controls-middle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 6px 0;
+}
+
+.timer-actions {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 10px;
+  flex-shrink: 0;
+}
+
+.btn-next {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 12px;
+  font-size: 20px;
+  border-radius: 14px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 10px 28px rgba(0, 123, 255, 0.4);
+}
+
+.btn-answer {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 12px;
+  font-size: 20px;
+  border-radius: 14px;
+  box-shadow: 0 10px 28px rgba(255, 152, 0, 0.35);
+}
+
+.controls-footer {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+.host-join-hint {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #9fdcff;
+  word-break: break-all;
+}
+
+.host-shortcuts-hint {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #888;
+  text-align: center;
+}
+
+.controls-footer button {
+  width: 100%;
+  min-width: 0;
+  padding-left: 8px;
+  padding-right: 8px;
+  font-size: 13px;
+}
+
+button {
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn-green { background: #28a745; color: white; }
+.btn-blue { background: #007bff; color: white; }
+.btn-orange { background: #ff9800; color: white; }
+.btn-red { background: #dc3545; color: white; }
+.btn-gray { background: #555; color: white; }
+
+.play-key-assign {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.play-key-assign-label {
+  font-size: 13px;
+  color: #bbb;
+  line-height: 1.35;
+}
+
+#learnPlayKeyBtn.active,
+#learnStopKeyBtn.active {
+  background: #ffc107;
+  color: #111;
+}
+
+#playKeyLearnDebug,
+#stopKeyLearnDebug {
+  width: 100%;
+  color: #ffc107;
+  font-weight: 700;
+}
+.btn-cyan { background: #00a8cc; color: white; }
+.btn-purple { background: #6f42c1; color: white; }
+
+select, input[type="number"] {
+  padding: 8px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.35);
+  color: white;
+}
+
+.timer-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+}
+
+.timer-circle {
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: conic-gradient(#00d4ff 100%, #333 0%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 28px rgba(0, 212, 255, 0.35);
+}
+
+.timer-inner {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: #050505;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 900;
+}
+
+.timer-side {
+  flex: 1;
+  min-width: 0;
+}
+
+.progress-bg {
+  width: 100%;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 100%;
+  background: #00d4ff;
+  transition: width 0.3s linear;
+}
+
+.timer-status {
+  font-size: 14px;
+  margin-top: 6px;
+  color: #ccc;
+}
+
+@keyframes timer-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 77, 77, 0.45); transform: scale(1); }
+  50% { box-shadow: 0 0 48px rgba(255, 77, 77, 1); transform: scale(1.06); }
+}
+
+.timer-circle.timer-urgent { animation: timer-pulse 0.75s ease-in-out infinite; }
+.timer-circle.timer-urgent .timer-inner { color: #ff4d4d; }
+.progress-bar.timer-urgent { background: #ff4d4d; }
+.timer-status.timer-urgent { color: #ff4d4d; font-weight: 800; }
+
+#questionBox {
+  flex: 1;
+  overflow-y: auto;
+  text-align: center;
+  font-size: 15px;
+  min-height: 0;
+}
+
+#questionBox h1 {
+  font-size: 20px;
+  line-height: 1.3;
+  margin: 8px 0;
+}
+
+#questionBox h2 {
+  color: #00d4ff;
+  font-size: 15px;
+}
+
+.answer {
+  font-size: 14px;
+  margin: 6px 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.answer.answer-correct {
+  background: rgba(0, 255, 153, 0.25);
+  border-color: #00ff99;
+}
+
+.answer.answer-dim { opacity: 0.4; }
+.good { color: #00ff99; font-weight: bold; }
+
+.player-count {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #00d4ff;
+  background: rgba(0, 212, 255, 0.15);
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+#players {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.player {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.player-score {
+  font-weight: 900;
+  color: #ffc107;
+}
+
+.empty-note {
+  color: #aaa;
+  text-align: center;
+  font-size: 14px;
+}
+
+.countdown-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+}
+
+.countdown-overlay.hidden {
+  display: none;
+}
+
+.countdown-number {
+  font-size: 120px;
+  font-weight: 900;
+  color: #00d4ff;
+  text-shadow: 0 0 50px rgba(0, 212, 255, 0.8);
+  animation: countdown-pop 0.45s ease;
+}
+
+.countdown-number.go {
+  color: #00ff99;
+  font-size: 100px;
+}
+
+@keyframes countdown-pop {
+  0% { transform: scale(0.4); opacity: 0; }
+  70% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 1000px) {
+  html, body { overflow: auto; }
+  .host-dashboard { height: auto; min-height: 100dvh; }
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  .card-players { grid-column: auto; }
+}
+</style>
+</head>
+<body>
+
+<div id="countdownOverlay" class="countdown-overlay hidden">
+  <div id="countdownNumber" class="countdown-number">3</div>
+</div>
+
+<div class="host-dashboard">
+  <header class="header">
+    <div class="header-brand">
+      <div class="logo">DJ Carl Quiz</div>
+      <div class="subtitle">Console animateur</div>
+    </div>
+    <a
+      href="/"
+      class="header-home-link"
+      data-home-confirm
+      data-home-confirm-message="Retourner à l'accueil ?&#10;&#10;Vous quittez la console animateur. L'écran public et les joueurs restent tels quels."
+    >Retour à l'accueil</a>
+  </header>
+
+  <div class="dashboard-grid">
+    <section class="card card-quiz">
+      <div class="card-head">
+        <h2>Quiz</h2>
+        <button type="button" class="btn-series" onclick="openQuizAdmin()">Admin</button>
+      </div>
+      <div id="quizList" class="quiz-list">Chargement…</div>
+      <div id="message"></div>
+    </section>
+
+    <section class="card card-controls">
+      <h2>Contrôles</h2>
+      <div class="controls controls-secondary">
+        <button class="btn-green" onclick="startQuiz()">Load</button>
+        <button class="btn-red" onclick="hideAnswer()">Effacer</button>
+      </div>
+      <div class="controls-middle">
+        <div class="controls controls-scores">
+          <button class="btn-gray" onclick="resetScores()">Scores à 0</button>
+          <button class="btn-cyan active" id="accumulateScoresBtn" onclick="toggleAccumulateScores()">Accumuler les points</button>
+        </div>
+      </div>
+      <div class="controls controls-footer">
+        <button class="btn-cyan" onclick="openQrFullscreen()">QR plein écran</button>
+        <button class="btn-purple" onclick="openGamesViewer()">Écran de jeu</button>
+        <button class="btn-gray" onclick="resetViewer()">Réinitialiser l'écran</button>
+      </div>
+      <p id="joinUrlHint" class="host-join-hint">Chargement de l’adresse joueurs…</p>
+      <p class="host-shortcuts-hint">Manette : contrôle le quiz depuis n’importe quelle page · F5 court = lecture/pause · F5 (3 s) = arrêt · Suppr sur /host = effacer la réponse</p>
+    </section>
+
+    <section class="card card-timer">
+      <h2>Timer</h2>
+      <div class="timer-wrap">
+        <div class="timer-circle" id="timerCircle">
+          <div class="timer-inner" id="timerText">30</div>
+        </div>
+        <div class="timer-side">
+          <select id="durationSelect" onchange="setTimerDurationFromSelect()">
+            <option value="10">10 s</option>
+            <option value="15">15 s</option>
+            <option value="20">20 s</option>
+            <option value="25">25 s</option>
+            <option value="30" selected>30 s</option>
+            <option value="45">45 s</option>
+            <option value="60">60 s</option>
+            <option value="custom">Perso.</option>
+          </select>
+          <input id="customDuration" type="number" min="1" max="600" value="30" style="display:none;width:80px;" onchange="setCustomTimerDuration()">
+          <div style="margin-top:8px;">
+            <button class="btn-green" id="playBtn" type="button">Lancer</button>
+            <button class="btn-orange" onclick="timerPause()">Pause</button>
+            <button class="btn-red" onclick="timerStop()">Arrêter</button>
+            <button class="btn-gray" onclick="timerReset()">Remise à zéro</button>
+          </div>
+          <div class="progress-bg"><div class="progress-bar" id="progressBar"></div></div>
+          <div class="timer-status" id="timerStatus">En attente</div>
+          <div class="play-key-assign">
+            <button type="button" class="btn-gray" id="learnPlayKeyBtn">Assigner lecture</button>
+            <button type="button" class="btn-gray" id="resetPlayKeyBtn">Par défaut</button>
+            <span id="playKeyAssignLabel" class="play-key-assign-label">Manette lecture : Espace / F5</span>
+            <span id="playKeyLearnDebug" class="play-key-assign-label" hidden></span>
+          </div>
+          <div class="play-key-assign">
+            <button type="button" class="btn-gray" id="learnStopKeyBtn">Assigner arrêt</button>
+            <button type="button" class="btn-gray" id="resetStopKeyBtn">Par défaut</button>
+            <span id="stopKeyAssignLabel" class="play-key-assign-label">Manette arrêt : non assignée</span>
+            <span id="stopKeyLearnDebug" class="play-key-assign-label" hidden></span>
+          </div>
+        </div>
+      </div>
+      <div class="timer-actions">
+        <button class="btn-orange btn-answer" onclick="showAnswer()">Réponse</button>
+        <button class="btn-blue btn-next" onclick="nextQuestion()">Suivante</button>
+      </div>
+    </section>
+
+    <section class="card card-question">
+      <h2>Question</h2>
+      <div id="questionBox">Aucune question affichée.</div>
+    </section>
+
+    <section class="card card-players">
+      <h2>Joueurs <span id="playerCount" class="player-count">0 connecté</span></h2>
+      <div id="players"></div>
+    </section>
+  </div>
+
+  <div id="quizAdminPanel" class="quiz-admin-panel">
+    <div class="quiz-admin-bar">
+      <span>Administration des quiz</span>
+      <button type="button" class="btn-gray" onclick="closeQuizAdmin()">Fermer</button>
+    </div>
+    <iframe id="quizAdminFrame" title="Administration des quiz"></iframe>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/timer-sounds.js"></script>
+<script src="/quiz-audio.js"></script>
+<script>
+const socket = io();
+let currentQuestionData = null;
+let networkData = null;
+let lastPlayers = [];
+let qrWindow = null;
+let viewerWindow = null;
+let hostQuizLoaded = false;
+let hostQuizStarted = false;
+let currentTimer = {
+  duration: 30,
+  remaining: 30,
+  running: false,
+  locked: false
+};
+let groupPlayQueue = [];
+let groupPlayActive = false;
+async function loadNetworkInfo() {
+  try {
+    const res = await fetch("/api/network");
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Erreur réseau");
+    }
+
+    networkData = data;
+    renderJoinUrlHint();
+  } catch (error) {
+    networkData = null;
+    renderJoinUrlHint();
+  }
+}
+
+function renderJoinUrlHint() {
+  const hint = document.getElementById("joinUrlHint");
+  if (!hint) return;
+
+  if (!networkData?.joinUrl) {
+    hint.textContent = "QR indisponible — vérifie que le serveur tourne.";
+    return;
+  }
+
+  const extraIps = Array.isArray(networkData.allIps)
+    ? networkData.allIps.filter((ip) => ip !== networkData.ip)
+    : [];
+
+  hint.textContent = extraIps.length
+    ? `QR joueurs : ${networkData.joinUrl} · Wi‑Fi requis · autres IP : ${extraIps.join(", ")}`
+    : `QR joueurs : ${networkData.joinUrl} · téléphone sur le même Wi‑Fi`;
+}
+
+function getPopupFeatures() {
+  const width = Math.min(window.screen.availWidth, 1600);
+  const height = Math.min(window.screen.availHeight, 1000);
+  const left = Math.max(0, Math.round((window.screen.availWidth - width) / 2));
+  const top = Math.max(0, Math.round((window.screen.availHeight - height) / 2));
+
+  return [
+    "popup=yes",
+    `width=${width}`,
+    `height=${height}`,
+    `left=${left}`,
+    `top=${top}`,
+    "menubar=no",
+    "toolbar=no",
+    "location=no",
+    "status=no",
+    "scrollbars=no",
+    "resizable=yes"
+  ].join(",");
+}
+
+function openPopupWindow(existingWindow, url, windowName) {
+  if (existingWindow && !existingWindow.closed) {
+    existingWindow.focus();
+    return existingWindow;
+  }
+
+  const popup = window.open(url, windowName, getPopupFeatures());
+
+  if (!popup) {
+    alert("Impossible d'ouvrir la fenêtre. Autorise les pop-ups pour ce site.");
+    return null;
+  }
+
+  popup.focus();
+  return popup;
+}
+
+async function openQrFullscreen() {
+  if (!networkData) {
+    await loadNetworkInfo();
+  }
+
+  if (!networkData?.joinQr && !networkData?.playerQr) {
+    alert("QR code indisponible pour le moment.");
+    return;
+  }
+
+  qrWindow = openPopupWindow(qrWindow, "/host/qr", "djCarlQr");
+}
+
+function openGamesViewer() {
+  const viewerUrl = `${window.location.origin}/viewer?embed=1&fullscreen=1`;
+  viewerWindow = openPopupWindow(viewerWindow, viewerUrl, "djCarlViewer");
+}
+
+async function loadQuizzes() {
+  const res = await fetch("/api/library");
+  const library = await res.json();
+
+  const div = document.getElementById("quizList");
+  div.innerHTML = "";
+
+  const hasGroups = library.groups?.some((group) => group.quizzes?.length > 0);
+
+  if (!hasGroups) {
+    div.innerHTML = '<p class="empty-note">Aucun quiz dans un dossier.</p>';
+    return;
+  }
+
+  library.groups.forEach((group) => {
+    if (!group.quizzes || group.quizzes.length === 0) return;
+
+    const quizIds = group.quizzes.map((quiz) => quiz.id).join(",");
+    let block = `
+      <div class="quiz-group-block">
+        <div class="quiz-group-head">
+          <span class="quiz-group-label">${escapeHtml(group.name)}</span>
+          <button type="button" class="btn-series" onclick="startGroupSequence([${quizIds}])">Série</button>
+        </div>
+        <div class="quiz-group-buttons">
+    `;
+
+    group.quizzes.forEach((quiz) => {
+      block += `
+        <button class="btn-blue" onclick="loadQuiz(${quiz.id})">
+          ${escapeHtml(quiz.title)}
+        </button>
+      `;
+    });
+
+    block += `</div></div>`;
+    div.innerHTML += block;
+  });
+}
+
+function startGroupSequence(quizIds) {
+  if (!quizIds || quizIds.length === 0) return;
+
+  groupPlayQueue = quizIds.slice(1);
+  groupPlayActive = true;
+  loadQuiz(quizIds[0], true);
+}
+
+function loadQuiz(id, keepSeries = false) {
+  if (!keepSeries) {
+    groupPlayActive = false;
+    groupPlayQueue = [];
+  }
+
+  socket.emit("loadQuiz", id);
+}
+
+function startQuiz() {
+  TimerSounds.unlockAudio();
+  socket.emit("startQuiz");
+}
+
+function showAnswer() {
+  socket.emit("showAnswer");
+}
+
+function hideAnswer() {
+  socket.emit("hideAnswer");
+}
+
+function nextQuestion() {
+  socket.emit("nextQuestion");
+}
+
+function previousQuestion() {
+  socket.emit("previousQuestion");
+}
+
+function resetScores() {
+  const confirmed = confirm("Remettre tous les scores à zéro maintenant ?");
+  if (!confirmed) return;
+
+  socket.emit("resetScores");
+}
+
+let accumulateScoresActive = true;
+
+function toggleAccumulateScores() {
+  accumulateScoresActive = !accumulateScoresActive;
+  updateAccumulateScoresButton();
+  socket.emit("setAccumulateScores", accumulateScoresActive);
+}
+
+function updateAccumulateScoresButton() {
+  const btn = document.getElementById("accumulateScoresBtn");
+  if (btn) btn.classList.toggle("active", accumulateScoresActive);
+}
+
+function openQuizAdmin() {
+  const frame = document.getElementById("quizAdminFrame");
+  if (frame) {
+    frame.src = `/admin?embed=1&t=${Date.now()}`;
+  }
+  document.querySelector(".host-dashboard")?.classList.add("admin-open");
+}
+
+function closeQuizAdmin() {
+  document.querySelector(".host-dashboard")?.classList.remove("admin-open");
+  loadQuizzes();
+}
+
+window.addEventListener("message", (event) => {
+  if (event.origin !== window.location.origin) return;
+  if (event.data?.type === "quiz-library-changed") loadQuizzes();
+});
+
+function resetViewer() {
+  const confirmed = confirm(
+    "Réinitialiser l'écran public et les téléphones ?\n\nLe classement sera effacé. Les joueurs restent connectés."
+  );
+
+  if (!confirmed) return;
+
+  socket.emit("resetViewer");
+}
+
+const PLAY_HOLD_MS = 3000;
+const PLAY_TRIGGER_KEYS = new Set(["Space", "MediaPlayPause", "F5"]);
+const HOST_PLAY_KEY_STORAGE = "djCarlHostPlayKey";
+const HOST_STOP_KEY_STORAGE = "djCarlHostStopKey";
+
+let playHoldTimer = null;
+let playHoldTriggered = false;
+let playHoldActive = false;
+let playKeyArmed = false;
+let customPlayKey = null;
+let customStopKey = null;
+let playKeyLearnMode = false;
+let stopKeyLearnMode = false;
+let playKeyLearnStartedAt = 0;
+let stopKeyLearnStartedAt = 0;
+let lastHostStopAt = 0;
+const HOST_STOP_DEBOUNCE_MS = 320;
+
+function timerStart() {
+  TimerSounds.unlockAudio();
+  socket.emit("timerStart");
+}
+
+function timerResume() {
+  TimerSounds.unlockAudio();
+  socket.emit("timerResume");
+}
+
+function handlePlayToggle() {
+  TimerSounds.unlockAudio();
+
+  if (hostQuizLoaded && !hostQuizStarted) {
+    startQuiz();
+    return;
+  }
+
+  if (!hostQuizStarted) return;
+
+  if (currentTimer.locked || Number(currentTimer.remaining) <= 0) return;
+
+  if (currentTimer.running) {
+    timerPause();
+    return;
+  }
+
+  const duration = Number(currentTimer.duration) || 30;
+  const remaining = Number(currentTimer.remaining) || 0;
+
+  if (remaining < duration) {
+    timerResume();
+    return;
+  }
+
+  timerStart();
+}
+
+function beginPlayHold() {
+  if (playHoldActive) return;
+
+  playHoldActive = true;
+  playHoldTriggered = false;
+  TimerSounds.unlockAudio();
+
+  playHoldTimer = setTimeout(() => {
+    playHoldTriggered = true;
+    if (hostQuizStarted) timerStop();
+  }, PLAY_HOLD_MS);
+}
+
+function cancelPlayHold() {
+  if (playHoldTimer) {
+    clearTimeout(playHoldTimer);
+    playHoldTimer = null;
+  }
+
+  playHoldActive = false;
+  playHoldTriggered = false;
+}
+
+function endPlayHold() {
+  if (!playHoldActive) return;
+
+  const wasLong = playHoldTriggered;
+  cancelPlayHold();
+
+  if (!wasLong) {
+    handlePlayToggle();
+  }
+}
+
+function getRemoteKeySignature(event) {
+  return {
+    code: event.code || "",
+    key: event.key || "",
+    keyCode: event.keyCode || event.which || 0
+  };
+}
+
+function getPlayKeySignature(event) {
+  return getRemoteKeySignature(event);
+}
+
+const MODIFIER_CODES = new Set([
+  "ShiftLeft", "ShiftRight", "ControlLeft", "ControlRight",
+  "AltLeft", "AltRight", "MetaLeft", "MetaRight", "OSLeft", "OSRight"
+]);
+
+function isIgnorableLearnKey(event, sig = getPlayKeySignature(event)) {
+  const code = sig.code || event.code || "";
+  const key = sig.key || event.key || "";
+
+  if (MODIFIER_CODES.has(code)) return true;
+  if (["Shift", "Control", "Alt", "Meta", "OS"].includes(key)) return true;
+  if (!code && !key && !sig.keyCode) return true;
+
+  if (
+    (key === "Unidentified" || code === "Unidentified") &&
+    !sig.keyCode
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+function buildRemoteKeyLabel(sig) {
+  if (sig.code && sig.code !== "Unidentified") return sig.code;
+  if (sig.key && sig.key !== "Unidentified") return sig.key;
+  if (sig.keyCode) return `Touche #${sig.keyCode}`;
+  return "Inconnue";
+}
+
+function describeRemoteKey(binding, fallback) {
+  if (!binding) return fallback;
+  return binding.label || binding.code || binding.key || `Touche #${binding.keyCode}`;
+}
+
+function describePlayKey(binding) {
+  return describeRemoteKey(binding, "Espace / F5");
+}
+
+function describeStopKey(binding) {
+  return describeRemoteKey(binding, "non assigné");
+}
+
+function matchesRemoteKeyBinding(event, binding) {
+  if (!binding) return false;
+
+  const sig = getRemoteKeySignature(event);
+
+  if (binding.keyCode && sig.keyCode && binding.keyCode === sig.keyCode) return true;
+
+  if (
+    binding.code &&
+    sig.code &&
+    binding.code !== "Unidentified" &&
+    binding.code === sig.code
+  ) {
+    return true;
+  }
+
+  if (
+    binding.key &&
+    sig.key &&
+    binding.key !== "Unidentified" &&
+    binding.key === sig.key
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+function matchesPlayBinding(event, binding) {
+  return matchesRemoteKeyBinding(event, binding);
+}
+
+function isPlayTriggerKey(event) {
+  const sig = getPlayKeySignature(event);
+
+  if (PLAY_TRIGGER_KEYS.has(sig.code) || sig.keyCode === 116 || sig.key === "F5") {
+    return true;
+  }
+
+  return matchesPlayBinding(event, customPlayKey);
+}
+
+function isStopTriggerKey(event) {
+  return matchesRemoteKeyBinding(event, customStopKey);
+}
+
+function canFireHostStop() {
+  const now = Date.now();
+  if (now - lastHostStopAt < HOST_STOP_DEBOUNCE_MS) return false;
+  lastHostStopAt = now;
+  return true;
+}
+
+function triggerHostStop() {
+  TimerSounds.unlockAudio();
+  cancelPlayHold();
+  playKeyArmed = false;
+
+  if (hostQuizStarted) {
+    timerStop();
+  }
+}
+
+function handleHostStopKey(event) {
+  if (!isStopTriggerKey(event)) return false;
+  if (isHostTypingTarget(event.target)) return false;
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  if (!canFireHostStop()) return true;
+
+  triggerHostStop();
+  return true;
+}
+
+function syncRemoteKeysToServer() {
+  socket.emit("setRemoteKeys", {
+    stopKey: customStopKey,
+    playKey: customPlayKey
+  });
+}
+
+function updatePlayKeyAssignUI() {
+  const label = document.getElementById("playKeyAssignLabel");
+  const learnBtn = document.getElementById("learnPlayKeyBtn");
+  const debugEl = document.getElementById("playKeyLearnDebug");
+
+  if (label) {
+    label.textContent = playKeyLearnMode
+      ? "Appuyez sur le bouton lecture de la manette (fenêtre animateur active)..."
+      : `Manette lecture : ${describePlayKey(customPlayKey)}`;
+  }
+
+  if (learnBtn) {
+    learnBtn.classList.toggle("active", playKeyLearnMode);
+    learnBtn.textContent = playKeyLearnMode ? "En écoute…" : "Assigner lecture";
+  }
+
+  if (debugEl) {
+    debugEl.hidden = !playKeyLearnMode;
+    if (!playKeyLearnMode) debugEl.textContent = "";
+  }
+}
+
+function updatePlayKeyLearnDebug(sig, type) {
+  const debugEl = document.getElementById("playKeyLearnDebug");
+  if (!debugEl || !playKeyLearnMode) return;
+
+  debugEl.textContent =
+    `Signal ${type} : code=${sig.code || "—"} · key=${sig.key || "—"} · keyCode=${sig.keyCode || "—"}`;
+}
+
+function loadCustomPlayKey() {
+  try {
+    const raw = localStorage.getItem(HOST_PLAY_KEY_STORAGE);
+    customPlayKey = raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    customPlayKey = null;
+  }
+
+  updatePlayKeyAssignUI();
+  syncRemoteKeysToServer();
+}
+
+function saveCustomPlayKey(binding) {
+  customPlayKey = binding;
+  localStorage.setItem(HOST_PLAY_KEY_STORAGE, JSON.stringify(binding));
+  updatePlayKeyAssignUI();
+  syncRemoteKeysToServer();
+}
+
+function clearCustomPlayKey() {
+  customPlayKey = null;
+  localStorage.removeItem(HOST_PLAY_KEY_STORAGE);
+  updatePlayKeyAssignUI();
+  syncRemoteKeysToServer();
+}
+
+function updateStopKeyAssignUI() {
+  const label = document.getElementById("stopKeyAssignLabel");
+  const learnBtn = document.getElementById("learnStopKeyBtn");
+  const debugEl = document.getElementById("stopKeyLearnDebug");
+
+  if (label) {
+    label.textContent = stopKeyLearnMode
+      ? "Appuyez sur le bouton arrêt de la manette (fenêtre animateur active)..."
+      : `Manette arrêt : ${describeStopKey(customStopKey)}`;
+  }
+
+  if (learnBtn) {
+    learnBtn.classList.toggle("active", stopKeyLearnMode);
+    learnBtn.textContent = stopKeyLearnMode ? "En écoute…" : "Assigner arrêt";
+  }
+
+  if (debugEl) {
+    debugEl.hidden = !stopKeyLearnMode;
+    if (!stopKeyLearnMode) debugEl.textContent = "";
+  }
+}
+
+function updateStopKeyLearnDebug(sig, type) {
+  const debugEl = document.getElementById("stopKeyLearnDebug");
+  if (!debugEl || !stopKeyLearnMode) return;
+
+  debugEl.textContent =
+    `Signal ${type} : code=${sig.code || "—"} · key=${sig.key || "—"} · keyCode=${sig.keyCode || "—"}`;
+}
+
+function loadCustomStopKey() {
+  try {
+    const raw = localStorage.getItem(HOST_STOP_KEY_STORAGE);
+    customStopKey = raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    customStopKey = null;
+  }
+
+  updateStopKeyAssignUI();
+  syncRemoteKeysToServer();
+}
+
+function saveCustomStopKey(binding) {
+  customStopKey = binding;
+  localStorage.setItem(HOST_STOP_KEY_STORAGE, JSON.stringify(binding));
+  updateStopKeyAssignUI();
+  syncRemoteKeysToServer();
+}
+
+function clearCustomStopKey() {
+  customStopKey = null;
+  localStorage.removeItem(HOST_STOP_KEY_STORAGE);
+  updateStopKeyAssignUI();
+  syncRemoteKeysToServer();
+}
+
+function beginPlayKeyLearn() {
+  cancelStopKeyLearn();
+  playKeyLearnMode = true;
+  playKeyLearnStartedAt = Date.now();
+  updatePlayKeyAssignUI();
+  focusHostForRemote();
+}
+
+function cancelPlayKeyLearn() {
+  playKeyLearnMode = false;
+  updatePlayKeyAssignUI();
+}
+
+function beginStopKeyLearn() {
+  cancelPlayKeyLearn();
+  stopKeyLearnMode = true;
+  stopKeyLearnStartedAt = Date.now();
+  updateStopKeyAssignUI();
+  focusHostForRemote();
+}
+
+function cancelStopKeyLearn() {
+  stopKeyLearnMode = false;
+  updateStopKeyAssignUI();
+}
+
+function capturePlayKeyFromEvent(event) {
+  if (!playKeyLearnMode) return false;
+
+  const sig = getPlayKeySignature(event);
+  updatePlayKeyLearnDebug(sig, event.type);
+
+  if (isIgnorableLearnKey(event, sig)) return false;
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  if (Date.now() - playKeyLearnStartedAt < 350) return false;
+
+  saveCustomPlayKey({
+    code: sig.code,
+    key: sig.key,
+    keyCode: sig.keyCode,
+    label: buildRemoteKeyLabel(sig)
+  });
+
+  playKeyLearnMode = false;
+  return true;
+}
+
+function captureStopKeyFromEvent(event) {
+  if (!stopKeyLearnMode) return false;
+
+  const sig = getRemoteKeySignature(event);
+  updateStopKeyLearnDebug(sig, event.type);
+
+  if (isIgnorableLearnKey(event, sig)) return false;
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  if (Date.now() - stopKeyLearnStartedAt < 350) return false;
+
+  saveCustomStopKey({
+    code: sig.code,
+    key: sig.key,
+    keyCode: sig.keyCode,
+    label: buildRemoteKeyLabel(sig)
+  });
+
+  stopKeyLearnMode = false;
+  return true;
+}
+
+function handleRemoteKeyLearnEvent(event) {
+  if (playKeyLearnMode) capturePlayKeyFromEvent(event);
+  if (stopKeyLearnMode) captureStopKeyFromEvent(event);
+}
+
+function setupRemoteKeyAssign() {
+  const learnPlayBtn = document.getElementById("learnPlayKeyBtn");
+  const resetPlayBtn = document.getElementById("resetPlayKeyBtn");
+  const learnStopBtn = document.getElementById("learnStopKeyBtn");
+  const resetStopBtn = document.getElementById("resetStopKeyBtn");
+
+  if (learnPlayBtn) {
+    learnPlayBtn.addEventListener("click", () => {
+      if (playKeyLearnMode) {
+        cancelPlayKeyLearn();
+        return;
+      }
+
+      beginPlayKeyLearn();
+    });
+  }
+
+  if (resetPlayBtn) {
+    resetPlayBtn.addEventListener("click", () => {
+      cancelPlayKeyLearn();
+      clearCustomPlayKey();
+    });
+  }
+
+  if (learnStopBtn) {
+    learnStopBtn.addEventListener("click", () => {
+      if (stopKeyLearnMode) {
+        cancelStopKeyLearn();
+        return;
+      }
+
+      beginStopKeyLearn();
+    });
+  }
+
+  if (resetStopBtn) {
+    resetStopBtn.addEventListener("click", () => {
+      cancelStopKeyLearn();
+      clearCustomStopKey();
+    });
+  }
+
+  loadCustomPlayKey();
+  loadCustomStopKey();
+
+  ["keydown", "keyup", "keypress"].forEach((type) => {
+    window.addEventListener(type, handleRemoteKeyLearnEvent, true);
+    document.addEventListener(type, handleRemoteKeyLearnEvent, true);
+  });
+}
+
+function setupPlayButton() {
+  const playBtn = document.getElementById("playBtn");
+  if (!playBtn) return;
+
+  playBtn.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    beginPlayHold();
+  });
+
+  playBtn.addEventListener("pointerup", (event) => {
+    event.preventDefault();
+    endPlayHold();
+  });
+
+  playBtn.addEventListener("pointerleave", () => {
+    cancelPlayHold();
+  });
+
+  playBtn.addEventListener("pointercancel", () => {
+    cancelPlayHold();
+  });
+}
+
+function timerPause() {
+  socket.emit("timerPause");
+}
+
+function timerStop() {
+  socket.emit("timerStop");
+}
+
+function timerReset() {
+  socket.emit("timerReset");
+}
+
+function setTimerDurationFromSelect() {
+  const select = document.getElementById("durationSelect");
+  const customInput = document.getElementById("customDuration");
+
+  if (select.value === "custom") {
+    customInput.style.display = "inline-block";
+    setCustomTimerDuration();
+    return;
+  }
+
+  customInput.style.display = "none";
+  socket.emit("setQuestionDuration", Number(select.value));
+}
+
+function setCustomTimerDuration() {
+  const input = document.getElementById("customDuration");
+  const duration = Number(input.value);
+
+  if (!duration || duration <= 0) return;
+
+  socket.emit("setQuestionDuration", duration);
+}
+
+socket.on("hostMessage", (msg) => {
+  document.getElementById("message").innerHTML = `<strong>${escapeHtml(msg)}</strong>`;
+});
+
+socket.on("adminMessage", (msg) => {
+  document.getElementById("message").innerHTML = `<strong>${escapeHtml(msg)}</strong>`;
+});
+
+socket.on("accumulateScoresUpdated", (data) => {
+  accumulateScoresActive = Boolean(data?.enabled);
+  updateAccumulateScoresButton();
+});
+
+socket.on("quizLoaded", (quiz) => {
+  hostQuizLoaded = true;
+  hostQuizStarted = false;
+  document.getElementById("message").innerHTML = `
+    <strong>Quiz chargé : ${escapeHtml(quiz.title)}</strong>
+    (${quiz.questions.length} question(s))
+  `;
+  document.getElementById("questionBox").innerHTML = "Prêt — clique sur Load.";
+});
+
+socket.on("countdown", handleCountdown);
+
+socket.on("showQuestion", (data) => {
+  hostQuizStarted = true;
+  currentQuestionData = data;
+  TimerSounds.resetTimerTickSound();
+
+  if (data.timerDuration) {
+    currentTimer = {
+      duration: data.timerDuration,
+      remaining: data.timerDuration,
+      running: false,
+      locked: false
+    };
+    updateDurationControls(data.timerDuration);
+  }
+
+  renderQuestion();
+  renderTimer();
+});
+
+socket.on("timerUpdate", (data) => {
+  currentTimer = data;
+  renderTimer();
+});
+
+socket.on("timerTick", () => {
+  TimerSounds.handleTimerTick();
+});
+
+socket.on("timerFinished", (data) => {
+  renderTimer();
+  TimerSounds.handleTimerFinished(data);
+});
+
+socket.on("answerRevealed", (data) => {
+  highlightHostAnswer(correctIndexesFromReveal(data));
+  const winnerLine = data.winnerName
+    ? `<p class="good"><strong>${escapeHtml(data.winnerName)}</strong> a répondu en premier${Number(data.winnerPoints) > 0 ? ` (+${Number(data.winnerPoints)} pts)` : ""}.</p>`
+    : `<p>Aucun joueur n'a trouvé la bonne réponse.</p>`;
+  document.getElementById("questionBox").innerHTML += `
+    <h2 class="good">Bonne réponse : ${escapeHtml(data.correctLabel)}. ${escapeHtml(data.correctText)}</h2>
+    ${winnerLine}
+  `;
+});
+
+socket.on("answerHidden", () => {
+  renderQuestion();
+});
+
+socket.on("quizEnded", () => {
+  hostQuizStarted = false;
+  document.getElementById("questionBox").innerHTML = `<h1>Quiz terminé!</h1>`;
+
+  if (!groupPlayActive || groupPlayQueue.length === 0) {
+    groupPlayActive = false;
+    return;
+  }
+
+  const nextId = groupPlayQueue.shift();
+
+  setTimeout(() => {
+    socket.emit("loadQuiz", nextId);
+  }, 2500);
+});
+
+socket.on("leaderboardUpdate", (players) => {
+  renderPlayers(players || []);
+});
+
+socket.on("playersUpdate", (players) => {
+  renderPlayers(players || []);
+});
+
+function renderQuestion() {
+  if (!currentQuestionData) return;
+
+  QuizAudio?.stopQuestionAudio?.();
+
+  const audioLine = currentQuestionData.audio
+    ? `<p class="question-audio-note">Extrait : ${escapeHtml(currentQuestionData.audio)}</p>`
+    : "";
+
+  document.getElementById("questionBox").innerHTML = `
+    <h2>Question ${currentQuestionData.questionNumber} / ${currentQuestionData.totalQuestions}</h2>
+    <h1>${escapeHtml(currentQuestionData.question)}</h1>
+    ${audioLine}
+    <p class="answer answer-option" data-index="0">A. ${escapeHtml(currentQuestionData.answers[0])}</p>
+    <p class="answer answer-option" data-index="1">B. ${escapeHtml(currentQuestionData.answers[1])}</p>
+    <p class="answer answer-option" data-index="2">C. ${escapeHtml(currentQuestionData.answers[2])}</p>
+    <p class="answer answer-option" data-index="3">D. ${escapeHtml(currentQuestionData.answers[3])}</p>
+  `;
+
+  if (currentQuestionData.audio) {
+    QuizAudio?.playQuestionAudio?.(currentQuestionData.audio, {
+      start: currentQuestionData.audioStart,
+      duration: currentQuestionData.audioDuration
+    });
+  }
+}
+
+function correctIndexesFromReveal(data) {
+  const list = Array.isArray(data?.correctIndexes) ? data.correctIndexes.map(Number) : [];
+  const clean = list.filter((index) => Number.isInteger(index) && index >= 0 && index <= 3);
+  if (clean.length) return clean;
+  const one = Number(data?.correctIndex);
+  return Number.isInteger(one) ? [one] : [];
+}
+
+function highlightHostAnswer(correctIndexes) {
+  const accepted = Array.isArray(correctIndexes) ? correctIndexes : [Number(correctIndexes)];
+  document.querySelectorAll("#questionBox .answer-option").forEach((el) => {
+    const index = Number(el.dataset.index);
+    el.classList.remove("answer-correct", "answer-dim");
+
+    if (accepted.includes(index)) {
+      el.classList.add("answer-correct");
+    } else {
+      el.classList.add("answer-dim");
+    }
+  });
+}
+
+function renderTimer() {
+  const duration = Number(currentTimer.duration) || 30;
+  const remaining = Math.max(0, Number(currentTimer.remaining) || 0);
+  const percent = duration > 0 ? (remaining / duration) * 100 : 0;
+  const running = Boolean(currentTimer.running);
+  const locked = Boolean(currentTimer.locked);
+  const isUrgent = running && remaining > 0 && remaining <= 5 && !locked;
+  const color = isUrgent ? "#ff4d4d" : "#00d4ff";
+
+  const timerCircle = document.getElementById("timerCircle");
+  const progressBar = document.getElementById("progressBar");
+  const timerStatus = document.getElementById("timerStatus");
+
+  document.getElementById("timerText").textContent = remaining;
+  progressBar.style.width = `${percent}%`;
+  timerCircle.style.background =
+    `conic-gradient(${color} ${percent}%, #333 ${percent}%)`;
+
+  timerCircle.classList.toggle("timer-urgent", isUrgent);
+  progressBar.classList.toggle("timer-urgent", isUrgent);
+  timerStatus.classList.toggle("timer-urgent", isUrgent);
+
+  let status = "En attente";
+
+  if (locked || remaining <= 0) {
+    status = "Temps terminé";
+  } else if (isUrgent) {
+    status = "Dépêchez-vous !";
+  } else if (running) {
+    status = "En marche";
+  } else if (remaining < duration) {
+    status = "Pause";
+  }
+
+  timerStatus.textContent = status;
+}
+
+function updateDurationControls(duration) {
+  const select = document.getElementById("durationSelect");
+  const customInput = document.getElementById("customDuration");
+  const value = String(duration);
+
+  const optionExists = Array.from(select.options).some(option => option.value === value);
+
+  if (optionExists) {
+    select.value = value;
+    customInput.style.display = "none";
+  } else {
+    select.value = "custom";
+    customInput.style.display = "inline-block";
+    customInput.value = duration;
+  }
+}
+
+function renderPlayers(players) {
+  lastPlayers = players || [];
+  const div = document.getElementById("players");
+  const countEl = document.getElementById("playerCount");
+  const count = lastPlayers.length;
+  const label = count === 1 ? "connecté" : "connectés";
+
+  if (countEl) {
+    countEl.textContent = `${count} ${label}`;
+  }
+
+  div.innerHTML = "";
+
+  if (count === 0) {
+    div.innerHTML = '<p class="empty-note">Aucun joueur connecté.</p>';
+    return;
+  }
+
+  lastPlayers.forEach(player => {
+    div.innerHTML += `
+      <div class="player">
+        <span>👤 ${escapeHtml(player.name)}</span>
+        <span>${player.score || 0} pt</span>
+      </div>
+    `;
+  });
+}
+
+function escapeHtml(text) {
+  return String(text ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function handleCountdown(data) {
+  TimerSounds.handleCountdownSound(data);
+
+  const overlay = document.getElementById("countdownOverlay");
+  const num = document.getElementById("countdownNumber");
+  const value = Number(data?.value);
+
+  if (value === -1) {
+    overlay.classList.add("hidden");
+    num.classList.remove("go");
+    return;
+  }
+
+  overlay.classList.remove("hidden");
+
+  if (value === 0) {
+    num.textContent = "GO!";
+    num.classList.add("go");
+    return;
+  }
+
+  num.classList.remove("go");
+  num.textContent = String(value);
+}
+
+loadNetworkInfo();
+loadQuizzes();
+renderTimer();
+setupPlayButton();
+setupRemoteKeyAssign();
+
+socket.on("connect", () => {
+  syncRemoteKeysToServer();
+});
+
+function isHostTypingTarget(target) {
+  if (!target) return false;
+
+  const tag = target.tagName;
+  return (
+    tag === "INPUT" ||
+    tag === "TEXTAREA" ||
+    tag === "SELECT" ||
+    target.isContentEditable
+  );
+}
+
+const HOST_NEXT_KEYS = new Set([
+  "ArrowRight",
+  "PageDown",
+  "MediaTrackNext",
+  "AudioTrackNext"
+]);
+
+const HOST_PREV_KEYS = new Set([
+  "ArrowLeft",
+  "PageUp",
+  "MediaTrackPrevious",
+  "AudioTrackPrevious"
+]);
+
+let lastHostNextAt = 0;
+let lastHostPrevAt = 0;
+const HOST_NAV_DEBOUNCE_MS = 320;
+
+function canFireHostNav(action) {
+  const now = Date.now();
+
+  if (action === "next") {
+    if (now - lastHostNextAt < HOST_NAV_DEBOUNCE_MS) return false;
+    lastHostNextAt = now;
+    return true;
+  }
+
+  if (now - lastHostPrevAt < HOST_NAV_DEBOUNCE_MS) return false;
+  lastHostPrevAt = now;
+  return true;
+}
+
+function getHostNavAction(event) {
+  const code = event.code || "";
+  const key = event.key || "";
+  const keyCode = event.keyCode || event.which || 0;
+
+  const isNext =
+    HOST_NEXT_KEYS.has(code) ||
+    key === "ArrowRight" ||
+    key === "PageDown" ||
+    keyCode === 34 ||
+    keyCode === 39;
+
+  const isPrev =
+    HOST_PREV_KEYS.has(code) ||
+    key === "ArrowLeft" ||
+    key === "PageUp" ||
+    keyCode === 33 ||
+    keyCode === 37;
+
+  if (isNext) return "next";
+  if (isPrev) return "prev";
+  return null;
+}
+
+function triggerHostNav(action) {
+  if (action === "next" && canFireHostNav("next")) nextQuestion();
+  if (action === "prev" && canFireHostNav("prev")) previousQuestion();
+}
+
+function handleHostNavKey(event) {
+  if (isHostTypingTarget(event.target)) return false;
+
+  const navAction = getHostNavAction(event);
+  if (!navAction) return false;
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  triggerHostNav(navAction);
+  return true;
+}
+
+function handleHostKeyDown(event) {
+  if (playKeyLearnMode && capturePlayKeyFromEvent(event)) return;
+  if (stopKeyLearnMode && captureStopKeyFromEvent(event)) return;
+
+  if (handleHostStopKey(event)) return;
+  if (handleHostNavKey(event)) return;
+
+  if (isHostTypingTarget(event.target)) return;
+
+  if (isPlayTriggerKey(event)) {
+    if (event.repeat) return;
+    event.preventDefault();
+    beginPlayHold();
+    return;
+  }
+
+  if (event.code === "Delete" || event.code === "Backspace") {
+    event.preventDefault();
+    hideAnswer();
+  }
+}
+
+function handleHostKeyUp(event) {
+  if (playKeyLearnMode && capturePlayKeyFromEvent(event)) return;
+  if (stopKeyLearnMode && captureStopKeyFromEvent(event)) return;
+
+  if (isHostTypingTarget(event.target)) return;
+
+  if (isPlayTriggerKey(event)) {
+    event.preventDefault();
+    endPlayHold();
+  }
+}
+
+function focusHostForRemote() {
+  document.body.focus({ preventScroll: true });
+}
+
+function setupHostRemoteFocus() {
+  document.body.tabIndex = -1;
+}
+
+window.addEventListener("blur", () => {
+  playKeyArmed = false;
+  cancelPlayHold();
+});
+
+window.addEventListener("keydown", handleHostKeyDown, true);
+window.addEventListener("keyup", handleHostKeyUp, true);
+
+setupHostRemoteFocus();
+</script>
+<script src="/home-confirm.js"></script>
+
+</body>
+</html>
