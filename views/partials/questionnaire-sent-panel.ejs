@@ -4,9 +4,17 @@
 <% const returnPath = typeof returnTo !== 'undefined' ? returnTo : '/'; %>
 <% const defaultSentDt = typeof defaultSentDatetime !== 'undefined' ? defaultSentDatetime : ''; %>
 <% const eventDateValue = typeof eventDate !== 'undefined' ? eventDate : ''; %>
+<% const sendStatus = typeof questionnaireSendStatus !== 'undefined'
+  ? questionnaireSendStatus
+  : (logs.length ? 'sent' : 'not_sent'); %>
+<% const statusLabels = {
+  not_sent: 'Questionnaire — non envoyé',
+  sent: 'Questionnaire — envoyé',
+  complete: 'Questionnaire — complété'
+}; %>
 
-<div class="questionnaire-sent-panel<%= compact ? ' questionnaire-sent-panel--compact' : '' %>" onclick="event.stopPropagation()">
-  <div class="questionnaire-sent-panel-label fw-semibold<%= compact ? ' text-muted small' : '' %>">Questionnaire envoyé</div>
+<div class="questionnaire-sent-panel questionnaire-sent-panel--<%= sendStatus %><%= compact ? ' questionnaire-sent-panel--compact' : '' %>" onclick="event.stopPropagation()">
+  <div class="questionnaire-sent-panel-label fw-semibold<%= compact ? ' small' : '' %>"><%= statusLabels[sendStatus] || statusLabels.not_sent %></div>
 
   <% if (logs.length) { %>
     <ul class="questionnaire-sent-log-list list-unstyled mb-2<%= compact ? ' small' : '' %>">

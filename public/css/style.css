@@ -1633,6 +1633,57 @@ a.calendar-month-event-link:hover {
 
 .questionnaire-sent-panel {
   margin-top: 0.65rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  border: 1px solid transparent;
+}
+
+.questionnaire-sent-panel--not_sent {
+  background-color: #fff5f5;
+  border-color: #f1aeb5;
+}
+
+.questionnaire-sent-panel--not_sent .questionnaire-sent-panel-label {
+  color: #842029;
+}
+
+.questionnaire-sent-panel--sent {
+  background-color: #fff9e6;
+  border-color: #ffe69c;
+}
+
+.questionnaire-sent-panel--sent .questionnaire-sent-panel-label {
+  color: #997404;
+}
+
+.questionnaire-sent-panel--complete {
+  background-color: #d1e7dd;
+  border-color: #a3cfbb;
+}
+
+.questionnaire-sent-panel--complete .questionnaire-sent-panel-label {
+  color: #0f5132;
+}
+
+.questionnaire-legend-dot {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  margin: 0 0.15rem 0 0.5rem;
+  vertical-align: middle;
+}
+
+.questionnaire-legend-dot--not_sent {
+  background-color: #f1aeb5;
+}
+
+.questionnaire-legend-dot--sent {
+  background-color: #ffe69c;
+}
+
+.questionnaire-legend-dot--complete {
+  background-color: #a3cfbb;
 }
 
 .questionnaire-sent-panel--compact {
