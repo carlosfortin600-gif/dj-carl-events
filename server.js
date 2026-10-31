@@ -189,8 +189,17 @@ const {
   isClientConfirmed,
   normalizeConfirmedByName,
   isValidConfirmedByName,
-  recordClientConfirmation
+  recordClientConfirmation,
+  unconfirmClientDossier
 } = require("./lib/client-confirmation");
+const {
+  CONFIRMATION_DAYS_BEFORE,
+  sendConfirmationEmailToClient,
+  confirmationEmailErrorMessage,
+  getConfirmationEmailPreview,
+  getConfirmationEmailCopyTo,
+  startConfirmationEmailScheduler
+} = require("./lib/confirmation-email");
 const {
   sendQuestionnaireInviteEmail,
   questionnaireInviteEmailErrorMessage,
@@ -926,6 +935,12 @@ function renderEventDetailPage(req, res) {
 
   const questionnaireEmailPreview =
     tab === "client" && portalToken ? getQuestionnaireInviteEmailPreview(event, portalToken) : null;
+  const confirmationEmailPreview =
+    tab === "client" && portalToken ? getConfirmationEmailPreview(event, portalToken) : null;
+  const clientConfirmUrl =
+    tab === "client" && portalLinks?.primary
+      ? `${String(portalLinks.primary).replace(/\/$/, "")}/confirmer`
+      : null;
 
   res.render("event", {
     title: `${clientShortName(event)} — DJ CARL`,
@@ -1005,7 +1020,15 @@ function renderEventDetailPage(req, res) {
     questionnaireEmailSent: req.query.questionnaireEmailSent === "1",
     questionnaireEmailForwarded: req.query.questionnaireEmailForwarded === "1",
     questionnaireEmailError: req.query.questionnaireEmailError || "",
-    questionnaireEmailPreview
+    questionnaireEmailPreview,
+    confirmationDaysBefore: CONFIRMATION_DAYS_BEFORE,
+    confirmationEmailCopyTo: getConfirmationEmailCopyTo(),
+    confirmationEmailSent: req.query.confirmationEmailSent === "1",
+    confirmationEmailForwarded: req.query.confirmationEmailForwarded === "1",
+    confirmationEmailError: req.query.confirmationEmailError || "",
+    confirmationEmailPreview,
+    clientConfirmUrl,
+    clientUnconfirmed: req.query.clientUnconfirmed === "1"
   });
 }
 
@@ -1214,6 +1237,52 @@ app.post("/events/:id/questionnaire-email/send", async (req, res) => {
       `/events/${eventId}?tab=client&questionnaireEmailError=${encodeURIComponent("Envoi impossible — réessayez ou vérifiez Paramètres → Notifications.")}`
     );
   }
+});
+
+app.post("/events/:id/confirmation-email/send", async (req, res) => {
+  const eventId = Number(req.params.id);
+  try {
+    const event = getEventById(db, eventId);
+    if (!event) {
+      return res.status(404).render("error", {
+        title: "Événement introuvable",
+        activeNav: "dashboard",
+        message: "Cet événement n'existe pas."
+      });
+    }
+
+    if (!isEmailNotificationConfigured(db)) {
+      return res.redirect(
+        `/events/${eventId}?tab=client&confirmationEmailError=${encodeURIComponent("Courriel non configuré — allez dans Paramètres → Notifications.")}`
+      );
+    }
+
+    const result = await sendConfirmationEmailToClient(db, event, { manual: true });
+    if (!result.ok) {
+      return res.redirect(
+        `/events/${eventId}?tab=client&confirmationEmailError=${encodeURIComponent(confirmationEmailErrorMessage(result))}`
+      );
+    }
+
+    res.redirect(
+      `/events/${eventId}?tab=client&confirmationEmailSent=1${
+        result.forwardedViaDj ? "&confirmationEmailForwarded=1" : ""
+      }`
+    );
+  } catch (err) {
+    console.error("Confirmation email route:", err);
+    res.redirect(
+      `/events/${eventId}?tab=client&confirmationEmailError=${encodeURIComponent("Envoi impossible — réessayez ou vérifiez Paramètres → Notifications.")}`
+    );
+  }
+});
+
+app.post("/events/:id/client/unconfirm", (req, res) => {
+  const eventId = Number(req.params.id);
+  const event = getEventById(db, eventId);
+  if (!event) return res.status(404).send("Not found");
+  unconfirmClientDossier(db, eventId);
+  res.redirect(`/events/${eventId}?tab=client&clientUnconfirmed=1`);
 });
 
 app.get("/portal/:token/confirmer", (req, res) => {
@@ -1987,6 +2056,7 @@ app.use((req, res) => {
 app.listen(PORT, HOST, () => {
   const base = process.env.PUBLIC_URL || `http://localhost:${PORT}`;
   const { APP_TIMEZONE } = require("./lib/app-timezone");
+  startConfirmationEmailScheduler(db);
   console.log(`DJ Carl Events — ${base}`);
   console.log(`Fuseau horaire app : ${APP_TIMEZONE} (TZ=${process.env.TZ || "—"})`);
   console.log(`Base SQLite : ${DB_PATH}${isPersistentStorage() ? " (persistante)" : ""}`);

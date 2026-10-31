@@ -134,7 +134,15 @@
           questionnaireEmailForwarded: typeof questionnaireEmailForwarded !== 'undefined' ? questionnaireEmailForwarded : false,
           questionnaireEmailError: typeof questionnaireEmailError !== 'undefined' ? questionnaireEmailError : '',
           questionnaireEmailPreview: typeof questionnaireEmailPreview !== 'undefined' ? questionnaireEmailPreview : null,
-          questionnaireSentLogs: typeof questionnaireSentLogs !== 'undefined' ? questionnaireSentLogs : []
+          questionnaireSentLogs: typeof questionnaireSentLogs !== 'undefined' ? questionnaireSentLogs : [],
+          confirmationDaysBefore: typeof confirmationDaysBefore !== 'undefined' ? confirmationDaysBefore : 6,
+          confirmationEmailCopyTo: typeof confirmationEmailCopyTo !== 'undefined' ? confirmationEmailCopyTo : '',
+          confirmationEmailSent: typeof confirmationEmailSent !== 'undefined' ? confirmationEmailSent : false,
+          confirmationEmailForwarded: typeof confirmationEmailForwarded !== 'undefined' ? confirmationEmailForwarded : false,
+          confirmationEmailError: typeof confirmationEmailError !== 'undefined' ? confirmationEmailError : '',
+          confirmationEmailPreview: typeof confirmationEmailPreview !== 'undefined' ? confirmationEmailPreview : null,
+          clientConfirmUrl: typeof clientConfirmUrl !== 'undefined' ? clientConfirmUrl : null,
+          clientUnconfirmed: typeof clientUnconfirmed !== 'undefined' ? clientUnconfirmed : false
         }) %>
 
       <% } else if (tab === 'questionnaire') { %>

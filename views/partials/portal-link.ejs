@@ -134,3 +134,92 @@
     <% } %>
   </div>
 </div>
+
+<div class="card mb-4 border-success">
+  <div class="card-header bg-white py-3">
+    <h2 class="h6 mb-0">Confirmation du questionnaire par le client</h2>
+  </div>
+  <div class="card-body">
+    <% if (typeof clientUnconfirmed !== 'undefined' && clientUnconfirmed) { %>
+      <div class="alert alert-success py-2 small">Confirmation réinitialisée — le client peut de nouveau modifier son dossier en ligne.</div>
+    <% } %>
+    <% if (typeof confirmationEmailSent !== 'undefined' && confirmationEmailSent) { %>
+      <div class="alert alert-success py-2 small">
+        <% if (typeof confirmationEmailForwarded !== 'undefined' && confirmationEmailForwarded) { %>
+          Courriel de confirmation envoyé à <strong><%= confirmationEmailCopyTo || 'pro@djcarl.ca' %></strong> (mode test Resend).
+          Transmettez-le au client <strong><%= event.email %></strong>.
+        <% } else { %>
+          Courriel de confirmation envoyé au client<% if (typeof confirmationEmailCopyTo !== 'undefined' && confirmationEmailCopyTo) { %> (copie à <%= confirmationEmailCopyTo %>)<% } %>.
+        <% } %>
+      </div>
+    <% } %>
+    <% if (typeof confirmationEmailError !== 'undefined' && confirmationEmailError) { %>
+      <div class="alert alert-danger py-2 small"><%= confirmationEmailError %></div>
+    <% } %>
+
+    <% if (event.client_confirmed_at) { %>
+      <div class="alert alert-success py-2 mb-3">
+        <strong>Dossier confirmé</strong>
+        <% if (event.client_confirmed_by_name) { %> par <%= event.client_confirmed_by_name %><% } %>
+        le <%= formatTimestampFr(event.client_confirmed_at) %>.
+        L'accès client en ligne est verrouillé.
+      </div>
+      <form method="post" action="/events/<%= event.id %>/client/unconfirm" class="mb-0"
+            onsubmit="return confirm('Réouvrir le dossier pour le client ? Il pourra modifier le questionnaire à nouveau.');">
+        <button type="submit" class="btn btn-outline-secondary btn-sm">Réouvrir le dossier client</button>
+      </form>
+    <% } else { %>
+      <p class="text-muted small mb-3">
+        Une fois le questionnaire rempli, envoyez ce courriel : le client vérifie que tout est correct et confirme en un clic
+        (lien <strong>/confirmer</strong>). Envoi automatique aussi <strong><%= typeof confirmationDaysBefore !== 'undefined' ? confirmationDaysBefore : 6 %> jours</strong> avant la date de l'événement.
+      </p>
+
+      <% if (event.confirmation_email_sent_at) { %>
+        <p class="small mb-2">
+          Dernier courriel de confirmation :
+          <strong><%= formatTimestampFr(event.confirmation_email_sent_at) %></strong>
+        </p>
+      <% } %>
+
+      <% if (typeof clientConfirmUrl !== 'undefined' && clientConfirmUrl && event.confirmation_email_sent_at) { %>
+        <label class="form-label small fw-semibold">Lien de confirmation (client)</label>
+        <div class="input-group mb-3">
+          <input type="text" class="form-control font-monospace small" id="clientConfirmLink" readonly value="<%= clientConfirmUrl %>">
+          <button type="button" class="btn btn-outline-primary" data-copy-target="clientConfirmLink">Copier</button>
+        </div>
+      <% } else if (event.portal_enabled) { %>
+        <div class="alert alert-warning py-2 small mb-3">
+          Le lien de confirmation sera actif après l'envoi du courriel de confirmation (ou l'envoi automatique <%= typeof confirmationDaysBefore !== 'undefined' ? confirmationDaysBefore : 6 %> jours avant).
+        </div>
+      <% } %>
+
+      <% if (typeof confirmationEmailPreview !== 'undefined' && confirmationEmailPreview) { %>
+        <details class="mb-3">
+          <summary class="small fw-semibold mb-2" style="cursor:pointer;">Aperçu du courriel de confirmation</summary>
+          <div class="border rounded p-3 bg-light small">
+            <p class="mb-2"><strong>Objet :</strong> <%= confirmationEmailPreview.subject %></p>
+            <pre class="mb-0 small" style="white-space:pre-wrap;font-family:inherit;"><%= confirmationEmailPreview.text %></pre>
+          </div>
+        </details>
+      <% } %>
+
+      <% if (!event.email?.trim()) { %>
+        <div class="alert alert-warning py-2 small mb-0">Ajoutez le courriel du client dans l'onglet Résumé avant d'envoyer.</div>
+      <% } else if (typeof emailNotificationConfigured !== 'undefined' && !emailNotificationConfigured) { %>
+        <div class="alert alert-warning py-2 small mb-0">
+          Courriel non configuré.
+          <a href="/settings/notifications">Paramètres → Notifications</a>
+        </div>
+      <% } else if (!event.portal_enabled) { %>
+        <div class="alert alert-warning py-2 small mb-0">Réactivez l'accès client avant d'envoyer le courriel de confirmation.</div>
+      <% } else { %>
+        <form method="post" action="/events/<%= event.id %>/confirmation-email/send" class="mb-0" data-native-submit="true">
+          <button type="submit" class="btn btn-success">
+            Envoyer le courriel de confirmation
+          </button>
+        </form>
+        <p class="text-muted small mt-2 mb-0">Destinataire : <%= event.email %></p>
+      <% } %>
+    <% } %>
+  </div>
+</div>
