@@ -36,11 +36,10 @@
                 <input type="text" class="form-control" id="first_name_1" name="first_name_1" required
                        value="<%= values.first_name_1 || '' %>">
               </div>
-              <div class="col-md-6">
-                <label class="form-label" for="phone">Téléphone</label>
-                <input type="tel" class="form-control phone-input" id="phone" name="phone"
-                       value="<%= values.phone || '' %>">
-              </div>
+              <%- include('partials/client-phone-fields', {
+                weddingClientLabels: true,
+                clientPhoneSource: values
+              }) %>
               <div class="col-md-6">
                 <label class="form-label" for="email">Courriel</label>
                 <input type="email" class="form-control" id="email" name="email"
@@ -65,11 +64,10 @@
               <input type="text" class="form-control" id="first_name_2" name="first_name_2"
                      value="<%= values.first_name_2 || '' %>">
             </div>
-            <div class="col-md-6">
-              <label class="form-label" for="phone">Téléphone</label>
-              <input type="tel" class="form-control phone-input" id="phone" name="phone"
-                     value="<%= values.phone || '' %>">
-            </div>
+            <%- include('partials/client-phone-fields', {
+              weddingClientLabels: false,
+              clientPhoneSource: values
+            }) %>
             <div class="col-md-6">
               <label class="form-label" for="email">Courriel</label>
               <input type="email" class="form-control" id="email" name="email"

@@ -31,6 +31,7 @@ const {
   sortByTime,
   telHref,
   formatPhoneDisplay,
+  formatPhoneWithExtension,
   clientShortName,
   clientFullName,
   calendarEventTitle,
@@ -405,6 +406,7 @@ app.locals.googleMapsDirectionsUrl = googleMapsDirectionsUrl;
 app.locals.sortByTime = sortByTime;
 app.locals.telHref = telHref;
 app.locals.formatPhoneDisplay = formatPhoneDisplay;
+app.locals.formatPhoneWithExtension = formatPhoneWithExtension;
 app.locals.ROUTE_ORIGIN_OPTIONS = loadRouteOrigins();
 app.locals.resolveRouteOrigin = resolveRouteOrigin;
 app.locals.routeOriginLabel = routeOriginLabel;

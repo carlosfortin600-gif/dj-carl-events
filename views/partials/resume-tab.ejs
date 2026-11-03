@@ -21,14 +21,10 @@
             <input type="text" class="form-control" id="first_name_1" name="first_name_1" required
                    value="<%= event.first_name_1 || '' %>">
           </div>
-          <div class="col-md-6">
-            <label class="form-label" for="phone">Téléphone</label>
-            <input type="tel" class="form-control phone-input" id="phone" name="phone"
-                   value="<%= event.phone || '' %>">
-            <% if (event.phone && telHref(event.phone)) { %>
-              <a href="<%= telHref(event.phone) %>" class="small d-inline-block mt-1">Composer</a>
-            <% } %>
-          </div>
+          <%- include('client-phone-fields', {
+            weddingClientLabels: true,
+            clientPhoneSource: event
+          }) %>
           <div class="col-md-6">
             <label class="form-label" for="email">Courriel</label>
             <input type="email" class="form-control" id="email" name="email"
@@ -53,14 +49,10 @@
           <input type="text" class="form-control" id="first_name_2" name="first_name_2"
                  value="<%= event.first_name_2 || '' %>">
         </div>
-        <div class="col-md-6">
-          <label class="form-label" for="phone">Téléphone</label>
-            <input type="tel" class="form-control phone-input" id="phone" name="phone"
-                   value="<%= event.phone || '' %>">
-            <% if (event.phone && telHref(event.phone)) { %>
-              <a href="<%= telHref(event.phone) %>" class="small d-inline-block mt-1">Composer</a>
-            <% } %>
-        </div>
+        <%- include('client-phone-fields', {
+          weddingClientLabels: false,
+          clientPhoneSource: event
+        }) %>
         <div class="col-md-6">
           <label class="form-label" for="email">Courriel</label>
           <input type="email" class="form-control" id="email" name="email"

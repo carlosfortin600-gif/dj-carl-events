@@ -40,6 +40,8 @@ function initDatabase() {
       first_name_2 TEXT,
       last_name TEXT NOT NULL,
       phone TEXT,
+      phone_cell TEXT,
+      phone_ext TEXT,
       email TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     );
@@ -623,6 +625,14 @@ function migrate(db) {
 
   const { backfillSubcontractorCalendarTokens } = require("./lib/subcontractor-calendar-access");
   backfillSubcontractorCalendarTokens(db);
+
+  const clientColumns = db.prepare("PRAGMA table_info(clients)").all().map((c) => c.name);
+  if (!clientColumns.includes("phone_cell")) {
+    db.exec("ALTER TABLE clients ADD COLUMN phone_cell TEXT");
+  }
+  if (!clientColumns.includes("phone_ext")) {
+    db.exec("ALTER TABLE clients ADD COLUMN phone_ext TEXT");
+  }
 }
 
 module.exports = {

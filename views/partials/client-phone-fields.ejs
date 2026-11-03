@@ -1,0 +1,24 @@
+<% const src = typeof clientPhoneSource !== 'undefined' ? clientPhoneSource : {}; %>
+<% const wedding = typeof weddingClientLabels !== 'undefined' && weddingClientLabels; %>
+<% const cellLabel = wedding ? 'Cellulaire de la mariée' : 'Cellulaire — personne contact 2'; %>
+<div class="col-md-5">
+  <label class="form-label" for="phone">Téléphone</label>
+  <input type="tel" class="form-control phone-input" id="phone" name="phone"
+         value="<%= src.phone || '' %>">
+  <% if (src.phone && telHref(src.phone)) { %>
+    <a href="<%= telHref(src.phone) %>" class="small d-inline-block mt-1">Composer</a>
+  <% } %>
+</div>
+<div class="col-md-2">
+  <label class="form-label" for="phone_ext">Poste</label>
+  <input type="text" class="form-control" id="phone_ext" name="phone_ext"
+         value="<%= src.phone_ext || '' %>" placeholder="Ex. 123" inputmode="numeric" autocomplete="off">
+</div>
+<div class="col-md-5">
+  <label class="form-label" for="phone_cell"><%= cellLabel %></label>
+  <input type="tel" class="form-control phone-input" id="phone_cell" name="phone_cell"
+         value="<%= src.phone_cell || '' %>">
+  <% if (src.phone_cell && telHref(src.phone_cell)) { %>
+    <a href="<%= telHref(src.phone_cell) %>" class="small d-inline-block mt-1">Composer</a>
+  <% } %>
+</div>

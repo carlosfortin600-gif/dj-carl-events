@@ -58,11 +58,22 @@
     <div class="card-body p-4">
       <h1 class="h2 mb-1"><%= clientShortName(event) %></h1>
       <p class="h5 text-muted mb-2"><%= event.event_type %> — <%= formatDateFr(event.event_date) %></p>
-      <% if (event.phone) { %>
+      <% if (event.phone || event.phone_ext || event.phone_cell) { %>
         <p class="mb-2">
           <span class="text-muted">Téléphone :</span>
-          <%- include('partials/phone-link', { value: event.phone }) %>
+          <% if (event.phone) { %>
+            <%- include('partials/phone-link', { value: event.phone }) %>
+          <% } else { %>—<% } %>
+          <% if (event.phone_ext) { %>
+            <span class="text-muted"> · poste <%= event.phone_ext %></span>
+          <% } %>
         </p>
+        <% if (event.phone_cell) { %>
+          <p class="mb-2">
+            <span class="text-muted"><%= event.event_type === 'Mariage' ? 'Cellulaire mariée' : 'Cellulaire contact 2' %> :</span>
+            <%- include('partials/phone-link', { value: event.phone_cell }) %>
+          </p>
+        <% } %>
       <% } %>
       <span class="badge <%= statusBadgeClass(event.status) %> fs-6"><%= statusLabel(event.status) %></span>
       <div class="mt-3 d-flex flex-wrap gap-2">
