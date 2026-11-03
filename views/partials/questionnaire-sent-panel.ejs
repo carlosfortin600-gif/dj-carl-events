@@ -10,11 +10,28 @@
 <% const statusLabels = {
   not_sent: 'Questionnaire — non envoyé',
   sent: 'Questionnaire — envoyé',
-  complete: 'Questionnaire — complété'
+  complete: 'Questionnaire — complété',
+  client_confirmed: 'Confirmé par le client'
 }; %>
 
 <div class="questionnaire-sent-panel questionnaire-sent-panel--<%= sendStatus %><%= compact ? ' questionnaire-sent-panel--compact' : '' %>" onclick="event.stopPropagation()">
-  <div class="questionnaire-sent-panel-label fw-semibold<%= compact ? ' small' : '' %>"><%= statusLabels[sendStatus] || statusLabels.not_sent %></div>
+  <div class="questionnaire-sent-panel-label fw-semibold<%= compact ? ' small' : '' %>">
+    <% if (sendStatus === 'client_confirmed') { %>
+      <span class="client-confirmed-check" aria-hidden="true">✓</span>
+    <% } %>
+    <%= statusLabels[sendStatus] || statusLabels.not_sent %>
+  </div>
+  <% if (sendStatus === 'client_confirmed' && (typeof clientConfirmedByName !== 'undefined' && clientConfirmedByName || typeof clientConfirmedAt !== 'undefined' && clientConfirmedAt)) { %>
+    <p class="questionnaire-sent-panel-confirmed-detail small mb-2<%= compact ? ' mb-1' : '' %>">
+      <% if (typeof clientConfirmedByName !== 'undefined' && clientConfirmedByName) { %>
+        <strong><%= clientConfirmedByName %></strong>
+      <% } %>
+      <% if (typeof clientConfirmedAt !== 'undefined' && clientConfirmedAt) { %>
+        <% if (clientConfirmedByName) { %> · <% } %>
+        <%= formatTimestampFr(clientConfirmedAt) %>
+      <% } %>
+    </p>
+  <% } %>
 
   <% if (logs.length) { %>
     <ul class="questionnaire-sent-log-list list-unstyled mb-2<%= compact ? ' small' : '' %>">

@@ -242,8 +242,26 @@ const {
   saveUploadedFiles,
   deleteEventFile,
   deleteAllEventFiles,
-  formatFileSize
+  formatFileSize,
+  resolveFileMime
 } = require("./lib/event-files");
+
+function sendEventFileResponse(res, eventId, file, { inline = false } = {}) {
+  const filePath = getStoredFilePath(eventId, file.stored_name);
+  if (!fs.existsSync(filePath)) {
+    res.status(404).send("Fichier introuvable");
+    return;
+  }
+  const mime = resolveFileMime(file);
+  const safeName = String(file.original_name || "fichier").replace(/[\r\n"]/g, "");
+  res.setHeader("Content-Type", mime);
+  if (inline) {
+    res.setHeader("Content-Disposition", `inline; filename="${safeName}"`);
+  } else {
+    res.setHeader("Content-Disposition", `attachment; filename="${safeName}"`);
+  }
+  res.sendFile(filePath);
+}
 
 function eventRedirect(eventId, tab, params = {}) {
   const qs = new URLSearchParams({ tab, ...params }).toString();
@@ -1070,6 +1088,18 @@ app.post("/events/:id/files/upload", (req, res) => {
   });
 });
 
+app.get("/events/:id/files/:fileId/view", (req, res) => {
+  const eventId = Number(req.params.id);
+  const fileId = Number(req.params.fileId);
+  const event = getEventById(db, eventId);
+  if (!event) return res.status(404).send("Not found");
+
+  const file = getEventFileById(db, fileId, eventId);
+  if (!file) return res.status(404).send("Not found");
+
+  sendEventFileResponse(res, eventId, file, { inline: true });
+});
+
 app.get("/events/:id/files/:fileId/download", (req, res) => {
   const eventId = Number(req.params.id);
   const fileId = Number(req.params.fileId);
@@ -1083,12 +1113,7 @@ app.get("/events/:id/files/:fileId/download", (req, res) => {
     return res.status(404).send("Not found");
   }
 
-  const filePath = getStoredFilePath(eventId, file.stored_name);
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).send("Fichier introuvable");
-  }
-
-  res.download(filePath, file.original_name);
+  sendEventFileResponse(res, eventId, file, { inline: false });
 });
 
 app.post("/events/:id/files/:fileId/delete", (req, res) => {

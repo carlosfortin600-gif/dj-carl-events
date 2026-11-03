@@ -1665,6 +1665,40 @@ a.calendar-month-event-link:hover {
   color: #0f5132;
 }
 
+.questionnaire-sent-panel--client_confirmed {
+  background: linear-gradient(135deg, #cfe2ff 0%, #d1e7dd 100%);
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.15);
+}
+
+.questionnaire-sent-panel--client_confirmed .questionnaire-sent-panel-label {
+  color: #084298;
+}
+
+.questionnaire-sent-panel-confirmed-detail {
+  color: #055160;
+  margin-top: 0.15rem;
+}
+
+.client-confirmed-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.35rem;
+  border-radius: 50%;
+  background: #198754;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.questionnaire-legend-dot--client_confirmed {
+  background: linear-gradient(135deg, #0d6efd 50%, #198754 50%);
+}
+
 .questionnaire-legend-dot {
   display: inline-block;
   width: 0.65rem;
@@ -1701,6 +1735,35 @@ a.calendar-month-event-link:hover {
 .questionnaire-sent-add-form .datetime-fr-picker,
 .email-rdv-sent-add-form .datetime-fr-picker {
   min-width: 12rem;
+}
+
+.event-file-preview-img {
+  max-height: 280px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.event-file-preview-pdf {
+  width: 100%;
+  min-height: 420px;
+  height: 55vh;
+  max-height: 640px;
+  border: 0;
+  background: #f8f9fa;
+}
+
+.event-file-preview-text {
+  width: 100%;
+  min-height: 200px;
+  height: 240px;
+  border: 0;
+  background: #fff;
+}
+
+.event-file-preview-video {
+  max-height: 360px;
+  background: #000;
 }
 
 .email-rdv-sent-panel {
