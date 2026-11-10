@@ -38,7 +38,7 @@
           }) %>
         </div>
         <div class="col-md-3">
-          <label class="form-label" for="time_spent_duration_hours">Durée</label>
+          <label class="form-label" for="time_spent_duration_hours">Durée <span class="text-muted fw-normal">(par 5 min)</span></label>
           <select class="form-select" id="time_spent_duration_hours" name="duration_hours" required>
             <option value="">— Choisir —</option>
             <% durations.forEach(function(item) { %>
@@ -91,19 +91,70 @@
             <th>Descriptif</th>
             <th>Date et heure</th>
             <th>Durée</th>
-            <th class="text-end" style="width: 6rem;"></th>
+            <th class="text-end" style="width: 9rem;"></th>
           </tr>
         </thead>
         <tbody>
-          <% logs.forEach(function(log) { %>
+          <% logs.forEach(function(log) {
+            const editOpen = String(typeof editTimeSpent !== 'undefined' ? editTimeSpent : '') === String(log.id);
+            const logDt = loggedDatetimeLocalValue(log.logged_date, log.logged_time);
+            const selectedDurationMins = Math.round(Number(log.duration_hours) * 60 / 5) * 5;
+          %>
             <tr>
               <td><%= activityLabel(log.activity) %></td>
               <td class="text-break"><%= log.description || '—' %></td>
               <td><%= formatLoggedAt(log.logged_date, log.logged_time) %></td>
               <td><%= formatDurationHours(log.duration_hours) %></td>
               <td class="text-end">
-                <form method="post" action="/events/<%= event.id %>/gestion/temps/<%= log.id %>/delete" class="d-inline">
+                <button type="button" class="btn btn-sm btn-outline-primary"
+                        data-bs-toggle="collapse" data-bs-target="#time-spent-edit-<%= log.id %>"
+                        aria-expanded="<%= editOpen ? 'true' : 'false' %>">
+                  Modifier
+                </button>
+                <form method="post" action="/events/<%= event.id %>/gestion/temps/<%= log.id %>/delete" class="d-inline"
+                      onsubmit="return confirm('Supprimer cette entrée ?');">
                   <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                </form>
+              </td>
+            </tr>
+            <tr class="collapse<%= editOpen ? ' show' : '' %>" id="time-spent-edit-<%= log.id %>">
+              <td colspan="5" class="bg-light p-3">
+                <form method="post" action="/events/<%= event.id %>/gestion/temps/<%= log.id %>/update" data-time-spent-edit-form>
+                  <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                      <label class="form-label" for="time_spent_activity_<%= log.id %>">Activité</label>
+                      <select class="form-select" id="time_spent_activity_<%= log.id %>" name="activity" required>
+                        <% activities.forEach(function(item) { %>
+                          <option value="<%= item.id %>" <%= log.activity === item.id ? 'selected' : '' %>><%= item.label %></option>
+                        <% }); %>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" for="time_spent_logged_datetime_<%= log.id %>">Date et heure</label>
+                      <%- include('datetime-fr-field', {
+                        id: 'time_spent_logged_datetime_' + log.id,
+                        name: 'logged_datetime',
+                        value: logDt,
+                        displayValue: logDt ? formatDateTimeFr(logDt.slice(0, 10), logDt.slice(11, 16)) : ''
+                      }) %>
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label" for="time_spent_duration_<%= log.id %>">Durée (5 min)</label>
+                      <select class="form-select" id="time_spent_duration_<%= log.id %>" name="duration_hours" required>
+                        <% durations.forEach(function(item) { %>
+                          <option value="<%= String(item.value) %>" <%= item.minutes === selectedDurationMins ? 'selected' : '' %>><%= item.label %></option>
+                        <% }); %>
+                      </select>
+                    </div>
+                    <div class="col-md-2 d-flex gap-2">
+                      <button type="submit" class="btn btn-primary flex-grow-1">Enregistrer</button>
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label" for="time_spent_description_<%= log.id %>">Descriptif</label>
+                      <input type="text" class="form-control" id="time_spent_description_<%= log.id %>" name="description"
+                             value="<%= log.description || '' %>" placeholder="Descriptif">
+                    </div>
+                  </div>
                 </form>
               </td>
             </tr>

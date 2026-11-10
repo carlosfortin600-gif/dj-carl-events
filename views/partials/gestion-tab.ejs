@@ -39,6 +39,9 @@
 <% if (typeof timeSpentDeleted !== 'undefined' && timeSpentDeleted) { %>
   <div class="alert alert-success">Entrée supprimée.</div>
 <% } %>
+<% if (typeof timeSpentUpdated !== 'undefined' && timeSpentUpdated) { %>
+  <div class="alert alert-success">Temps passé modifié.</div>
+<% } %>
 
 <%- include('gestion-nav', { event, gestionSection }) %>
 
@@ -130,7 +133,8 @@
     timeSpentLogs,
     timeSpentTotalHours,
     timeSpentDefaultDatetime,
-    timeSpentError: typeof timeSpentError !== 'undefined' ? timeSpentError : ''
+    timeSpentError: typeof timeSpentError !== 'undefined' ? timeSpentError : '',
+    editTimeSpent: typeof editTimeSpent !== 'undefined' ? editTimeSpent : ''
   }) %>
 
 <% } else if (gestionSection === 'fichiers') { %>

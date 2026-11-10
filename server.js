@@ -224,11 +224,14 @@ const {
   TIME_SPENT_ACTIVITIES,
   TIME_SPENT_DURATIONS,
   formatDurationHours,
+  durationSelectValue,
+  loggedDatetimeLocalValue,
   activityLabel,
   formatLoggedAt,
   getTimeSpentLogs,
   getTimeSpentTotalHours,
   addTimeSpentLog,
+  updateTimeSpentLog,
   deleteTimeSpentLog,
   defaultLoggedDatetime
 } = require("./lib/time-spent");
@@ -438,6 +441,8 @@ app.locals.isContractFullySigned = isContractFullySigned;
 app.locals.TIME_SPENT_ACTIVITIES = TIME_SPENT_ACTIVITIES;
 app.locals.TIME_SPENT_DURATIONS = TIME_SPENT_DURATIONS;
 app.locals.formatDurationHours = formatDurationHours;
+app.locals.durationSelectValue = durationSelectValue;
+app.locals.loggedDatetimeLocalValue = loggedDatetimeLocalValue;
 app.locals.activityLabel = activityLabel;
 app.locals.formatLoggedAt = formatLoggedAt;
 app.locals.defaultQuestionnaireSentDatetime = defaultSentDatetime;
@@ -1032,6 +1037,8 @@ function renderEventDetailPage(req, res) {
     timeSpentSaved: req.query.timeSpentSaved === "1",
     clientContactLogged: req.query.clientContactLogged === "1",
     timeSpentDeleted: req.query.timeSpentDeleted === "1",
+    timeSpentUpdated: req.query.timeSpentUpdated === "1",
+    editTimeSpent: req.query.editTimeSpent || "",
     timeSpentError: req.query.timeSpentError || "",
     lastPortalClientUpdate,
     portalClientUpdateUnread: tab === "client" || tab === "questionnaire" ? false : portalClientUpdateUnread,
@@ -1694,6 +1701,34 @@ app.post("/events/:id/gestion/temps/add", (req, res) => {
       gestionRedirect(eventId, {
         gestion: "temps",
         timeSpentError: "Enregistrement impossible — réessayez."
+      })
+    );
+  }
+});
+
+app.post("/events/:id/gestion/temps/:logId/update", (req, res) => {
+  const eventId = Number(req.params.id);
+  const logId = Number(req.params.logId);
+  if (!getEventById(db, eventId)) return res.status(404).send("Not found");
+
+  try {
+    const result = updateTimeSpentLog(db, eventId, logId, req.body);
+    if (!result.ok) {
+      return res.redirect(
+        gestionRedirect(eventId, {
+          gestion: "temps",
+          timeSpentError: result.error,
+          editTimeSpent: String(logId)
+        })
+      );
+    }
+    res.redirect(gestionRedirect(eventId, { gestion: "temps", timeSpentUpdated: "1" }));
+  } catch (err) {
+    console.error("Time spent update failed:", err);
+    res.redirect(
+      gestionRedirect(eventId, {
+        gestion: "temps",
+        timeSpentError: "Modification impossible — réessayez."
       })
     );
   }
