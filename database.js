@@ -633,6 +633,12 @@ function migrate(db) {
   if (!clientColumns.includes("phone_ext")) {
     db.exec("ALTER TABLE clients ADD COLUMN phone_ext TEXT");
   }
+  if (!clientColumns.includes("contact_honorific")) {
+    db.exec("ALTER TABLE clients ADD COLUMN contact_honorific TEXT");
+  }
+  if (!clientColumns.includes("contact_family_name")) {
+    db.exec("ALTER TABLE clients ADD COLUMN contact_family_name TEXT");
+  }
 }
 
 module.exports = {

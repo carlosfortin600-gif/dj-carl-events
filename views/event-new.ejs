@@ -40,6 +40,7 @@
                 weddingClientLabels: true,
                 clientPhoneSource: values
               }) %>
+              <%- include('partials/client-courtesy-fields', { clientCourtesySource: values }) %>
               <div class="col-md-6">
                 <label class="form-label" for="email">Courriel</label>
                 <input type="email" class="form-control" id="email" name="email"
@@ -68,6 +69,7 @@
               weddingClientLabels: false,
               clientPhoneSource: values
             }) %>
+            <%- include('partials/client-courtesy-fields', { clientCourtesySource: values }) %>
             <div class="col-md-6">
               <label class="form-label" for="email">Courriel</label>
               <input type="email" class="form-control" id="email" name="email"

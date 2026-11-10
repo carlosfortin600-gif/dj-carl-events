@@ -25,6 +25,7 @@
             weddingClientLabels: true,
             clientPhoneSource: event
           }) %>
+          <%- include('client-courtesy-fields', { clientCourtesySource: event }) %>
           <div class="col-md-6">
             <label class="form-label" for="email">Courriel</label>
             <input type="email" class="form-control" id="email" name="email"
@@ -53,6 +54,7 @@
           weddingClientLabels: false,
           clientPhoneSource: event
         }) %>
+        <%- include('client-courtesy-fields', { clientCourtesySource: event }) %>
         <div class="col-md-6">
           <label class="form-label" for="email">Courriel</label>
           <input type="email" class="form-control" id="email" name="email"

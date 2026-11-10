@@ -1,0 +1,22 @@
+<% const courtesySource = typeof clientCourtesySource !== 'undefined' ? clientCourtesySource : {}; %>
+<div class="col-md-3">
+  <label class="form-label" for="contact_honorific">Civilité</label>
+  <select class="form-select" id="contact_honorific" name="contact_honorific">
+    <option value="" <%= !courtesySource.contact_honorific ? 'selected' : '' %>>—</option>
+    <option value="M." <%= courtesySource.contact_honorific === 'M.' ? 'selected' : '' %>>M.</option>
+    <option value="Mme" <%= courtesySource.contact_honorific === 'Mme' ? 'selected' : '' %>>Mme</option>
+  </select>
+</div>
+<div class="col-md-9 col-lg-6">
+  <label class="form-label" for="contact_family_name">Nom de famille</label>
+  <input type="text" class="form-control" id="contact_family_name" name="contact_family_name"
+         value="<%= courtesySource.contact_family_name || '' %>"
+         placeholder="Ex. : Giroux"
+         autocomplete="family-name">
+</div>
+<div class="col-12">
+  <p class="form-text text-muted mb-0">
+    Utilisé pour la formule d’accueil du <strong>courriel questionnaire</strong> et de l’<strong>introduction du portail client</strong>
+    (ex. : «&nbsp;Bonjour, Mme Giroux&nbsp;»).
+  </p>
+</div>

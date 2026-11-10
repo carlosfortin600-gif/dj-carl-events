@@ -33,6 +33,7 @@ const {
   formatPhoneDisplay,
   formatPhoneWithExtension,
   clientShortName,
+  clientCourtesyName,
   clientFullName,
   calendarEventTitle,
   calendarEventPrimary,
@@ -399,6 +400,7 @@ app.locals.statusLabel = statusLabel;
 app.locals.eventTypeLabel = eventTypeLabel;
 app.locals.statusBadgeClass = statusBadgeClass;
 app.locals.clientShortName = clientShortName;
+app.locals.clientCourtesyName = clientCourtesyName;
 app.locals.clientFullName = clientFullName;
 app.locals.calendarEventTitle = calendarEventTitle;
 app.locals.calendarEventPrimary = calendarEventPrimary;
