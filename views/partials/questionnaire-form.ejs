@@ -1,7 +1,7 @@
 <% const q = questionnaire.data; %>
 <% const readOnly = typeof readOnlyMode !== 'undefined' && readOnlyMode; %>
 <% const isPortal = typeof portalMode !== 'undefined' && portalMode; %>
-<% const embedInParentForm = typeof embedInParentForm !== 'undefined' && embedInParentForm; %>
+<% const embeddedInParentForm = typeof embedInParentForm !== 'undefined' && embedInParentForm; %>
 <% const lockedFields = typeof djLockedFields !== 'undefined' ? djLockedFields : []; %>
 <% const ceremony = q.ceremony || { location: '', ceremony_room: '', ceremony_place: '', start_time: '', end_time: '', equipment_provided: '', sound_provided: '' }; %>
 <% const cocktail = q.cocktail || { cocktail_location: '', cocktail_place: '', cocktail_dj_distance: '', equipment_provided: '', styles: [], requests: '' }; %>
@@ -11,7 +11,7 @@
   <p class="text-muted small mb-3">Dernière modification : <%= formatTimestampFr(questionnaire.updated_at) %></p>
 <% } %>
 
-<% if (!embedInParentForm) { %>
+<% if (!embeddedInParentForm) { %>
 <form method="post" action="<%= typeof formAction !== 'undefined' ? formAction : ('/events/' + event.id + '/questionnaire') %>" id="questionnaireForm" data-unsaved-guard<% if (isPortal && lockedFields.length) { %> data-dj-locked-fields="<%= encodeURIComponent(JSON.stringify(lockedFields)) %>"<% } %>>
 <% } else { %>
 <div id="questionnaireForm"<% if (isPortal && lockedFields.length) { %> data-dj-locked-fields="<%= encodeURIComponent(JSON.stringify(lockedFields)) %>"<% } %>>
@@ -446,7 +446,7 @@
               placeholder="Notes générales, rappels ou précisions…"><%= q.general.general_notes || '' %></textarea>
   </section>
 
-  <% if (!readOnly && !embedInParentForm) { %>
+  <% if (!readOnly && !embeddedInParentForm) { %>
   <div class="sticky-save-bar d-flex flex-wrap gap-2 align-items-center justify-content-between">
     <% if (!isPortal) { %>
     <div class="form-check mb-0">
@@ -459,9 +459,9 @@
     <% } %>
     <button type="submit" class="btn btn-primary btn-lg"><%= isPortal ? 'Enregistrer mes réponses' : 'Enregistrer le questionnaire' %></button>
   </div>
-  <% } else if (isPortal && !readOnly && embedInParentForm) { %>
+  <% } else if (isPortal && !readOnly && embeddedInParentForm) { %>
     <p class="small text-muted mb-0">Les champs déjà remplis ne sont pas modifiables.</p>
   <% } %>
 <% if (readOnly) { %></fieldset><% } %>
-<% if (!embedInParentForm) { %></form><% } else { %></div><% } %>
+<% if (!embeddedInParentForm) { %></form><% } else { %></div><% } %>
 <script src="/js/questionnaire-location-equipment.js?v=3"></script>
