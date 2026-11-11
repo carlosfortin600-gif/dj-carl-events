@@ -15,36 +15,28 @@
           <span class="text-muted small">—</span>
         <% } else { %>
           <% day.events.forEach(function(ev) { %>
-            <div class="calendar-week-event calendar-event-card <%= ev.isClientCallback ? 'calendar-event-card--callback' : 'status-border-' + ev.status %>">
+            <div class="calendar-week-event calendar-event-card status-border-<%= ev.status %>">
               <div class="calendar-week-event-title">
                 <% if (typeof canOpenEvent !== 'undefined' && canOpenEvent) { %>
-                  <a href="<%= ev.isClientCallback ? ev.gestionDepartUrl : '/events/' + ev.id %>" class="text-decoration-none text-body calendar-week-event-open"><%= ev.isClientCallback ? ev.calendarEntryPrimary : calendarEventPrimary(ev) %></a>
+                  <a href="/events/<%= ev.id %>" class="text-decoration-none text-body calendar-week-event-open"><%= calendarEventPrimary(ev) %></a>
                 <% } else { %>
-                  <%= ev.isClientCallback ? ev.calendarEntryPrimary : calendarEventPrimary(ev) %>
+                  <%= calendarEventPrimary(ev) %>
                 <% } %>
               </div>
               <div class="calendar-week-event-meta small text-muted">
-                <% if (ev.isClientCallback) { %>
-                  <%= ev.calendarEntrySubtitle %><% if (ev.calendarTime) { %> · <%= formatTime(ev.calendarTime) %><% } %>
-                <% } else { %>
-                  <%= eventCity(ev) || '—' %>
-                  <% if (ev.calendarTime || ev.start_time) { %> · <%= formatTime(ev.calendarTime || ev.start_time) %><% } %>
-                  · <%= eventTypeLabel(ev.event_type) %>
-                <% } %>
+                <%= eventCity(ev) || '—' %>
+                <% if (ev.calendarTime || ev.start_time) { %> · <%= formatTime(ev.calendarTime || ev.start_time) %><% } %>
+                · <%= eventTypeLabel(ev.event_type) %>
               </div>
-              <% if (!ev.isClientCallback) { %>
-                <%- include('calendar-agreement-summary', { ev, showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false }) %>
-              <% } %>
-              <% if (!ev.isClientCallback) { %>
-                <%- include('calendar-contract-btn', {
-                  ev,
-                  subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
-                  showContractLink: typeof showContractLink !== 'undefined' ? showContractLink : false,
-                  showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false,
-                  publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false,
-                  compact: true
-                }) %>
-              <% } %>
+              <%- include('calendar-agreement-summary', { ev, showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false }) %>
+              <%- include('calendar-contract-btn', {
+                ev,
+                subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
+                showContractLink: typeof showContractLink !== 'undefined' ? showContractLink : false,
+                showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false,
+                publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false,
+                compact: true
+              }) %>
             </div>
           <% }); %>
         <% } %>

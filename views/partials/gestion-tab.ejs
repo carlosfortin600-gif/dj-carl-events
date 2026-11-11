@@ -1,5 +1,11 @@
 <% if (notesSaved) { %>
-  <div class="alert alert-success">Informations enregistrées.</div>
+  <div class="alert alert-success">
+    Informations enregistrées.
+    <% if (typeof addCallbackCalendar !== 'undefined' && addCallbackCalendar && callbackIcsUrl) { %>
+      Ajout du rappel à Calendrier (Mac) en cours…
+      <a href="<%= callbackIcsUrl %>" class="alert-link ms-1">Ouvrir le fichier</a>
+    <% } %>
+  </div>
 <% } %>
 <% if (contractSaved) { %>
   <div class="alert alert-success">Contrat enregistré.</div>

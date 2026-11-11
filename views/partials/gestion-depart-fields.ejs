@@ -100,6 +100,13 @@
           displayValue: djNotes.tech_callback_date
             ? formatDateTimeFr(djNotes.tech_callback_date, djNotes.tech_callback_time) : ''
         }) %>
+        <% const callbackPartyClient = (djNotes.tech_callback_party || 'client') === 'client'; %>
+        <% if (callbackPartyClient && djNotes.tech_callback_date) { %>
+          <a href="/events/<%= event.id %>/callback-calendar.ics"
+             class="btn btn-sm btn-outline-secondary mt-2"
+             download>Ajouter à Calendrier (Mac)</a>
+          <p class="form-text mb-0">Télécharge un fichier .ics pour votre Calendrier Apple (15 min).</p>
+        <% } %>
       </div>
     </div>
   </div>

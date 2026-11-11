@@ -169,7 +169,14 @@ const {
 } = require("./lib/subcontractor-calendar-access");
 const { buildSummarySheet } = require("./lib/summary-sheet");
 const { buildEventDossierZip, buildAllEventsDossierZip } = require("./lib/event-export");
-const { buildEventIcs, buildEventIcsFilename } = require("./lib/event-ics");
+const {
+  buildEventIcs,
+  buildEventIcsFilename,
+  buildClientCallbackIcs,
+  buildClientCallbackIcsFilename,
+  clientCallbackEligible,
+  clientCallbackChanged
+} = require("./lib/event-ics");
 const { applyPlanSoireeFromBody } = require("./lib/plan-soiree");
 const {
   notifyDjCarlClientUpdate,
@@ -874,6 +881,34 @@ app.get("/events/:id/calendar.ics", (req, res) => {
   }
 });
 
+app.get("/events/:id/callback-calendar.ics", (req, res) => {
+  const event = getEventById(db, Number(req.params.id));
+  if (!event) {
+    return res.status(404).send("Événement introuvable.");
+  }
+
+  const djNotes = getDjNotes(db, event.id);
+  if (!clientCallbackEligible(djNotes)) {
+    return res.status(404).send("Aucun rappel client planifié pour ce dossier.");
+  }
+
+  try {
+    const { currentBase } = getPortalBaseUrls(req);
+    const ics = buildClientCallbackIcs({
+      event,
+      djNotes,
+      appUrl: currentBase
+    });
+    const filename = buildClientCallbackIcsFilename(event, djNotes.tech_callback_date);
+    res.setHeader("Content-Type", "text/calendar; charset=utf-8");
+    res.setHeader("Content-Disposition", `inline; filename="${filename}"`);
+    res.send(ics);
+  } catch (err) {
+    console.error("Callback calendar ICS:", err.message);
+    res.status(500).send("Impossible de générer le rappel calendrier.");
+  }
+});
+
 function renderEventDetailPage(req, res) {
   const event = getEventById(db, Number(req.params.id));
   if (!event) {
@@ -1004,6 +1039,13 @@ function renderEventDetailPage(req, res) {
     addCalendar: req.query.addCalendar === "1",
     calendarIcsUrl: `/events/${event.id}/calendar.ics`,
     calendarIcsFilename: buildEventIcsFilename(event),
+    addCallbackCalendar: req.query.addCallbackCalendar === "1",
+    callbackIcsUrl: clientCallbackEligible(djNotes)
+      ? `/events/${event.id}/callback-calendar.ics`
+      : null,
+    callbackIcsFilename: clientCallbackEligible(djNotes)
+      ? buildClientCallbackIcsFilename(event, djNotes.tech_callback_date)
+      : null,
     statusUpdated: req.query.statusUpdated === "1",
     questionnaireSaved: req.query.questionnaireSaved === "1",
     portalRegenerated: req.query.portalRegenerated === "1",
@@ -1774,7 +1816,9 @@ app.post("/events/:id/notes/save", (req, res) => {
   const eventId = Number(req.params.id);
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
   try {
+    const notesBeforeSave = getDjNotes(db, eventId);
     saveDjNotes(db, eventId, req.body);
+    const notesAfterSave = getDjNotes(db, eventId);
     const returnTab = req.body.return_tab === "gestion" ? "gestion" : "notes";
     if (returnTab === "gestion") {
       const gestionParams = {
@@ -1783,6 +1827,14 @@ app.post("/events/:id/notes/save", (req, res) => {
       };
       if (req.body.sous_traitant?.trim()) {
         gestionParams.sousTraitant = req.body.sous_traitant.trim();
+      }
+      const saveScope = req.body.save_scope || req.body.gestion_section || "";
+      if (
+        saveScope === "depart" &&
+        clientCallbackEligible(notesAfterSave) &&
+        clientCallbackChanged(notesBeforeSave, notesAfterSave)
+      ) {
+        gestionParams.addCallbackCalendar = "1";
       }
       return res.redirect(gestionRedirect(eventId, gestionParams));
     }
