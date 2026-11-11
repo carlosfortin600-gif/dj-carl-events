@@ -22,9 +22,9 @@
         </div>
       </div>
       <div class="alert alert-info small mb-0">
-        Vérifiez d’abord les <strong>coordonnées et le lieu</strong>, puis complétez le questionnaire.
-        Les réponses déjà remplies sont verrouillées.
-        Pour la musique et le plan de soirée, utilisez les onglets dédiés.
+        Les réponses déjà remplies sont verrouillées. Complétez les champs encore vides.
+        <a href="/portal/<%= event.portal_token %>/resume" class="alert-link">Résumé</a>
+        · musique et plan de soirée : onglets dédiés.
       </div>
     </div>
   </div>
@@ -39,9 +39,7 @@
           timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : [],
           formAction: '/portal/' + event.portal_token + '/questionnaire',
           portalMode: true,
-          djLockedFields: typeof djLockedFields !== 'undefined' ? djLockedFields : [],
-          includeResumeFields: true,
-          resumeShowServices: false
+          djLockedFields: typeof djLockedFields !== 'undefined' ? djLockedFields : []
         }) %>
       <% } else { %>
         <%- include('../partials/party-questionnaire-form', {
@@ -51,9 +49,7 @@
           timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : [],
           formAction: '/portal/' + event.portal_token + '/questionnaire',
           portalMode: true,
-          djLockedFields: typeof djLockedFields !== 'undefined' ? djLockedFields : [],
-          includeResumeFields: true,
-          resumeShowServices: false
+          djLockedFields: typeof djLockedFields !== 'undefined' ? djLockedFields : []
         }) %>
       <% } %>
     </div>

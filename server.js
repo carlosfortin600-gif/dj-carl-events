@@ -1179,13 +1179,6 @@ app.post("/events/:id/questionnaire", (req, res) => {
   }
 
   try {
-    if (req.body.include_resume_fields === "1") {
-      updateEventResumeFromForm(db, eventId, req.body, {
-        portal: false,
-        includeServices: true,
-        skipRouteOrigin: true
-      });
-    }
     const data = bodyToQuestionnaireForEvent(req.body, event.event_type);
     stampDjLockedFields(data, event.event_type);
     saveQuestionnaireForEvent(db, eventId, event.event_type, data);
@@ -1432,6 +1425,46 @@ app.post("/portal/:token/intro-ack", (req, res) => {
   res.redirect(`/portal/${req.params.token}/dossier`);
 });
 
+app.get("/portal/:token/resume", (req, res) => {
+  const event = requirePortalEvent(req, res);
+  if (!event) return;
+  if (!requirePortalIntroAck(req, res, event)) return;
+
+  touchPortalAccess(db, event.id);
+
+  res.render("portal/resume", {
+    title: `Résumé — ${clientShortName(event)}`,
+    event,
+    saved: req.query.saved === "1"
+  });
+});
+
+app.post("/portal/:token/resume", async (req, res) => {
+  const event = requirePortalEvent(req, res);
+  if (!event) return;
+  if (!requirePortalIntroAck(req, res, event)) return;
+
+  try {
+    updateEventResumeFromForm(db, event.id, req.body, {
+      portal: true,
+      includeServices: false,
+      skipRouteOrigin: true
+    });
+    const updated = getEventById(db, event.id);
+    await notifyDjCarlClientUpdate({
+      db,
+      event: updated || event,
+      kind: "resume",
+      req,
+      changes: []
+    });
+    res.redirect(`/portal/${req.params.token}/resume?saved=1`);
+  } catch (err) {
+    console.error(err);
+    res.redirect(`/portal/${req.params.token}/resume`);
+  }
+});
+
 app.get("/portal/:token/dossier", (req, res) => {
   const event = requirePortalEvent(req, res);
   if (!event) return;
@@ -1466,13 +1499,6 @@ app.post("/portal/:token/questionnaire", async (req, res) => {
   if (!requirePortalIntroAck(req, res, event)) return;
 
   try {
-    if (req.body.include_resume_fields === "1") {
-      updateEventResumeFromForm(db, event.id, req.body, {
-        portal: true,
-        includeServices: false,
-        skipRouteOrigin: true
-      });
-    }
     const existing = getQuestionnaireForEvent(db, event.id, event.event_type);
     const before = existing.data;
     const incoming = bodyToQuestionnaireForEvent(req.body, event.event_type);

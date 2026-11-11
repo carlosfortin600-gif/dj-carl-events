@@ -158,25 +158,9 @@
 
       <% } else if (tab === 'questionnaire') { %>
         <% if (isWeddingEvent(event.event_type)) { %>
-          <%- include('partials/questionnaire-form', {
-            event,
-            questionnaire,
-            questionnaireSaved,
-            includeResumeFields: true,
-            selectedServices,
-            customServiceSlots,
-            resumeShowServices: true
-          }) %>
+          <%- include('partials/questionnaire-form', { event, questionnaire, questionnaireSaved }) %>
         <% } else { %>
-          <%- include('partials/party-questionnaire-form', {
-            event,
-            questionnaire,
-            questionnaireSaved,
-            includeResumeFields: true,
-            selectedServices,
-            customServiceSlots,
-            resumeShowServices: true
-          }) %>
+          <%- include('partials/party-questionnaire-form', { event, questionnaire, questionnaireSaved }) %>
         <% } %>
 
       <% } else if (tab === 'a-completer') { %>

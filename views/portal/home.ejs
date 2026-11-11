@@ -15,11 +15,23 @@
     <div class="card-body p-4">
       <h2 class="h5 mb-3">Complétez votre dossier</h2>
       <p class="text-muted">
-        Utilisez cet espace pour compléter le questionnaire, le <strong>plan de soirée</strong>
+        Commencez par le <strong>résumé</strong>, puis le questionnaire, le <strong>plan de soirée</strong>
         et vos <strong>préférences musicales</strong>.
       </p>
 
       <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task">
+        <div>
+          <strong>Résumé</strong>
+          <div class="small text-muted">
+            Coordonnées, lieu, horaires et nombre d’invités
+          </div>
+        </div>
+        <a href="/portal/<%= event.portal_token %>/resume" class="btn btn-primary">
+          Vérifier le résumé
+        </a>
+      </div>
+
+      <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task mt-3">
         <div>
           <strong><%= getQuestionnaireLabel(event.event_type) %></strong>
           <div class="small text-muted">
@@ -57,45 +69,6 @@
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-body p-4">
-      <h2 class="h6 mb-3">Rappel de votre événement</h2>
-      <dl class="row mb-0 small">
-        <dt class="col-sm-4">Date</dt>
-        <dd class="col-sm-8"><%= formatDateFr(event.event_date) %></dd>
-        <% if (event.start_time || event.end_time) { %>
-          <dt class="col-sm-4">Heures</dt>
-          <dd class="col-sm-8">
-            <% if (event.start_time) { %><%= formatTime(event.start_time) %><% } %>
-            <% if (event.end_time) { %>
-              <% if (event.start_time) { %> — <% } %>
-              <%= formatDateTimeFr(event.end_date || event.event_date, event.end_time) %>
-            <% } %>
-          </dd>
-        <% } %>
-        <% if (event.venue) { %>
-          <dt class="col-sm-4">Salle</dt>
-          <dd class="col-sm-8"><%= event.venue %></dd>
-        <% } %>
-        <% if (event.address) { %>
-          <dt class="col-sm-4">Adresse</dt>
-          <dd class="col-sm-8">
-            <% if (googleMapsUrl(event.address)) { %>
-              <a href="<%= googleMapsUrl(event.address) %>" target="_blank" rel="noopener noreferrer"><%= event.address %></a>
-            <% } else { %>
-              <%= event.address %>
-            <% } %>
-          </dd>
-        <% } %>
-        <% if (event.phone) { %>
-          <dt class="col-sm-4">Téléphone</dt>
-          <dd class="col-sm-8">
-            <%- include('../partials/phone-link', { value: event.phone }) %>
-          </dd>
-        <% } %>
-      </dl>
-    </div>
-  </div>
 </main>
 
 <%- include('partials/footer') %>

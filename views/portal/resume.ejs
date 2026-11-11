@@ -1,0 +1,38 @@
+<%- include('partials/head', { title }) %>
+
+<main class="container pb-5" style="max-width: 820px;">
+  <div class="mb-3">
+    <a href="/portal/<%= event.portal_token %>/dossier" class="btn btn-outline-secondary btn-sm">← Retour</a>
+  </div>
+
+  <% if (saved) { %>
+    <div class="alert alert-success">Merci ! Vos informations ont été enregistrées.</div>
+  <% } %>
+
+  <div class="card mb-4">
+    <div class="card-body p-4">
+      <h1 class="h4 mb-1">Résumé de votre événement</h1>
+      <p class="text-muted small mb-0">
+        Vérifiez et complétez vos coordonnées, le lieu et les horaires.
+        Ensuite, poursuivez avec le questionnaire, le plan de soirée et la musique.
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-4">
+      <form method="post" action="/portal/<%= event.portal_token %>/resume" data-unsaved-guard>
+        <%- include('../partials/resume-form-fields', {
+          event,
+          resumeShowServices: false,
+          resumeShowStatus: false,
+          resumeShowRouteOrigin: false,
+          resumeLockEventSchedule: true
+        }) %>
+        <button type="submit" class="btn btn-primary btn-lg mt-4">Enregistrer</button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
