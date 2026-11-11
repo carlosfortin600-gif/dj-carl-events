@@ -2,7 +2,15 @@
 <% const selected = typeof selectedServices !== 'undefined' ? selectedServices : []; %>
 <% const customSlots = typeof customServiceSlots !== 'undefined' ? customServiceSlots : []; %>
 <% const customNames = customSlots.filter(function(s) { return s.enabled && s.name && s.name.trim(); }).map(function(s) { return s.name.trim(); }); %>
-<% const serviceLines = selected.concat(customNames); %>
+<% let serviceLines = selected.concat(customNames); %>
+<% serviceLines = serviceLines.map(function(name) {
+  if (name === 'Bingo musical' && event.bingo_musical_style) return 'Bingo musical (' + event.bingo_musical_style + ')';
+  if (name === 'On connaît la chanson' && event.on_connait_chanson_notes) return 'On connaît la chanson (' + event.on_connait_chanson_notes + ')';
+  if (name === 'Animation' && event.animation_notes) return 'Animation (' + event.animation_notes + ')';
+  return name;
+}); %>
+<% const originAddress = resolveDepartureAddress(event.route_origin_key, event.route_origin_custom, ROUTE_ORIGIN_OPTIONS); %>
+<% const departureDirectionsUrl = originAddress && event.address ? googleMapsDirectionsUrl(originAddress, event.address) : null; %>
 <% const courtesy = clientCourtesyName(event); %>
 <% const company = !wedding && event.last_name && event.last_name !== '—' ? event.last_name.trim() : ''; %>
 
@@ -93,6 +101,18 @@
       <% if (event.city) { %>
         <dt class="col-sm-4">Ville</dt>
         <dd class="col-sm-8"><%= event.city %></dd>
+      <% } %>
+      <% if (originAddress) { %>
+        <dt class="col-sm-4">Adresse de départ</dt>
+        <dd class="col-sm-8">
+          <% if (departureDirectionsUrl) { %>
+            <a href="<%= departureDirectionsUrl %>" target="_blank" rel="noopener noreferrer"><%= originAddress %></a>
+          <% } else if (googleMapsUrl(originAddress)) { %>
+            <a href="<%= googleMapsUrl(originAddress) %>" target="_blank" rel="noopener noreferrer"><%= originAddress %></a>
+          <% } else { %>
+            <%= originAddress %>
+          <% } %>
+        </dd>
       <% } %>
     </dl>
   </section>
