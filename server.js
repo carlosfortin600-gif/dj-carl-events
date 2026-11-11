@@ -1452,12 +1452,6 @@ app.post("/portal/:token/resume", async (req, res) => {
   if (!requirePortalIntroAck(req, res, event)) return;
 
   try {
-    updateEventResumeFromForm(db, event.id, req.body, {
-      portal: false,
-      includeServices: true,
-      skipRouteOrigin: true
-    });
-
     const existing = getQuestionnaireForEvent(db, event.id, event.event_type);
     const before = existing.data;
     const incoming = bodyToQuestionnaireForEvent(req.body, event.event_type);

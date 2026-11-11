@@ -1,0 +1,110 @@
+<% const wedding = event.event_type === 'Mariage'; %>
+<% const selected = typeof selectedServices !== 'undefined' ? selectedServices : []; %>
+<% const customSlots = typeof customServiceSlots !== 'undefined' ? customServiceSlots : []; %>
+<% const customNames = customSlots.filter(function(s) { return s.enabled && s.name && s.name.trim(); }).map(function(s) { return s.name.trim(); }); %>
+<% const serviceLines = selected.concat(customNames); %>
+<% const courtesy = clientCourtesyName(event); %>
+<% const company = !wedding && event.last_name && event.last_name !== '—' ? event.last_name.trim() : ''; %>
+
+<div class="portal-resume-readonly mb-4">
+  <p class="text-muted small mb-3">
+    Ces informations sont préparées par DJ Carl. Si quelque chose est incorrect,
+    écrivez-le dans le questionnaire ou contactez directement DJ Carl.
+  </p>
+
+  <section class="mb-4">
+    <h2 class="h6 text-uppercase text-muted mb-3">Informations client</h2>
+    <dl class="row mb-0 small">
+      <% if (courtesy) { %>
+        <dt class="col-sm-4">Contact</dt>
+        <dd class="col-sm-8"><%= courtesy %></dd>
+      <% } %>
+      <% if (wedding) { %>
+        <% if (event.first_name_2) { %>
+          <dt class="col-sm-4">Mariée</dt>
+          <dd class="col-sm-8"><%= event.first_name_2 %></dd>
+        <% } %>
+        <% if (event.first_name_1) { %>
+          <dt class="col-sm-4">Marié</dt>
+          <dd class="col-sm-8"><%= event.first_name_1 %></dd>
+        <% } %>
+      <% } else { %>
+        <% if (company) { %>
+          <dt class="col-sm-4">Organisation</dt>
+          <dd class="col-sm-8"><%= company %></dd>
+        <% } %>
+        <% if (event.first_name_1) { %>
+          <dt class="col-sm-4">Personne contact</dt>
+          <dd class="col-sm-8"><%= event.first_name_1 %><% if (event.first_name_2) { %> · <%= event.first_name_2 %><% } %></dd>
+        <% } %>
+      <% } %>
+      <% if (event.phone) { %>
+        <dt class="col-sm-4">Téléphone</dt>
+        <dd class="col-sm-8"><%= formatPhoneWithExtension(event.phone, event.phone_ext) %></dd>
+      <% } %>
+      <% if (event.phone_cell) { %>
+        <dt class="col-sm-4"><%= wedding ? 'Cellulaire mariée' : 'Cellulaire contact 2' %></dt>
+        <dd class="col-sm-8"><%= formatPhoneDisplay(event.phone_cell) %></dd>
+      <% } %>
+      <% if (event.email) { %>
+        <dt class="col-sm-4">Courriel</dt>
+        <dd class="col-sm-8"><%= event.email %></dd>
+      <% } %>
+    </dl>
+  </section>
+
+  <section class="mb-4">
+    <h2 class="h6 text-uppercase text-muted mb-3">Événement</h2>
+    <dl class="row mb-0 small">
+      <dt class="col-sm-4">Type</dt>
+      <dd class="col-sm-8"><%= event.event_type %></dd>
+      <dt class="col-sm-4">Date</dt>
+      <dd class="col-sm-8"><%= formatDateFr(event.event_date) %></dd>
+      <% if (event.start_time) { %>
+        <dt class="col-sm-4">Début</dt>
+        <dd class="col-sm-8"><%= formatTime(event.start_time) %></dd>
+      <% } %>
+      <% if (event.end_time) { %>
+        <dt class="col-sm-4">Fin</dt>
+        <dd class="col-sm-8"><%= formatDateTimeFr(event.end_date || event.event_date, event.end_time) %></dd>
+      <% } %>
+      <% if (event.venue) { %>
+        <dt class="col-sm-4">Salle</dt>
+        <dd class="col-sm-8"><%= event.venue %></dd>
+      <% } %>
+      <% if (event.venue_elevator) { %>
+        <dt class="col-sm-4">Ascenseur</dt>
+        <dd class="col-sm-8"><%= event.venue_elevator === 'yes' ? 'Oui' : 'Non' %></dd>
+      <% } %>
+      <% if (event.guest_count != null) { %>
+        <dt class="col-sm-4">Invités (approx.)</dt>
+        <dd class="col-sm-8"><%= event.guest_count %></dd>
+      <% } %>
+      <% if (event.address) { %>
+        <dt class="col-sm-4">Adresse</dt>
+        <dd class="col-sm-8">
+          <% if (googleMapsUrl(event.address)) { %>
+            <a href="<%= googleMapsUrl(event.address) %>" target="_blank" rel="noopener noreferrer"><%= event.address %></a>
+          <% } else { %>
+            <%= event.address %>
+          <% } %>
+        </dd>
+      <% } %>
+      <% if (event.city) { %>
+        <dt class="col-sm-4">Ville</dt>
+        <dd class="col-sm-8"><%= event.city %></dd>
+      <% } %>
+    </dl>
+  </section>
+
+  <% if (serviceLines.length) { %>
+    <section>
+      <h2 class="h6 text-uppercase text-muted mb-3">Services prévus</h2>
+      <ul class="small mb-0 ps-3">
+        <% serviceLines.forEach(function(name) { %>
+          <li><%= name %></li>
+        <% }); %>
+      </ul>
+    </section>
+  <% } %>
+</div>

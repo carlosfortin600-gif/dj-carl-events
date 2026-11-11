@@ -17,25 +17,21 @@
     <div class="card-body p-4">
       <h1 class="h4 mb-1">Votre dossier</h1>
       <p class="text-muted small mb-0">
-        Tout ce dont DJ Carl a besoin pour préparer votre soirée — coordonnées, événement, services et questionnaire.
-        Le <strong>plan de soirée</strong> et la <strong>musique</strong> se complètent dans les onglets ci-dessus.
+        Le <strong>résumé</strong> est fourni par DJ Carl (lecture seule).
+        Complétez le <strong>questionnaire</strong> ci-dessous, puis le plan de soirée et la musique.
       </p>
     </div>
   </div>
 
   <div class="card">
     <div class="card-body p-4">
-      <form method="post" action="/portal/<%= event.portal_token %>/resume" id="portalResumeForm" data-unsaved-guard>
-        <%- include('../partials/resume-form-fields', {
-          event,
-          selectedServices,
-          customServiceSlots,
-          resumeShowServices: true,
-          resumeShowStatus: false,
-          resumeShowRouteOrigin: false,
-          resumeLockEventSchedule: false
-        }) %>
+      <%- include('../partials/portal-resume-summary', {
+        event,
+        selectedServices,
+        customServiceSlots
+      }) %>
 
+      <form method="post" action="/portal/<%= event.portal_token %>/resume" id="portalResumeForm" data-unsaved-guard>
         <hr class="my-5">
         <h2 class="h5 mb-4" id="questionnaire"><%= getQuestionnaireLabel(event.event_type) %></h2>
 
@@ -58,8 +54,8 @@
         <% } %>
 
         <div class="sticky-save-bar d-flex flex-wrap gap-2 align-items-center justify-content-between mt-4 pt-3 border-top">
-          <p class="small text-muted mb-0">Un seul enregistrement pour le résumé et le questionnaire.</p>
-          <button type="submit" class="btn btn-primary btn-lg">Enregistrer mon dossier</button>
+          <p class="small text-muted mb-0">Seules vos réponses au questionnaire sont enregistrées.</p>
+          <button type="submit" class="btn btn-primary btn-lg">Enregistrer le questionnaire</button>
         </div>
       </form>
     </div>
