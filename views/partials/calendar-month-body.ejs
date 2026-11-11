@@ -28,19 +28,21 @@
       <% if (dayEvents.length) { %>
         <div class="calendar-month-events">
           <% dayEvents.forEach(function(ev) { %>
+            <% const evHref = ev.isClientCallback ? ev.gestionDepartUrl : '/events/' + ev.id; %>
+            <% const evBorderClass = ev.isClientCallback ? 'calendar-month-event--callback' : 'status-border-' + ev.status; %>
             <% if (typeof canOpenEvent !== 'undefined' && canOpenEvent) { %>
-              <a href="/events/<%= ev.id %>" class="calendar-month-event calendar-month-event-link status-border-<%= ev.status %>">
-                <div class="calendar-month-event-name"><%= calendarEventPrimary(ev) %></div>
-                <div class="calendar-month-event-city"><%= eventCity(ev) || '—' %></div>
-                <% if (ev.thematicSummary) { %>
+              <a href="<%= evHref %>" class="calendar-month-event calendar-month-event-link <%= evBorderClass %>">
+                <div class="calendar-month-event-name"><%= ev.isClientCallback ? ev.calendarEntryPrimary : calendarEventPrimary(ev) %></div>
+                <div class="calendar-month-event-city"><%= ev.isClientCallback ? ev.calendarEntrySubtitle : (eventCity(ev) || '—') %></div>
+                <% if (!ev.isClientCallback && ev.thematicSummary) { %>
                   <div class="calendar-month-event-thematic"><%= ev.thematicSummary %></div>
                 <% } %>
               </a>
             <% } else { %>
-              <div class="calendar-month-event status-border-<%= ev.status %>">
-                <div class="calendar-month-event-name"><%= calendarEventPrimary(ev) %></div>
-                <div class="calendar-month-event-city"><%= eventCity(ev) || '—' %></div>
-                <% if (ev.thematicSummary) { %>
+              <div class="calendar-month-event <%= evBorderClass %>">
+                <div class="calendar-month-event-name"><%= ev.isClientCallback ? ev.calendarEntryPrimary : calendarEventPrimary(ev) %></div>
+                <div class="calendar-month-event-city"><%= ev.isClientCallback ? ev.calendarEntrySubtitle : (eventCity(ev) || '—') %></div>
+                <% if (!ev.isClientCallback && ev.thematicSummary) { %>
                   <div class="calendar-month-event-thematic"><%= ev.thematicSummary %></div>
                 <% } %>
               </div>

@@ -6,31 +6,43 @@
   <h3 class="h6 text-uppercase text-muted mb-3">Événements</h3>
   <div class="calendar-events-stack mb-4">
     <% dayEvents.forEach(function(ev) { %>
-      <div class="calendar-event-card calendar-day-event status-border-<%= ev.status %>">
+      <div class="calendar-event-card calendar-day-event <%= ev.isClientCallback ? 'calendar-event-card--callback' : 'status-border-' + ev.status %>">
         <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
           <div>
-            <strong><%= calendarEventPrimary(ev) %></strong>
+            <strong><%= ev.isClientCallback ? ev.calendarEntryPrimary : calendarEventPrimary(ev) %></strong>
             <div class="text-muted small">
-              <%= eventCity(ev) || '—' %>
-              · <%= eventTypeLabel(ev.event_type) %>
-              <% if (ev.calendarTime || ev.start_time) { %> · <%= formatTime(ev.calendarTime || ev.start_time) %><% } %>
-              <% if (ev.venue) { %> · <%= ev.venue %><% } %>
+              <% if (ev.isClientCallback) { %>
+                <%= ev.calendarEntrySubtitle %><% if (ev.calendarTime) { %> · <%= formatTime(ev.calendarTime) %><% } %>
+              <% } else { %>
+                <%= eventCity(ev) || '—' %>
+                · <%= eventTypeLabel(ev.event_type) %>
+                <% if (ev.calendarTime || ev.start_time) { %> · <%= formatTime(ev.calendarTime || ev.start_time) %><% } %>
+                <% if (ev.venue) { %> · <%= ev.venue %><% } %>
+              <% } %>
             </div>
-            <%- include('calendar-agreement-summary', { ev, showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false }) %>
+            <% if (!ev.isClientCallback) { %>
+              <%- include('calendar-agreement-summary', { ev, showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false }) %>
+            <% } %>
             <div class="d-flex gap-2 mt-2 flex-wrap">
               <% if (typeof canOpenEvent !== 'undefined' && canOpenEvent) { %>
-                <a href="/events/<%= ev.id %>" class="btn btn-outline-primary btn-sm">Ouvrir l'événement</a>
+                <a href="<%= ev.isClientCallback ? ev.gestionDepartUrl : '/events/' + ev.id %>" class="btn btn-outline-primary btn-sm"><%= ev.isClientCallback ? 'Rappel — gestion' : "Ouvrir l'événement" %></a>
               <% } %>
-              <%- include('calendar-contract-btn', {
-                ev,
-                subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
-                showContractLink: typeof showContractLink !== 'undefined' ? showContractLink : false,
-                showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false,
-                publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false
-              }) %>
+              <% if (!ev.isClientCallback) { %>
+                <%- include('calendar-contract-btn', {
+                  ev,
+                  subcontractorLabel: typeof subcontractorLabel !== 'undefined' ? subcontractorLabel : '',
+                  showContractLink: typeof showContractLink !== 'undefined' ? showContractLink : false,
+                  showAgreementSummary: typeof showAgreementSummary !== 'undefined' ? showAgreementSummary : false,
+                  publicCalendarMode: typeof publicCalendarMode !== 'undefined' ? publicCalendarMode : false
+                }) %>
+              <% } %>
             </div>
           </div>
-          <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
+          <% if (ev.isClientCallback) { %>
+            <span class="badge bg-warning text-dark">Rappel client</span>
+          <% } else { %>
+            <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
+          <% } %>
         </div>
       </div>
     <% }); %>
