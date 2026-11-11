@@ -59,6 +59,7 @@ const {
   saveEventServices,
   saveServiceFormData,
   updateEventDetails,
+  updateEventResumeFromForm,
   updateEventStatus,
   deleteEvent,
   restoreEvent,
@@ -1178,6 +1179,13 @@ app.post("/events/:id/questionnaire", (req, res) => {
   }
 
   try {
+    if (req.body.include_resume_fields === "1") {
+      updateEventResumeFromForm(db, eventId, req.body, {
+        portal: false,
+        includeServices: true,
+        skipRouteOrigin: true
+      });
+    }
     const data = bodyToQuestionnaireForEvent(req.body, event.event_type);
     stampDjLockedFields(data, event.event_type);
     saveQuestionnaireForEvent(db, eventId, event.event_type, data);
@@ -1458,6 +1466,13 @@ app.post("/portal/:token/questionnaire", async (req, res) => {
   if (!requirePortalIntroAck(req, res, event)) return;
 
   try {
+    if (req.body.include_resume_fields === "1") {
+      updateEventResumeFromForm(db, event.id, req.body, {
+        portal: true,
+        includeServices: false,
+        skipRouteOrigin: true
+      });
+    }
     const existing = getQuestionnaireForEvent(db, event.id, event.event_type);
     const before = existing.data;
     const incoming = bodyToQuestionnaireForEvent(req.body, event.event_type);

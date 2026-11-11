@@ -22,7 +22,8 @@
         </div>
       </div>
       <div class="alert alert-info small mb-0">
-        Les réponses déjà remplies sont verrouillées. Complétez les champs encore vides.
+        Vérifiez d’abord les <strong>coordonnées et le lieu</strong>, puis complétez le questionnaire.
+        Les réponses déjà remplies sont verrouillées.
         Pour la musique et le plan de soirée, utilisez les onglets dédiés.
       </div>
     </div>
@@ -38,7 +39,9 @@
           timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : [],
           formAction: '/portal/' + event.portal_token + '/questionnaire',
           portalMode: true,
-          djLockedFields: typeof djLockedFields !== 'undefined' ? djLockedFields : []
+          djLockedFields: typeof djLockedFields !== 'undefined' ? djLockedFields : [],
+          includeResumeFields: true,
+          resumeShowServices: false
         }) %>
       <% } else { %>
         <%- include('../partials/party-questionnaire-form', {
@@ -48,7 +51,9 @@
           timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : [],
           formAction: '/portal/' + event.portal_token + '/questionnaire',
           portalMode: true,
-          djLockedFields: typeof djLockedFields !== 'undefined' ? djLockedFields : []
+          djLockedFields: typeof djLockedFields !== 'undefined' ? djLockedFields : [],
+          includeResumeFields: true,
+          resumeShowServices: false
         }) %>
       <% } %>
     </div>

@@ -17,6 +17,21 @@
 <form method="post" action="<%= typeof formAction !== 'undefined' ? formAction : ('/events/' + event.id + '/questionnaire') %>" id="questionnaireForm" data-unsaved-guard<% if (isPortal && lockedFields.length) { %> data-dj-locked-fields="<%= encodeURIComponent(JSON.stringify(lockedFields)) %>"<% } %>>
 <% if (readOnly) { %><fieldset disabled class="portal-readonly-fieldset"><% } %>
 
+  <% if (typeof includeResumeFields !== 'undefined' && includeResumeFields) { %>
+    <%- include('resume-form-fields', {
+      event,
+      eventTypes: typeof eventTypes !== 'undefined' ? eventTypes : undefined,
+      selectedServices: typeof selectedServices !== 'undefined' ? selectedServices : [],
+      customServiceSlots: typeof customServiceSlots !== 'undefined' ? customServiceSlots : [],
+      resumeShowServices: typeof resumeShowServices !== 'undefined' ? resumeShowServices : !isPortal,
+      resumeShowStatus: false,
+      resumeShowRouteOrigin: false,
+      resumeLockEventSchedule: isPortal
+    }) %>
+    <hr class="my-4">
+    <h2 class="h5 mb-3">Questionnaire</h2>
+  <% } %>
+
   <section class="q-section mb-4">
     <h2 class="h5 q-section-title">Informations générales</h2>
     <div class="row g-3">

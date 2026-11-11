@@ -1,0 +1,205 @@
+<% const weddingClientLabels = event.event_type === 'Mariage'; %>
+<% const showServices = typeof resumeShowServices !== 'undefined' ? resumeShowServices : true; %>
+<% const showStatus = typeof resumeShowStatus !== 'undefined' ? resumeShowStatus : false; %>
+<% const showRouteOrigin = typeof resumeShowRouteOrigin !== 'undefined' ? resumeShowRouteOrigin : false; %>
+<% const lockEventSchedule = typeof resumeLockEventSchedule !== 'undefined' ? resumeLockEventSchedule : false; %>
+<% const selected = typeof selectedServices !== 'undefined' ? selectedServices : []; %>
+<% const customSlots = typeof customServiceSlots !== 'undefined'
+  ? customServiceSlots
+  : Array.from({ length: typeof CUSTOM_SERVICE_SLOT_COUNT !== 'undefined' ? CUSTOM_SERVICE_SLOT_COUNT : 12 }, () => ({ enabled: false, name: '' })); %>
+
+<input type="hidden" name="include_resume_fields" value="1">
+<% if (!showStatus) { %>
+  <input type="hidden" name="status" value="<%= event.status %>">
+<% } %>
+<% if (lockEventSchedule) { %>
+  <input type="hidden" name="event_type" value="<%= event.event_type %>">
+  <input type="hidden" name="event_date" value="<%= event.event_date %>">
+<% } %>
+
+<section class="form-section form-section-client mb-4">
+  <h2 class="form-section-title">Informations client</h2>
+  <% if (weddingClientLabels) { %>
+    <div class="row g-3 mb-0" id="clientNamesRow">
+      <div class="col-md-6" data-client-field="2">
+        <label class="form-label" for="first_name_2" id="label_first_name_2">Prénom de la mariée</label>
+        <input type="text" class="form-control" id="first_name_2" name="first_name_2"
+               value="<%= event.first_name_2 || '' %>">
+      </div>
+      <div class="col-md-6" data-client-field="1">
+        <label class="form-label" for="first_name_1" id="label_first_name_1">Prénom du mari *</label>
+        <input type="text" class="form-control" id="first_name_1" name="first_name_1" required
+               value="<%= event.first_name_1 || '' %>">
+      </div>
+      <%- include('client-phone-fields', {
+        weddingClientLabels: true,
+        clientPhoneSource: event
+      }) %>
+      <%- include('client-courtesy-fields', { clientCourtesySource: event }) %>
+      <div class="col-md-6">
+        <label class="form-label" for="email">Courriel</label>
+        <input type="email" class="form-control" id="email" name="email"
+               value="<%= event.email || '' %>">
+      </div>
+    </div>
+    <input type="hidden" name="last_name" id="last_name_wedding" value="<%= event.last_name || '—' %>">
+  <% } else { %>
+    <div class="row g-3 mb-0" id="clientNamesRow">
+      <div class="col-12" id="lastNameField">
+        <label class="form-label" for="last_name" id="label_last_name">Nom de l'entreprise *</label>
+        <input type="text" class="form-control" id="last_name" name="last_name" required
+               value="<%= event.last_name || '' %>" placeholder="Ex. : Entreprise ABC, Club social, École…">
+      </div>
+      <div class="col-md-6" data-client-field="1">
+        <label class="form-label" for="first_name_1" id="label_first_name_1">Personne contact *</label>
+        <input type="text" class="form-control" id="first_name_1" name="first_name_1" required
+               value="<%= event.first_name_1 || '' %>">
+      </div>
+      <div class="col-md-6" data-client-field="2">
+        <label class="form-label" for="first_name_2" id="label_first_name_2">Personne contact 2</label>
+        <input type="text" class="form-control" id="first_name_2" name="first_name_2"
+               value="<%= event.first_name_2 || '' %>">
+      </div>
+      <%- include('client-phone-fields', {
+        weddingClientLabels: false,
+        clientPhoneSource: event
+      }) %>
+      <%- include('client-courtesy-fields', { clientCourtesySource: event }) %>
+      <div class="col-md-6">
+        <label class="form-label" for="email">Courriel</label>
+        <input type="email" class="form-control" id="email" name="email"
+               value="<%= event.email || '' %>">
+      </div>
+    </div>
+  <% } %>
+</section>
+
+<section class="form-section form-section-event mb-4">
+  <h2 class="form-section-title">Événement</h2>
+  <div class="row g-3">
+    <% if (lockEventSchedule) { %>
+      <div class="col-md-6">
+        <p class="form-label text-muted small mb-1">Type d'événement</p>
+        <p class="mb-0 fw-semibold"><%= event.event_type %></p>
+      </div>
+      <div class="col-md-6">
+        <p class="form-label text-muted small mb-1">Date</p>
+        <p class="mb-0 fw-semibold"><%= formatDateFr(event.event_date) %></p>
+      </div>
+    <% } else { %>
+      <div class="col-md-6">
+        <label class="form-label" for="event_type">Type d'événement *</label>
+        <select class="form-select" id="event_type" name="event_type" required>
+          <% (typeof eventTypes !== 'undefined' ? eventTypes : EVENT_TYPES).forEach(function(type) { %>
+            <option value="<%= type %>" <%= event.event_type === type ? 'selected' : '' %>><%= type %></option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="event_date">Date *</label>
+        <%- include('date-fr-field', {
+          id: 'event_date',
+          name: 'event_date',
+          value: event.event_date || '',
+          required: true
+        }) %>
+      </div>
+    <% } %>
+    <div class="col-md-4 col-lg-3">
+      <label class="form-label" for="start_time">Heure début</label>
+      <input type="time" class="form-control" id="start_time" name="start_time"
+             value="<%= event.start_time ? event.start_time.slice(0, 5) : '' %>">
+    </div>
+    <div class="col-md-8 col-lg-9">
+      <label class="form-label" for="end_datetime">Fin (date et heure)</label>
+      <%- include('datetime-fr-field', {
+        id: 'end_datetime',
+        name: 'end_datetime',
+        value: endDatetimeLocalValue(event.event_date, event.end_date, event.end_time),
+        displayValue: event.end_time
+          ? formatDateTimeFr(event.end_date || event.event_date, event.end_time) : ''
+      }) %>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" for="venue">Nom de la salle</label>
+      <input type="text" class="form-control" id="venue" name="venue"
+             value="<%= event.venue || '' %>">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label d-block">Ascenseur</label>
+      <div class="btn-group btn-group-sm w-100" role="group" aria-label="Ascenseur disponible">
+        <input type="radio" class="btn-check" name="venue_elevator" id="venue_elevator_yes" value="yes"
+               <%= event.venue_elevator === 'yes' ? 'checked' : '' %>>
+        <label class="btn btn-outline-secondary" for="venue_elevator_yes">Oui</label>
+        <input type="radio" class="btn-check" name="venue_elevator" id="venue_elevator_no" value="no"
+               <%= event.venue_elevator === 'no' ? 'checked' : '' %>>
+        <label class="btn btn-outline-secondary" for="venue_elevator_no">Non</label>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label" for="guest_count" title="Nombre approximatif d'invités">Invités</label>
+      <input type="number" class="form-control" id="guest_count" name="guest_count" min="0"
+             value="<%= event.guest_count != null ? event.guest_count : '' %>"
+             placeholder="—">
+    </div>
+    <div class="col-md-8">
+      <label class="form-label" for="address">Adresse</label>
+      <div class="address-suggest-wrap">
+        <input type="text" class="form-control address-suggest" id="address" name="address"
+               value="<%= event.address || '' %>"
+               autocomplete="off" spellcheck="false">
+        <ul class="address-suggest-list list-group" id="address-suggestions" hidden></ul>
+      </div>
+      <a href="<%= googleMapsUrl(event.address) || '#' %>"
+         id="address-map-link"
+         class="small mt-1 d-inline-block <%= event.address && event.address.trim() && googleMapsUrl(event.address) ? '' : 'd-none' %>"
+         target="_blank" rel="noopener noreferrer">Ouvrir dans Google Maps</a>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label" for="city">Ville</label>
+      <input type="text" class="form-control" id="city" name="city"
+             value="<%= event.city || '' %>" placeholder="Ex. : Beloeil, Jonquière">
+    </div>
+    <% if (showRouteOrigin) { %>
+      <div class="col-12" id="route-time-block">
+        <label class="form-label" for="route_origin_custom">Adresse de départ (temps de route)</label>
+        <div class="address-suggest-wrap">
+          <input type="text" class="form-control address-suggest"
+                 id="route_origin_custom" name="route_origin_custom"
+                 placeholder="D'où partez-vous pour cet événement ?"
+                 value="<%= resolveDepartureAddress(event.route_origin_key, event.route_origin_custom, ROUTE_ORIGIN_OPTIONS) %>"
+                 autocomplete="off" spellcheck="false">
+          <ul class="address-suggest-list list-group" hidden></ul>
+        </div>
+        <p class="text-muted small mb-0 mt-1">Change selon l'événement — choisissez une suggestion pour un calcul plus précis.</p>
+        <div id="route-time-result" class="small mt-2 text-muted">—</div>
+        <a href="#" id="route-directions-link"
+           class="small d-none"
+           target="_blank" rel="noopener noreferrer">Temps réel avec trafic (Google Maps)</a>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<% if (showServices) { %>
+  <%- include('services-form', {
+    serviceOptions: typeof SERVICE_OPTIONS !== 'undefined' ? SERVICE_OPTIONS : [],
+    selectedServices: selected,
+    customServiceSlots: customSlots,
+    bingoMusicalStyle: event.bingo_musical_style || '',
+    onConnaitChansonNotes: event.on_connait_chanson_notes || '',
+    animationIncludedValue: event.animation_included || (selected.includes('Animation') ? 'yes' : ''),
+    animationNotesValue: event.animation_notes || ''
+  }) %>
+<% } %>
+
+<% if (showStatus) { %>
+  <section class="form-section form-section-status">
+    <h2 class="form-section-title">Statut du dossier</h2>
+    <select name="status" class="form-select w-auto mb-0">
+      <% Object.entries(STATUS_LABELS).forEach(function([value, label]) { %>
+        <option value="<%= value %>" <%= event.status === value ? 'selected' : '' %>><%= label %></option>
+      <% }); %>
+    </select>
+  </section>
+<% } %>
