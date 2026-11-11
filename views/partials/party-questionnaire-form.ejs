@@ -1,6 +1,7 @@
 <% const q = questionnaire.data; %>
 <% const readOnly = typeof readOnlyMode !== 'undefined' && readOnlyMode; %>
 <% const isPortal = typeof portalMode !== 'undefined' && portalMode; %>
+<% const embedInParentForm = typeof embedInParentForm !== 'undefined' && embedInParentForm; %>
 <% const lockedFields = typeof djLockedFields !== 'undefined' ? djLockedFields : []; %>
 <% const thematicEvening = q.general.thematic_evening || ((q.general.evening_themes || []).length || q.general.evening_theme_other ? 'yes' : ''); %>
 <% const cocktail = q.cocktail || { styles: [], requests: '' }; %>
@@ -14,7 +15,11 @@
   Questionnaire adapté pour : <strong><%= event.event_type %></strong>
 </p>
 
+<% if (!embedInParentForm) { %>
 <form method="post" action="<%= typeof formAction !== 'undefined' ? formAction : ('/events/' + event.id + '/questionnaire') %>" id="questionnaireForm" data-unsaved-guard<% if (isPortal && lockedFields.length) { %> data-dj-locked-fields="<%= encodeURIComponent(JSON.stringify(lockedFields)) %>"<% } %>>
+<% } else { %>
+<div id="questionnaireForm"<% if (isPortal && lockedFields.length) { %> data-dj-locked-fields="<%= encodeURIComponent(JSON.stringify(lockedFields)) %>"<% } %>>
+<% } %>
 <% if (readOnly) { %><fieldset disabled class="portal-readonly-fieldset"><% } %>
 
   <% if (typeof includeResumeFields !== 'undefined' && includeResumeFields) { %>
@@ -335,7 +340,7 @@
               placeholder="Notes générales, rappels ou précisions…"><%= q.general.general_notes || '' %></textarea>
   </section>
 
-  <% if (!readOnly) { %>
+  <% if (!readOnly && !embedInParentForm) { %>
   <div class="sticky-save-bar d-flex flex-wrap gap-2 align-items-center justify-content-between">
     <% if (!isPortal) { %>
     <div class="form-check mb-0">
@@ -348,8 +353,10 @@
     <% } %>
     <button type="submit" class="btn btn-primary btn-lg"><%= isPortal ? 'Enregistrer mes réponses' : 'Enregistrer le questionnaire' %></button>
   </div>
+  <% } else if (isPortal && !readOnly && embedInParentForm) { %>
+    <p class="small text-muted mb-0">Les champs déjà remplis ne sont pas modifiables.</p>
   <% } %>
 <% if (readOnly) { %></fieldset><% } %>
-</form>
+<% if (!embedInParentForm) { %></form><% } else { %></div><% } %>
 <script src="/js/questionnaire-location-equipment.js?v=3"></script>
 <script src="/js/party-questionnaire-form.js?v=1"></script>

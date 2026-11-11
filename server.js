@@ -1431,10 +1431,17 @@ app.get("/portal/:token/resume", (req, res) => {
   if (!requirePortalIntroAck(req, res, event)) return;
 
   touchPortalAccess(db, event.id);
+  const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
+  const services = getEventServices(db, event.id);
+  const { selectedServices, customServiceSlots } = splitServicesForForm(services);
 
   res.render("portal/resume", {
-    title: `Résumé — ${clientShortName(event)}`,
+    title: `Votre dossier — ${clientShortName(event)}`,
     event,
+    questionnaire,
+    selectedServices,
+    customServiceSlots,
+    djLockedFields: getPortalLockedFields(questionnaire.data, event.event_type),
     saved: req.query.saved === "1"
   });
 });
@@ -1446,17 +1453,30 @@ app.post("/portal/:token/resume", async (req, res) => {
 
   try {
     updateEventResumeFromForm(db, event.id, req.body, {
-      portal: true,
-      includeServices: false,
+      portal: false,
+      includeServices: true,
       skipRouteOrigin: true
     });
+
+    const existing = getQuestionnaireForEvent(db, event.id, event.event_type);
+    const before = existing.data;
+    const incoming = bodyToQuestionnaireForEvent(req.body, event.event_type);
+    const data = mergePortalQuestionnaire(before, incoming, event.event_type);
+    const changes = summarizePortalChanges({
+      before,
+      after: data,
+      eventType: event.event_type,
+      kind: "questionnaire"
+    });
+    saveQuestionnaireForEvent(db, event.id, event.event_type, data);
+
     const updated = getEventById(db, event.id);
     await notifyDjCarlClientUpdate({
       db,
       event: updated || event,
-      kind: "resume",
+      kind: "questionnaire",
       req,
-      changes: []
+      changes
     });
     res.redirect(`/portal/${req.params.token}/resume?saved=1`);
   } catch (err) {
@@ -1498,24 +1518,7 @@ app.post("/portal/:token/questionnaire", async (req, res) => {
   if (!event) return;
   if (!requirePortalIntroAck(req, res, event)) return;
 
-  try {
-    const existing = getQuestionnaireForEvent(db, event.id, event.event_type);
-    const before = existing.data;
-    const incoming = bodyToQuestionnaireForEvent(req.body, event.event_type);
-    const data = mergePortalQuestionnaire(before, incoming, event.event_type);
-    const changes = summarizePortalChanges({
-      before,
-      after: data,
-      eventType: event.event_type,
-      kind: "questionnaire"
-    });
-    saveQuestionnaireForEvent(db, event.id, event.event_type, data);
-    await notifyDjCarlClientUpdate({ db, event, kind: "questionnaire", req, changes });
-    res.redirect(`/portal/${req.params.token}/questionnaire?saved=1`);
-  } catch (err) {
-    console.error(err);
-    res.redirect(`/portal/${req.params.token}/questionnaire`);
-  }
+  return res.redirect(307, `/portal/${req.params.token}/resume`);
 });
 
 app.get("/portal/:token/musique", (req, res) => {
@@ -1565,23 +1568,7 @@ app.get("/portal/:token/questionnaire", (req, res) => {
   if (!event) return;
   if (!requirePortalIntroAck(req, res, event)) return;
 
-  touchPortalAccess(db, event.id);
-  const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
-  const proposedTimelineSteps = buildStepsFromQuestionnaire(
-    questionnaire.data,
-    event.event_type
-  );
-  const timelineItems = getTimelineItems(db, event.id);
-
-  res.render("portal/questionnaire", {
-    title: `${getQuestionnaireLabel(event.event_type)} — ${clientShortName(event)}`,
-    event,
-    questionnaire,
-    djLockedFields: getPortalLockedFields(questionnaire.data, event.event_type),
-    proposedTimelineSteps,
-    timelineItems,
-    saved: req.query.saved === "1"
-  });
+  return res.redirect(`/portal/${req.params.token}/resume#questionnaire`);
 });
 
 app.get("/portal/:token/plan-soiree", (req, res) => {

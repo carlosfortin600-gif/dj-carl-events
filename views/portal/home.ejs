@@ -12,63 +12,43 @@
   </div>
 
   <div class="card mb-4">
-    <div class="card-body p-4">
-      <h2 class="h5 mb-3">Complétez votre dossier</h2>
-      <p class="text-muted">
-        Commencez par le <strong>résumé</strong>, puis le questionnaire, le <strong>plan de soirée</strong>
-        et vos <strong>préférences musicales</strong>.
+    <div class="card-body p-4 text-center">
+      <h2 class="h5 mb-2">Votre dossier</h2>
+      <p class="text-muted mb-4">
+        Coordonnées, lieu, services prévus et questionnaire — tout au même endroit.
+        Ensuite : plan de soirée et musique.
       </p>
+      <a href="/portal/<%= event.portal_token %>/resume" class="btn btn-primary btn-lg px-4">
+        Ouvrir mon dossier
+      </a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-4">
+      <h2 class="h6 mb-3 text-muted text-uppercase">Étapes complémentaires</h2>
 
       <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task">
         <div>
-          <strong>Résumé</strong>
-          <div class="small text-muted">
-            Coordonnées, lieu, horaires et nombre d’invités
-          </div>
-        </div>
-        <a href="/portal/<%= event.portal_token %>/resume" class="btn btn-primary">
-          Vérifier le résumé
-        </a>
-      </div>
-
-      <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task mt-3">
-        <div>
-          <strong><%= getQuestionnaireLabel(event.event_type) %></strong>
-          <div class="small text-muted">
-            Complétez les champs vides — les réponses déjà remplies sont verrouillées
-          </div>
-        </div>
-        <a href="/portal/<%= event.portal_token %>/questionnaire" class="btn btn-outline-primary">
-          Accéder au questionnaire
-        </a>
-      </div>
-
-      <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task mt-3">
-        <div>
           <strong>Plan de soirée</strong>
-          <div class="small text-muted">
-            Choisissez vos moments, heures et étapes personnalisées
-          </div>
+          <div class="small text-muted">Moments, heures et étapes personnalisées</div>
         </div>
-        <a href="/portal/<%= event.portal_token %>/plan-soiree" class="btn btn-outline-primary">
-          Choisir mon plan
+        <a href="/portal/<%= event.portal_token %>/plan-soiree" class="btn btn-outline-primary btn-sm">
+          Plan de soirée
         </a>
       </div>
 
       <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 p-3 rounded portal-task mt-3">
         <div>
           <strong>Musique</strong>
-          <div class="small text-muted">
-            Décennies, chansons incontournables, styles à éviter…
-          </div>
+          <div class="small text-muted">Décennies, incontournables, styles à éviter…</div>
         </div>
-        <a href="/portal/<%= event.portal_token %>/musique" class="btn btn-primary">
-          Mes préférences musicales
+        <a href="/portal/<%= event.portal_token %>/musique" class="btn btn-outline-primary btn-sm">
+          Musique
         </a>
       </div>
     </div>
   </div>
-
 </main>
 
 <%- include('partials/footer') %>
