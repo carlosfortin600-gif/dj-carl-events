@@ -1271,8 +1271,10 @@ app.post("/events/:id/questionnaire-email/send", async (req, res) => {
     );
   } catch (err) {
     console.error("Questionnaire email route:", err);
+    const { describeMailError } = require("./lib/email-send");
+    const detail = describeMailError(err);
     res.redirect(
-      `/events/${eventId}?tab=client&questionnaireEmailError=${encodeURIComponent("Envoi impossible — réessayez ou vérifiez Paramètres → Notifications.")}`
+      `/events/${eventId}?tab=client&questionnaireEmailError=${encodeURIComponent(detail || "Envoi impossible — réessayez ou vérifiez Paramètres → Notifications.")}`
     );
   }
 });
