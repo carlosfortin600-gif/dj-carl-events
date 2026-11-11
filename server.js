@@ -137,7 +137,8 @@ const {
   addClientContactLog,
   deleteClientContactLog,
   defaultContactDatetime,
-  formatContactAt
+  formatContactAt,
+  formatContactPersonDisplay
 } = require("./lib/client-contact-log");
 const {
   DEFAULT_SUBCONTRACTOR_ID,
@@ -450,6 +451,7 @@ app.locals.formatLoggedAt = formatLoggedAt;
 app.locals.defaultQuestionnaireSentDatetime = defaultSentDatetime;
 app.locals.formatSentAt = formatSentAt;
 app.locals.formatContactAt = formatContactAt;
+app.locals.formatContactPersonDisplay = formatContactPersonDisplay;
 
 app.get("/api/health", (req, res) => {
   const tables = db

@@ -88,6 +88,7 @@
         <thead class="table-light">
           <tr>
             <th>Activité</th>
+            <th>Personne contact</th>
             <th>Descriptif</th>
             <th>Date et heure</th>
             <th>Durée</th>
@@ -102,6 +103,7 @@
           %>
             <tr>
               <td><%= activityLabel(log.activity) %></td>
+              <td><%= formatContactPersonDisplay(log.contact_person, log.contact_party) || '—' %></td>
               <td class="text-break"><%= log.description || '—' %></td>
               <td><%= formatLoggedAt(log.logged_date, log.logged_time) %></td>
               <td><%= formatDurationHours(log.duration_hours) %></td>
@@ -118,7 +120,7 @@
               </td>
             </tr>
             <tr class="collapse<%= editOpen ? ' show' : '' %>" id="time-spent-edit-<%= log.id %>">
-              <td colspan="5" class="bg-light p-3">
+              <td colspan="6" class="bg-light p-3">
                 <form method="post" action="/events/<%= event.id %>/gestion/temps/<%= log.id %>/update" data-time-spent-edit-form>
                   <div class="row g-3 align-items-end">
                     <div class="col-md-3">
@@ -149,7 +151,20 @@
                     <div class="col-md-2 d-flex gap-2">
                       <button type="submit" class="btn btn-primary flex-grow-1">Enregistrer</button>
                     </div>
-                    <div class="col-12">
+                    <div class="col-md-4">
+                      <label class="form-label" for="time_spent_contact_person_<%= log.id %>">Personne contact</label>
+                      <input type="text" class="form-control" id="time_spent_contact_person_<%= log.id %>" name="contact_person"
+                             value="<%= log.contact_person || '' %>" placeholder="Nom">
+                    </div>
+                    <div class="col-md-4">
+                      <span class="form-label d-block">Qui ?</span>
+                      <%- include('contact-party-field', {
+                        contactPartyFieldName: 'contact_party',
+                        contactPartyFieldId: 'time_spent_contact_party_' + log.id,
+                        contactPartyValue: log.contact_party || 'client'
+                      }) %>
+                    </div>
+                    <div class="col-md-4">
                       <label class="form-label" for="time_spent_description_<%= log.id %>">Descriptif</label>
                       <input type="text" class="form-control" id="time_spent_description_<%= log.id %>" name="description"
                              value="<%= log.description || '' %>" placeholder="Descriptif">

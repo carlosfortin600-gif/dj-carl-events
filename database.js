@@ -441,6 +441,12 @@ function migrate(db) {
   if (timeLogColumns.length && !timeLogColumns.includes("description")) {
     db.exec("ALTER TABLE event_time_logs ADD COLUMN description TEXT");
   }
+  if (timeLogColumns.length && !timeLogColumns.includes("contact_person")) {
+    db.exec("ALTER TABLE event_time_logs ADD COLUMN contact_person TEXT");
+  }
+  if (timeLogColumns.length && !timeLogColumns.includes("contact_party")) {
+    db.exec("ALTER TABLE event_time_logs ADD COLUMN contact_party TEXT");
+  }
 
   const contactLogColumns = db
     .prepare("PRAGMA table_info(event_client_contact_logs)")
