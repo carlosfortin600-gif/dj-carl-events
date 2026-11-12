@@ -1680,6 +1680,15 @@ a.calendar-month-event-link:hover {
   margin-top: 0.15rem;
 }
 
+.questionnaire-sent-panel-received-detail {
+  color: #0f5132;
+  margin-top: 0.15rem;
+}
+
+.questionnaire-sent-panel--complete .questionnaire-sent-panel-received-detail {
+  color: #0a3622;
+}
+
 .client-confirmed-check {
   display: inline-flex;
   align-items: center;

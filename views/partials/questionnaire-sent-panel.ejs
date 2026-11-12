@@ -9,18 +9,28 @@
   : (logs.length ? 'sent' : 'not_sent'); %>
 <% const statusLabels = {
   not_sent: 'Questionnaire — non envoyé',
-  sent: 'Questionnaire — envoyé',
-  complete: 'Questionnaire — complété',
-  client_confirmed: 'Confirmé par le client'
+  sent: 'Questionnaire envoyé — en attente du client',
+  complete: 'Questionnaire reçu et complété',
+  client_confirmed: 'Questionnaire reçu, complété et confirmé'
 }; %>
+<% const questionnaireUpdatedAtValue = typeof questionnaireUpdatedAt !== 'undefined'
+  ? questionnaireUpdatedAt
+  : null; %>
+<% const hideSentLogBlock = compact && (sendStatus === 'complete' || sendStatus === 'client_confirmed'); %>
 
 <div class="questionnaire-sent-panel questionnaire-sent-panel--<%= sendStatus %><%= compact ? ' questionnaire-sent-panel--compact' : '' %>" onclick="event.stopPropagation()">
   <div class="questionnaire-sent-panel-label fw-semibold<%= compact ? ' small' : '' %>">
-    <% if (sendStatus === 'client_confirmed') { %>
+    <% if (sendStatus === 'client_confirmed' || sendStatus === 'complete') { %>
       <span class="client-confirmed-check" aria-hidden="true">✓</span>
     <% } %>
     <%= statusLabels[sendStatus] || statusLabels.not_sent %>
   </div>
+  <% if ((sendStatus === 'complete' || sendStatus === 'client_confirmed') && questionnaireUpdatedAtValue) { %>
+    <p class="questionnaire-sent-panel-received-detail small mb-2<%= compact ? ' mb-1' : '' %>">
+      Dernière mise à jour du dossier client :
+      <strong><%= formatTimestampFr(questionnaireUpdatedAtValue) %></strong>
+    </p>
+  <% } %>
   <% if (sendStatus === 'client_confirmed' && (typeof clientConfirmedByName !== 'undefined' && clientConfirmedByName || typeof clientConfirmedAt !== 'undefined' && clientConfirmedAt)) { %>
     <p class="questionnaire-sent-panel-confirmed-detail small mb-2<%= compact ? ' mb-1' : '' %>">
       <% if (typeof clientConfirmedByName !== 'undefined' && clientConfirmedByName) { %>
@@ -33,22 +43,28 @@
     </p>
   <% } %>
 
-  <% if (logs.length) { %>
-    <ul class="questionnaire-sent-log-list list-unstyled mb-2<%= compact ? ' small' : '' %>">
-      <% logs.forEach(function(log) { %>
-        <li class="questionnaire-sent-log-item d-flex flex-wrap align-items-center gap-2<%= compact ? ' mb-1' : ' mb-2' %>">
-          <span><%= formatDateTimeFr(log.sent_date, log.sent_time) %></span>
-          <form method="post"
-                action="/events/<%= eventId %>/questionnaire-sent/<%= log.id %>/delete"
-                class="d-inline mb-0">
-            <input type="hidden" name="returnTo" value="<%= returnPath %>">
-            <button type="submit" class="btn btn-link btn-sm p-0 text-danger">Supprimer</button>
-          </form>
-        </li>
-      <% }); %>
-    </ul>
-  <% } else { %>
-    <p class="text-muted<%= compact ? ' small' : '' %> mb-2">Aucun envoi enregistré.</p>
+  <% if (!hideSentLogBlock) { %>
+    <% if (logs.length) { %>
+      <ul class="questionnaire-sent-log-list list-unstyled mb-2<%= compact ? ' small' : '' %>">
+        <% logs.forEach(function(log) { %>
+          <li class="questionnaire-sent-log-item d-flex flex-wrap align-items-center gap-2<%= compact ? ' mb-1' : ' mb-2' %>">
+            <span>Envoyé le <%= formatDateTimeFr(log.sent_date, log.sent_time) %></span>
+            <form method="post"
+                  action="/events/<%= eventId %>/questionnaire-sent/<%= log.id %>/delete"
+                  class="d-inline mb-0">
+              <input type="hidden" name="returnTo" value="<%= returnPath %>">
+              <button type="submit" class="btn btn-link btn-sm p-0 text-danger">Supprimer</button>
+            </form>
+          </li>
+        <% }); %>
+      </ul>
+    <% } else if (!(compact && sendStatus === 'sent')) { %>
+      <p class="text-muted<%= compact ? ' small' : '' %> mb-2">Aucun envoi enregistré.</p>
+    <% } %>
+  <% } else if (logs.length) { %>
+    <p class="questionnaire-sent-panel-received-detail small text-muted mb-2<%= compact ? ' mb-1' : '' %>">
+      Questionnaire envoyé le <%= formatDateTimeFr(logs[0].sent_date, logs[0].sent_time) %>
+    </p>
   <% } %>
 
   <% if (showAddFormEnabled) { %>
