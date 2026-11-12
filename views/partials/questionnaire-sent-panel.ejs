@@ -17,6 +17,10 @@
   ? questionnaireUpdatedAt
   : null; %>
 <% const hideSentLogBlock = compact && (sendStatus === 'complete' || sendStatus === 'client_confirmed'); %>
+<% const manualCompleteToggleEnabled =
+  typeof showManualCompleteToggle !== 'undefined' && showManualCompleteToggle; %>
+<% const manualDone = typeof questionnaireManuallyCompleted !== 'undefined' && questionnaireManuallyCompleted; %>
+<% const questionnaireNotDone = sendStatus !== 'complete' && sendStatus !== 'client_confirmed'; %>
 
 <div class="questionnaire-sent-panel questionnaire-sent-panel--<%= sendStatus %><%= compact ? ' questionnaire-sent-panel--compact' : '' %>" onclick="event.stopPropagation()">
   <div class="questionnaire-sent-panel-label fw-semibold<%= compact ? ' small' : '' %>">
@@ -24,6 +28,9 @@
       <span class="client-confirmed-check" aria-hidden="true">✓</span>
     <% } %>
     <%= statusLabels[sendStatus] || statusLabels.not_sent %>
+    <% if (manualDone && sendStatus === 'complete') { %>
+      <span class="text-muted fw-normal"> — marqué par vous</span>
+    <% } %>
   </div>
   <% if ((sendStatus === 'complete' || sendStatus === 'client_confirmed') && questionnaireUpdatedAtValue) { %>
     <p class="questionnaire-sent-panel-received-detail small mb-2<%= compact ? ' mb-1' : '' %>">
@@ -65,6 +72,26 @@
     <p class="questionnaire-sent-panel-received-detail small text-muted mb-2<%= compact ? ' mb-1' : '' %>">
       Questionnaire envoyé le <%= formatDateTimeFr(logs[0].sent_date, logs[0].sent_time) %>
     </p>
+  <% } %>
+
+  <% if (manualCompleteToggleEnabled) { %>
+    <div class="questionnaire-manual-complete-actions d-flex flex-wrap align-items-center gap-2<%= compact ? ' small' : '' %><%= (showAddFormEnabled || questionnaireNotDone || manualDone) ? ' mt-2 pt-2 border-top' : '' %>">
+      <% if (questionnaireNotDone) { %>
+        <form method="post" action="/events/<%= eventId %>/questionnaire/complete" class="d-inline mb-0">
+          <input type="hidden" name="returnTo" value="<%= returnPath %>">
+          <input type="hidden" name="completed" value="1">
+          <button type="submit" class="btn btn-sm btn-success">
+            <span aria-hidden="true">✓</span> Marquer reçu et complété
+          </button>
+        </form>
+      <% } else if (manualDone) { %>
+        <form method="post" action="/events/<%= eventId %>/questionnaire/complete" class="d-inline mb-0">
+          <input type="hidden" name="returnTo" value="<%= returnPath %>">
+          <input type="hidden" name="completed" value="0">
+          <button type="submit" class="btn btn-link btn-sm p-0 text-muted">Retirer votre marquage complété</button>
+        </form>
+      <% } %>
+    </div>
   <% } %>
 
   <% if (showAddFormEnabled) { %>

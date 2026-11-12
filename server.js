@@ -72,6 +72,7 @@ const {
   getQuestionnaireForEvent,
   bodyToQuestionnaireForEvent,
   saveQuestionnaireForEvent,
+  setQuestionnaireCompletedFlag,
   isWeddingEvent,
   getQuestionnaireLabel,
   COCKTAIL_STYLES,
@@ -1873,6 +1874,21 @@ app.post("/events/:id/questionnaire-sent/:logId/delete", (req, res) => {
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
   deleteQuestionnaireSentLog(db, eventId, logId);
   const returnTo = req.body.returnTo?.trim() || "/";
+  res.redirect(returnTo);
+});
+
+app.post("/events/:id/questionnaire/complete", (req, res) => {
+  const eventId = Number(req.params.id);
+  const event = getEventById(db, eventId);
+  if (!event) return res.status(404).send("Not found");
+
+  const completed = req.body.completed === "1";
+  try {
+    setQuestionnaireCompletedFlag(db, eventId, event.event_type, completed);
+  } catch (err) {
+    console.error("Questionnaire complete toggle failed:", err);
+  }
+  const returnTo = safeReturnPath(req.body.returnTo) || "/";
   res.redirect(returnTo);
 });
 

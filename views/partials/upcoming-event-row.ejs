@@ -38,11 +38,13 @@
         questionnaireSentLogs: ev.questionnaireSentLogs || [],
         questionnaireSendStatus: ev.questionnaireSendStatus,
         questionnaireUpdatedAt: ev.questionnaireUpdatedAt,
+        questionnaireManuallyCompleted: ev.questionnaireManuallyCompleted,
         clientConfirmedAt: ev.client_confirmed_at,
         clientConfirmedByName: ev.client_confirmed_by_name,
         returnTo: '/',
         compactPanel: true,
-        showAddForm: false
+        showAddForm: false,
+        showManualCompleteToggle: true
       }) %>
     </div>
     <a href="/events/<%= ev.id %>" class="btn btn-outline-primary btn-sm flex-shrink-0">Ouvrir</a>
