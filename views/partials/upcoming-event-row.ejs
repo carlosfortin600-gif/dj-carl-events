@@ -1,4 +1,5 @@
-<div class="list-group-item upcoming-event-row py-2">
+<% const questionnaireDone = ev.questionnaireSendStatus === 'complete' || ev.questionnaireSendStatus === 'client_confirmed'; %>
+<div class="list-group-item upcoming-event-row py-2<%= questionnaireDone ? ' upcoming-event-row--questionnaire-done' : '' %>">
   <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-start gap-2">
     <div class="flex-grow-1">
       <div class="upcoming-event-line text-break">
@@ -19,6 +20,9 @@
         <% } %>
         <span class="text-muted mx-1">|</span>
         <%= clientShortName(ev) %>
+        <% if (questionnaireDone) { %>
+          <span class="dashboard-questionnaire-complete-check" title="Questionnaire reçu et complété" aria-label="Questionnaire reçu et complété">✓</span>
+        <% } %>
         <span class="text-muted mx-1">|</span>
         <%= eventCity(ev) || '—' %>
         <span class="text-muted mx-1">|</span>

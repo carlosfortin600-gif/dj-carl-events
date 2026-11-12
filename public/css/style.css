@@ -1689,6 +1689,33 @@ a.calendar-month-event-link:hover {
   color: #0a3622;
 }
 
+.dashboard-questionnaire-complete-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-left: 0.35rem;
+  border-radius: 50%;
+  background: #198754;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: middle;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3px #a3cfbb;
+}
+
+.upcoming-event-row--questionnaire-done {
+  border-left: 4px solid #198754;
+}
+
+.questionnaire-sent-panel--compact .client-confirmed-check {
+  width: 1.35rem;
+  height: 1.35rem;
+  font-size: 0.85rem;
+}
+
 .client-confirmed-check {
   display: inline-flex;
   align-items: center;
