@@ -24,7 +24,7 @@
 
 <div class="questionnaire-sent-panel questionnaire-sent-panel--<%= sendStatus %><%= compact ? ' questionnaire-sent-panel--compact' : '' %>" onclick="event.stopPropagation()">
   <div class="questionnaire-sent-panel-label fw-semibold<%= compact ? ' small' : '' %>">
-    <% if (sendStatus === 'client_confirmed' || sendStatus === 'complete') { %>
+    <% if (manualDone) { %>
       <span class="client-confirmed-check" aria-hidden="true">✓</span>
     <% } %>
     <%= statusLabels[sendStatus] || statusLabels.not_sent %>

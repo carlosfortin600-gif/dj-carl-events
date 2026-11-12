@@ -1,4 +1,4 @@
-<% const questionnaireDone = ev.questionnaireSendStatus === 'complete' || ev.questionnaireSendStatus === 'client_confirmed'; %>
+<% const questionnaireDone = ev.questionnaireManuallyCompleted; %>
 <div class="list-group-item upcoming-event-row py-2<%= questionnaireDone ? ' upcoming-event-row--questionnaire-done' : '' %>">
   <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-start gap-2">
     <div class="flex-grow-1">
