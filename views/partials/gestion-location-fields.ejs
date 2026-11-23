@@ -122,5 +122,12 @@
           ? formatDateTimeFr(djNotes.tech_room_end, djNotes.tech_room_end_time) : ''
       }) %>
     </div>
+    <div class="col-12">
+      <label class="form-label" for="tech_room_notes">Infos hôtel (copier-coller)</label>
+      <textarea class="form-control font-monospace small" id="tech_room_notes" name="tech_room_notes" rows="6"
+                placeholder="Collez ici confirmation, # de réservation, politiques, notes de l'agence…"
+                <%= roomNeeded === 'no' ? 'disabled' : '' %>><%= djNotes.tech_room_notes || '' %></textarea>
+      <p class="form-text mb-0">Notes privées — non visibles par le client.</p>
+    </div>
   </div>
 </section>
