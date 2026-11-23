@@ -101,11 +101,7 @@ const {
   addTimelineItem,
   updateTimelineItem,
   deleteTimelineItem,
-  moveTimelineItem,
-  generateFromQuestionnaire,
-  buildStepsFromQuestionnaire,
-  buildStepsFromWeddingQuestionnaire,
-  buildStepsFromPartyQuestionnaire
+  moveTimelineItem
 } = require("./lib/timeline");
 const {
   getMusicDataForEvent,
@@ -1050,10 +1046,6 @@ function renderEventDetailPage(req, res) {
   const portalToken = ensurePortalToken(db, event.id);
   const portalLinks = getPortalLinks(req, portalToken);
   const timelineItems = getTimelineItems(db, event.id);
-  const proposedTimelineSteps = buildStepsFromQuestionnaire(
-    questionnaire.data,
-    event.event_type
-  );
   const music = getMusicDataForEvent(db, event.id, event.event_type);
   const djNotes = getDjNotes(db, event.id);
   const gestionThematicSummary =
@@ -1098,13 +1090,6 @@ function renderEventDetailPage(req, res) {
     subcontractorContract = getSubcontractorContract(db, event.id, sousTraitant);
   }
 
-  let timelineNeedsConfirm = false;
-  let timelineExistingCount = 0;
-  if (req.query.timelineConfirm === "1" && questionnaire) {
-    timelineNeedsConfirm = true;
-    timelineExistingCount = timelineItems.length;
-  }
-
   const lastPortalClientUpdate = getLastPortalClientUpdate(db, event.id);
   const portalClientUpdateUnread = hasUnreadPortalNotificationForEvent(db, event.id);
   if (tab === "client" || tab === "questionnaire") {
@@ -1132,7 +1117,6 @@ function renderEventDetailPage(req, res) {
     portalLinks,
     portalToken,
     timelineItems,
-    proposedTimelineSteps,
     music,
     djNotes,
     questionnaireSentLogs,
@@ -1164,10 +1148,6 @@ function renderEventDetailPage(req, res) {
     portalRegenerated: req.query.portalRegenerated === "1",
     portalToggled: req.query.portalToggled === "1",
     timelineSaved: req.query.timelineSaved === "1",
-    timelineGenerated: req.query.timelineGenerated === "1",
-    timelineGeneratedMessage: req.query.timelineMsg || "",
-    timelineNeedsConfirm,
-    timelineExistingCount,
     musicSaved: req.query.musicSaved === "1",
     notesSaved: req.query.notesSaved === "1",
     servicesSaved: req.query.servicesSaved === "1",
@@ -1727,17 +1707,12 @@ app.get("/portal/:token/plan-soiree", (req, res) => {
 
   touchPortalAccess(db, event.id);
   const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
-  const proposedTimelineSteps = buildStepsFromQuestionnaire(
-    questionnaire.data,
-    event.event_type
-  );
   const timelineItems = getTimelineItems(db, event.id);
 
   res.render("portal/plan-soiree", {
     title: `Plan de soirée — ${clientShortName(event)}`,
     event,
     questionnaire,
-    proposedTimelineSteps,
     timelineItems,
     saved: req.query.saved === "1"
   });
@@ -1808,40 +1783,6 @@ app.post("/events/:id/timeline/:itemId/move-down", (req, res) => {
   const eventId = Number(req.params.id);
   moveTimelineItem(db, Number(req.params.itemId), eventId, "down");
   res.redirect(eventRedirect(eventId, "timeline"));
-});
-
-app.post("/events/:id/timeline/generate", (req, res) => {
-  const eventId = Number(req.params.id);
-  const event = getEventById(db, eventId);
-  if (!event) {
-    return res.redirect(eventRedirect(eventId, "timeline"));
-  }
-
-  const questionnaire = getQuestionnaireForEvent(db, eventId, event.event_type);
-  const result = generateFromQuestionnaire(db, eventId, questionnaire.data, {
-    confirm: req.body.confirm === "1",
-    eventType: event.event_type
-  });
-
-  if (result.needsConfirm) {
-    return res.redirect(
-      eventRedirect(eventId, "timeline", { timelineConfirm: "1" })
-    );
-  }
-
-  let msg;
-  if (!result.proposedCount) {
-    msg =
-      "Aucune étape trouvée dans le questionnaire. Remplissez les heures (entrée, souper, party…) puis enregistrez le questionnaire avant de générer.";
-  } else if (!result.added) {
-    msg = `Toutes les étapes (${result.skipped}) existent déjà dans le plan de soirée.`;
-  } else {
-    msg = `${result.added} étape(s) ajoutée(s)${result.skipped ? `, ${result.skipped} ignorée(s) (déjà existantes)` : ""}.`;
-  }
-
-  res.redirect(
-    eventRedirect(eventId, "timeline", { timelineGenerated: "1", timelineMsg: msg })
-  );
 });
 
 app.post("/events/:id/services/save", (req, res) => {

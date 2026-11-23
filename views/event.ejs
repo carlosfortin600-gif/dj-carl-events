@@ -167,7 +167,7 @@
         <%- include('partials/missing-questions-tab', { event, missingQuestions }) %>
 
       <% } else if (tab === 'timeline') { %>
-        <%- include('partials/timeline-tab', { event, questionnaire, timelineItems, proposedTimelineSteps, timelineSaved, timelineGenerated, timelineGeneratedMessage, timelineNeedsConfirm, timelineExistingCount }) %>
+        <%- include('partials/timeline-tab', { event, questionnaire, timelineItems, timelineSaved }) %>
 
       <% } else if (tab === 'musique') { %>
         <% if (isWeddingEvent(event.event_type)) { %>

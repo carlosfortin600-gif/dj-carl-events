@@ -1,30 +1,10 @@
-<% const steps = typeof proposedTimelineSteps !== 'undefined' ? proposedTimelineSteps : []; %>
 <% const timeline = typeof timelineItems !== 'undefined' ? timelineItems : []; %>
 <% const moments = sortByTime(q.important_moments || [], 'time'); %>
 <% const clientSteps = (q.client_plan && q.client_plan.steps) ? q.client_plan.steps : []; %>
 
 <p class="text-muted small">
   Choisissez les moments importants de votre soirée, ajoutez vos propres étapes, puis enregistrez.
-  DJ Carl s'en sert pour bâtir le déroulement.
 </p>
-
-<% if (steps.length) { %>
-  <div class="card border-info mb-4">
-    <div class="card-body py-3">
-      <h3 class="h6 mb-2">Aperçu selon le questionnaire</h3>
-      <ul class="small mb-0 ps-3">
-        <% steps.forEach(function(step) { %>
-          <li class="mb-1">
-            <strong><%= step.time ? formatTime(step.time) : '—' %></strong>
-            — <%= step.title %>
-            <% if (step.description) { %><span class="text-muted"> · <%= step.description %></span><% } %>
-          </li>
-        <% }); %>
-      </ul>
-      <p class="text-muted small mb-0 mt-2">Complétez aussi le questionnaire pour enrichir cet aperçu.</p>
-    </div>
-  </div>
-<% } %>
 
 <% if (timeline.length) { %>
   <div class="card mb-4">
@@ -110,7 +90,6 @@
            name="expected_end_time" value="<%= (q.general && q.general.expected_end_time) || '' %>">
     <div class="form-text">
       Vous pouvez indiquer une heure après minuit — ex. <strong>01:00</strong> pour 1 h du matin.
-      Cette étape apparaîtra à la fin de votre plan de soirée.
     </div>
   </div>
 </div>

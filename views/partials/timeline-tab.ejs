@@ -1,45 +1,6 @@
 <% if (timelineSaved) { %>
   <div class="alert alert-success">Plan de soirée enregistré.</div>
 <% } %>
-<% if (timelineGenerated) { %>
-  <div class="alert <%= timelineGeneratedMessage && timelineGeneratedMessage.includes('Aucune') ? 'alert-warning' : 'alert-success' %>"><%= timelineGeneratedMessage %></div>
-<% } %>
-<% if (timelineNeedsConfirm) { %>
-  <div class="alert alert-warning">
-    <%= timelineExistingCount %> étape(s) existent déjà. Voulez-vous ajouter les étapes du questionnaire sans effacer les étapes manuelles ?
-    <form method="post" action="/events/<%= event.id %>/timeline/generate" class="d-inline ms-2">
-      <input type="hidden" name="confirm" value="1">
-      <button type="submit" class="btn btn-sm btn-warning">Oui, ajouter les étapes</button>
-    </form>
-  </div>
-<% } %>
-
-<div class="card mb-4 <%= proposedTimelineSteps.length ? 'border-info' : 'border-warning' %>">
-  <div class="card-body py-3">
-    <h3 class="h6 mb-2">Aperçu depuis le questionnaire enregistré</h3>
-    <% if (!questionnaire || !questionnaire.updated_at) { %>
-      <p class="text-muted small mb-0">
-        Le questionnaire n'a pas encore été enregistré. Remplissez l'onglet <strong>Questionnaire</strong>, cliquez sur
-        <strong>Enregistrer le questionnaire</strong>, puis revenez ici.
-      </p>
-    <% } else if (proposedTimelineSteps.length === 0) { %>
-      <p class="text-muted small mb-0">
-        Aucune heure ou moment repéré. Ajoutez au minimum les heures dans
-        <strong>Informations générales</strong> (entrée, souper, party…) ou cochez des moments importants, puis enregistrez le questionnaire.
-      </p>
-    <% } else { %>
-      <p class="text-muted small mb-2"><%= proposedTimelineSteps.length %> étape(s) prête(s) à être générée(s) :</p>
-      <ul class="small mb-0 ps-3">
-        <% proposedTimelineSteps.forEach(function(step) { %>
-          <li>
-            <strong><%= step.time ? formatTime(step.time) : '—' %></strong>
-            — <%= step.title %>
-          </li>
-        <% }); %>
-      </ul>
-    <% } %>
-  </div>
-</div>
 
 <% const clientPlanSteps = (questionnaire && questionnaire.data && questionnaire.data.client_plan && questionnaire.data.client_plan.steps) ? questionnaire.data.client_plan.steps : []; %>
 <% if (clientPlanSteps.length) { %>
@@ -63,14 +24,10 @@
   <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#addTimelineForm">
     + Ajouter une étape
   </button>
-  <form method="post" action="/events/<%= event.id %>/timeline/generate" class="d-inline">
-    <button type="submit" class="btn btn-outline-primary">Générer à partir du questionnaire</button>
-  </form>
 </div>
 
 <p class="text-muted small mb-4">
-  Génération automatique : entrée des invités, souper, première danse, ouverture du plancher, cocktail, discours et moments cochés dans le questionnaire.
-  Les heures du questionnaire sont reprises quand elles sont indiquées.
+  Construisez le déroulement ici — étapes manuelles uniquement. Le plan saisi par le client dans son portail s'affiche ci-dessus pour référence.
 </p>
 
 <div class="collapse mb-4" id="addTimelineForm">
@@ -111,7 +68,7 @@
 </div>
 
 <% if (timelineItems.length === 0) { %>
-  <p class="text-muted text-center py-4">Aucune étape. Ajoutez-en manuellement ou générez à partir du questionnaire.</p>
+  <p class="text-muted text-center py-4">Aucune étape. Ajoutez-en manuellement.</p>
 <% } else { %>
   <div class="timeline-list">
     <% timelineItems.forEach(function(item, index) { %>
@@ -130,7 +87,7 @@
                 <button type="submit" class="btn btn-outline-secondary" <%= index === timelineItems.length - 1 ? 'disabled' : '' %> title="Descendre">↓</button>
               </form>
               <button type="button" class="btn btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#editItem<%= item.id %>">Modifier</button>
-              <form method="post" action="/events/<%= event.id %>/timeline/<%= item.id %>/delete" class="d-inline"
+              <form method="post" action="/events/<%= event.id %>/timeline/<%= item.id %>/delete" class="d-inline">
                 <button type="submit" class="btn btn-outline-danger">Supprimer</button>
               </form>
             </div>

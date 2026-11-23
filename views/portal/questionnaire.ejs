@@ -35,8 +35,6 @@
         <%- include('../partials/questionnaire-form', {
           event,
           questionnaire,
-          proposedTimelineSteps: typeof proposedTimelineSteps !== 'undefined' ? proposedTimelineSteps : [],
-          timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : [],
           formAction: '/portal/' + event.portal_token + '/questionnaire',
           portalMode: true,
           djLockedFields: typeof djLockedFields !== 'undefined' ? djLockedFields : []
@@ -45,8 +43,6 @@
         <%- include('../partials/party-questionnaire-form', {
           event,
           questionnaire,
-          proposedTimelineSteps: typeof proposedTimelineSteps !== 'undefined' ? proposedTimelineSteps : [],
-          timelineItems: typeof timelineItems !== 'undefined' ? timelineItems : [],
           formAction: '/portal/' + event.portal_token + '/questionnaire',
           portalMode: true,
           djLockedFields: typeof djLockedFields !== 'undefined' ? djLockedFields : []

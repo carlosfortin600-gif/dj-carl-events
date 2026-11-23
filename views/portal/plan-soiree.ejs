@@ -24,7 +24,6 @@
       <form method="post" action="/portal/<%= event.portal_token %>/plan-soiree" id="planSoireeForm" data-unsaved-guard>
         <%- include('../partials/portal-plan-soiree-fields', {
           q: questionnaire.data,
-          proposedTimelineSteps,
           timelineItems
         }) %>
         <div class="sticky-save-bar mt-4">
