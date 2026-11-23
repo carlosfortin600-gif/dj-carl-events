@@ -801,7 +801,7 @@ initQuestionnaireMissingHighlight();
     if (!origin || !destination) {
       window.alert(
         !destination
-          ? "Renseignez l'adresse de l'événement dans l'onglet Résumé, puis rouvrez Gestion → Location."
+          ? "Renseignez le champ Adresse de l'événement (onglet Résumé), puis rouvrez Gestion → Location."
           : "Indiquez l'adresse ou le nom de l'hôtel."
       );
       return;
