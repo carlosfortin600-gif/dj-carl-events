@@ -436,7 +436,8 @@ table tr.q-field-missing td:first-child {
   top: calc(100% + 2px);
   left: 0;
   right: 0;
-  z-index: 2000;
+  z-index: 2500;
+  box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.12);
   max-height: 220px;
   overflow-y: auto;
   margin: 0;

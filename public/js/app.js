@@ -757,6 +757,9 @@ initQuestionnaireMissingHighlight();
       fields.querySelectorAll("input, textarea, select").forEach((el) => {
         el.disabled = !active;
       });
+      if (active && typeof window.bindAddressSuggestInputs === "function") {
+        window.bindAddressSuggestInputs(fields);
+      }
     }
 
     yes.addEventListener("change", update);

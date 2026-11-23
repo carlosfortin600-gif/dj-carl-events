@@ -5,7 +5,7 @@
     || ((djNotes.tech_room_location || djNotes.tech_room_start || djNotes.tech_room_end) ? 'yes' : 'no');
   const trailerClientProvided = djNotes.tech_trailer_client_provided || 'no';
   const roomClientProvided = djNotes.tech_room_client_provided || 'no';
-  const eventVenueAddress = [event.address, event.city].filter(function(part) {
+  const eventVenueAddress = [event.venue, event.address, event.city].filter(function(part) {
     return part && String(part).trim();
   }).join(', ');
 %>
