@@ -171,7 +171,7 @@
     <% } else { %>
       <p class="text-muted small mb-3">
         Une fois le questionnaire rempli, envoyez ce courriel : le client vérifie que tout est correct et confirme en un clic
-        (lien <strong>/confirmer</strong>). Envoi automatique aussi <strong><%= typeof confirmationDaysBefore !== 'undefined' ? confirmationDaysBefore : 6 %> jours</strong> avant la date de l'événement.
+        (lien <strong>/confirmer</strong>).
       </p>
 
       <% if (event.confirmation_email_sent_at) { %>
@@ -189,7 +189,7 @@
         </div>
       <% } else if (event.portal_enabled) { %>
         <div class="alert alert-warning py-2 small mb-3">
-          Le lien de confirmation sera actif après l'envoi du courriel de confirmation (ou l'envoi automatique <%= typeof confirmationDaysBefore !== 'undefined' ? confirmationDaysBefore : 6 %> jours avant).
+          Le lien de confirmation sera actif après l'envoi du courriel de confirmation.
         </div>
       <% } %>
 

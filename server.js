@@ -4,6 +4,7 @@ applyAppTimezoneToProcess();
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const multer = require("multer");
 const { initDatabase, DB_PATH, DATA_DIR, isPersistentStorage } = require("./database");
 const {
   STATUS_LABELS,
@@ -120,6 +121,33 @@ const {
 } = require("./lib/questionnaire-portal-lock");
 const { hasPortalIntroAck, ackPortalIntro, ackPortalIntroDb } = require("./lib/portal-intro");
 const { getDjNotes, saveDjNotes } = require("./lib/dj-notes");
+const {
+  parseAgencyContractText,
+  extractTextFromPdfBuffer,
+  draftToFormValues
+} = require("./lib/agency-contract-import");
+
+const importContractUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 12 * 1024 * 1024 }
+});
+
+function validateNewEventForm(values) {
+  const errors = [];
+  if (!values.first_name_1?.trim()) {
+    errors.push(
+      values.event_type === "Mariage"
+        ? "Le prénom du mari est requis."
+        : "La personne contact est requise."
+    );
+  }
+  if (values.event_type !== "Mariage" && !values.last_name?.trim()) {
+    errors.push("Le nom de l'entreprise est requis.");
+  }
+  if (!values.event_type) errors.push("Le type d'événement est requis.");
+  if (!values.event_date) errors.push("La date est requise.");
+  return errors;
+}
 const { getThematicSummariesForEventIds } = require("./lib/party-questionnaire");
 const {
   getQuestionnaireSentLogs,
@@ -209,8 +237,7 @@ const {
   sendConfirmationEmailToClient,
   confirmationEmailErrorMessage,
   getConfirmationEmailPreview,
-  getConfirmationEmailCopyTo,
-  startConfirmationEmailScheduler
+  getConfirmationEmailCopyTo
 } = require("./lib/confirmation-email");
 const {
   sendQuestionnaireInviteEmail,
@@ -761,6 +788,104 @@ app.get("/calendrier/:token", (req, res) => {
   });
 });
 
+app.get("/events/import", (req, res) => {
+  let error = "";
+  if (req.query.error === "empty") {
+    error = "Ajoutez du texte ou un fichier PDF.";
+  } else if (req.query.error) {
+    try {
+      error = decodeURIComponent(req.query.error);
+    } catch {
+      error = "Import impossible.";
+    }
+  }
+  res.render("event-import", {
+    title: "Importer un contrat — DJ CARL",
+    activeNav: "new",
+    error
+  });
+});
+
+app.post("/events/import", importContractUpload.single("contract_pdf"), async (req, res) => {
+  try {
+    let text = req.body.contract_text?.trim() || "";
+    if (req.file?.buffer) {
+      const pdfText = await extractTextFromPdfBuffer(req.file.buffer);
+      text = text ? `${text}\n\n${pdfText}` : pdfText;
+    }
+    if (!text) {
+      return res.redirect("/events/import?error=empty");
+    }
+    const parsed = parseAgencyContractText(text);
+    res.render("event-import-preview", {
+      title: "Vérifier l'import — DJ CARL",
+      activeNav: "new",
+      eventTypes: EVENT_TYPES,
+      serviceOptions: SERVICE_OPTIONS,
+      errors: [],
+      values: draftToFormValues(parsed.draft),
+      importSourceText: parsed.text,
+      importHints: parsed.hints,
+      importMissing: parsed.missing
+    });
+  } catch (err) {
+    console.error("Contract import:", err);
+    const message = encodeURIComponent(err.message || "Import impossible.");
+    res.redirect(`/events/import?error=${message}`);
+  }
+});
+
+app.post("/events/import/confirm", (req, res) => {
+  const values = req.body;
+  const importSourceText = values.import_source_text?.trim() || "";
+  const errors = validateNewEventForm(values);
+
+  if (errors.length > 0) {
+    const parsed = parseAgencyContractText(importSourceText || "");
+    return res.status(400).render("event-import-preview", {
+      title: "Vérifier l'import — DJ CARL",
+      activeNav: "new",
+      eventTypes: EVENT_TYPES,
+      serviceOptions: SERVICE_OPTIONS,
+      errors,
+      values,
+      importSourceText,
+      importHints: parsed.hints,
+      importMissing: parsed.missing
+    });
+  }
+
+  try {
+    const eventId = createEvent(db, values);
+    if (importSourceText) {
+      saveDjNotes(db, eventId, {
+        save_scope: "notes",
+        content: `--- Contrat agence (import) ---\n\n${importSourceText}\n`
+      });
+    }
+    if (values.tech_charged_price?.trim()) {
+      saveDjNotes(db, eventId, {
+        save_scope: "depart",
+        tech_charged_price: values.tech_charged_price.trim()
+      });
+    }
+    res.redirect(`/events/${eventId}?created=1&addCalendar=1&imported=1`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("event-import-preview", {
+      title: "Vérifier l'import — DJ CARL",
+      activeNav: "new",
+      eventTypes: EVENT_TYPES,
+      serviceOptions: SERVICE_OPTIONS,
+      errors: ["Erreur lors de la création. Veuillez réessayer."],
+      values,
+      importSourceText,
+      importHints: [],
+      importMissing: []
+    });
+  }
+});
+
 app.get("/events/new", (req, res) => {
   res.render("event-new", {
     title: "Nouvel événement — DJ CARL",
@@ -774,20 +899,7 @@ app.get("/events/new", (req, res) => {
 
 app.post("/events/new", (req, res) => {
   const values = req.body;
-  const errors = [];
-
-  if (!values.first_name_1?.trim()) {
-    errors.push(
-      values.event_type === "Mariage"
-        ? "Le prénom du mari est requis."
-        : "La personne contact est requise."
-    );
-  }
-  if (values.event_type !== "Mariage" && !values.last_name?.trim()) {
-    errors.push("Le nom de l'entreprise est requis.");
-  }
-  if (!values.event_type) errors.push("Le type d'événement est requis.");
-  if (!values.event_date) errors.push("La date est requise.");
+  const errors = validateNewEventForm(values);
 
   if (errors.length > 0) {
     return res.status(400).render("event-new", {
@@ -2214,7 +2326,6 @@ app.use((req, res) => {
 app.listen(PORT, HOST, () => {
   const base = process.env.PUBLIC_URL || `http://localhost:${PORT}`;
   const { APP_TIMEZONE } = require("./lib/app-timezone");
-  startConfirmationEmailScheduler(db);
   console.log(`DJ Carl Events — ${base}`);
   console.log(`Fuseau horaire app : ${APP_TIMEZONE} (TZ=${process.env.TZ || "—"})`);
   console.log(`Base SQLite : ${DB_PATH}${isPersistentStorage() ? " (persistante)" : ""}`);
