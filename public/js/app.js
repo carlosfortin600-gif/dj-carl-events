@@ -786,6 +786,48 @@ initQuestionnaireMissingHighlight();
   bindToggle("wedding_has_color_yes", "wedding_has_color_no", "wedding_color_fields");
 })();
 
+(function initHotelEventDistance() {
+  const hotelInput = document.getElementById("tech_room_location");
+  const distanceInput = document.getElementById("tech_room_event_distance");
+  const calcBtn = document.getElementById("tech_room_distance_calc");
+  if (!hotelInput || !distanceInput || !calcBtn) return;
+
+  calcBtn.addEventListener("click", async () => {
+    const origin = hotelInput.value.trim();
+    const destination = (calcBtn.getAttribute("data-event-address") || "").trim();
+    if (!origin || !destination) {
+      window.alert(
+        !destination
+          ? "Renseignez l'adresse de l'événement dans l'onglet Résumé, puis rouvrez Gestion → Location."
+          : "Indiquez l'adresse ou le nom de l'hôtel."
+      );
+      return;
+    }
+
+    const label = calcBtn.textContent;
+    calcBtn.disabled = true;
+    calcBtn.textContent = "…";
+    try {
+      const params = new URLSearchParams({ origin, destination });
+      const response = await fetch(`/api/route-time?${params.toString()}`);
+      const data = await response.json();
+      if (!response.ok) {
+        window.alert(data.error || "Impossible de calculer la distance.");
+        return;
+      }
+      const parts = [];
+      if (data.distanceLabel) parts.push(data.distanceLabel);
+      if (data.durationLabel) parts.push(data.durationLabel);
+      if (parts.length) distanceInput.value = parts.join(" · ");
+    } catch {
+      window.alert("Impossible de calculer la distance.");
+    } finally {
+      calcBtn.disabled = false;
+      calcBtn.textContent = label;
+    }
+  });
+})();
+
 (function initClientContactPanels() {
   document.querySelectorAll("[data-client-contact-add-toggle]").forEach((btn) => {
     const formId = btn.getAttribute("aria-controls");

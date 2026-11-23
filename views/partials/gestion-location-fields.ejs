@@ -5,6 +5,9 @@
     || ((djNotes.tech_room_location || djNotes.tech_room_start || djNotes.tech_room_end) ? 'yes' : 'no');
   const trailerClientProvided = djNotes.tech_trailer_client_provided || 'no';
   const roomClientProvided = djNotes.tech_room_client_provided || 'no';
+  const eventVenueAddress = [event.address, event.city].filter(function(part) {
+    return part && String(part).trim();
+  }).join(', ');
 %>
 
 <%- include('gestion-employee-needed-panel', { event, djNotes, employeePanelProminent: false }) %>
@@ -101,6 +104,20 @@
              value="<%= djNotes.tech_room_location || '' %>"
              placeholder="Nom ou adresse de l'hôtel"
              <%= roomNeeded === 'no' ? 'disabled' : '' %>>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label" for="tech_room_event_distance">Distance événement ↔ hôtel</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="tech_room_event_distance" name="tech_room_event_distance"
+               value="<%= djNotes.tech_room_event_distance || '' %>"
+               placeholder="Ex. : 12 km · 18 min"
+               <%= roomNeeded === 'no' ? 'disabled' : '' %>>
+        <button type="button" class="btn btn-outline-secondary" id="tech_room_distance_calc"
+                data-event-address="<%= eventVenueAddress %>"
+                title="Calculer selon l'adresse de la salle et l'hôtel"
+                <%= roomNeeded === 'no' ? 'disabled' : '' %>>Calculer</button>
+      </div>
+      <p class="form-text mb-0">Salle : <strong><%= eventVenueAddress || '— (voir onglet Résumé)' %></strong></p>
     </div>
     <div class="col-md-6">
       <label class="form-label" for="tech_room_start_datetime">Du — date et heure</label>

@@ -394,6 +394,9 @@ function migrate(db) {
   if (!djNotesColumns.includes("tech_room_notes")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_room_notes TEXT");
   }
+  if (!djNotesColumns.includes("tech_room_event_distance")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_room_event_distance TEXT");
+  }
   if (!djNotesColumns.includes("tech_entry_distance")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_entry_distance TEXT");
   }
