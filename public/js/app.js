@@ -809,6 +809,12 @@ initQuestionnaireMissingHighlight();
     calcBtn.textContent = "…";
     try {
       const params = new URLSearchParams({ origin, destination });
+      const lat = hotelInput.dataset.geoLat;
+      const lon = hotelInput.dataset.geoLon;
+      if (lat && lon) {
+        params.set("originLat", lat);
+        params.set("originLon", lon);
+      }
       const response = await fetch(`/api/route-time?${params.toString()}`);
       const data = await response.json();
       if (!response.ok) {

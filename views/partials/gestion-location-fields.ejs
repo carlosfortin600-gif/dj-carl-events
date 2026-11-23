@@ -100,10 +100,15 @@
     </div>
     <div class="col-md-6">
       <label class="form-label" for="tech_room_location">Endroit où louer</label>
-      <input type="text" class="form-control" id="tech_room_location" name="tech_room_location"
-             value="<%= djNotes.tech_room_location || '' %>"
-             placeholder="Nom ou adresse de l'hôtel"
-             <%= roomNeeded === 'no' ? 'disabled' : '' %>>
+      <div class="address-suggest-wrap">
+        <input type="text" class="form-control address-suggest" id="tech_room_location" name="tech_room_location"
+               value="<%= djNotes.tech_room_location || '' %>"
+               placeholder="Nom ou adresse de l'hôtel"
+               autocomplete="off" spellcheck="false"
+               <%= roomNeeded === 'no' ? 'disabled' : '' %>>
+        <ul class="address-suggest-list list-group" id="tech_room_location-suggestions" hidden></ul>
+      </div>
+      <p class="form-text mb-0">Suggestions d'adresse après quelques caractères.</p>
     </div>
     <div class="col-md-6">
       <label class="form-label" for="tech_room_event_distance">Distance événement ↔ hôtel</label>
