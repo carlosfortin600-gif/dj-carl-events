@@ -17,6 +17,13 @@
   </section>
 
   <section class="form-section form-section-notes mb-4">
+    <h2 class="form-section-title">Questions à poser</h2>
+    <p class="text-muted small mb-2">Points à clarifier au prochain contact (appel, courriel ou rencontre).</p>
+    <textarea class="form-control" id="questions_to_ask" name="questions_to_ask" rows="6"
+              placeholder="Ex. : heure exacte de l'entrée des invités, accès service, chanson surprise confirmée…"><%= djNotes.questions_to_ask || '' %></textarea>
+  </section>
+
+  <section class="form-section form-section-notes mb-4">
     <h2 class="form-section-title">Notes libres</h2>
     <textarea class="form-control" id="dj_notes_content" name="content" rows="14"
               placeholder="Vos notes privées pour cet événement…"><%= djNotes.content || '' %></textarea>
