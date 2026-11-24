@@ -5,10 +5,7 @@
 <p class="text-muted small mb-2">
   Choisissez les moments importants de votre soirée, ajoutez vos propres étapes, puis enregistrez.
 </p>
-<div class="alert alert-info py-2 small mb-4">
-  Les heures servent surtout à mettre les étapes <strong>dans le bon ordre</strong>.
-  L'important, ce sont les <strong>moments</strong> — inscrivez une heure approximative ou laissez vide si vous préférez.
-</div>
+<%- include('plan-hours-reminder') %>
 
 <% if (timeline.length) { %>
   <div class="card mb-4">

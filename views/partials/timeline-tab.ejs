@@ -2,10 +2,7 @@
   <div class="alert alert-success">Plan de soirée enregistré.</div>
 <% } %>
 
-<div class="alert alert-info py-2 small mb-4">
-  <strong>Rappel :</strong> les heures servent surtout à <strong>ordonner</strong> les étapes.
-  Ce qui compte, ce sont les <strong>moments</strong> — l'heure indiquée n'a pas à être exacte au minute près.
-</div>
+<%- include('plan-hours-reminder') %>
 
 <% const clientPlanSteps = (questionnaire && questionnaire.data && questionnaire.data.client_plan && questionnaire.data.client_plan.steps) ? questionnaire.data.client_plan.steps : []; %>
 <% const clientMoments = typeof sortByTime !== 'undefined' ? sortByTime((questionnaire && questionnaire.data && questionnaire.data.important_moments) || [], 'time') : []; %>
@@ -23,14 +20,21 @@
                 <th>Heure</th>
                 <th>Titre</th>
                 <th>Notes</th>
+                <th class="text-end" style="width: 5.5rem;">Action</th>
               </tr>
             </thead>
             <tbody>
-              <% clientPlanSteps.forEach(function(step) { %>
+              <% clientPlanSteps.forEach(function(step, stepIndex) { %>
                 <tr>
                   <td class="text-nowrap"><%= step.time ? formatTime(step.time) : '—' %></td>
                   <td><%= step.title || '—' %></td>
                   <td><%= step.description || '—' %></td>
+                  <td class="text-end">
+                    <form method="post" action="/events/<%= event.id %>/client-plan/steps/<%= stepIndex %>/delete" class="d-inline"
+                          onsubmit="return confirm('Retirer cette étape du plan client ?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                    </form>
+                  </td>
                 </tr>
               <% }); %>
             </tbody>
@@ -47,6 +51,7 @@
                 <th>Heure</th>
                 <th>Chanson</th>
                 <th>Notes</th>
+                <th class="text-end" style="width: 5.5rem;">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -56,6 +61,12 @@
                   <td class="text-nowrap"><%= m.time ? formatTime(m.time) : '—' %></td>
                   <td><%= m.song || '—' %></td>
                   <td><%= m.notes || '—' %></td>
+                  <td class="text-end">
+                    <form method="post" action="/events/<%= event.id %>/client-plan/moments/<%= m.key %>/remove" class="d-inline"
+                          onsubmit="return confirm('Retirer ce moment du plan client ?');">
+                      <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+                    </form>
+                  </td>
                 </tr>
               <% }); %>
             </tbody>

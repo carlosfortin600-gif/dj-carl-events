@@ -202,7 +202,11 @@ const {
   clientCallbackEligible,
   clientCallbackChanged
 } = require("./lib/event-ics");
-const { applyPlanSoireeFromBody } = require("./lib/plan-soiree");
+const {
+  applyPlanSoireeFromBody,
+  removeClientPlanStepAt,
+  deactivateImportantMoment
+} = require("./lib/plan-soiree");
 const {
   notifyDjCarlClientUpdate,
   notifyDjCarlClientConfirmation,
@@ -1783,6 +1787,32 @@ app.post("/events/:id/timeline/:itemId/move-down", (req, res) => {
   const eventId = Number(req.params.id);
   moveTimelineItem(db, Number(req.params.itemId), eventId, "down");
   res.redirect(eventRedirect(eventId, "timeline"));
+});
+
+app.post("/events/:id/client-plan/steps/:index/delete", (req, res) => {
+  const eventId = Number(req.params.id);
+  const event = getEventById(db, eventId);
+  if (!event) return res.status(404).send("Not found");
+  const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
+  const data = JSON.parse(JSON.stringify(questionnaire.data));
+  if (!removeClientPlanStepAt(data, req.params.index)) {
+    return res.redirect(eventRedirect(eventId, "timeline", { saveError: "1" }));
+  }
+  saveQuestionnaireForEvent(db, event.id, event.event_type, data);
+  res.redirect(eventRedirect(eventId, "timeline", { timelineSaved: "1" }));
+});
+
+app.post("/events/:id/client-plan/moments/:key/remove", (req, res) => {
+  const eventId = Number(req.params.id);
+  const event = getEventById(db, eventId);
+  if (!event) return res.status(404).send("Not found");
+  const questionnaire = getQuestionnaireForEvent(db, event.id, event.event_type);
+  const data = JSON.parse(JSON.stringify(questionnaire.data));
+  if (!deactivateImportantMoment(data, req.params.key)) {
+    return res.redirect(eventRedirect(eventId, "timeline", { saveError: "1" }));
+  }
+  saveQuestionnaireForEvent(db, event.id, event.event_type, data);
+  res.redirect(eventRedirect(eventId, "timeline", { timelineSaved: "1" }));
 });
 
 app.post("/events/:id/services/save", (req, res) => {

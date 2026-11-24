@@ -550,6 +550,34 @@ table tr.q-field-missing td:first-child {
   border-left: 4px solid var(--dj-accent);
 }
 
+.plan-hours-reminder {
+  border-width: 2px;
+  border-color: #0dcaf0;
+  padding: 1rem 1.15rem;
+}
+
+.plan-hours-reminder-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #055160;
+}
+
+.plan-hours-reminder-body {
+  font-size: 1.05rem;
+  line-height: 1.45;
+  color: #0a4b55;
+}
+
+@media (min-width: 768px) {
+  .plan-hours-reminder-title {
+    font-size: 1.5rem;
+  }
+  .plan-hours-reminder-body {
+    font-size: 1.1rem;
+  }
+}
+
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
