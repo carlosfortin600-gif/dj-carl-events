@@ -8,19 +8,60 @@
 </div>
 
 <% const clientPlanSteps = (questionnaire && questionnaire.data && questionnaire.data.client_plan && questionnaire.data.client_plan.steps) ? questionnaire.data.client_plan.steps : []; %>
-<% if (clientPlanSteps.length) { %>
+<% const clientMoments = typeof sortByTime !== 'undefined' ? sortByTime((questionnaire && questionnaire.data && questionnaire.data.important_moments) || [], 'time') : []; %>
+<% const clientMomentsActive = clientMoments.filter(function(m) { return m.active === 'yes'; }); %>
+<% if (clientPlanSteps.length || clientMomentsActive.length) { %>
   <div class="card mb-4 border-primary">
     <div class="card-body py-3">
-      <h3 class="h6 mb-2">Plan proposé par le client</h3>
-      <ul class="small mb-0 ps-3">
-        <% clientPlanSteps.forEach(function(step) { %>
-          <li>
-            <strong><%= step.time ? formatTime(step.time) : '—' %></strong>
-            — <%= step.title %>
-            <% if (step.description) { %><span class="text-muted"> · <%= step.description %></span><% } %>
-          </li>
-        <% }); %>
-      </ul>
+      <h3 class="h6 mb-3">Plan proposé par le client</h3>
+      <% if (clientPlanSteps.length) { %>
+        <p class="small fw-semibold mb-2">Étapes personnalisées</p>
+        <div class="table-responsive mb-0">
+          <table class="table table-sm table-bordered mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Heure</th>
+                <th>Titre</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% clientPlanSteps.forEach(function(step) { %>
+                <tr>
+                  <td class="text-nowrap"><%= step.time ? formatTime(step.time) : '—' %></td>
+                  <td><%= step.title || '—' %></td>
+                  <td><%= step.description || '—' %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+      <% if (clientMomentsActive.length) { %>
+        <p class="small fw-semibold mb-2 <%= clientPlanSteps.length ? 'mt-3' : '' %>">Moments à préciser</p>
+        <div class="table-responsive mb-0">
+          <table class="table table-sm table-bordered mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Moment</th>
+                <th>Heure</th>
+                <th>Chanson</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% clientMomentsActive.forEach(function(m) { %>
+                <tr>
+                  <td><%= m.label %></td>
+                  <td class="text-nowrap"><%= m.time ? formatTime(m.time) : '—' %></td>
+                  <td><%= m.song || '—' %></td>
+                  <td><%= m.notes || '—' %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
     </div>
   </div>
 <% } %>
@@ -58,7 +99,7 @@
             <input type="text" class="form-control form-control-sm" name="song_title">
           </div>
           <div class="col-md-6">
-            <label class="form-label small">Description</label>
+            <label class="form-label small">Notes</label>
             <input type="text" class="form-control form-control-sm" name="description">
           </div>
           <div class="col-md-6">
@@ -97,11 +138,15 @@
               </form>
             </div>
           </div>
-          <% if (item.description) { %><p class="small mb-1 text-muted"><%= item.description %></p><% } %>
+          <% if (item.description) { %>
+            <p class="small mb-1"><span class="text-muted">Notes :</span> <%= item.description %></p>
+          <% } %>
           <% if (item.song_artist || item.song_title) { %>
             <p class="small mb-1"><span class="text-muted">Chanson :</span> <%= [item.song_artist, item.song_title].filter(Boolean).join(' — ') %></p>
           <% } %>
-          <% if (item.dj_notes) { %><p class="small mb-0 text-info"><span class="text-muted">Notes DJ :</span> <%= item.dj_notes %></p><% } %>
+          <% if (item.dj_notes) { %>
+            <p class="small mb-0"><span class="text-muted">Notes DJ :</span> <%= item.dj_notes %></p>
+          <% } %>
 
           <div class="collapse mt-3" id="editItem<%= item.id %>">
             <form method="post" action="/events/<%= event.id %>/timeline/<%= item.id %>/update" data-unsaved-guard>
@@ -119,7 +164,7 @@
                   <input type="text" class="form-control form-control-sm" name="song_title" value="<%= item.song_title || '' %>" placeholder="Chanson">
                 </div>
                 <div class="col-md-6">
-                  <input type="text" class="form-control form-control-sm" name="description" value="<%= item.description || '' %>" placeholder="Description">
+                  <input type="text" class="form-control form-control-sm" name="description" value="<%= item.description || '' %>" placeholder="Notes">
                 </div>
                 <div class="col-md-6">
                   <input type="text" class="form-control form-control-sm" name="dj_notes" value="<%= item.dj_notes || '' %>" placeholder="Notes DJ">
