@@ -550,9 +550,42 @@ table tr.q-field-missing td:first-child {
   border-left: 4px solid var(--dj-accent);
 }
 
-.horaire-table td:first-child {
+.logistics-when {
+  font-size: 1.1rem;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
+
+.logistics-item {
+  border-left: 4px solid #6c757d;
+}
+
+.logistics-kind-depart { border-left-color: #0d6efd; }
+.logistics-kind-arrivee { border-left-color: #198754; }
+.logistics-kind-hotel { border-left-color: #6f42c1; }
+.logistics-kind-trailer { border-left-color: #fd7e14; }
+.logistics-kind-contrat { border-left-color: #adb5bd; }
+.logistics-kind-rappel { border-left-color: #20c997; }
+
+.logistics-month-chip {
+  border-left-width: 3px;
+  border-left-style: solid;
+}
+
+.logistics-legend-dot {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  margin-right: 0.25rem;
+  vertical-align: middle;
+}
+
+.logistics-legend-dot.logistics-kind-depart { background: #0d6efd; }
+.logistics-legend-dot.logistics-kind-arrivee { background: #198754; }
+.logistics-legend-dot.logistics-kind-hotel { background: #6f42c1; }
+.logistics-legend-dot.logistics-kind-trailer { background: #fd7e14; }
+.logistics-legend-dot.logistics-kind-rappel { background: #20c997; }
 
 .plan-hours-reminder {
   border-width: 2px;

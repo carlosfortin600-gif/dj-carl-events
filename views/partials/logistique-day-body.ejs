@@ -1,0 +1,24 @@
+<% const items = dayLogistics && dayLogistics.items ? dayLogistics.items : []; %>
+
+<% if (!items.length) { %>
+  <p class="text-muted text-center py-4 mb-0">Aucun horaire logistique ce jour-là.</p>
+<% } else { %>
+  <div class="list-group list-group-flush">
+    <% items.forEach(function(item) { %>
+      <div class="list-group-item py-3 logistics-item logistics-kind-<%= item.kind %>">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+          <div>
+            <div class="fw-semibold"><%= item.clientLabel %> — <%= item.label %></div>
+            <% if (item.when && item.when !== '—') { %>
+              <div class="text-primary logistics-when"><%= item.when %></div>
+            <% } %>
+            <% if (item.detail) { %>
+              <div class="text-muted small mt-1"><%= item.detail %></div>
+            <% } %>
+          </div>
+          <a href="<%= item.gestionUrl %>" class="btn btn-outline-primary btn-sm flex-shrink-0">Gestion</a>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+<% } %>

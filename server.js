@@ -207,7 +207,7 @@ const {
   removeClientPlanStepAt,
   deactivateImportantMoment
 } = require("./lib/plan-soiree");
-const { buildEventHoraire } = require("./lib/event-horaire");
+const { getLogisticsViewData } = require("./lib/logistics-schedule");
 const {
   notifyDjCarlClientUpdate,
   notifyDjCarlClientConfirmation,
@@ -684,6 +684,22 @@ app.get("/export/dossiers.zip", async (req, res) => {
   }
 });
 
+app.get("/logistique", (req, res) => {
+  const view = parseViewParam(req.query.view);
+  const { year, month } = parseMonthParam(req.query.year, req.query.month);
+  const cal = getLogisticsViewData(db, {
+    view,
+    date: req.query.date,
+    year,
+    month
+  });
+  res.render("logistique", {
+    title: "Horaire logistique",
+    activeNav: "logistique",
+    cal
+  });
+});
+
 app.get("/calendar", (req, res) => {
   const { year, month } = parseMonthParam(req.query.year, req.query.month);
   const cal = getCalendarViewData(db, {
@@ -1071,12 +1087,6 @@ function renderEventDetailPage(req, res) {
     emailRdvSentLogs,
     clientContactLogs
   });
-  const horaire = buildEventHoraire({
-    event,
-    questionnaire,
-    timelineItems,
-    djNotes
-  });
   const missingQuestions = getQuestionnaireMissing(event.event_type, questionnaire.data);
   const eventFiles = getEventFiles(db, event.id);
   const timeSpentLogs = gestionSection === "temps" ? getTimeSpentLogs(db, event.id) : [];
@@ -1138,7 +1148,6 @@ function renderEventDetailPage(req, res) {
     clientContactDefaultDatetime: defaultContactDatetime(),
     eventAgreementStatuses,
     summarySheet,
-    horaire,
     missingQuestions,
     eventFiles,
     maxFileSize: MAX_FILE_SIZE,

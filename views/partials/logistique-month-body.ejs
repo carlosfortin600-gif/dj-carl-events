@@ -1,0 +1,42 @@
+<% function dayUrl(dateStr) {
+  const q = queryString({ view: 'day', date: dateStr });
+  return calendarBasePath + '?' + q;
+} %>
+
+<div class="calendar-grid">
+  <div class="calendar-weekday">Dim</div>
+  <div class="calendar-weekday">Lun</div>
+  <div class="calendar-weekday">Mar</div>
+  <div class="calendar-weekday">Mer</div>
+  <div class="calendar-weekday">Jeu</div>
+  <div class="calendar-weekday">Ven</div>
+  <div class="calendar-weekday">Sam</div>
+
+  <% for (let i = 0; i < firstWeekday; i++) { %>
+    <div class="calendar-day calendar-day-empty"></div>
+  <% } %>
+
+  <% for (let day = 1; day <= daysInMonth; day++) { %>
+    <% const dateStr = year + '-' + String(month).padStart(2, '0') + '-' + String(day).padStart(2, '0'); %>
+    <% const dayItems = byDate[dateStr] || []; %>
+    <% const isToday = typeof todayIso !== 'undefined' && todayIso === dateStr; %>
+    <div class="calendar-day <%= dayItems.length ? 'has-events' : '' %> <%= isToday ? 'is-today' : '' %>">
+      <a href="<%= dayUrl(dateStr) %>" class="calendar-day-head text-decoration-none">
+        <span class="calendar-day-num"><%= day %></span>
+      </a>
+      <% if (dayItems.length) { %>
+        <div class="calendar-month-events">
+          <% dayItems.slice(0, 4).forEach(function(item) { %>
+            <div class="calendar-month-event logistics-kind-<%= item.kind %> logistics-month-chip">
+              <div class="calendar-month-event-name"><%= item.clientLabel %></div>
+              <div class="calendar-month-event-city small text-muted"><%= item.label %><% if (item.sortTime) { %> · <%= formatTime(item.sortTime) %><% } %></div>
+            </div>
+          <% }); %>
+          <% if (dayItems.length > 4) { %>
+            <div class="small text-muted">+<%= dayItems.length - 4 %> autres</div>
+          <% } %>
+        </div>
+      <% } %>
+    </div>
+  <% } %>
+</div>
