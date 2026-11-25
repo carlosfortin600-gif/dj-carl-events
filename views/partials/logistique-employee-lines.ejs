@@ -36,14 +36,14 @@
               <label class="form-label mb-0 text-muted" for="<%= rowKey %>_arrival">Arrivée</label>
               <input type="time" class="form-control form-control-sm logistique-emp-when-field" id="<%= rowKey %>_arrival"
                      name="emp_<%= sid %>_arrival_time" value="<%= emp.arrivalTime %>" step="300"
-                     <%= emp.withMe === 'no' ? 'disabled' : '' %>>
+                     <%= emp.withMe === 'yes' ? 'disabled' : '' %>>
             </div>
             <div class="col-6 col-md-5 col-lg-3 logistique-emp-when-target">
               <label class="form-label mb-0 text-muted" for="<%= rowKey %>_location">Endroit</label>
               <select class="form-select form-select-sm logistique-emp-location logistique-emp-when-field"
                       id="<%= rowKey %>_location" name="emp_<%= sid %>_location"
                       data-custom-target="<%= rowKey %>_custom_wrap"
-                      <%= emp.withMe === 'no' ? 'disabled' : '' %>>
+                      <%= emp.withMe === 'yes' ? 'disabled' : '' %>>
                 <% emp.locationChoices.forEach(function(choice) { %>
                   <option value="<%= choice.key %>"<%= emp.locationKey === choice.key ? ' selected' : '' %>>
                     <%= choice.label %><% if (choice.address) { %> — <%= choice.address.length > 40 ? choice.address.slice(0, 37) + '…' : choice.address %><% } %>
@@ -57,7 +57,7 @@
               <input type="text" class="form-control form-control-sm logistique-emp-when-field" id="<%= rowKey %>_custom"
                      name="emp_<%= sid %>_location_custom" value="<%= emp.locationCustom %>"
                      placeholder="Adresse ou lieu"
-                     <%= emp.withMe === 'no' ? 'disabled' : '' %>>
+                     <%= emp.withMe === 'yes' ? 'disabled' : '' %>>
             </div>
           </div>
         <% }); %>
