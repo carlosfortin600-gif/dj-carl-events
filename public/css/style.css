@@ -596,6 +596,20 @@ table tr.q-field-missing td:first-child {
   font-variant-numeric: tabular-nums;
 }
 
+.logistique-access-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+.logistique-access-body {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--bs-body-color);
+}
+
 .logistique-org-name {
   line-height: 1.2;
 }

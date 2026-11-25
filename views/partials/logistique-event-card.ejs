@@ -98,8 +98,6 @@
       <% } %>
     </section>
 
-    <%- include('logistique-employee-lines', { ev }) %>
-
     <section class="logistique-section logistique-section-day-contact mt-3 pt-3 border-top">
       <h3 class="h6 mb-1">Personne à contacter le jour de l’événement</h3>
       <p class="text-muted small mb-2">Questionnaire client (sur place, gérant de salle, etc.).</p>
@@ -134,17 +132,20 @@
       <% } else { %>
         <p class="text-muted small mb-0">Non renseigné dans le questionnaire.</p>
       <% } %>
+
+      <div class="logistique-access-block mt-3 pt-3 border-top">
+        <h3 class="logistique-access-title mb-2">Accès</h3>
+        <% if (ev.accessSummary) { %>
+          <p class="logistique-access-body mb-0"><%= ev.accessSummary %></p>
+        <% } else { %>
+          <p class="logistique-access-body text-muted mb-0">— Non renseigné (Gestion départ).</p>
+        <% } %>
+      </div>
     </section>
 
     <section class="logistique-section logistique-section-locations mt-3 pt-3 border-top">
       <span class="badge bg-light text-dark border mb-2">Locations</span>
       <div class="resume-event-row-gestion small">
-        <% if (ev.accessSummary) { %>
-          <div class="mb-2">
-            <span class="resume-event-row-label d-block mb-1">Accès</span>
-            <div class="text-muted"><%= ev.accessSummary %></div>
-          </div>
-        <% } %>
         <div class="resume-event-row-location-item">
           <span class="resume-event-row-location-type">Hôtel</span>
           <span class="resume-location-pair">
@@ -165,6 +166,8 @@
         </div>
       </div>
     </section>
+
+    <%- include('logistique-employee-lines', { ev }) %>
   </div>
 
   <div class="resume-event-row-action d-flex flex-column gap-1">
