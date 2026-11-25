@@ -16,6 +16,7 @@ const {
   CUSTOM_SERVICE_SLOT_COUNT,
   formatDateFr,
   formatTime,
+  formatHourFr,
   formatDateTimeFr,
   formatTimestampFr,
   formatDateRangeFr,
@@ -428,6 +429,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.locals.formatDateFr = formatDateFr;
 app.locals.formatTime = formatTime;
+app.locals.formatHourFr = formatHourFr;
 app.locals.formatDateTimeFr = formatDateTimeFr;
 app.locals.formatTimestampFr = formatTimestampFr;
 app.locals.formatDateRangeFr = formatDateRangeFr;
@@ -1165,6 +1167,7 @@ function renderEventDetailPage(req, res) {
     timelineSaved: req.query.timelineSaved === "1",
     musicSaved: req.query.musicSaved === "1",
     notesSaved: req.query.notesSaved === "1",
+    travelWarning: req.query.travelWarning || "",
     servicesSaved: req.query.servicesSaved === "1",
     resumeSaved: req.query.resumeSaved === "1",
     filesUploaded: req.query.filesUploaded === "1",
@@ -1907,10 +1910,25 @@ app.post("/events/:id/gestion/temps/:logId/delete", (req, res) => {
   res.redirect(gestionRedirect(eventId, { gestion: "temps", timeSpentDeleted: "1" }));
 });
 
-app.post("/events/:id/notes/save", (req, res) => {
+app.post("/events/:id/notes/save", async (req, res) => {
   const eventId = Number(req.params.id);
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
   try {
+    let travelWarning = null;
+    const saveScope = req.body.save_scope || req.body.gestion_section || "";
+    if (saveScope === "depart") {
+      const { applyAutoDepartureFromArrival } = require("./lib/tech-departure");
+      const auto = await applyAutoDepartureFromArrival(db, eventId, req.body);
+      if (auto.error === "missing_origin" || auto.error === "missing_destination") {
+        travelWarning =
+          auto.error === "missing_origin"
+            ? "Arrivée enregistrée. Ajoutez l’adresse de départ dans Résumé pour calculer l’heure de départ."
+            : "Arrivée enregistrée. Ajoutez l’adresse de l’événement dans Résumé pour calculer l’heure de départ.";
+      } else if (!auto.ok && auto.error) {
+        travelWarning =
+          "Arrivée enregistrée. Impossible de calculer l’heure de départ (adresse ou itinéraire).";
+      }
+    }
     const notesBeforeSave = getDjNotes(db, eventId);
     saveDjNotes(db, eventId, req.body);
     const notesAfterSave = getDjNotes(db, eventId);
@@ -1931,6 +1949,7 @@ app.post("/events/:id/notes/save", (req, res) => {
       ) {
         gestionParams.addCallbackCalendar = "1";
       }
+      if (travelWarning) gestionParams.travelWarning = travelWarning;
       return res.redirect(gestionRedirect(eventId, gestionParams));
     }
     res.redirect(eventRedirect(eventId, returnTab, { notesSaved: "1" }));

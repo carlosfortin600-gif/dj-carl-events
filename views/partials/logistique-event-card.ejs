@@ -21,19 +21,36 @@
 
       <div class="resume-event-row-field">
         <span class="resume-event-row-label">Départ</span>
-        <span class="<%= ev.departureAt && ev.departureAt !== '—' ? 'fw-semibold text-primary' : '' %>">
-          <%= ev.departureAt || '—' %>
-        </span>
-        <% if (ev.departureFrom) { %>
-          <span class="d-block text-muted small mt-1"><%= ev.departureFrom %></span>
+        <% if (ev.departureFrom || ev.departureTimeLabel) { %>
+          <% if (ev.departureFrom) { %>
+            <span class="d-block small text-muted">de <%= ev.departureFrom %></span>
+          <% } %>
+          <span class="logistics-time display-6 fs-4 fw-semibold text-primary lh-1">
+            <%= ev.departureTimeLabel || '—' %>
+          </span>
+          <% if (ev.departureDateLabel) { %>
+            <span class="d-block small text-muted mt-1"><%= ev.departureDateLabel %></span>
+          <% } %>
+        <% } else { %>
+          <span>—</span>
         <% } %>
       </div>
 
       <div class="resume-event-row-field">
         <span class="resume-event-row-label">Arrivée / installation</span>
-        <span class="<%= ev.arrivalAt && ev.arrivalAt !== '—' ? 'fw-semibold text-primary' : '' %>">
-          <%= ev.arrivalAt || '—' %>
-        </span>
+        <% if (ev.arrivalAddress || ev.arrivalTimeLabel) { %>
+          <% if (ev.arrivalAddress) { %>
+            <span class="d-block small text-muted">à <%= ev.arrivalAddress %></span>
+          <% } %>
+          <span class="logistics-time display-6 fs-4 fw-semibold text-primary lh-1">
+            <%= ev.arrivalTimeLabel || '—' %>
+          </span>
+          <% if (ev.arrivalDateLabel) { %>
+            <span class="d-block small text-muted mt-1"><%= ev.arrivalDateLabel %></span>
+          <% } %>
+        <% } else { %>
+          <span>—</span>
+        <% } %>
       </div>
     </div>
 

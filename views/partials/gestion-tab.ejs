@@ -1,3 +1,6 @@
+<% if (typeof travelWarning !== 'undefined' && travelWarning) { %>
+  <div class="alert alert-warning py-2"><%= travelWarning %></div>
+<% } %>
 <% if (notesSaved) { %>
   <div class="alert alert-success">
     Informations enregistrées.

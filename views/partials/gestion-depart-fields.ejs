@@ -1,26 +1,56 @@
+<% const travelOrigin = resolveDepartureAddress(event.route_origin_key, event.route_origin_custom, ROUTE_ORIGIN_OPTIONS); %>
+<% const travelDest = [event.address, event.city].filter(function (p) { return p && String(p).trim(); }).join(', ')
+  || (event.venue && String(event.venue).trim()) || ''; %>
 <section class="form-section form-section-technique-date-prix mb-4">
   <h2 class="form-section-title">Divers</h2>
+
+  <div id="tech-travel-schedule" class="border rounded p-3 bg-light mb-4"
+       data-route-origin="<%= travelOrigin %>"
+       data-route-destination="<%= travelDest %>">
+    <h3 class="h6 mb-3">Trajet — horaire d’installation</h3>
+    <p class="small text-muted mb-3">
+      Indiquez l’<strong>arrivée sur place</strong> (installation). L’heure de <strong>départ</strong> se calcule selon le temps de route entre l’adresse de départ (Résumé) et l’adresse de la salle.
+    </p>
+    <div class="row g-2 small mb-3">
+      <div class="col-md-6">
+        <span class="text-muted d-block">Départ de</span>
+        <span class="fw-semibold"><%= travelOrigin || '— Renseignez l’adresse de départ dans Résumé' %></span>
+      </div>
+      <div class="col-md-6">
+        <span class="text-muted d-block">Arrivée à</span>
+        <span class="fw-semibold"><%= travelDest || '— Renseignez l’adresse de l’événement dans Résumé' %></span>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label" for="tech_arrival_datetime">Arrivée — date et heure</label>
+        <%- include('datetime-fr-field', {
+          id: 'tech_arrival_datetime',
+          name: 'tech_arrival_datetime',
+          value: endDatetimeLocalValue(event.event_date, djNotes.tech_arrival_date, djNotes.tech_arrival_time),
+          displayValue: djNotes.tech_arrival_date
+            ? formatDateTimeFr(djNotes.tech_arrival_date, djNotes.tech_arrival_time) : ''
+        }) %>
+      </div>
+      <div class="col-md-6">
+        <span class="form-label d-block">Départ — calculé automatiquement</span>
+        <div class="border rounded bg-white px-3 py-2" id="tech_departure_auto_display" aria-live="polite">
+          <% if (djNotes.tech_departure_date) { %>
+            <div class="fw-semibold text-primary"><%= formatDateTimeFr(djNotes.tech_departure_date, djNotes.tech_departure_time) %></div>
+            <% if (travelOrigin) { %><div class="small text-muted mt-1">de <%= travelOrigin %></div><% } %>
+          <% } else { %>
+            <span class="text-muted">—</span>
+          <% } %>
+        </div>
+        <input type="hidden" name="tech_departure_datetime" id="tech_departure_datetime"
+               value="<%= endDatetimeLocalValue(event.event_date, djNotes.tech_departure_date, djNotes.tech_departure_time) %>">
+        <p class="form-text mb-0" id="tech_travel_duration_hint"></p>
+      </div>
+    </div>
+  </div>
+
   <div class="row g-3 mb-4">
-    <div class="col-md-6">
-      <label class="form-label" for="tech_departure_datetime">Départ — date et heure</label>
-      <%- include('datetime-fr-field', {
-        id: 'tech_departure_datetime',
-        name: 'tech_departure_datetime',
-        value: endDatetimeLocalValue(event.event_date, djNotes.tech_departure_date, djNotes.tech_departure_time),
-        displayValue: djNotes.tech_departure_date
-          ? formatDateTimeFr(djNotes.tech_departure_date, djNotes.tech_departure_time) : ''
-      }) %>
-    </div>
-    <div class="col-md-6">
-      <label class="form-label" for="tech_arrival_datetime">Arrivée — date et heure</label>
-      <%- include('datetime-fr-field', {
-        id: 'tech_arrival_datetime',
-        name: 'tech_arrival_datetime',
-        value: endDatetimeLocalValue(event.event_date, djNotes.tech_arrival_date, djNotes.tech_arrival_time),
-        displayValue: djNotes.tech_arrival_date
-          ? formatDateTimeFr(djNotes.tech_arrival_date, djNotes.tech_arrival_time) : ''
-      }) %>
-    </div>
     <div class="col-md-6">
       <label class="form-label" for="tech_charged_price">Prix chargé</label>
       <input type="text" class="form-control" id="tech_charged_price" name="tech_charged_price"
