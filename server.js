@@ -689,9 +689,15 @@ app.get("/export/dossiers.zip", async (req, res) => {
 });
 
 app.get("/logistique", (req, res) => {
-  const { isEmailNotificationConfigured } = require("./lib/app-settings");
-  const { getLogisticsEmailRecipients } = require("./lib/logistics-week-email");
+  const { getEffectiveNotificationConfig, isEmailNotificationConfigured } = require("./lib/app-settings");
+  const {
+    getLogisticsEmailRecipients,
+    resolveLogisticsSelfRecipient
+  } = require("./lib/logistics-week-email");
+  const { resolveFromAddress: resolveMailFrom } = require("./lib/email-send");
   const { eventsList, eventsByWeek } = getLogisticsEventsList(db);
+  const mailConfig = getEffectiveNotificationConfig(db);
+  const mailProvider = mailConfig.resendApiKey?.trim() ? "resend" : "smtp";
   res.render("logistique", {
     title: "Logistique",
     activeNav: "logistique",
@@ -699,10 +705,15 @@ app.get("/logistique", (req, res) => {
     eventsByWeek,
     logisticsEmailRecipients: getLogisticsEmailRecipients(db),
     logisticsEmailConfigured: isEmailNotificationConfigured(db),
+    logisticsNotificationEmail: mailConfig.emailTo?.trim() || "",
+    logisticsTestDeliverTo: resolveLogisticsSelfRecipient(mailConfig) || "",
+    logisticsMailFrom: isEmailNotificationConfigured(db) ? resolveMailFrom(mailConfig, mailProvider) : "",
     logistiqueSaved: req.query.logistiqueSaved === "1",
     logistiqueError: req.query.logistiqueError === "1",
     logistiqueEmailSent: req.query.logistiqueEmailSent === "1",
     logistiqueEmailRecipient: req.query.logistiqueEmailRecipient || "",
+    logistiqueEmailTo: req.query.logistiqueEmailTo || "",
+    logistiqueEmailFrom: req.query.logistiqueEmailFrom || "",
     logistiqueEmailError: req.query.logistiqueEmailError || ""
   });
 });
@@ -732,7 +743,9 @@ app.post("/logistique/week/send", async (req, res) => {
   }
   return redirectWithSearchParams(res, returnTo, {
     logistiqueEmailSent: "1",
-    logistiqueEmailRecipient: result.recipientLabel
+    logistiqueEmailRecipient: result.recipientLabel,
+    logistiqueEmailTo: result.to || "",
+    logistiqueEmailFrom: result.from || ""
   });
 });
 
@@ -760,7 +773,9 @@ app.post("/logistique/week/send-test", async (req, res) => {
   }
   return redirectWithSearchParams(res, returnTo, {
     logistiqueEmailSent: "1",
-    logistiqueEmailRecipient: result.recipientLabel
+    logistiqueEmailRecipient: result.recipientLabel,
+    logistiqueEmailTo: result.to || "",
+    logistiqueEmailFrom: result.from || ""
   });
 });
 

@@ -26,4 +26,10 @@
       Test — m’envoyer
     </button>
   </form>
+  <% if (emailConfigured && testDeliverTo) { %>
+    <p class="text-muted small mb-0 w-100 logistique-week-send-hint">
+      Test → <code><%= testDeliverTo %></code> (même destination que les questionnaires Resend test)
+      <% if (mailFrom) { %> · de <code><%= mailFrom %></code><% } %>
+    </p>
+  <% } %>
 </div>

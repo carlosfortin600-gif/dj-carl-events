@@ -27,7 +27,9 @@
             <%- include('logistique-week-send', {
               weekStart: week.weekStart,
               recipients: logisticsEmailRecipients,
-              emailConfigured: typeof logisticsEmailConfigured !== 'undefined' ? logisticsEmailConfigured : false
+              emailConfigured: typeof logisticsEmailConfigured !== 'undefined' ? logisticsEmailConfigured : false,
+              testDeliverTo: typeof logisticsTestDeliverTo !== 'undefined' ? logisticsTestDeliverTo : '',
+              mailFrom: typeof logisticsMailFrom !== 'undefined' ? logisticsMailFrom : ''
             }) %>
           </div>
         <% } %>

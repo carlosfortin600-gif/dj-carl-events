@@ -19,7 +19,16 @@
     <div class="alert alert-danger py-2">Enregistrement impossible — réessayez.</div>
   <% } %>
   <% if (typeof logistiqueEmailSent !== 'undefined' && logistiqueEmailSent) { %>
-    <div class="alert alert-success py-2">Logistique envoyée à <strong><%= logistiqueEmailRecipient %></strong>.</div>
+    <div class="alert alert-success py-2">
+      Courriel envoyé (<strong><%= logistiqueEmailRecipient %></strong>).
+      <% if (logistiqueEmailTo) { %>
+        Destinataire : <code><%= logistiqueEmailTo %></code>.
+      <% } %>
+      <% if (logistiqueEmailFrom) { %>
+        Expéditeur : <code><%= logistiqueEmailFrom %></code>.
+      <% } %>
+      Vérifiez boîte de réception et indésirables.
+    </div>
   <% } %>
   <% if (typeof logistiqueEmailError !== 'undefined' && logistiqueEmailError) { %>
     <div class="alert alert-danger py-2"><%= logistiqueEmailError %></div>
@@ -43,7 +52,10 @@
       rowType: 'logistique',
       emptyMessage: 'Aucun événement à venir.',
       logisticsEmailRecipients: typeof logisticsEmailRecipients !== 'undefined' ? logisticsEmailRecipients : [],
-      logisticsEmailConfigured: typeof logisticsEmailConfigured !== 'undefined' ? logisticsEmailConfigured : false
+      logisticsEmailConfigured: typeof logisticsEmailConfigured !== 'undefined' ? logisticsEmailConfigured : false,
+      logisticsNotificationEmail: typeof logisticsNotificationEmail !== 'undefined' ? logisticsNotificationEmail : '',
+      logisticsTestDeliverTo: typeof logisticsTestDeliverTo !== 'undefined' ? logisticsTestDeliverTo : '',
+      logisticsMailFrom: typeof logisticsMailFrom !== 'undefined' ? logisticsMailFrom : ''
     }) %>
   <% } %>
 </main>
