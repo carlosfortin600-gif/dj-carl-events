@@ -556,6 +556,12 @@ table tr.q-field-missing td:first-child {
   font-variant-numeric: tabular-nums;
 }
 
+.logistique-section-client .badge,
+.logistique-section-trajet .badge,
+.logistique-section-locations .badge {
+  font-weight: 500;
+}
+
 .logistique-org-name {
   line-height: 1.2;
 }

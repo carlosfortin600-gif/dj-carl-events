@@ -6,152 +6,182 @@
 
 <div class="resume-event-row logistique-event-row status-border-<%= ev.status %>">
   <div class="resume-event-row-body">
-    <div class="resume-event-row-line">
-      <div class="resume-event-row-name flex-grow-1">
-        <div class="resume-event-row-name-text w-100">
-          <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
-            <div>
-              <a href="/events/<%= ev.id %>" class="h5 fw-bold text-decoration-none d-block logistique-org-name">
-                <%= headerTitle %>
-              </a>
-              <div class="logistique-header-meta text-muted small mt-1">
-                <% if (ev.companyLabel && ev.contactPersonLabel) { %>
-                  <span class="text-body fw-medium"><%= ev.contactPersonLabel %></span>
-                  <span class="mx-1" aria-hidden="true">·</span>
-                <% } else if (ev.contactPersonLabel && !ev.companyLabel) { %>
-                  <span class="text-body fw-medium"><%= ev.contactPersonLabel %></span>
-                  <span class="mx-1" aria-hidden="true">·</span>
-                <% } %>
-                <span><%= formatDateFr(ev.event_date) %></span>
-                <span class="mx-1" aria-hidden="true">·</span>
-                <span><%= ev.event_type %></span>
-              </div>
-            </div>
-            <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
-          </div>
-
-          <div class="logistique-client-times mt-2">
-            <div class="logistique-leg">
-              <div class="logistique-leg-head">
-                <span class="resume-event-row-label">Départ</span>
-                <span class="logistics-time fw-semibold text-primary"><%= ev.departureTimeLabel || '—' %></span>
-                <% if (ev.departureDateLabel) { %>
-                  <span class="small text-muted">· <%= ev.departureDateLabel %></span>
-                <% } %>
-              </div>
-              <% if (ev.departureFrom) { %>
-                <div class="small text-muted mt-1">
-                  de <%- include('maps-link', { address: ev.departureFrom, linkClass: 'logistique-address-link' }) %>
-                </div>
-              <% } %>
-            </div>
-            <div class="logistique-leg">
-              <div class="logistique-leg-head">
-                <span class="resume-event-row-label">Arrivée</span>
-                <span class="logistics-time fw-semibold text-primary"><%= ev.arrivalTimeLabel || '—' %></span>
-                <% if (ev.arrivalDateLabel) { %>
-                  <span class="small text-muted">· <%= ev.arrivalDateLabel %></span>
-                <% } %>
-              </div>
-              <% if (ev.arrivalAddress) { %>
-                <div class="small text-muted mt-1">
-                  à <%- include('maps-link', { address: ev.arrivalAddress, linkClass: 'logistique-address-link' }) %>
-                </div>
-              <% } %>
-            </div>
-          </div>
-
-          <% if (directionsUrl) { %>
-            <a href="<%= directionsUrl %>" target="_blank" rel="noopener noreferrer"
-               class="small d-inline-block mt-2">Itinéraire Google Maps</a>
+    <section class="logistique-section logistique-section-client">
+      <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+        <div>
+          <a href="/events/<%= ev.id %>" class="h5 fw-bold text-decoration-none d-block logistique-org-name">
+            <%= headerTitle %>
+          </a>
+          <span class="badge bg-light text-dark border mt-2">Client</span>
+        </div>
+        <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
+      </div>
+      <div class="row g-2 small">
+        <div class="col-md-6">
+          <% if (ev.companyLabel && ev.contactPersonLabel) { %>
+            <span class="text-muted d-block">Personne contact</span>
+            <span class="fw-medium"><%= ev.contactPersonLabel %></span>
+          <% } else if (ev.contactPersonLabel) { %>
+            <span class="text-muted d-block">Nom</span>
+            <span class="fw-medium"><%= ev.contactPersonLabel %></span>
           <% } %>
-
-          <div class="logistique-day-contact mt-3 pt-2 border-top">
-            <h3 class="h6 mb-1">Personne à contacter le jour de l’événement</h3>
-            <p class="text-muted small mb-2">Comme dans le questionnaire client (coordonnateur, gérant de salle, etc.).</p>
-            <% if (ev.dayContactName || ev.dayContactPhoneDisplay || ev.dayContactEmail) { %>
-              <div class="row g-2 small logistique-day-contact-grid">
-                <div class="col-sm-4">
-                  <span class="text-muted d-block">Nom</span>
-                  <span class="fw-medium"><%= ev.dayContactName || '—' %></span>
-                </div>
-                <div class="col-sm-4">
-                  <span class="text-muted d-block">Téléphone</span>
-                  <% if (ev.dayContactPhoneDisplay) { %>
-                    <% if (telHref(ev.dayContactPhone)) { %>
-                      <a href="<%= telHref(ev.dayContactPhone) %>" class="maps-address-link fw-medium"><%= ev.dayContactPhoneDisplay %></a>
-                      <a href="<%= telHref(ev.dayContactPhone) %>" class="d-block small mt-1">Composer</a>
-                    <% } else { %>
-                      <span class="fw-medium"><%= ev.dayContactPhoneDisplay %></span>
-                    <% } %>
-                  <% } else { %>
-                    <span>—</span>
-                  <% } %>
-                </div>
-                <div class="col-sm-4">
-                  <span class="text-muted d-block">Courriel</span>
-                  <% if (ev.dayContactEmail) { %>
-                    <a href="mailto:<%= ev.dayContactEmail %>" class="maps-address-link fw-medium text-break"><%= ev.dayContactEmail %></a>
-                  <% } else { %>
-                    <span>—</span>
-                  <% } %>
-                </div>
-              </div>
+        </div>
+        <div class="col-md-6">
+          <span class="text-muted d-block">Date · type</span>
+          <span><%= formatDateFr(ev.event_date) %> · <%= ev.event_type %></span>
+        </div>
+        <div class="col-md-6">
+          <span class="text-muted d-block">Téléphone client</span>
+          <% if (ev.clientPhoneMainDisplay) { %>
+            <% if (telHref(ev.clientPhoneMain)) { %>
+              <a href="<%= telHref(ev.clientPhoneMain) %>" class="maps-address-link fw-medium"><%= ev.clientPhoneMainDisplay %></a>
+              <a href="<%= telHref(ev.clientPhoneMain) %>" class="d-block small mt-1">Composer</a>
             <% } else { %>
-              <p class="text-muted small mb-0">Non renseigné dans le questionnaire.</p>
+              <span class="fw-medium"><%= ev.clientPhoneMainDisplay %></span>
+            <% } %>
+          <% } else { %>
+            <span>—</span>
+          <% } %>
+        </div>
+        <div class="col-md-6">
+          <span class="text-muted d-block">Cellulaire client</span>
+          <% if (ev.clientPhoneCellDisplay) { %>
+            <% if (telHref(ev.clientPhoneCell)) { %>
+              <a href="<%= telHref(ev.clientPhoneCell) %>" class="maps-address-link fw-medium"><%= ev.clientPhoneCellDisplay %></a>
+              <a href="<%= telHref(ev.clientPhoneCell) %>" class="d-block small mt-1">Composer</a>
+            <% } else { %>
+              <span class="fw-medium"><%= ev.clientPhoneCellDisplay %></span>
+            <% } %>
+          <% } else { %>
+            <span>—</span>
+          <% } %>
+        </div>
+        <% if (ev.clientEmail) { %>
+          <div class="col-12">
+            <span class="text-muted d-block">Courriel client</span>
+            <a href="mailto:<%= ev.clientEmail %>" class="maps-address-link text-break"><%= ev.clientEmail %></a>
+          </div>
+        <% } %>
+      </div>
+    </section>
+
+    <section class="logistique-section logistique-section-trajet mt-3 pt-3 border-top">
+      <span class="badge bg-light text-dark border mb-2">Adresses — trajet</span>
+      <div class="logistique-client-times">
+        <div class="logistique-leg">
+          <div class="logistique-leg-head">
+            <span class="resume-event-row-label">Départ</span>
+            <span class="logistics-time fw-semibold text-primary"><%= ev.departureTimeLabel || '—' %></span>
+            <% if (ev.departureDateLabel) { %>
+              <span class="small text-muted">· <%= ev.departureDateLabel %></span>
+            <% } %>
+          </div>
+          <% if (ev.departureFrom) { %>
+            <div class="small text-muted mt-1">
+              de <%- include('maps-link', { address: ev.departureFrom, linkClass: 'logistique-address-link' }) %>
+            </div>
+          <% } %>
+        </div>
+        <div class="logistique-leg">
+          <div class="logistique-leg-head">
+            <span class="resume-event-row-label">Arrivée</span>
+            <span class="logistics-time fw-semibold text-primary"><%= ev.arrivalTimeLabel || '—' %></span>
+            <% if (ev.arrivalDateLabel) { %>
+              <span class="small text-muted">· <%= ev.arrivalDateLabel %></span>
+            <% } %>
+          </div>
+          <% if (ev.arrivalAddress) { %>
+            <div class="small text-muted mt-1">
+              à <%- include('maps-link', { address: ev.arrivalAddress, linkClass: 'logistique-address-link' }) %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+      <% if (directionsUrl) { %>
+        <a href="<%= directionsUrl %>" target="_blank" rel="noopener noreferrer"
+           class="small d-inline-block mt-2">Itinéraire Google Maps</a>
+      <% } %>
+    </section>
+
+    <section class="logistique-section logistique-section-day-contact mt-3 pt-3 border-top">
+      <h3 class="h6 mb-1">Personne à contacter le jour de l’événement</h3>
+      <p class="text-muted small mb-2">Questionnaire client (sur place, gérant de salle, etc.).</p>
+      <% if (ev.dayContactName || ev.dayContactPhoneDisplay || ev.dayContactEmail) { %>
+        <div class="row g-2 small logistique-day-contact-grid">
+          <div class="col-sm-4">
+            <span class="text-muted d-block">Nom</span>
+            <span class="fw-medium"><%= ev.dayContactName || '—' %></span>
+          </div>
+          <div class="col-sm-4">
+            <span class="text-muted d-block">Téléphone</span>
+            <% if (ev.dayContactPhoneDisplay) { %>
+              <% if (telHref(ev.dayContactPhone)) { %>
+                <a href="<%= telHref(ev.dayContactPhone) %>" class="maps-address-link fw-medium"><%= ev.dayContactPhoneDisplay %></a>
+                <a href="<%= telHref(ev.dayContactPhone) %>" class="d-block small mt-1">Composer</a>
+              <% } else { %>
+                <span class="fw-medium"><%= ev.dayContactPhoneDisplay %></span>
+              <% } %>
+            <% } else { %>
+              <span>—</span>
+            <% } %>
+          </div>
+          <div class="col-sm-4">
+            <span class="text-muted d-block">Courriel</span>
+            <% if (ev.dayContactEmail) { %>
+              <a href="mailto:<%= ev.dayContactEmail %>" class="maps-address-link fw-medium text-break"><%= ev.dayContactEmail %></a>
+            <% } else { %>
+              <span>—</span>
             <% } %>
           </div>
         </div>
-      </div>
-    </div>
+      <% } else { %>
+        <p class="text-muted small mb-0">Non renseigné dans le questionnaire.</p>
+      <% } %>
+    </section>
 
-    <div class="resume-event-row-line resume-event-row-line-secondary">
-      <div class="resume-event-row-field resume-event-row-where">
-        <div class="resume-event-row-gestion small">
-          <% if (ev.accessSummary) { %>
-            <div class="mb-2">
-              <span class="resume-event-row-label d-block mb-1">Accès</span>
-              <div class="text-muted"><%= ev.accessSummary %></div>
-            </div>
-          <% } %>
-
-          <div class="mt-2 pt-2<%= ev.accessSummary ? '' : '' %>">
-            <div class="resume-event-row-location-item">
-              <span class="resume-event-row-location-type">Hôtel</span>
-              <span class="resume-location-pair">
-                <% if (ev.hotelPeriod && ev.hotelPeriod !== '—') { %>
-                  <span><%= ev.hotelPeriod %></span>
-                  <% if (ev.hotelLocation) { %>
-                    <span class="resume-location-sep" aria-hidden="true">·</span>
-                    <%- include('maps-link', { address: ev.hotelLocation }) %>
-                  <% } %>
-                  <% if (ev.hotelEventDistance) { %>
-                    <span class="resume-location-sep" aria-hidden="true">·</span>
-                    <span>Hôtel ↔ salle : <%= ev.hotelEventDistance %></span>
-                  <% } %>
-                <% } else { %>
-                  <span>Besoin <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong></span>
-                <% } %>
-              </span>
-            </div>
-            <div class="resume-event-row-location-item">
-              <span class="resume-event-row-location-type">Trailer</span>
-              <span class="resume-location-pair">
-                <% if (ev.trailerPeriod && ev.trailerPeriod !== '—') { %>
-                  <span><%= ev.trailerPeriod %></span>
-                  <% if (ev.trailerLocation) { %>
-                    <span class="resume-location-sep" aria-hidden="true">·</span>
-                    <%- include('maps-link', { address: ev.trailerLocation }) %>
-                  <% } %>
-                <% } else { %>
-                  <span>Besoin <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong></span>
-                <% } %>
-              </span>
-            </div>
+    <section class="logistique-section logistique-section-locations mt-3 pt-3 border-top">
+      <span class="badge bg-light text-dark border mb-2">Locations</span>
+      <div class="resume-event-row-gestion small">
+        <% if (ev.accessSummary) { %>
+          <div class="mb-2">
+            <span class="resume-event-row-label d-block mb-1">Accès</span>
+            <div class="text-muted"><%= ev.accessSummary %></div>
           </div>
+        <% } %>
+        <div class="resume-event-row-location-item">
+          <span class="resume-event-row-location-type">Hôtel</span>
+          <span class="resume-location-pair">
+            <% if (ev.hotelPeriod && ev.hotelPeriod !== '—') { %>
+              <span><%= ev.hotelPeriod %></span>
+              <% if (ev.hotelLocation) { %>
+                <span class="resume-location-sep" aria-hidden="true">·</span>
+                <%- include('maps-link', { address: ev.hotelLocation }) %>
+              <% } %>
+              <% if (ev.hotelEventDistance) { %>
+                <span class="resume-location-sep" aria-hidden="true">·</span>
+                <span>Hôtel ↔ salle : <%= ev.hotelEventDistance %></span>
+              <% } %>
+            <% } else { %>
+              <span>Besoin <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong></span>
+            <% } %>
+          </span>
+        </div>
+        <div class="resume-event-row-location-item">
+          <span class="resume-event-row-location-type">Trailer</span>
+          <span class="resume-location-pair">
+            <% if (ev.trailerPeriod && ev.trailerPeriod !== '—') { %>
+              <span><%= ev.trailerPeriod %></span>
+              <% if (ev.trailerLocation) { %>
+                <span class="resume-location-sep" aria-hidden="true">·</span>
+                <%- include('maps-link', { address: ev.trailerLocation }) %>
+              <% } %>
+            <% } else { %>
+              <span>Besoin <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong></span>
+            <% } %>
+          </span>
         </div>
       </div>
-    </div>
+    </section>
   </div>
 
   <div class="resume-event-row-action d-flex flex-column gap-1">
