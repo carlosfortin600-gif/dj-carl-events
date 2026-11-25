@@ -18,6 +18,18 @@
   <% if (typeof logistiqueError !== 'undefined' && logistiqueError) { %>
     <div class="alert alert-danger py-2">Enregistrement impossible — réessayez.</div>
   <% } %>
+  <% if (typeof logistiqueEmailSent !== 'undefined' && logistiqueEmailSent) { %>
+    <div class="alert alert-success py-2">Logistique envoyée à <strong><%= logistiqueEmailRecipient %></strong>.</div>
+  <% } %>
+  <% if (typeof logistiqueEmailError !== 'undefined' && logistiqueEmailError) { %>
+    <div class="alert alert-danger py-2"><%= logistiqueEmailError %></div>
+  <% } %>
+  <% if (typeof logisticsEmailConfigured !== 'undefined' && !logisticsEmailConfigured) { %>
+    <div class="alert alert-warning py-2 small">
+      Pour envoyer par courriel, configurez l’expéditeur dans
+      <a href="/settings/notifications">Paramètres → Notifications</a>.
+    </div>
+  <% } %>
 
   <% if (!eventsList.length) { %>
     <p class="text-muted text-center py-5">Aucun événement à venir.</p>
@@ -29,7 +41,9 @@
     <%- include('partials/upcoming-by-week', {
       eventsByWeek: typeof eventsByWeek !== 'undefined' ? eventsByWeek : [],
       rowType: 'logistique',
-      emptyMessage: 'Aucun événement à venir.'
+      emptyMessage: 'Aucun événement à venir.',
+      logisticsEmailRecipients: typeof logisticsEmailRecipients !== 'undefined' ? logisticsEmailRecipients : [],
+      logisticsEmailConfigured: typeof logisticsEmailConfigured !== 'undefined' ? logisticsEmailConfigured : false
     }) %>
   <% } %>
 </main>

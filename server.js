@@ -689,14 +689,50 @@ app.get("/export/dossiers.zip", async (req, res) => {
 });
 
 app.get("/logistique", (req, res) => {
+  const { isEmailNotificationConfigured } = require("./lib/app-settings");
+  const { getLogisticsEmailRecipients } = require("./lib/logistics-week-email");
   const { eventsList, eventsByWeek } = getLogisticsEventsList(db);
   res.render("logistique", {
     title: "Logistique",
     activeNav: "logistique",
     eventsList,
     eventsByWeek,
+    logisticsEmailRecipients: getLogisticsEmailRecipients(db),
+    logisticsEmailConfigured: isEmailNotificationConfigured(db),
     logistiqueSaved: req.query.logistiqueSaved === "1",
-    logistiqueError: req.query.logistiqueError === "1"
+    logistiqueError: req.query.logistiqueError === "1",
+    logistiqueEmailSent: req.query.logistiqueEmailSent === "1",
+    logistiqueEmailRecipient: req.query.logistiqueEmailRecipient || "",
+    logistiqueEmailError: req.query.logistiqueEmailError || ""
+  });
+});
+
+app.post("/logistique/week/send", async (req, res) => {
+  const { sendLogisticsWeekEmail } = require("./lib/logistics-week-email");
+  const returnTo = safeReturnPath(req.body.returnTo) || "/logistique";
+  const weekStart = String(req.body.weekStart || "").trim();
+  const recipientId = String(req.body.recipientId || "").trim();
+  if (!weekStart || !recipientId) {
+    return redirectWithSearchParams(res, returnTo, {
+      logistiqueEmailError: "Choisissez une personne et une semaine."
+    });
+  }
+  const { eventsByWeek } = getLogisticsEventsList(db);
+  const week = eventsByWeek.find((w) => w.weekStart === weekStart);
+  if (!week?.events?.length) {
+    return redirectWithSearchParams(res, returnTo, {
+      logistiqueEmailError: "Aucun événement pour cette semaine."
+    });
+  }
+  const result = await sendLogisticsWeekEmail(db, { week, recipientId });
+  if (!result.ok) {
+    return redirectWithSearchParams(res, returnTo, {
+      logistiqueEmailError: result.error || "Envoi impossible."
+    });
+  }
+  return redirectWithSearchParams(res, returnTo, {
+    logistiqueEmailSent: "1",
+    logistiqueEmailRecipient: result.recipientLabel
   });
 });
 

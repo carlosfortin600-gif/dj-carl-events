@@ -22,6 +22,15 @@
           </div>
           <span class="badge upcoming-month-count"><%= week.eventCount %> événement<%= week.eventCount !== 1 ? 's' : '' %></span>
         </header>
+        <% if (weekRowType === 'logistique' && typeof logisticsEmailRecipients !== 'undefined') { %>
+          <div class="logistique-week-send-bar px-3 py-2 border-bottom bg-white">
+            <%- include('logistique-week-send', {
+              weekStart: week.weekStart,
+              recipients: logisticsEmailRecipients,
+              emailConfigured: typeof logisticsEmailConfigured !== 'undefined' ? logisticsEmailConfigured : false
+            }) %>
+          </div>
+        <% } %>
         <div class="upcoming-month-events <%= (weekRowType === 'resume' || weekRowType === 'logistique') ? 'resume-events-list' : 'list-group list-group-flush' %>">
           <% week.events.forEach(function(ev) { %>
             <% if (weekRowType === 'resume') { %>

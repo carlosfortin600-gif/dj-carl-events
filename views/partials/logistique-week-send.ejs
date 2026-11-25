@@ -1,0 +1,20 @@
+<% if (!recipients.length) { %>
+  <p class="text-muted small mb-0">Aucun sous-traitant avec courriel — renseignez les courriels pour envoyer la logistique.</p>
+<% } else { %>
+  <form method="post" action="/logistique/week/send" class="logistique-week-send-form d-flex flex-wrap align-items-center gap-2">
+    <input type="hidden" name="weekStart" value="<%= weekStart %>">
+    <input type="hidden" name="returnTo" value="/logistique">
+    <label class="text-muted small mb-0" for="logistics_recipient_<%= weekStart %>">Envoyer à</label>
+    <select class="form-select form-select-sm logistique-week-send-select" id="logistics_recipient_<%= weekStart %>" name="recipientId" required>
+      <option value="" selected disabled>Choisir une personne</option>
+      <% recipients.forEach(function(person) { %>
+        <option value="<%= person.id %>"<%= person.email ? '' : ' disabled' %>>
+          <%= person.label %><%= person.email ? '' : ' (sans courriel)' %>
+        </option>
+      <% }); %>
+    </select>
+    <button type="submit" class="btn btn-sm btn-primary"<%= emailConfigured ? '' : ' disabled title="Configurez les courriels dans Paramètres"' %>>
+      Envoyer la logistique
+    </button>
+  </form>
+<% } %>

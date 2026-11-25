@@ -596,6 +596,15 @@ table tr.q-field-missing td:first-child {
   font-variant-numeric: tabular-nums;
 }
 
+.logistique-week-send-select {
+  min-width: 12rem;
+  max-width: 18rem;
+}
+
+.logistique-week-send-form .btn-primary {
+  white-space: nowrap;
+}
+
 .logistique-emp-with-me .btn-outline-primary {
   --bs-btn-color: var(--bs-primary);
   --bs-btn-border-color: var(--bs-primary);
