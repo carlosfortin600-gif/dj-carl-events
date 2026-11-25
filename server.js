@@ -736,6 +736,34 @@ app.post("/logistique/week/send", async (req, res) => {
   });
 });
 
+app.post("/logistique/week/send-test", async (req, res) => {
+  const { sendLogisticsWeekEmailTest } = require("./lib/logistics-week-email");
+  const returnTo = safeReturnPath(req.body.returnTo) || "/logistique";
+  const weekStart = String(req.body.weekStart || "").trim();
+  if (!weekStart) {
+    return redirectWithSearchParams(res, returnTo, {
+      logistiqueEmailError: "Semaine invalide."
+    });
+  }
+  const { eventsByWeek } = getLogisticsEventsList(db);
+  const week = eventsByWeek.find((w) => w.weekStart === weekStart);
+  if (!week?.events?.length) {
+    return redirectWithSearchParams(res, returnTo, {
+      logistiqueEmailError: "Aucun événement pour cette semaine."
+    });
+  }
+  const result = await sendLogisticsWeekEmailTest(db, { week });
+  if (!result.ok) {
+    return redirectWithSearchParams(res, returnTo, {
+      logistiqueEmailError: result.error || "Envoi test impossible."
+    });
+  }
+  return redirectWithSearchParams(res, returnTo, {
+    logistiqueEmailSent: "1",
+    logistiqueEmailRecipient: result.recipientLabel
+  });
+});
+
 app.post("/events/:id/logistique-employees/save", (req, res) => {
   const eventId = Number(req.params.id);
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
