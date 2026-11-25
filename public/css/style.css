@@ -596,6 +596,17 @@ table tr.q-field-missing td:first-child {
   font-variant-numeric: tabular-nums;
 }
 
+.logistique-emp-with-me .btn-outline-primary {
+  --bs-btn-color: var(--bs-primary);
+  --bs-btn-border-color: var(--bs-primary);
+}
+
+.logistique-emp-with-me .btn-check:checked + .btn-outline-primary {
+  color: #fff;
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
 .logistique-access-title {
   font-size: 1.1rem;
   font-weight: 700;

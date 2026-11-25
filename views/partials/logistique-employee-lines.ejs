@@ -16,9 +16,20 @@
           <% const withMeYesId = 'emp_' + sid + '_with_yes'; %>
           <% const withMeNoId = 'emp_' + sid + '_with_no'; %>
           <div class="logistique-employee-row row g-2 align-items-end small mb-3 pb-3 border-bottom border-light">
-            <div class="col-12 col-lg-3">
+            <div class="col-12 col-md-6 col-lg-3">
               <span class="text-muted d-block">Employé</span>
               <span class="fw-semibold"><%= emp.label %></span>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <span class="text-muted d-block mb-1">Déjà avec moi</span>
+              <div class="btn-group btn-group-sm w-100 logistique-emp-with-me" role="group" aria-label="Déjà avec moi — <%= emp.label %>">
+                <input type="radio" class="btn-check" name="emp_<%= sid %>_with_me" id="<%= withMeYesId %>" value="yes"
+                       <%= emp.withMe === 'yes' ? 'checked' : '' %>>
+                <label class="btn btn-outline-primary fw-semibold" for="<%= withMeYesId %>">Oui</label>
+                <input type="radio" class="btn-check" name="emp_<%= sid %>_with_me" id="<%= withMeNoId %>" value="no"
+                       <%= emp.withMe === 'no' ? 'checked' : '' %>>
+                <label class="btn btn-outline-primary fw-semibold" for="<%= withMeNoId %>">Non</label>
+              </div>
             </div>
             <div class="col-6 col-md-4 col-lg-2">
               <label class="form-label mb-0 text-muted" for="emp_<%= sid %>_arrival">Arrivée</label>
@@ -43,17 +54,6 @@
               <input type="text" class="form-control form-control-sm" id="emp_<%= sid %>_custom"
                      name="emp_<%= sid %>_location_custom" value="<%= emp.locationCustom %>"
                      placeholder="Adresse ou lieu">
-            </div>
-            <div class="col-12 col-lg-2">
-              <span class="text-muted d-block mb-1">Déjà avec moi</span>
-              <div class="btn-group btn-group-sm w-100" role="group" aria-label="Déjà avec moi — <%= emp.label %>">
-                <input type="radio" class="btn-check" name="emp_<%= sid %>_with_me" id="<%= withMeYesId %>" value="yes"
-                       <%= emp.withMe === 'yes' ? 'checked' : '' %>>
-                <label class="btn btn-outline-primary" for="<%= withMeYesId %>">Oui</label>
-                <input type="radio" class="btn-check" name="emp_<%= sid %>_with_me" id="<%= withMeNoId %>" value="no"
-                       <%= emp.withMe === 'no' ? 'checked' : '' %>>
-                <label class="btn btn-outline-secondary" for="<%= withMeNoId %>">Non</label>
-              </div>
             </div>
           </div>
         <% }); %>
