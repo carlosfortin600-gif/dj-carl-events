@@ -570,9 +570,39 @@ table tr.q-field-missing td:first-child {
   line-height: 1.35;
 }
 
-.logistique-day-contact .resume-event-row-label {
-  text-transform: none;
-  letter-spacing: normal;
+.logistique-day-contact--compact {
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--bs-secondary-color);
+}
+
+.logistique-day-contact-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--bs-secondary-color);
+  margin: 0;
+}
+
+.logistique-day-contact-inline .maps-address-link {
+  font-weight: 500;
+}
+
+.logistique-highlight-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.logistique-highlight-body {
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+.logistique-highlight-block + .logistique-highlight-block {
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .logistique-client-times {

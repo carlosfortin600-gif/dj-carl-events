@@ -103,83 +103,57 @@
       <% } %>
     </section>
 
-    <section class="logistique-section logistique-section-day-contact mt-3 pt-3 border-top">
-      <h3 class="h6 mb-1">Personne à contacter le jour de l’événement</h3>
-      <p class="text-muted small mb-2">Questionnaire client (sur place, gérant de salle, etc.).</p>
+    <section class="logistique-section logistique-section-day-contact logistique-day-contact--compact mt-3 pt-2 border-top">
+      <p class="logistique-day-contact-title mb-1">Personne à contacter le jour de l’événement</p>
       <% if (ev.dayContactName || ev.dayContactPhoneDisplay || ev.dayContactEmail) { %>
-        <div class="row g-2 small logistique-day-contact-grid">
-          <div class="col-sm-4">
-            <span class="text-muted d-block">Nom</span>
-            <span class="fw-medium"><%= ev.dayContactName || '—' %></span>
-          </div>
-          <div class="col-sm-4">
-            <span class="text-muted d-block">Téléphone</span>
-            <% if (ev.dayContactPhoneDisplay) { %>
-              <% if (telHref(ev.dayContactPhone)) { %>
-                <a href="<%= telHref(ev.dayContactPhone) %>" class="maps-address-link fw-medium"><%= ev.dayContactPhoneDisplay %></a>
-                <a href="<%= telHref(ev.dayContactPhone) %>" class="d-block small mt-1">Composer</a>
-              <% } else { %>
-                <span class="fw-medium"><%= ev.dayContactPhoneDisplay %></span>
-              <% } %>
+        <div class="logistique-day-contact-inline">
+          <% if (ev.dayContactName) { %>
+            <span><%= ev.dayContactName %></span>
+          <% } %>
+          <% if (ev.dayContactPhoneDisplay) { %>
+            <% if (ev.dayContactName) { %><span aria-hidden="true"> · </span><% } %>
+            <% if (telHref(ev.dayContactPhone)) { %>
+              <a href="<%= telHref(ev.dayContactPhone) %>" class="maps-address-link"><%= ev.dayContactPhoneDisplay %></a>
             <% } else { %>
-              <span>—</span>
+              <span><%= ev.dayContactPhoneDisplay %></span>
             <% } %>
-          </div>
-          <div class="col-sm-4">
-            <span class="text-muted d-block">Courriel</span>
-            <% if (ev.dayContactEmail) { %>
-              <a href="mailto:<%= ev.dayContactEmail %>" class="maps-address-link fw-medium text-break"><%= ev.dayContactEmail %></a>
-            <% } else { %>
-              <span>—</span>
-            <% } %>
-          </div>
+          <% } %>
+          <% if (ev.dayContactEmail) { %>
+            <% if (ev.dayContactName || ev.dayContactPhoneDisplay) { %><span aria-hidden="true"> · </span><% } %>
+            <a href="mailto:<%= ev.dayContactEmail %>" class="maps-address-link text-break"><%= ev.dayContactEmail %></a>
+          <% } %>
         </div>
       <% } else { %>
-        <p class="text-muted small mb-0">Non renseigné dans le questionnaire.</p>
+        <p class="text-muted mb-0">— questionnaire</p>
       <% } %>
     </section>
 
-    <section class="logistique-section logistique-section-locations mt-3 pt-3 border-top">
-      <span class="badge bg-light text-dark border mb-2">Locations</span>
-      <div class="resume-event-row-gestion small">
+    <section class="logistique-section logistique-section-access-hotel mt-3 pt-3 border-top">
+      <div class="logistique-highlight-block mb-3">
+        <h3 class="logistique-highlight-title mb-2">Accès</h3>
         <% if (ev.accessSummary) { %>
-          <div class="mb-2">
-            <span class="resume-event-row-label d-block mb-1">Accès</span>
-            <div class="text-muted"><%= ev.accessSummary %></div>
-          </div>
+          <p class="logistique-highlight-body mb-0"><%= ev.accessSummary %></p>
+        <% } else { %>
+          <p class="logistique-highlight-body text-muted mb-0">—</p>
         <% } %>
-        <div class="resume-event-row-location-item">
-          <span class="resume-event-row-location-type">Hôtel</span>
-          <span class="resume-location-pair">
-            <% if (ev.hotelPeriod && ev.hotelPeriod !== '—') { %>
-              <span><%= ev.hotelPeriod %></span>
-              <% if (ev.hotelLocation) { %>
-                <span class="resume-location-sep" aria-hidden="true">·</span>
-                <%- include('maps-link', { address: ev.hotelLocation }) %>
-              <% } %>
-              <% if (ev.hotelEventDistance) { %>
-                <span class="resume-location-sep" aria-hidden="true">·</span>
-                <span>Hôtel ↔ salle : <%= ev.hotelEventDistance %></span>
-              <% } %>
-            <% } else { %>
-              <span>Besoin <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong></span>
-            <% } %>
-          </span>
-        </div>
-        <div class="resume-event-row-location-item">
-          <span class="resume-event-row-location-type">Trailer</span>
-          <span class="resume-location-pair">
-            <% if (ev.trailerPeriod && ev.trailerPeriod !== '—') { %>
-              <span><%= ev.trailerPeriod %></span>
-              <% if (ev.trailerLocation) { %>
-                <span class="resume-location-sep" aria-hidden="true">·</span>
-                <%- include('maps-link', { address: ev.trailerLocation }) %>
-              <% } %>
-            <% } else { %>
-              <span>Besoin <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong></span>
-            <% } %>
-          </span>
-        </div>
+      </div>
+      <div class="logistique-highlight-block">
+        <h3 class="logistique-highlight-title mb-2">Hôtel</h3>
+        <% if (ev.hotelPeriod && ev.hotelPeriod !== '—') { %>
+          <p class="logistique-highlight-body fw-semibold mb-1"><%= ev.hotelPeriod %></p>
+          <% if (ev.hotelLocation) { %>
+            <p class="logistique-highlight-body mb-1">
+              <%- include('maps-link', { address: ev.hotelLocation, linkClass: 'maps-address-link' }) %>
+            </p>
+          <% } %>
+          <% if (ev.hotelEventDistance) { %>
+            <p class="logistique-highlight-body text-muted mb-0">Hôtel ↔ salle : <%= ev.hotelEventDistance %></p>
+          <% } %>
+        <% } else { %>
+          <p class="logistique-highlight-body mb-0">
+            Besoin <strong><%= ev.hotelNeeded ? 'Oui' : 'Non' %></strong>
+          </p>
+        <% } %>
       </div>
     </section>
   </div>
