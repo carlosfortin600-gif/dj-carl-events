@@ -1,0 +1,7 @@
+<form method="post"
+      action="/gestion/sous-traitants/<%= subcontractorId %>/delete"
+      class="d-inline subcontractor-delete-form"
+      onsubmit="return confirm('Supprimer <%= subcontractorLabel %> ?\n\nLes contrats enregistrés pour cette personne seront aussi effacés.');">
+  <input type="hidden" name="returnTo" value="<%= typeof returnTo !== 'undefined' ? returnTo : '/calendar' %>">
+  <button type="submit" class="btn btn-sm btn-outline-danger">Supprimer</button>
+</form>

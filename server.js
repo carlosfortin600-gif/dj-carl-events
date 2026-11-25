@@ -171,7 +171,8 @@ const {
 const {
   DEFAULT_SUBCONTRACTOR_ID,
   getSubcontractors,
-  addSubcontractor
+  addSubcontractor,
+  deleteSubcontractor
 } = require("./lib/subcontractors-registry");
 const { notifyContractSignedIfNeeded } = require("./lib/contract-signed-email");
 const {
@@ -861,6 +862,8 @@ app.get("/calendar", (req, res) => {
     subcontractorCalendarLinks: getAllSubcontractorCalendarLinks(db, req),
     subcontractorCalendarReturnTo: calendarQuery ? `/calendar?${calendarQuery}` : "/calendar",
     subcontractorAdded: req.query.subcontractorAdded === "1",
+    subcontractorDeleted: req.query.subcontractorDeleted === "1",
+    subcontractorDeletedLabel: req.query.subcontractorDeletedLabel || "",
     subcontractorError: req.query.subcontractorError || ""
   });
 });
@@ -881,6 +884,39 @@ app.post("/gestion/sous-traitants/add", (req, res) => {
   if (returnTo.includes("gestion=contrat")) {
     params.gestion = "contrat";
     params.tab = "gestion";
+  }
+  redirectWithSearchParams(res, returnTo, params);
+});
+
+app.post("/gestion/sous-traitants/:id/delete", (req, res) => {
+  const subcontractorId = String(req.params.id || "").trim();
+  const returnTo = safeReturnPath(req.body.returnTo) || "/calendar";
+  const result = deleteSubcontractor(db, subcontractorId);
+  if (!result.ok) {
+    return redirectWithSearchParams(res, returnTo, {
+      subcontractorError: result.error
+    });
+  }
+  const params = { subcontractorDeleted: "1", subcontractorDeletedLabel: result.label };
+  if (returnTo.includes("/events/") && returnTo.includes("gestion=contrat")) {
+    const fallback = returnTo.replace(
+      /([&?])sousTraitant=[^&]*/,
+      `$1sousTraitant=${encodeURIComponent(DEFAULT_SUBCONTRACTOR_ID)}`
+    );
+    if (isValidSubcontractor(db, DEFAULT_SUBCONTRACTOR_ID)) {
+      return redirectWithSearchParams(res, fallback, params);
+    }
+    const first = getSubcontractors(db)[0];
+    if (first) {
+      const withSub = returnTo.includes("sousTraitant=")
+        ? returnTo.replace(
+            /([&?])sousTraitant=[^&]*/,
+            `$1sousTraitant=${encodeURIComponent(first.id)}`
+          )
+        : `${returnTo}${returnTo.includes("?") ? "&" : "?"}sousTraitant=${encodeURIComponent(first.id)}`;
+      return redirectWithSearchParams(res, withSub, params);
+    }
+    return redirectWithSearchParams(res, "/calendar", params);
   }
   redirectWithSearchParams(res, returnTo, params);
 });
@@ -1329,6 +1365,8 @@ function renderEventDetailPage(req, res) {
     contractEmailForwarded: req.query.contractEmailForwarded === "1",
     contractEmailError: req.query.contractEmailError || "",
     subcontractorAdded: req.query.subcontractorAdded === "1",
+    subcontractorDeleted: req.query.subcontractorDeleted === "1",
+    subcontractorDeletedLabel: req.query.subcontractorDeletedLabel || "",
     subcontractorError: req.query.subcontractorError || "",
     timeSpentLogs,
     timeSpentTotalHours,

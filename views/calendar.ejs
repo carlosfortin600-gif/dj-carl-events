@@ -13,6 +13,11 @@
   <% if (typeof subcontractorAdded !== 'undefined' && subcontractorAdded) { %>
     <div class="alert alert-success">Sous-traitant ajouté.</div>
   <% } %>
+  <% if (typeof subcontractorDeleted !== 'undefined' && subcontractorDeleted) { %>
+    <div class="alert alert-success">
+      Sous-traitant supprimé<% if (typeof subcontractorDeletedLabel !== 'undefined' && subcontractorDeletedLabel) { %> — <strong><%= subcontractorDeletedLabel %></strong><% } %>.
+    </div>
+  <% } %>
   <% if (typeof subcontractorError !== 'undefined' && subcontractorError) { %>
     <div class="alert alert-danger"><%= subcontractorError %></div>
   <% } %>

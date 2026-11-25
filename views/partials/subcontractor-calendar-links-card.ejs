@@ -11,9 +11,14 @@
           <input type="text" class="form-control font-monospace small" id="subCalLink-<%= entry.id %>" readonly value="<%= entry.links.primary %>">
           <button type="button" class="btn btn-outline-primary" data-copy-target="subCalLink-<%= entry.id %>">Copier</button>
         </div>
-        <div class="d-flex flex-wrap gap-2">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
           <a href="<%= entry.hostPath %>" class="btn btn-sm btn-outline-secondary">Console <%= entry.label %></a>
           <a href="<%= entry.links.primary %>" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">Ouvrir lien</a>
+          <%- include('subcontractor-delete-form', {
+            subcontractorId: entry.id,
+            subcontractorLabel: entry.label,
+            returnTo: typeof returnTo !== 'undefined' ? returnTo : '/calendar'
+          }) %>
         </div>
       </div>
     <% }); %>
