@@ -765,18 +765,26 @@ app.post("/logistique/week/send-test", async (req, res) => {
       logistiqueEmailError: "Aucun événement pour cette semaine."
     });
   }
-  const result = await sendLogisticsWeekEmailTest(db, { week });
-  if (!result.ok) {
+  try {
+    const result = await sendLogisticsWeekEmailTest(db, { week });
+    if (!result.ok) {
+      return redirectWithSearchParams(res, returnTo, {
+        logistiqueEmailError: result.error || "Envoi test impossible."
+      });
+    }
     return redirectWithSearchParams(res, returnTo, {
-      logistiqueEmailError: result.error || "Envoi test impossible."
+      logistiqueEmailSent: "1",
+      logistiqueEmailRecipient: result.recipientLabel,
+      logistiqueEmailTo: result.to || "",
+      logistiqueEmailFrom: result.from || ""
+    });
+  } catch (err) {
+    console.error("Logistics week send-test failed:", err);
+    const { describeMailError } = require("./lib/email-send");
+    return redirectWithSearchParams(res, returnTo, {
+      logistiqueEmailError: describeMailError(err) || "Envoi test impossible."
     });
   }
-  return redirectWithSearchParams(res, returnTo, {
-    logistiqueEmailSent: "1",
-    logistiqueEmailRecipient: result.recipientLabel,
-    logistiqueEmailTo: result.to || "",
-    logistiqueEmailFrom: result.from || ""
-  });
 });
 
 app.post("/events/:id/logistique-employees/save", (req, res) => {
