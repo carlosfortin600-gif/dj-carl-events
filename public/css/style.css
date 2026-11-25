@@ -585,10 +585,15 @@ table tr.q-field-missing td:first-child {
   font-weight: 400;
 }
 
+.logistique-employee-row--highlight {
+  padding: 12px 14px;
+  border: 2px solid #198754;
+  border-radius: 10px;
+  background-color: #d1e7dd;
+}
+
 .logistique-section-employees .logistique-employee-row:last-child {
   margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none !important;
 }
 
 .logistique-employees-form .form-control-sm,
