@@ -689,12 +689,12 @@ app.get("/export/dossiers.zip", async (req, res) => {
 });
 
 app.get("/logistique", (req, res) => {
-  const { eventsList, eventsByMonth } = getLogisticsEventsList(db);
+  const { eventsList, eventsByWeek } = getLogisticsEventsList(db);
   res.render("logistique", {
     title: "Logistique",
     activeNav: "logistique",
     eventsList,
-    eventsByMonth
+    eventsByWeek
   });
 });
 

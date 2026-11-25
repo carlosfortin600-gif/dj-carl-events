@@ -2,28 +2,34 @@
 <% const weekRowType = typeof rowType !== 'undefined' ? rowType : 'dashboard'; %>
 
 <% if (!weeks.length) { %>
-  <div class="upcoming-by-week-empty text-muted py-4 text-center">
+  <div class="upcoming-by-month-empty text-muted py-4 text-center">
     <%= typeof emptyMessage !== 'undefined' ? emptyMessage : 'Aucun événement à venir' %>
   </div>
 <% } else { %>
-  <div class="upcoming-by-week">
+  <div class="upcoming-by-month upcoming-by-week">
     <% weeks.forEach(function(week) { %>
-      <section class="upcoming-week-block mb-4<%= week.isCurrentWeek ? ' upcoming-week-block--current' : '' %><%= week.isNextWeek ? ' upcoming-week-block--next' : '' %>">
-        <header class="upcoming-week-header">
-          <div class="upcoming-week-header-text">
-            <h3 class="upcoming-week-title mb-0">
+      <section class="upcoming-month-block mb-4<%= week.isCurrentWeek ? ' upcoming-month-block--current' : '' %><%= week.isNextWeek ? ' upcoming-month-block--next' : '' %>">
+        <header class="upcoming-month-header">
+          <div class="upcoming-month-header-text">
+            <h3 class="upcoming-month-title mb-0">
               <%= week.headingWithTotal || week.heading %>
             </h3>
-            <p class="upcoming-week-dates mb-0"><%= week.weekLabel %></p>
+            <% if (week.isCurrentWeek || week.isNextWeek) { %>
+              <p class="upcoming-month-subtitle mb-0"><%= week.weekLabel %></p>
+            <% } else { %>
+              <p class="upcoming-month-subtitle mb-0 text-muted"><%= week.weekLabel %></p>
+            <% } %>
           </div>
-          <span class="badge upcoming-week-count"><%= week.eventCount %> événement<%= week.eventCount !== 1 ? 's' : '' %></span>
+          <span class="badge upcoming-month-count"><%= week.eventCount %> événement<%= week.eventCount !== 1 ? 's' : '' %></span>
         </header>
-        <div class="upcoming-week-events <%= weekRowType === 'resume' ? 'resume-events-list' : 'list-group list-group-flush' %>">
+        <div class="upcoming-month-events <%= (weekRowType === 'resume' || weekRowType === 'logistique') ? 'resume-events-list' : 'list-group list-group-flush' %>">
           <% week.events.forEach(function(ev) { %>
             <% if (weekRowType === 'resume') { %>
               <%- include('resume-event-card', { ev }) %>
+            <% } else if (weekRowType === 'logistique') { %>
+              <%- include('logistique-event-card', { ev }) %>
             <% } else { %>
-              <%- include('event-row', { ev, expandable: typeof expandable !== 'undefined' ? expandable : true }) %>
+              <%- include('upcoming-event-row', { ev }) %>
             <% } %>
           <% }); %>
         </div>
