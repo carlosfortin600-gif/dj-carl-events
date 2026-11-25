@@ -591,6 +591,35 @@ table tr.q-field-missing td:first-child {
   border-bottom: none !important;
 }
 
+.logistique-emp-field-name {
+  flex: 1 1 8rem;
+  min-width: 7rem;
+}
+
+.logistique-emp-field-with-me {
+  flex: 0 0 auto;
+}
+
+.logistique-emp-field-arrival {
+  flex: 0 0 7.25rem;
+}
+
+.logistique-emp-field-location {
+  flex: 1 1 12rem;
+  min-width: 10rem;
+  max-width: 18rem;
+}
+
+.logistique-emp-field-custom {
+  flex: 1 1 9rem;
+  min-width: 8rem;
+  max-width: 14rem;
+}
+
+.logistique-emp-field-custom.d-none {
+  display: none !important;
+}
+
 .logistique-employees-form .form-control-sm,
 .logistique-employees-form .form-select-sm {
   font-variant-numeric: tabular-nums;
@@ -607,11 +636,8 @@ table tr.q-field-missing td:first-child {
   border-color: var(--bs-primary);
 }
 
-.logistique-employee-row.logistique-emp-when-fields--off .logistique-emp-when-target {
-  opacity: 0.45;
-}
-
 .logistique-employee-row.logistique-emp-when-fields--off .logistique-emp-when-field:disabled {
+  opacity: 0.5;
   background-color: var(--bs-secondary-bg);
   cursor: not-allowed;
 }
