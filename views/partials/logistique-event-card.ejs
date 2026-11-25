@@ -60,6 +60,8 @@
       <p class="text-muted small mb-0 mt-1"><%= ev.event_type %></p>
     </section>
 
+    <%- include('logistique-employee-lines', { ev }) %>
+
     <section class="logistique-section logistique-section-trajet mt-3 pt-3 border-top">
       <span class="badge bg-light text-dark border mb-2">Adresses — trajet</span>
       <div class="logistique-client-times">

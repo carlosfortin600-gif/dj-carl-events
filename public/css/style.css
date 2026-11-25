@@ -585,6 +585,17 @@ table tr.q-field-missing td:first-child {
   font-weight: 400;
 }
 
+.logistique-section-employees .logistique-employee-row:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none !important;
+}
+
+.logistique-employees-form .form-control-sm,
+.logistique-employees-form .form-select-sm {
+  font-variant-numeric: tabular-nums;
+}
+
 .logistique-org-name {
   line-height: 1.2;
 }

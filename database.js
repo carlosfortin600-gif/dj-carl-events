@@ -448,6 +448,9 @@ function migrate(db) {
   if (!djNotesColumns.includes("tech_employee_needed")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_employee_needed TEXT");
   }
+  if (!djNotesColumns.includes("tech_logistics_employees")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_logistics_employees TEXT");
+  }
 
   const timeLogColumns = db.prepare("PRAGMA table_info(event_time_logs)").all().map((c) => c.name);
   if (timeLogColumns.length && !timeLogColumns.includes("description")) {

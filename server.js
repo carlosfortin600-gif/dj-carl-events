@@ -694,8 +694,24 @@ app.get("/logistique", (req, res) => {
     title: "Logistique",
     activeNav: "logistique",
     eventsList,
-    eventsByWeek
+    eventsByWeek,
+    logistiqueSaved: req.query.logistiqueSaved === "1",
+    logistiqueError: req.query.logistiqueError === "1"
   });
+});
+
+app.post("/events/:id/logistique-employees/save", (req, res) => {
+  const eventId = Number(req.params.id);
+  if (!getEventById(db, eventId)) return res.status(404).send("Not found");
+  const returnTo = safeReturnPath(req.body.returnTo) || "/logistique";
+  try {
+    const { saveLogisticsEmployeeLines } = require("./lib/logistics-employee-lines");
+    saveLogisticsEmployeeLines(db, eventId, req.body);
+    return redirectWithSearchParams(res, returnTo, { logistiqueSaved: "1" });
+  } catch (err) {
+    console.error("Logistics employees save failed:", err);
+    return redirectWithSearchParams(res, returnTo, { logistiqueError: "1" });
+  }
 });
 
 app.get("/calendar", (req, res) => {

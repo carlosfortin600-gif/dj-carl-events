@@ -983,3 +983,17 @@ startServerWarmOnPageLoad();
     target.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 })();
+
+(function initLogistiqueEmployeeLocationToggles() {
+  function syncSelect(select) {
+    const targetId = select.getAttribute("data-custom-target");
+    if (!targetId) return;
+    const wrap = document.getElementById(targetId);
+    if (!wrap) return;
+    wrap.classList.toggle("d-none", select.value !== "other");
+  }
+  document.querySelectorAll(".logistique-emp-location").forEach((select) => {
+    syncSelect(select);
+    select.addEventListener("change", () => syncSelect(select));
+  });
+})();
