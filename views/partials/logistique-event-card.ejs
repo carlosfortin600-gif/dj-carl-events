@@ -26,53 +26,38 @@
         </div>
         <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
       </div>
-      <div class="row g-2 small">
-        <div class="col-md-6">
-          <% if (ev.companyLabel && ev.contactPersonLabel) { %>
-            <span class="text-muted d-block">Personne contact</span>
-            <span class="fw-medium"><%= ev.contactPersonLabel %></span>
-          <% } else if (ev.contactPersonLabel) { %>
-            <span class="text-muted d-block">Nom</span>
-            <span class="fw-medium"><%= ev.contactPersonLabel %></span>
-          <% } %>
-        </div>
-        <div class="col-md-6">
-          <span class="text-muted d-block">Type</span>
-          <span><%= ev.event_type %></span>
-        </div>
-        <div class="col-md-6">
-          <span class="text-muted d-block">Téléphone client</span>
-          <% if (ev.clientPhoneMainDisplay) { %>
+      <div class="d-flex flex-wrap align-items-baseline small mt-2 logistique-client-headline logistique-client-contacts-line">
+        <% if (ev.contactPersonLabel) { %>
+          <span class="fw-medium logistique-headline-part"><%= ev.contactPersonLabel %></span>
+        <% } %>
+        <% if (ev.clientPhoneMainDisplay) { %>
+          <span class="logistique-headline-part">
             <% if (telHref(ev.clientPhoneMain)) { %>
-              <a href="<%= telHref(ev.clientPhoneMain) %>" class="maps-address-link fw-medium"><%= ev.clientPhoneMainDisplay %></a>
-              <a href="<%= telHref(ev.clientPhoneMain) %>" class="d-block small mt-1">Composer</a>
+              <a href="<%= telHref(ev.clientPhoneMain) %>" class="maps-address-link"><%= ev.clientPhoneMainDisplay %></a>
             <% } else { %>
-              <span class="fw-medium"><%= ev.clientPhoneMainDisplay %></span>
+              <%= ev.clientPhoneMainDisplay %>
             <% } %>
-          <% } else { %>
-            <span>—</span>
-          <% } %>
-        </div>
-        <div class="col-md-6">
-          <span class="text-muted d-block">Cellulaire client</span>
-          <% if (ev.clientPhoneCellDisplay) { %>
+          </span>
+        <% } %>
+        <% if (ev.clientPhoneCellDisplay) { %>
+          <span class="logistique-headline-part">
             <% if (telHref(ev.clientPhoneCell)) { %>
-              <a href="<%= telHref(ev.clientPhoneCell) %>" class="maps-address-link fw-medium"><%= ev.clientPhoneCellDisplay %></a>
-              <a href="<%= telHref(ev.clientPhoneCell) %>" class="d-block small mt-1">Composer</a>
+              <a href="<%= telHref(ev.clientPhoneCell) %>" class="maps-address-link"><%= ev.clientPhoneCellDisplay %></a>
             <% } else { %>
-              <span class="fw-medium"><%= ev.clientPhoneCellDisplay %></span>
+              <%= ev.clientPhoneCellDisplay %>
             <% } %>
-          <% } else { %>
-            <span>—</span>
-          <% } %>
-        </div>
+          </span>
+        <% } %>
         <% if (ev.clientEmail) { %>
-          <div class="col-12">
-            <span class="text-muted d-block">Courriel client</span>
+          <span class="logistique-headline-part">
             <a href="mailto:<%= ev.clientEmail %>" class="maps-address-link text-break"><%= ev.clientEmail %></a>
-          </div>
+          </span>
+        <% } %>
+        <% if (!ev.contactPersonLabel && !ev.clientPhoneMainDisplay && !ev.clientPhoneCellDisplay && !ev.clientEmail) { %>
+          <span class="text-muted">—</span>
         <% } %>
       </div>
+      <p class="text-muted small mb-0 mt-1"><%= ev.event_type %></p>
     </section>
 
     <section class="logistique-section logistique-section-trajet mt-3 pt-3 border-top">

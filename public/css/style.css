@@ -581,6 +581,10 @@ table tr.q-field-missing td:first-child {
   font-weight: 500;
 }
 
+.logistique-client-contacts-line .logistique-headline-part {
+  font-weight: 400;
+}
+
 .logistique-org-name {
   line-height: 1.2;
 }
