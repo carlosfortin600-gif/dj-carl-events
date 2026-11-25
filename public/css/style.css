@@ -556,6 +556,19 @@ table tr.q-field-missing td:first-child {
   font-variant-numeric: tabular-nums;
 }
 
+.logistique-org-name {
+  line-height: 1.2;
+}
+
+.logistique-header-meta {
+  line-height: 1.35;
+}
+
+.logistique-day-contact .resume-event-row-label {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
 .logistique-client-times {
   display: flex;
   flex-wrap: wrap;

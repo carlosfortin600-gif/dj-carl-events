@@ -41,6 +41,7 @@ const {
   calendarEventPrimary,
   eventCity,
   clientCompanyName,
+  clientContactPersonName,
   todayLocal
 } = require("./lib/helpers");
 const {
@@ -446,6 +447,7 @@ app.locals.calendarEventTitle = calendarEventTitle;
 app.locals.calendarEventPrimary = calendarEventPrimary;
 app.locals.eventCity = eventCity;
 app.locals.clientCompanyName = clientCompanyName;
+app.locals.clientContactPersonName = clientContactPersonName;
 app.locals.googleMapsUrl = googleMapsUrl;
 app.locals.googleMapsDirectionsUrl = googleMapsDirectionsUrl;
 app.locals.sortByTime = sortByTime;
