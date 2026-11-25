@@ -556,6 +556,46 @@ table tr.q-field-missing td:first-child {
   font-variant-numeric: tabular-nums;
 }
 
+.logistique-client-times {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+}
+
+.logistique-leg {
+  min-width: 10rem;
+}
+
+.logistique-leg-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.5rem;
+}
+
+.logistique-leg-head .resume-event-row-label {
+  margin-bottom: 0;
+}
+
+.logistique-address-link {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.logistique-address-link:hover {
+  color: var(--bs-primary);
+}
+
+.maps-address-link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.maps-address-link:hover {
+  color: var(--bs-primary);
+}
+
 .logistics-item {
   border-left: 4px solid #6c757d;
 }

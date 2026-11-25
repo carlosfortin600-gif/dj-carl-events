@@ -1,0 +1,8 @@
+<% const q = typeof address !== 'undefined' && address ? String(address).trim() : ''; %>
+<% const href = q ? googleMapsUrl(q) : null; %>
+<% const cls = typeof linkClass !== 'undefined' && linkClass ? linkClass : 'maps-address-link'; %>
+<% if (href) { %>
+  <a href="<%= href %>" target="_blank" rel="noopener noreferrer" class="<%= cls %>"><%= q %></a>
+<% } else if (q) { %>
+  <span><%= q %></span>
+<% } %>

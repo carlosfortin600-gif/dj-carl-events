@@ -1,56 +1,62 @@
 <% function gestionDepartUrl(id) { return '/events/' + id + '?tab=gestion&gestion=depart'; } %>
 <% function gestionLocationUrl(id) { return '/events/' + id + '?tab=gestion&gestion=location'; } %>
+<% const salleAddress = [ev.address, ev.city].filter(function (p) { return p && String(p).trim(); }).join(', '); %>
+<% const directionsUrl = ev.departureFrom && ev.arrivalAddress
+  ? googleMapsDirectionsUrl(ev.departureFrom, ev.arrivalAddress) : null; %>
 
 <div class="resume-event-row logistique-event-row status-border-<%= ev.status %>">
   <div class="resume-event-row-body">
     <div class="resume-event-row-line">
-      <div class="resume-event-row-name">
-        <div class="resume-event-row-name-text">
-          <a href="/events/<%= ev.id %>" class="fw-semibold text-decoration-none"><%= clientShortName(ev) %></a>
-          <div class="text-muted small">
-            <%= ev.event_type %><% if (ev.venue) { %> · <%= ev.venue %><% } %>
+      <div class="resume-event-row-name flex-grow-1">
+        <div class="resume-event-row-name-text w-100">
+          <div class="d-flex flex-wrap justify-content-between align-items-start gap-2">
+            <a href="/events/<%= ev.id %>" class="fw-semibold text-decoration-none"><%= clientShortName(ev) %></a>
+            <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
+          </div>
+
+          <div class="logistique-client-times mt-2">
+            <div class="logistique-leg">
+              <div class="logistique-leg-head">
+                <span class="resume-event-row-label">Départ</span>
+                <span class="logistics-time fw-semibold text-primary"><%= ev.departureTimeLabel || '—' %></span>
+                <% if (ev.departureDateLabel) { %>
+                  <span class="small text-muted">· <%= ev.departureDateLabel %></span>
+                <% } %>
+              </div>
+              <% if (ev.departureFrom) { %>
+                <div class="small text-muted mt-1">
+                  de <%- include('maps-link', { address: ev.departureFrom, linkClass: 'logistique-address-link' }) %>
+                </div>
+              <% } %>
+            </div>
+            <div class="logistique-leg">
+              <div class="logistique-leg-head">
+                <span class="resume-event-row-label">Arrivée</span>
+                <span class="logistics-time fw-semibold text-primary"><%= ev.arrivalTimeLabel || '—' %></span>
+                <% if (ev.arrivalDateLabel) { %>
+                  <span class="small text-muted">· <%= ev.arrivalDateLabel %></span>
+                <% } %>
+              </div>
+              <% if (ev.arrivalAddress) { %>
+                <div class="small text-muted mt-1">
+                  à <%- include('maps-link', { address: ev.arrivalAddress, linkClass: 'logistique-address-link' }) %>
+                </div>
+              <% } %>
+            </div>
+          </div>
+
+          <% if (directionsUrl) { %>
+            <a href="<%= directionsUrl %>" target="_blank" rel="noopener noreferrer"
+               class="small d-inline-block mt-2">Itinéraire Google Maps</a>
+          <% } %>
+
+          <div class="text-muted small mt-2">
+            <%= ev.event_type %> · <%= formatDateFr(ev.event_date) %>
+            <% if (ev.venue) { %>
+              · <%- include('maps-link', { address: ev.venue, linkClass: 'maps-address-link text-muted' }) %>
+            <% } %>
           </div>
         </div>
-        <span class="badge <%= statusBadgeClass(ev.status) %>"><%= statusLabel(ev.status) %></span>
-      </div>
-
-      <div class="resume-event-row-field">
-        <span class="resume-event-row-label">Date événement</span>
-        <span><%= formatDateFr(ev.event_date) %></span>
-      </div>
-
-      <div class="resume-event-row-field">
-        <span class="resume-event-row-label">Départ</span>
-        <% if (ev.departureFrom || ev.departureTimeLabel) { %>
-          <% if (ev.departureFrom) { %>
-            <span class="d-block small text-muted">de <%= ev.departureFrom %></span>
-          <% } %>
-          <span class="logistics-time display-6 fs-4 fw-semibold text-primary lh-1">
-            <%= ev.departureTimeLabel || '—' %>
-          </span>
-          <% if (ev.departureDateLabel) { %>
-            <span class="d-block small text-muted mt-1"><%= ev.departureDateLabel %></span>
-          <% } %>
-        <% } else { %>
-          <span>—</span>
-        <% } %>
-      </div>
-
-      <div class="resume-event-row-field">
-        <span class="resume-event-row-label">Arrivée / installation</span>
-        <% if (ev.arrivalAddress || ev.arrivalTimeLabel) { %>
-          <% if (ev.arrivalAddress) { %>
-            <span class="d-block small text-muted">à <%= ev.arrivalAddress %></span>
-          <% } %>
-          <span class="logistics-time display-6 fs-4 fw-semibold text-primary lh-1">
-            <%= ev.arrivalTimeLabel || '—' %>
-          </span>
-          <% if (ev.arrivalDateLabel) { %>
-            <span class="d-block small text-muted mt-1"><%= ev.arrivalDateLabel %></span>
-          <% } %>
-        <% } else { %>
-          <span>—</span>
-        <% } %>
       </div>
     </div>
 
@@ -58,15 +64,19 @@
       <div class="resume-event-row-field resume-event-row-where">
         <span class="resume-event-row-label">Salle</span>
         <span>
-          <% if (ev.address) { %>
-            <span class="d-block"><%= ev.address %><% if (ev.city) { %>, <%= ev.city %><% } %></span>
+          <% if (salleAddress) { %>
+            <span class="d-block">
+              <%- include('maps-link', { address: salleAddress }) %>
+            </span>
           <% } else if (!ev.venue) { %>
             —
           <% } %>
-          <% if (ev.venue && ev.address) { %>
-            <span class="d-block text-muted small mt-1"><%= ev.venue %></span>
-          <% } else if (ev.venue && !ev.address) { %>
-            <span class="d-block"><%= ev.venue %></span>
+          <% if (ev.venue && salleAddress) { %>
+            <span class="d-block text-muted small mt-1">
+              <%- include('maps-link', { address: ev.venue, linkClass: 'maps-address-link text-muted' }) %>
+            </span>
+          <% } else if (ev.venue && !salleAddress) { %>
+            <span class="d-block"><%- include('maps-link', { address: ev.venue }) %></span>
           <% } %>
         </span>
 
@@ -86,7 +96,7 @@
                   <span><%= ev.hotelPeriod %></span>
                   <% if (ev.hotelLocation) { %>
                     <span class="resume-location-sep" aria-hidden="true">·</span>
-                    <span><%= ev.hotelLocation %></span>
+                    <%- include('maps-link', { address: ev.hotelLocation }) %>
                   <% } %>
                   <% if (ev.hotelEventDistance) { %>
                     <span class="resume-location-sep" aria-hidden="true">·</span>
@@ -104,7 +114,7 @@
                   <span><%= ev.trailerPeriod %></span>
                   <% if (ev.trailerLocation) { %>
                     <span class="resume-location-sep" aria-hidden="true">·</span>
-                    <span><%= ev.trailerLocation %></span>
+                    <%- include('maps-link', { address: ev.trailerLocation }) %>
                   <% } %>
                 <% } else { %>
                   <span>Besoin <strong><%= ev.trailerNeeded ? 'Oui' : 'Non' %></strong></span>
