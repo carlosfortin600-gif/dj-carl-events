@@ -7,9 +7,14 @@
   <div id="tech-travel-schedule" class="border rounded p-3 bg-light mb-4"
        data-route-origin="<%= travelOrigin %>"
        data-route-destination="<%= travelDest %>">
+    <% const travelDurationMins = djNotes.tech_travel_duration_minutes != null && djNotes.tech_travel_duration_minutes !== ''
+      ? Number(djNotes.tech_travel_duration_minutes) : null; %>
+    <% const travelDurationH = travelDurationMins != null ? Math.floor(travelDurationMins / 60) : ''; %>
+    <% const travelDurationM = travelDurationMins != null ? travelDurationMins % 60 : ''; %>
     <h3 class="h6 mb-3">Trajet — horaire d’installation</h3>
     <p class="small text-muted mb-3">
-      Indiquez l’<strong>arrivée sur place</strong> (installation). L’heure de <strong>départ</strong> se calcule selon le temps de route entre l’adresse de départ (Résumé) et l’adresse de la salle.
+      Saisissez l’<strong>arrivée</strong> et le <strong>temps de route (manuel)</strong>. Le <strong>départ</strong> =
+      arrivée − temps de route.
     </p>
     <div class="row g-2 small mb-3">
       <div class="col-md-6">
@@ -23,7 +28,7 @@
     </div>
 
     <div class="row g-3">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <label class="form-label" for="tech_arrival_datetime">Arrivée — date et heure</label>
         <%- include('datetime-fr-field', {
           id: 'tech_arrival_datetime',
@@ -33,8 +38,25 @@
             ? formatDateTimeFr(djNotes.tech_arrival_date, djNotes.tech_arrival_time) : ''
         }) %>
       </div>
-      <div class="col-md-6">
-        <span class="form-label d-block">Départ — calculé automatiquement</span>
+      <div class="col-md-4">
+        <label class="form-label d-block">Temps de route — manuel</label>
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+          <div class="input-group" style="max-width: 11rem">
+            <input type="number" class="form-control" id="tech_travel_duration_hours"
+                   name="tech_travel_duration_hours" min="0" max="24" step="1"
+                   value="<%= travelDurationH %>" placeholder="0" aria-label="Heures de route">
+            <span class="input-group-text">h</span>
+          </div>
+          <div class="input-group" style="max-width: 11rem">
+            <input type="number" class="form-control" id="tech_travel_duration_mins"
+                   name="tech_travel_duration_mins" min="0" max="59" step="5"
+                   value="<%= travelDurationM !== '' ? travelDurationM : '' %>" placeholder="0" aria-label="Minutes de route">
+            <span class="input-group-text">min</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <span class="form-label d-block">Départ — calculé</span>
         <div class="border rounded bg-white px-3 py-2" id="tech_departure_auto_display" aria-live="polite">
           <% if (djNotes.tech_departure_date) { %>
             <div class="fw-semibold text-primary"><%= formatDateTimeFr(djNotes.tech_departure_date, djNotes.tech_departure_time) %></div>

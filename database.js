@@ -433,6 +433,9 @@ function migrate(db) {
   if (!djNotesColumns.includes("questions_to_ask")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN questions_to_ask TEXT");
   }
+  if (!djNotesColumns.includes("tech_travel_duration_minutes")) {
+    db.exec("ALTER TABLE dj_notes ADD COLUMN tech_travel_duration_minutes INTEGER");
+  }
   if (!djNotesColumns.includes("tech_email_rdv_sent")) {
     db.exec("ALTER TABLE dj_notes ADD COLUMN tech_email_rdv_sent TEXT");
   }

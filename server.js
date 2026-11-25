@@ -1910,23 +1910,20 @@ app.post("/events/:id/gestion/temps/:logId/delete", (req, res) => {
   res.redirect(gestionRedirect(eventId, { gestion: "temps", timeSpentDeleted: "1" }));
 });
 
-app.post("/events/:id/notes/save", async (req, res) => {
+app.post("/events/:id/notes/save", (req, res) => {
   const eventId = Number(req.params.id);
   if (!getEventById(db, eventId)) return res.status(404).send("Not found");
   try {
     let travelWarning = null;
     const saveScope = req.body.save_scope || req.body.gestion_section || "";
     if (saveScope === "depart") {
-      const { applyAutoDepartureFromArrival } = require("./lib/tech-departure");
-      const auto = await applyAutoDepartureFromArrival(db, eventId, req.body);
-      if (auto.error === "missing_origin" || auto.error === "missing_destination") {
+      const { applyComputedDeparture } = require("./lib/tech-departure");
+      const auto = applyComputedDeparture(req.body);
+      if (auto.error === "missing_duration") {
         travelWarning =
-          auto.error === "missing_origin"
-            ? "Arrivée enregistrée. Ajoutez l’adresse de départ dans Résumé pour calculer l’heure de départ."
-            : "Arrivée enregistrée. Ajoutez l’adresse de l’événement dans Résumé pour calculer l’heure de départ.";
+          "Arrivée enregistrée. Indiquez le temps de route (h et min) pour calculer le départ.";
       } else if (!auto.ok && auto.error) {
-        travelWarning =
-          "Arrivée enregistrée. Impossible de calculer l’heure de départ (adresse ou itinéraire).";
+        travelWarning = "Impossible de calculer l’heure de départ.";
       }
     }
     const notesBeforeSave = getDjNotes(db, eventId);
