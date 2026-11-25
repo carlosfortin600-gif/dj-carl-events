@@ -38,7 +38,7 @@
             <% if (weekRowType === 'resume') { %>
               <%- include('resume-event-card', { ev }) %>
             <% } else if (weekRowType === 'logistique') { %>
-              <%- include('logistique-event-card', { ev }) %>
+              <%- include('logistique-event-card', { ev, weekStart: week.weekStart, weekPlanning: week.planningBySubcontractor }) %>
             <% } else { %>
               <%- include('upcoming-event-row', { ev }) %>
             <% } %>

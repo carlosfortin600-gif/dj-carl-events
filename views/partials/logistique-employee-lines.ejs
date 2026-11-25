@@ -16,7 +16,16 @@
           <% const rowKey = 'ev' + ev.id + '_' + sid; %>
           <% const withMeYesId = rowKey + '_with_yes'; %>
           <% const withMeNoId = rowKey + '_with_no'; %>
-          <div class="logistique-employee-row logistique-employee-row--highlight row g-2 align-items-end small mb-3">
+          <% const planning =
+            typeof weekPlanning !== 'undefined' && weekPlanning ? weekPlanning[emp.subcontractorId] : null;
+            let employeeRowClass = 'logistique-employee-row row g-2 align-items-end small mb-3';
+            if (planning && planning.confirmedAt) {
+              employeeRowClass += ' logistique-employee-row--confirmed';
+            } else if (planning && planning.sentAt) {
+              employeeRowClass += ' logistique-employee-row--sent';
+            }
+          %>
+          <div class="<%= employeeRowClass %>">
             <div class="col-12 col-lg-3">
               <span class="text-muted d-block">Employé</span>
               <span class="fw-semibold"><%= emp.label %></span>

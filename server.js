@@ -718,6 +718,42 @@ app.get("/logistique", (req, res) => {
   });
 });
 
+app.get("/logistique/planning/confirmer/:token", (req, res) => {
+  const { getPlanningConfirmContext } = require("./lib/logistics-week-planning");
+  const ctx = getPlanningConfirmContext(db, req.params.token);
+  if (!ctx) {
+    return res.status(404).send("Lien invalide.");
+  }
+  if (ctx.row.confirmed_at) {
+    return res.render("logistique-planning-confirmed", {
+      weekLabel: ctx.weekLabel,
+      personLabel: ctx.personLabel
+    });
+  }
+  return res.render("logistique-planning-confirmer", {
+    token: ctx.row.confirm_token,
+    weekLabel: ctx.weekLabel,
+    personLabel: ctx.personLabel
+  });
+});
+
+app.post("/logistique/planning/confirmer/:token", (req, res) => {
+  const {
+    confirmWeekPlanningByToken,
+    getPlanningConfirmContext
+  } = require("./lib/logistics-week-planning");
+  const token = String(req.params.token || "").trim();
+  const result = confirmWeekPlanningByToken(db, token);
+  if (!result.ok) {
+    return res.status(404).send(result.error || "Lien invalide.");
+  }
+  const ctx = getPlanningConfirmContext(db, token);
+  return res.render("logistique-planning-confirmed", {
+    weekLabel: ctx?.weekLabel || "",
+    personLabel: ctx?.personLabel || ""
+  });
+});
+
 app.post("/logistique/week/send", async (req, res) => {
   const { sendLogisticsWeekEmail } = require("./lib/logistics-week-email");
   const returnTo = safeReturnPath(req.body.returnTo) || "/logistique";

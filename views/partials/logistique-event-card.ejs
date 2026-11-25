@@ -167,7 +167,7 @@
       </div>
     </section>
 
-    <%- include('logistique-employee-lines', { ev }) %>
+    <%- include('logistique-employee-lines', { ev, weekPlanning: typeof weekPlanning !== 'undefined' ? weekPlanning : null }) %>
   </div>
 
   <div class="resume-event-row-action d-flex flex-column gap-1">

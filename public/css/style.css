@@ -585,11 +585,35 @@ table tr.q-field-missing td:first-child {
   font-weight: 400;
 }
 
-.logistique-employee-row--highlight {
+.logistique-employee-row--sent {
+  padding: 12px 14px;
+  border: 2px solid #ffc107;
+  border-radius: 10px;
+  background-color: #fff8e1;
+}
+
+.logistique-employee-row--confirmed {
   padding: 12px 14px;
   border: 2px solid #198754;
   border-radius: 10px;
   background-color: #d1e7dd;
+}
+
+.logistique-legend-swatch {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.logistique-legend-swatch--sent {
+  border: 2px solid #ffc107;
+  background: #fff8e1;
+}
+
+.logistique-legend-swatch--confirmed {
+  border: 2px solid #198754;
+  background: #d1e7dd;
 }
 
 .logistique-section-employees .logistique-employee-row:last-child {

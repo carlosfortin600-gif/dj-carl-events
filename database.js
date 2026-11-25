@@ -647,6 +647,9 @@ function migrate(db) {
   const { backfillSubcontractorCalendarTokens } = require("./lib/subcontractor-calendar-access");
   backfillSubcontractorCalendarTokens(db);
 
+  const { ensureLogisticsWeekPlanningTable } = require("./lib/logistics-week-planning");
+  ensureLogisticsWeekPlanningTable(db);
+
   const clientColumns = db.prepare("PRAGMA table_info(clients)").all().map((c) => c.name);
   if (!clientColumns.includes("phone_cell")) {
     db.exec("ALTER TABLE clients ADD COLUMN phone_cell TEXT");
