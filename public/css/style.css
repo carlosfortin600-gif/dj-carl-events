@@ -550,6 +550,10 @@ table tr.q-field-missing td:first-child {
   border-left: 4px solid var(--dj-accent);
 }
 
+.horaire-table td:first-child {
+  font-variant-numeric: tabular-nums;
+}
+
 .plan-hours-reminder {
   border-width: 2px;
   border-color: #0dcaf0;

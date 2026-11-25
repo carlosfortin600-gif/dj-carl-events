@@ -207,6 +207,7 @@ const {
   removeClientPlanStepAt,
   deactivateImportantMoment
 } = require("./lib/plan-soiree");
+const { buildEventHoraire } = require("./lib/event-horaire");
 const {
   notifyDjCarlClientUpdate,
   notifyDjCarlClientConfirmation,
@@ -1070,6 +1071,12 @@ function renderEventDetailPage(req, res) {
     emailRdvSentLogs,
     clientContactLogs
   });
+  const horaire = buildEventHoraire({
+    event,
+    questionnaire,
+    timelineItems,
+    djNotes
+  });
   const missingQuestions = getQuestionnaireMissing(event.event_type, questionnaire.data);
   const eventFiles = getEventFiles(db, event.id);
   const timeSpentLogs = gestionSection === "temps" ? getTimeSpentLogs(db, event.id) : [];
@@ -1131,6 +1138,7 @@ function renderEventDetailPage(req, res) {
     clientContactDefaultDatetime: defaultContactDatetime(),
     eventAgreementStatuses,
     summarySheet,
+    horaire,
     missingQuestions,
     eventFiles,
     maxFileSize: MAX_FILE_SIZE,

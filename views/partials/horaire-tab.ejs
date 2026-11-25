@@ -1,0 +1,74 @@
+<% const horaireData = typeof horaire !== 'undefined' && horaire ? horaire : { chronological: [], bySource: {} }; %>
+<% const rows = horaireData.chronological || []; %>
+
+<%- include('plan-hours-reminder') %>
+
+<p class="text-muted mb-4">
+  Vue d'ensemble de tous les horaires du dossier : contrat, départ / arrivée, questionnaire, plan client et plan DJ.
+  Cliquez sur la source pour modifier l'info à l'origine.
+</p>
+
+<% if (!rows.length) { %>
+  <p class="text-muted text-center py-5">Aucun horaire renseigné pour l'instant.</p>
+<% } else { %>
+  <div class="table-responsive">
+    <table class="table table-sm align-middle horaire-table">
+      <thead class="table-light">
+        <tr>
+          <th style="width: 11rem;">Quand</th>
+          <th>Élément</th>
+          <th>Détails</th>
+          <th style="width: 8.5rem;">Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.forEach(function(row) { %>
+          <tr>
+            <td class="text-nowrap fw-semibold"><%= row.when || '—' %></td>
+            <td><%= row.label %></td>
+            <td class="text-muted small"><%= row.detail || '—' %></td>
+            <td>
+              <% if (row.href) { %>
+                <a href="<%= row.href %>" class="badge text-bg-secondary text-decoration-none"><%= row.source %></a>
+              <% } else { %>
+                <span class="badge text-bg-secondary"><%= row.source %></span>
+              <% } %>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="h6 mt-5 mb-3">Par catégorie</h3>
+  <div class="row g-3">
+    <% const sources = ['Contrat', 'Gestion', 'Questionnaire', 'Plan client', 'Plan DJ']; %>
+    <% sources.forEach(function(source) {
+      const group = horaireData.bySource[source];
+      if (!group || !group.length) return;
+    %>
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-header py-2 small fw-semibold"><%= source %></div>
+          <ul class="list-group list-group-flush small">
+            <% group.forEach(function(item) { %>
+              <li class="list-group-item py-2">
+                <span class="text-nowrap fw-semibold me-1"><%= item.when || '—' %></span>
+                — <%= item.label %>
+                <% if (item.detail) { %><span class="text-muted d-block mt-1"><%= item.detail %></span><% } %>
+              </li>
+            <% }); %>
+          </ul>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+<% } %>
+
+<% if (horaireData.eventDate) { %>
+  <p class="text-muted small mt-4 mb-0">
+    Date de l'événement : <strong><%= formatDateFr(horaireData.eventDate) %></strong>.
+    Les heures sans date (questionnaire, plans) sont interprétées pour cette journée
+    (après minuit = jour suivant).
+  </p>
+<% } %>

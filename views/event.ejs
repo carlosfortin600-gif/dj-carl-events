@@ -101,6 +101,7 @@
       { id: 'questionnaire', label: 'Questionnaire' },
       { id: 'a-completer', label: 'À compléter', badge: missingQuestions.count },
       { id: 'timeline', label: 'Plan de soirée' },
+      { id: 'horaire', label: 'Horaire' },
       { id: 'musique', label: 'Musique' },
       { id: 'services', label: 'Services' },
       { id: 'fiche', label: 'Fiche récap' },
@@ -168,6 +169,9 @@
 
       <% } else if (tab === 'timeline') { %>
         <%- include('partials/timeline-tab', { event, questionnaire, timelineItems, timelineSaved }) %>
+
+      <% } else if (tab === 'horaire') { %>
+        <%- include('partials/horaire-tab', { event, horaire }) %>
 
       <% } else if (tab === 'musique') { %>
         <% if (isWeddingEvent(event.event_type)) { %>
