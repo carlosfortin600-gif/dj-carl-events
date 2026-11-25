@@ -992,6 +992,23 @@ startServerWarmOnPageLoad();
     if (!wrap) return;
     wrap.classList.toggle("d-none", select.value !== "other");
   }
+
+  function syncWithMeForRow(row) {
+    const checked = row.querySelector('input[type="radio"][name$="_with_me"]:checked');
+    const withMe = checked?.value === "yes";
+    row.classList.toggle("logistique-emp-when-fields--off", !withMe);
+    row.querySelectorAll(".logistique-emp-when-field").forEach((field) => {
+      field.disabled = !withMe;
+    });
+  }
+
+  document.querySelectorAll(".logistique-employee-row").forEach((row) => {
+    row.querySelectorAll('input[type="radio"][name$="_with_me"]').forEach((radio) => {
+      radio.addEventListener("change", () => syncWithMeForRow(row));
+    });
+    syncWithMeForRow(row);
+  });
+
   document.querySelectorAll(".logistique-emp-location").forEach((select) => {
     syncSelect(select);
     select.addEventListener("change", () => syncSelect(select));

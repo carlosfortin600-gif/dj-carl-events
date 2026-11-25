@@ -13,8 +13,9 @@
       <div class="logistique-employees-list">
         <% ev.employeeLines.forEach(function(emp) { %>
           <% const sid = emp.subcontractorId; %>
-          <% const withMeYesId = 'emp_' + sid + '_with_yes'; %>
-          <% const withMeNoId = 'emp_' + sid + '_with_no'; %>
+          <% const rowKey = 'ev' + ev.id + '_' + sid; %>
+          <% const withMeYesId = rowKey + '_with_yes'; %>
+          <% const withMeNoId = rowKey + '_with_no'; %>
           <div class="logistique-employee-row row g-2 align-items-end small mb-3 pb-3 border-bottom border-light">
             <div class="col-12 col-md-6 col-lg-3">
               <span class="text-muted d-block">Employé</span>
@@ -31,16 +32,18 @@
                 <label class="btn btn-outline-primary fw-semibold" for="<%= withMeNoId %>">Non</label>
               </div>
             </div>
-            <div class="col-6 col-md-4 col-lg-2">
-              <label class="form-label mb-0 text-muted" for="emp_<%= sid %>_arrival">Arrivée</label>
-              <input type="time" class="form-control form-control-sm" id="emp_<%= sid %>_arrival"
-                     name="emp_<%= sid %>_arrival_time" value="<%= emp.arrivalTime %>" step="300">
+            <div class="col-6 col-md-4 col-lg-2 logistique-emp-when-target">
+              <label class="form-label mb-0 text-muted" for="<%= rowKey %>_arrival">Arrivée</label>
+              <input type="time" class="form-control form-control-sm logistique-emp-when-field" id="<%= rowKey %>_arrival"
+                     name="emp_<%= sid %>_arrival_time" value="<%= emp.arrivalTime %>" step="300"
+                     <%= emp.withMe === 'no' ? 'disabled' : '' %>>
             </div>
-            <div class="col-6 col-md-5 col-lg-3">
-              <label class="form-label mb-0 text-muted" for="emp_<%= sid %>_location">Endroit</label>
-              <select class="form-select form-select-sm logistique-emp-location"
-                      id="emp_<%= sid %>_location" name="emp_<%= sid %>_location"
-                      data-custom-target="emp_<%= sid %>_custom_wrap">
+            <div class="col-6 col-md-5 col-lg-3 logistique-emp-when-target">
+              <label class="form-label mb-0 text-muted" for="<%= rowKey %>_location">Endroit</label>
+              <select class="form-select form-select-sm logistique-emp-location logistique-emp-when-field"
+                      id="<%= rowKey %>_location" name="emp_<%= sid %>_location"
+                      data-custom-target="<%= rowKey %>_custom_wrap"
+                      <%= emp.withMe === 'no' ? 'disabled' : '' %>>
                 <% emp.locationChoices.forEach(function(choice) { %>
                   <option value="<%= choice.key %>"<%= emp.locationKey === choice.key ? ' selected' : '' %>>
                     <%= choice.label %><% if (choice.address) { %> — <%= choice.address.length > 40 ? choice.address.slice(0, 37) + '…' : choice.address %><% } %>
@@ -48,12 +51,13 @@
                 <% }); %>
               </select>
             </div>
-            <div class="col-12 col-md-3 col-lg-2 logistique-emp-custom-wrap<%= emp.locationKey === 'other' ? '' : ' d-none' %>"
-                 id="emp_<%= sid %>_custom_wrap">
-              <label class="form-label mb-0 text-muted" for="emp_<%= sid %>_custom">Précision</label>
-              <input type="text" class="form-control form-control-sm" id="emp_<%= sid %>_custom"
+            <div class="col-12 col-md-3 col-lg-2 logistique-emp-custom-wrap logistique-emp-when-target<%= emp.locationKey === 'other' ? '' : ' d-none' %>"
+                 id="<%= rowKey %>_custom_wrap">
+              <label class="form-label mb-0 text-muted" for="<%= rowKey %>_custom">Précision</label>
+              <input type="text" class="form-control form-control-sm logistique-emp-when-field" id="<%= rowKey %>_custom"
                      name="emp_<%= sid %>_location_custom" value="<%= emp.locationCustom %>"
-                     placeholder="Adresse ou lieu">
+                     placeholder="Adresse ou lieu"
+                     <%= emp.withMe === 'no' ? 'disabled' : '' %>>
             </div>
           </div>
         <% }); %>
