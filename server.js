@@ -207,7 +207,7 @@ const {
   removeClientPlanStepAt,
   deactivateImportantMoment
 } = require("./lib/plan-soiree");
-const { getLogisticsViewData } = require("./lib/logistics-schedule");
+const { getLogisticsEventsList } = require("./lib/logistics-schedule");
 const {
   notifyDjCarlClientUpdate,
   notifyDjCarlClientConfirmation,
@@ -685,18 +685,12 @@ app.get("/export/dossiers.zip", async (req, res) => {
 });
 
 app.get("/logistique", (req, res) => {
-  const view = parseViewParam(req.query.view);
-  const { year, month } = parseMonthParam(req.query.year, req.query.month);
-  const cal = getLogisticsViewData(db, {
-    view,
-    date: req.query.date,
-    year,
-    month
-  });
+  const { eventsList, eventsByMonth } = getLogisticsEventsList(db);
   res.render("logistique", {
-    title: "Horaire logistique",
+    title: "Logistique",
     activeNav: "logistique",
-    cal
+    eventsList,
+    eventsByMonth
   });
 });
 
